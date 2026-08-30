@@ -55,7 +55,7 @@ export default function DashboardOverviewPage() {
 
       {/* Metrics Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        <div className="rounded-[24px] bg-surface dark:bg-[#161715] p-6 border border-border space-y-1">
+        <div className="rounded-md bg-surface dark:bg-[#161715] p-6 border border-border space-y-1">
           <div className="flex items-center justify-between text-foreground-muted">
             <span className="text-xs font-bold uppercase tracking-wider">{t("dashboardHome.slotLabel")}</span>
             <Smartphone className="size-4 text-wise-green" />
@@ -71,7 +71,7 @@ export default function DashboardOverviewPage() {
           </p>
         </div>
 
-        <div className="rounded-[24px] bg-surface dark:bg-[#161715] p-6 border border-border space-y-1">
+        <div className="rounded-md bg-surface dark:bg-[#161715] p-6 border border-border space-y-1">
           <div className="flex items-center justify-between text-foreground-muted">
             <span className="text-xs font-bold uppercase tracking-wider">{t("dashboardHome.quotaLabel")}</span>
             <Zap className="size-4 text-wise-green" />
@@ -84,7 +84,7 @@ export default function DashboardOverviewPage() {
           </p>
         </div>
 
-        <div className="rounded-[24px] bg-surface dark:bg-[#161715] p-6 border border-border space-y-1">
+        <div className="rounded-md bg-surface dark:bg-[#161715] p-6 border border-border space-y-1">
           <div className="flex items-center justify-between text-foreground-muted">
             <span className="text-xs font-bold uppercase tracking-wider">{t("dashboardHome.contactsLabel")}</span>
             <Users className="size-4 text-wise-green" />
@@ -95,7 +95,7 @@ export default function DashboardOverviewPage() {
           </p>
         </div>
 
-        <div className="rounded-[24px] bg-surface dark:bg-[#161715] p-6 border border-border space-y-1">
+        <div className="rounded-md bg-surface dark:bg-[#161715] p-6 border border-border space-y-1">
           <div className="flex items-center justify-between text-foreground-muted">
             <span className="text-xs font-bold uppercase tracking-wider">{t("dashboardHome.antiBanLabel")}</span>
             <ShieldCheck className="size-4 text-emerald-500" />

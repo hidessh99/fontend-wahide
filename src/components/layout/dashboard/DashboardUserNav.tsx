@@ -65,7 +65,7 @@ export function DashboardUserNav() {
             <Link
               href="/settings"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-2 px-3 py-2 rounded-[12px] hover:bg-muted hover:text-foreground transition"
+              className="flex items-center gap-2 px-3 py-2 rounded-full hover:bg-muted hover:text-foreground transition"
             >
               <User className="size-3.5" />
               <span>{t("dashboardMenu.profile")}</span>
@@ -73,7 +73,7 @@ export function DashboardUserNav() {
             <Link
               href="/settings/api-key"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-2 px-3 py-2 rounded-[12px] hover:bg-muted hover:text-foreground transition"
+              className="flex items-center gap-2 px-3 py-2 rounded-full hover:bg-muted hover:text-foreground transition"
             >
               <Key className="size-3.5" />
               <span>{t("dashboardMenu.apiKey")}</span>
@@ -82,7 +82,7 @@ export function DashboardUserNav() {
               <Link
                 href="/admin/overview"
                 onClick={() => setOpen(false)}
-                className="flex items-center gap-2 px-3 py-2 rounded-[12px] bg-[rgba(159,232,112,0.12)] text-dark-green dark:text-wise-green font-bold transition"
+                className="flex items-center gap-2 px-3 py-2 rounded-full bg-[rgba(159,232,112,0.12)] text-dark-green dark:text-wise-green font-bold transition"
               >
                 <Shield className="size-3.5" />
                 <span>{t("dashboardMenu.superadminPanel")}</span>

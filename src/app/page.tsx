@@ -69,25 +69,25 @@ export default function HomePage() {
 
           {/* Key Metrics Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mt-16 pt-8 border-t border-border">
-            <div className="rounded-[26px] bg-surface dark:bg-[#161715] p-6 border border-border shadow-[0_0_0_1px_rgba(14,15,12,0.04)]">
+            <div className="rounded-md bg-surface dark:bg-[#161715] p-6 border border-border shadow-[0_0_0_1px_rgba(14,15,12,0.04)]">
               <p className="text-xs font-semibold text-foreground-muted uppercase tracking-wider">{t("metrics.deviceScale")}</p>
               <p className="text-4xl sm:text-5xl font-black text-foreground mt-2 leading-none">10k+</p>
               <p className="text-xs font-semibold text-foreground-secondary mt-2">{t("metrics.deviceScaleDesc")}</p>
             </div>
 
-            <div className="rounded-[26px] bg-surface dark:bg-[#161715] p-6 border border-border shadow-[0_0_0_1px_rgba(14,15,12,0.04)]">
+            <div className="rounded-md bg-surface dark:bg-[#161715] p-6 border border-border shadow-[0_0_0_1px_rgba(14,15,12,0.04)]">
               <p className="text-xs font-semibold text-foreground-muted uppercase tracking-wider">{t("metrics.ramSavings")}</p>
               <p className="text-4xl sm:text-5xl font-black text-dark-green dark:text-wise-green mt-2 leading-none">95%</p>
               <p className="text-xs font-semibold text-foreground-secondary mt-2">{t("metrics.ramSavingsDesc")}</p>
             </div>
 
-            <div className="rounded-[26px] bg-surface dark:bg-[#161715] p-6 border border-border shadow-[0_0_0_1px_rgba(14,15,12,0.04)]">
+            <div className="rounded-md bg-surface dark:bg-[#161715] p-6 border border-border shadow-[0_0_0_1px_rgba(14,15,12,0.04)]">
               <p className="text-xs font-semibold text-foreground-muted uppercase tracking-wider">{t("metrics.wakeupLatency")}</p>
               <p className="text-4xl sm:text-5xl font-black text-foreground mt-2 leading-none">&lt;0.3s</p>
               <p className="text-xs font-semibold text-foreground-secondary mt-2">{t("metrics.wakeupLatencyDesc")}</p>
             </div>
 
-            <div className="rounded-[26px] bg-surface dark:bg-[#161715] p-6 border border-border shadow-[0_0_0_1px_rgba(14,15,12,0.04)]">
+            <div className="rounded-md bg-surface dark:bg-[#161715] p-6 border border-border shadow-[0_0_0_1px_rgba(14,15,12,0.04)]">
               <p className="text-xs font-semibold text-foreground-muted uppercase tracking-wider">{t("metrics.antiBan")}</p>
               <p className="text-4xl sm:text-5xl font-black text-foreground mt-2 leading-none">5 Lapis</p>
               <p className="text-xs font-semibold text-foreground-secondary mt-2">{t("metrics.antiBanDesc")}</p>
@@ -127,7 +127,7 @@ export default function HomePage() {
                 />
               </div>
 
-              <div className="rounded-[24px] bg-[#eef2eb] dark:bg-[#212320] p-6 border border-border space-y-3">
+              <div className="rounded-md bg-[#eef2eb] dark:bg-[#212320] p-6 border border-border space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold uppercase tracking-wider text-foreground-muted">
                     {t("spintaxSection.resultLabel")}
