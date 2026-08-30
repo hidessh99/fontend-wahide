@@ -1,0 +1,14 @@
+{
+  "title": "Broadcast Campaigns",
+  "subtitle": "Send high-throughput mass broadcasts with human typing simulations and anti-ban spintax.",
+  "createCampaign": "Create New Campaign",
+  "templateLabel": "Message Template (Spintax Supported)",
+  "spintaxHint": "Use {Hello|Hi|Good Morning} syntax for automated word variations.",
+  "jitterDelayLabel": "Dynamic Jitter Delay (3-7 Seconds)",
+  "recipientCount": "Target Recipient Count",
+  "statusDraft": "Draft",
+  "statusRunning": "Sending",
+  "statusCompleted": "Completed",
+  "statusFailed": "Partially Failed",
+  "viewLogs": "View Dispatch Logs"
+}

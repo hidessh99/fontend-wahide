@@ -1,0 +1,10 @@
+{
+  "title": "Pusat Bantuan & Tiket",
+  "subtitle": "Kirim pertanyaan atau laporkan kendala integrasi WhatsApp ke tim teknis Wahide.",
+  "createTicket": "Buat Tiket Baru",
+  "ticketSubject": "Subjek / Topik Kendala",
+  "ticketMessage": "Penjelasan Detail",
+  "statusOpen": "Menunggu Respon",
+  "statusAnswered": "Dijawab Tim Support",
+  "statusResolved": "Selesai / Ditutup"
+}

@@ -4,11 +4,14 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { LocaleSwitcher } from "@/components/layout/shared/LocaleSwitcher";
 import { useAuth } from "@/services/iam/hooks/useAuth";
+import { useI18n } from "@/lib/i18n/context";
 import { User, Menu, X } from "lucide-react";
 
 export function PublicHeader() {
   const { user, isAuthenticated } = useAuth();
+  const { t } = useI18n();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
@@ -25,40 +28,41 @@ export function PublicHeader() {
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-foreground-secondary">
           <Link href="/#features" className="hover:text-foreground transition">
-            Fitur Anti-Ban
+            {t("common.nav.antiBan")}
           </Link>
           <Link href="/#architecture" className="hover:text-foreground transition">
-            Arsitektur Microservice
+            {t("common.nav.architecture")}
           </Link>
           <Link href="/#spintax" className="hover:text-foreground transition">
-            Spintax Tester
+            {t("common.nav.spintax")}
           </Link>
           <Link href="/pricing" className="hover:text-foreground transition">
-            Harga Paket
+            {t("common.nav.pricing")}
           </Link>
         </nav>
 
         {/* Action Controls & Auth State */}
-        <div className="hidden sm:flex items-center gap-3">
+        <div className="hidden sm:flex items-center gap-2.5">
+          <LocaleSwitcher />
           <ThemeToggle />
 
           {isAuthenticated && user ? (
             <Link href="/dashboard">
               <Button variant="primaryPill" size="sm" className="gap-2">
                 <User className="size-4" />
-                <span>Dashboard ({user.name.split(" ")[0]})</span>
+                <span>{t("common.nav.dashboard")} ({user.name.split(" ")[0]})</span>
               </Button>
             </Link>
           ) : (
             <div className="flex items-center gap-2">
               <Link href="/login">
                 <Button variant="secondaryPill" size="sm">
-                  Masuk
+                  {t("common.nav.login")}
                 </Button>
               </Link>
               <Link href="/register">
                 <Button variant="primaryPill" size="sm">
-                  Daftar Gratis
+                  {t("common.nav.register")}
                 </Button>
               </Link>
             </div>
@@ -67,6 +71,7 @@ export function PublicHeader() {
 
         {/* Mobile Hamburger Button */}
         <div className="flex items-center gap-2 sm:hidden">
+          <LocaleSwitcher />
           <ThemeToggle />
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -87,32 +92,32 @@ export function PublicHeader() {
               onClick={() => setMobileMenuOpen(false)}
               className="py-2 border-b border-border/50"
             >
-              Fitur Anti-Ban
+              {t("common.nav.antiBan")}
             </Link>
             <Link
               href="/#architecture"
               onClick={() => setMobileMenuOpen(false)}
               className="py-2 border-b border-border/50"
             >
-              Arsitektur Microservice
+              {t("common.nav.architecture")}
             </Link>
             <Link
               href="/#spintax"
               onClick={() => setMobileMenuOpen(false)}
               className="py-2 border-b border-border/50"
             >
-              Spintax Tester
+              {t("common.nav.spintax")}
             </Link>
           </nav>
           <div className="pt-2 flex flex-col gap-2">
             <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
               <Button variant="outlinePill" size="default" className="w-full">
-                Masuk
+                {t("common.nav.login")}
               </Button>
             </Link>
             <Link href="/register" onClick={() => setMobileMenuOpen(false)}>
               <Button variant="primaryPill" size="default" className="w-full">
-                Daftar Gratis
+                {t("common.nav.register")}
               </Button>
             </Link>
           </div>

@@ -1,0 +1,15 @@
+{
+  "title": "WhatsApp Multi-Device Slots",
+  "subtitle": "Manage multi-device WhatsApp sessions, scan pairing QR codes, and monitor real-time connection status.",
+  "addDevice": "Add Device Slot",
+  "qrModalTitle": "Scan WhatsApp QR Code",
+  "qrModalSubtitle": "Open WhatsApp on your phone > Linked Devices > Link a Device",
+  "qrExpiresIn": "QR Code refreshes in {seconds} seconds",
+  "statusConnected": "Connected",
+  "statusDisconnected": "Disconnected",
+  "statusPairing": "Awaiting QR Scan",
+  "statusHibernated": "Memory Hibernated",
+  "reconnect": "Reconnect",
+  "disconnect": "Disconnect Session",
+  "noDevices": "No WhatsApp devices linked yet."
+}

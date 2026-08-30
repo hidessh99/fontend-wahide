@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { LocaleSwitcher } from "@/components/layout/shared/LocaleSwitcher";
 
 export function AuthHeader() {
   return (
@@ -11,7 +12,10 @@ export function AuthHeader() {
           Wahide<span className="text-[#9fe870]">.</span>
         </span>
       </Link>
-      <ThemeToggle />
+      <div className="flex items-center gap-2">
+        <LocaleSwitcher />
+        <ThemeToggle />
+      </div>
     </div>
   );
 }

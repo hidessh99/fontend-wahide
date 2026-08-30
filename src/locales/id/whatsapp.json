@@ -1,0 +1,15 @@
+{
+  "title": "Manajemen Slot WhatsApp",
+  "subtitle": "Kelola sesi WhatsApp multi-device, scan QR pairing, dan pantau status koneksi.",
+  "addDevice": "Tambah Slot Perangkat",
+  "qrModalTitle": "Scan QR Code WhatsApp",
+  "qrModalSubtitle": "Buka WhatsApp di ponsel Anda > Perangkat Tertaut > Tautkan Perangkat",
+  "qrExpiresIn": "QR Code diperbarui dalam {seconds} detik",
+  "statusConnected": "Terhubung",
+  "statusDisconnected": "Terputus",
+  "statusPairing": "Menunggu Scan QR",
+  "statusHibernated": "Hibernasi Memori",
+  "reconnect": "Hubungkan Ulang",
+  "disconnect": "Putuskan Sesi",
+  "noDevices": "Belum ada perangkat WhatsApp yang ditautkan."
+}

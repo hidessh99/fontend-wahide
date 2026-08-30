@@ -6,11 +6,13 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { loginSchema, LoginInput } from "../schemas/auth.schema";
 import { useAuth } from "../hooks/useAuth";
+import { useI18n } from "@/lib/i18n/context";
 import { Eye, EyeOff, Lock, Mail, ArrowRight, AlertCircle, Loader2 } from "lucide-react";
 
 export function LoginForm() {
   const router = useRouter();
   const { login, isLoading, error, clearError } = useAuth();
+  const { t } = useI18n();
 
   const [formData, setFormData] = useState<LoginInput>({
     email: "",
@@ -68,7 +70,7 @@ export function LoginForm() {
       <div className="space-y-4">
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-2">
-            Email Bisnis
+            {t("auth.login.emailLabel")}
           </label>
           <div className="relative">
             <Mail className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-foreground-muted" />
@@ -77,7 +79,7 @@ export function LoginForm() {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="nama@perusahaan.com"
+              placeholder={t("auth.login.emailPlaceholder")}
               disabled={isLoading}
               className={`w-full h-13 pl-12 pr-4 rounded-full bg-surface dark:bg-[#161715] text-foreground font-semibold border ${
                 fieldErrors.email
@@ -96,13 +98,13 @@ export function LoginForm() {
         <div>
           <div className="flex items-center justify-between mb-2">
             <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary">
-              Password
+              {t("auth.login.passwordLabel")}
             </label>
             <Link
               href="/forgot-password"
               className="text-xs font-semibold text-[#163300] dark:text-[#9fe870] hover:underline"
             >
-              Lupa Password?
+              {t("auth.login.forgotPasswordLink")}
             </Link>
           </div>
           <div className="relative">
@@ -112,7 +114,7 @@ export function LoginForm() {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              placeholder="Minimal 6 karakter"
+              placeholder={t("auth.login.passwordPlaceholder")}
               disabled={isLoading}
               className={`w-full h-13 pl-12 pr-12 rounded-full bg-surface dark:bg-[#161715] text-foreground font-semibold border ${
                 fieldErrors.password
@@ -146,7 +148,7 @@ export function LoginForm() {
             className="size-4 rounded accent-[#9fe870] cursor-pointer"
           />
           <span className="text-xs font-semibold text-foreground-secondary">
-            Ingat saya di perangkat ini
+            {t("auth.login.rememberMe")}
           </span>
         </label>
       </div>
@@ -161,11 +163,11 @@ export function LoginForm() {
         {isLoading ? (
           <>
             <Loader2 className="size-5 animate-spin" />
-            <span>Memverifikasi...</span>
+            <span>{t("auth.login.loadingButton")}</span>
           </>
         ) : (
           <>
-            <span>Masuk ke Dashboard</span>
+            <span>{t("auth.login.submitButton")}</span>
             <ArrowRight className="size-5" />
           </>
         )}
@@ -173,12 +175,12 @@ export function LoginForm() {
 
       <div className="text-center pt-2">
         <p className="text-sm font-semibold text-foreground-secondary">
-          Belum punya akun bisnis?{" "}
+          {t("auth.login.noAccountPrompt")}{" "}
           <Link
             href="/register"
             className="font-bold text-[#163300] dark:text-[#9fe870] hover:underline"
           >
-            Daftar Sekarang (Free Trial)
+            {t("auth.login.registerLink")}
           </Link>
         </p>
       </div>

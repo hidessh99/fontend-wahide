@@ -1,0 +1,14 @@
+{
+  "title": "Kampanye Broadcast",
+  "subtitle": "Kirim pesan blast massal dengan simulasi pengetikan manusia dan spintax anti-ban.",
+  "createCampaign": "Buat Kampanye Baru",
+  "templateLabel": "Pesan Template (Mendukung Spintax)",
+  "spintaxHint": "Gunakan format {Halo|Hai|Selamat Pagi} untuk variasi kata otomatis.",
+  "jitterDelayLabel": "Dynamic Jitter Delay (3-7 Detik)",
+  "recipientCount": "Jumlah Penerima Target",
+  "statusDraft": "Draf",
+  "statusRunning": "Sedang Mengirim",
+  "statusCompleted": "Selesai",
+  "statusFailed": "Gagal Sebagian",
+  "viewLogs": "Lihat Log Pengiriman"
+}

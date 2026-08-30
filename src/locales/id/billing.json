@@ -1,0 +1,13 @@
+{
+  "title": "Faktur & Tagihan",
+  "subtitle": "Riwayat pembayaran langganan, top-up saldo pesan, dan unduh faktur resmi.",
+  "activePlan": "Paket Langganan Aktif",
+  "quotaRemaining": "Sisa Kuota Pesan",
+  "topUpBalance": "Top-Up Saldo Kuota",
+  "invoiceNumber": "Nomor Faktur",
+  "amount": "Total Tagihan",
+  "paymentStatus": "Status Pembayaran",
+  "paid": "Lunas",
+  "unpaid": "Menunggu Pembayaran",
+  "expired": "Kadaluarsa"
+}

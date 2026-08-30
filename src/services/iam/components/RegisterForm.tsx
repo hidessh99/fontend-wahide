@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { registerSchema, RegisterInput } from "../schemas/auth.schema";
 import { useAuth } from "../hooks/useAuth";
+import { useI18n } from "@/lib/i18n/context";
 import {
   User,
   Mail,
@@ -21,6 +22,7 @@ import {
 export function RegisterForm() {
   const router = useRouter();
   const { register, isLoading, error, clearError } = useAuth();
+  const { t } = useI18n();
 
   const [formData, setFormData] = useState<RegisterInput>({
     name: "",
@@ -81,7 +83,7 @@ export function RegisterForm() {
       <div className="space-y-4">
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
-            Nama Lengkap / Bisnis
+            {t("auth.register.nameLabel")}
           </label>
           <div className="relative">
             <User className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-foreground-muted" />
@@ -90,7 +92,7 @@ export function RegisterForm() {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              placeholder="Wahide Enterprise"
+              placeholder={t("auth.register.namePlaceholder")}
               disabled={isLoading}
               className={`w-full h-12 pl-12 pr-4 rounded-full bg-surface dark:bg-[#161715] text-foreground font-semibold border ${
                 fieldErrors.name
@@ -108,7 +110,7 @@ export function RegisterForm() {
 
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
-            Email Perusahaan
+            {t("auth.register.emailLabel")}
           </label>
           <div className="relative">
             <Mail className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-foreground-muted" />
@@ -117,7 +119,7 @@ export function RegisterForm() {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="owner@bisnis.com"
+              placeholder={t("auth.register.emailPlaceholder")}
               disabled={isLoading}
               className={`w-full h-12 pl-12 pr-4 rounded-full bg-surface dark:bg-[#161715] text-foreground font-semibold border ${
                 fieldErrors.email
@@ -135,7 +137,7 @@ export function RegisterForm() {
 
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
-            Nomor WhatsApp
+            {t("auth.register.phoneLabel")}
           </label>
           <div className="relative">
             <Phone className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-foreground-muted" />
@@ -144,7 +146,7 @@ export function RegisterForm() {
               name="phone"
               value={formData.phone}
               onChange={handleChange}
-              placeholder="081234567890"
+              placeholder={t("auth.register.phonePlaceholder")}
               disabled={isLoading}
               className={`w-full h-12 pl-12 pr-4 rounded-full bg-surface dark:bg-[#161715] text-foreground font-semibold border ${
                 fieldErrors.phone
@@ -162,7 +164,7 @@ export function RegisterForm() {
 
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
-            Password Baru
+            {t("auth.register.passwordLabel")}
           </label>
           <div className="relative">
             <Lock className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-foreground-muted" />
@@ -171,7 +173,7 @@ export function RegisterForm() {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              placeholder="Minimal 8 karakter"
+              placeholder={t("auth.register.passwordPlaceholder")}
               disabled={isLoading}
               className={`w-full h-12 pl-12 pr-12 rounded-full bg-surface dark:bg-[#161715] text-foreground font-semibold border ${
                 fieldErrors.password
@@ -196,7 +198,7 @@ export function RegisterForm() {
 
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
-            Konfirmasi Password
+            {t("auth.register.confirmPasswordLabel")}
           </label>
           <div className="relative">
             <Lock className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-foreground-muted" />
@@ -205,7 +207,7 @@ export function RegisterForm() {
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
-              placeholder="Ulangi password di atas"
+              placeholder={t("auth.register.confirmPasswordPlaceholder")}
               disabled={isLoading}
               className={`w-full h-12 pl-12 pr-4 rounded-full bg-surface dark:bg-[#161715] text-foreground font-semibold border ${
                 fieldErrors.confirmPassword
@@ -232,7 +234,7 @@ export function RegisterForm() {
             className="size-4 mt-0.5 rounded accent-[#9fe870] cursor-pointer"
           />
           <span className="text-xs font-semibold text-foreground-secondary leading-relaxed">
-            Saya menyetujui Ketentuan Layanan & Kebijakan Privasi Wahide
+            {t("auth.register.agreeTerms")}
           </span>
         </label>
         {fieldErrors.agreeTerms && (
@@ -252,11 +254,11 @@ export function RegisterForm() {
         {isLoading ? (
           <>
             <Loader2 className="size-5 animate-spin" />
-            <span>Mendaftarkan Bisnis...</span>
+            <span>{t("auth.register.loadingButton")}</span>
           </>
         ) : (
           <>
-            <span>Buat Akun Bisnis Gratis</span>
+            <span>{t("auth.register.submitButton")}</span>
             <ArrowRight className="size-5" />
           </>
         )}
@@ -264,12 +266,12 @@ export function RegisterForm() {
 
       <div className="text-center pt-1">
         <p className="text-sm font-semibold text-foreground-secondary">
-          Sudah memiliki akun?{" "}
+          {t("auth.register.haveAccountPrompt")}{" "}
           <Link
             href="/login"
             className="font-bold text-[#163300] dark:text-[#9fe870] hover:underline"
           >
-            Masuk di Sini
+            {t("auth.register.loginLink")}
           </Link>
         </p>
       </div>

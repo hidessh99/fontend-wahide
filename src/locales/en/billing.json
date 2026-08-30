@@ -1,0 +1,13 @@
+{
+  "title": "Invoices & Billing",
+  "subtitle": "Subscription payment history, message balance top-ups, and official VAT invoice downloads.",
+  "activePlan": "Active Subscription Plan",
+  "quotaRemaining": "Message Quota Remaining",
+  "topUpBalance": "Top-Up Balance",
+  "invoiceNumber": "Invoice Number",
+  "amount": "Total Amount",
+  "paymentStatus": "Payment Status",
+  "paid": "Paid",
+  "unpaid": "Pending Payment",
+  "expired": "Expired"
+}

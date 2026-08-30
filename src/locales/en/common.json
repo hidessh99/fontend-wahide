@@ -1,0 +1,37 @@
+{
+  "appName": "Wahide",
+  "tagline": "Enterprise WhatsApp Multi-Tenant Gateway",
+  "nav": {
+    "antiBan": "Anti-Ban Engine",
+    "architecture": "Microservices Arch",
+    "spintax": "Spintax Tester",
+    "pricing": "Pricing Plans",
+    "login": "Sign In",
+    "register": "Get Started Free",
+    "dashboard": "Dashboard",
+    "logout": "Log Out"
+  },
+  "footer": {
+    "description": "High-performance Enterprise SaaS WhatsApp Multi-Tenant & Multi-Device Gateway.",
+    "product": "Product",
+    "developer": "Developers",
+    "legal": "Legal & Support",
+    "rights": "All rights reserved.",
+    "sla": "99.9% Uptime SLA",
+    "encryption": "AES-GCM 256 Encryption"
+  },
+  "actions": {
+    "save": "Save Changes",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create New",
+    "search": "Search records...",
+    "loading": "Loading...",
+    "back": "Back"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark"
+  }
+}

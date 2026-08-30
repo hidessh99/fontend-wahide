@@ -1,0 +1,10 @@
+{
+  "title": "Helpdesk & Tickets",
+  "subtitle": "Submit questions or report WhatsApp integration incidents to the Wahide technical team.",
+  "createTicket": "Create New Ticket",
+  "ticketSubject": "Incident Subject / Topic",
+  "ticketMessage": "Detailed Description",
+  "statusOpen": "Awaiting Response",
+  "statusAnswered": "Answered by Support",
+  "statusResolved": "Resolved / Closed"
+}

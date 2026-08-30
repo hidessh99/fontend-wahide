@@ -1,0 +1,37 @@
+{
+  "appName": "Wahide",
+  "tagline": "Enterprise WhatsApp Multi-Tenant Gateway",
+  "nav": {
+    "antiBan": "Fitur Anti-Ban",
+    "architecture": "Arsitektur Microservice",
+    "spintax": "Spintax Tester",
+    "pricing": "Harga Paket",
+    "login": "Masuk",
+    "register": "Daftar Gratis",
+    "dashboard": "Dashboard",
+    "logout": "Keluar"
+  },
+  "footer": {
+    "description": "Enterprise SaaS WhatsApp Multi-Tenant & Multi-Device Gateway berkinerja tinggi.",
+    "product": "Produk",
+    "developer": "Developer",
+    "legal": "Legal & Bantuan",
+    "rights": "All rights reserved.",
+    "sla": "SLA 99.9% Uptime",
+    "encryption": "AES-GCM 256 Enkripsi"
+  },
+  "actions": {
+    "save": "Simpan Perubahan",
+    "cancel": "Batal",
+    "delete": "Hapus",
+    "edit": "Ubah",
+    "create": "Buat Baru",
+    "search": "Cari data...",
+    "loading": "Memuat...",
+    "back": "Kembali"
+  },
+  "theme": {
+    "light": "Terang",
+    "dark": "Gelap"
+  }
+}

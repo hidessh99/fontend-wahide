@@ -655,11 +655,39 @@ export function useQRStream(deviceId: string, onSuccess?: () => void) {
 
 ---
 
-## 10. Internationalization (i18n) & Lokalisasi Bilingual
+## 10. Internationalization (i18n) & Lokalisasi Bilingual (ID & EN)
 
-Dukungan penuh **Bahasa Indonesia (`id`)** dan **English (`en`)**:
-- Format Mata Uang: `Rp 150.000` (id) / `$10.00` (en).
-- Tanggal & Waktu: `30 Agustus 2026, 20:00 WIB` (id) / `Aug 30, 2026, 08:00 PM` (en).
+Arsitektur lokalisasi i18n Wahide dirancang khusus untuk performa tinggi, ramah memori (zero heap leak), dan bebas kedipan (*zero hydration flicker*):
+
+### A. Konfigurasi Bahasa
+* **Bahasa Utama (Default)**: **Bahasa Indonesia (`id`)** 🇮🇩
+* **Bahasa Alternatif**: **English (`en`)** 🇺🇸
+* **Persistensi Pilihan Bahasa**: Disimpan ganda pada `localStorage.getItem("wahide_locale")` dan Cookie `NEXT_LOCALE` (masa aktif 1 tahun).
+
+### B. Struktur Kamus Terjemahan (`src/locales/`)
+Kamus terjemahan dipecah modular per ranah fungsional agar rapi dan mudah dirawat:
+```
+src/locales/
+├── id/                                # Kamus Terjemahan Bahasa Indonesia (Utama)
+│   ├── common.json                    # Navigasi, Footer, Tombol Aksi, Tema
+│   ├── auth.json                      # Form Login, Register, Lupa Password
+│   ├── whatsapp.json                  # Slot Perangkat, Scan QR, Status Koneksi
+│   ├── campaign.json                  # Broadcast Blast, Spintax, Jitter Delay
+│   ├── billing.json                   # Faktur, Tagihan, Saldo Kuota
+│   └── support.json                   # Tiket Helpdesk, Status Laporan
+└── en/                                # Kamus Terjemahan English (Alternatif)
+    ├── common.json
+    ├── auth.json
+    ├── whatsapp.json
+    ├── campaign.json
+    ├── billing.json
+    └── support.json
+```
+
+### C. Mekanisme Provider & Hook (`useI18n`)
+- **`I18nProvider`**: Wrapper context React di `src/app/providers.tsx` yang memuat kamus secara sinkron tanpa jeda jaringan.
+- **Hook `useI18n`**: Mengembalikan fungsi penerjemah `t("auth.login.title")` dengan format *dot-notation* dan interpolasi parameter dinamis (misal `{seconds}`).
+- **Komponen `LocaleSwitcher`**: Tombol pil interaktif Wise di header yang menampilkan bendera & kode bahasa (`ID 🇮🇩` / `EN 🇺🇸`) dan mengganti bahasa secara instan tanpa perlu memuat ulang halaman (*zero recompile / zero page reload*).
 
 ---
 
