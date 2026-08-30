@@ -148,7 +148,7 @@ export function DashboardSidebar({ onItemClick, className }: DashboardSidebarPro
       </div>
 
       {/* Footer Info Box */}
-      <div className="p-4 border-t border-border m-3 rounded-[20px] bg-[#f2f4ef] dark:bg-[#161715]">
+      <div className="p-4 border-t border-border m-3 rounded-md bg-[#f2f4ef] dark:bg-[#161715]">
         <p className="text-xs font-bold text-foreground">Anti-Ban Multi-Device</p>
         <p className="text-[11px] font-semibold text-foreground-muted mt-0.5">
           Noise Protocol &amp; Spintax Engine aktif
