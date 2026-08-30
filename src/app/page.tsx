@@ -64,7 +64,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* 📊 Key Metric Showcase Cards (Wise Rounded 30px Cards) */}
+          {/* 📊 Key Metric Showcase Cards (Wise Rounded Cards) */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mt-16 pt-8 border-t border-border">
             <div className="rounded-[26px] bg-surface dark:bg-[#161715] p-6 border border-border shadow-[0_0_0_1px_rgba(14,15,12,0.04)]">
               <p className="text-xs font-semibold text-foreground-muted uppercase tracking-wider">Device Scale</p>
@@ -120,7 +120,7 @@ export default function HomePage() {
                     setSpintaxInput(e.target.value);
                     setSpintaxOutput(parseSpintax(e.target.value));
                   }}
-                  className="w-full rounded-[20px] bg-background text-foreground font-semibold p-4 border border-border focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none text-sm transition"
+                  className="w-full rounded-md bg-background text-foreground font-semibold p-4 border border-border focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none text-sm transition"
                 />
               </div>
 
@@ -159,7 +159,7 @@ export default function HomePage() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="rounded-[30px] bg-surface dark:bg-[#161715] p-8 border border-border space-y-4">
+            <div className="rounded-lg bg-surface dark:bg-[#161715] p-8 border border-border space-y-4">
               <div className="h-12 w-12 rounded-full bg-wise-green text-dark-green flex items-center justify-center font-bold">
                 <ShieldCheck className="size-6" />
               </div>
@@ -169,7 +169,7 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="rounded-[30px] bg-surface dark:bg-[#161715] p-8 border border-border space-y-4">
+            <div className="rounded-lg bg-surface dark:bg-[#161715] p-8 border border-border space-y-4">
               <div className="h-12 w-12 rounded-full bg-wise-green text-dark-green flex items-center justify-center font-bold">
                 <Zap className="size-6" />
               </div>
@@ -179,7 +179,7 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="rounded-[30px] bg-surface dark:bg-[#161715] p-8 border border-border space-y-4">
+            <div className="rounded-lg bg-surface dark:bg-[#161715] p-8 border border-border space-y-4">
               <div className="h-12 w-12 rounded-full bg-wise-green text-dark-green flex items-center justify-center font-bold">
                 <Layers className="size-6" />
               </div>

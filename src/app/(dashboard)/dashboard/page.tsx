@@ -21,7 +21,7 @@ export default function DashboardOverviewPage() {
   return (
     <div className="space-y-8">
       {/* Welcome Banner (Wise Rounded Card) */}
-      <div className="rounded-[30px] bg-surface dark:bg-[#161715] p-6 sm:p-10 border border-border flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="rounded-lg bg-surface dark:bg-[#161715] p-6 sm:p-10 border border-border flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-2">
           <div className="inline-flex items-center gap-2 rounded-full bg-[rgba(159,232,112,0.15)] px-3.5 py-1 text-xs font-bold text-dark-green dark:text-wise-green">
             <span className="size-2 rounded-full bg-wise-green animate-pulse" />
@@ -107,7 +107,7 @@ export default function DashboardOverviewPage() {
 
       {/* Quick Access Cards */}
       <div className="grid md:grid-cols-2 gap-6">
-        <div className="rounded-[30px] bg-surface dark:bg-[#161715] p-8 border border-border space-y-4">
+        <div className="rounded-lg bg-surface dark:bg-[#161715] p-8 border border-border space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-foreground">Status Perangkat WhatsApp</h2>
             <Link href="/devices" className="text-xs font-bold text-dark-green dark:text-wise-green hover:underline flex items-center gap-1">
@@ -115,7 +115,7 @@ export default function DashboardOverviewPage() {
               <ArrowRight className="size-3.5" />
             </Link>
           </div>
-          <div className="rounded-[20px] bg-[#f2f4ef] dark:bg-[#212320] p-6 text-center space-y-3">
+          <div className="rounded-md bg-[#f2f4ef] dark:bg-[#212320] p-6 text-center space-y-3">
             <Smartphone className="size-8 mx-auto text-foreground-muted" />
             <p className="text-sm font-semibold text-foreground">Belum ada perangkat WhatsApp yang dipasangkan.</p>
             <Link href="/devices">
@@ -126,7 +126,7 @@ export default function DashboardOverviewPage() {
           </div>
         </div>
 
-        <div className="rounded-[30px] bg-surface dark:bg-[#161715] p-8 border border-border space-y-4">
+        <div className="rounded-lg bg-surface dark:bg-[#161715] p-8 border border-border space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-foreground">Kampanye Terakhir</h2>
             <Link href="/campaigns" className="text-xs font-bold text-dark-green dark:text-wise-green hover:underline flex items-center gap-1">
@@ -134,7 +134,7 @@ export default function DashboardOverviewPage() {
               <ArrowRight className="size-3.5" />
             </Link>
           </div>
-          <div className="rounded-[20px] bg-[#f2f4ef] dark:bg-[#212320] p-6 text-center space-y-3">
+          <div className="rounded-md bg-[#f2f4ef] dark:bg-[#212320] p-6 text-center space-y-3">
             <TrendingUp className="size-8 mx-auto text-foreground-muted" />
             <p className="text-sm font-semibold text-foreground">Belum ada kampanye broadcast yang dibuat.</p>
             <Link href="/campaigns">
