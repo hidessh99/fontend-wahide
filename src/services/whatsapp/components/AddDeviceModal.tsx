@@ -8,7 +8,7 @@ import { X, Smartphone, Loader2, Plus } from "lucide-react";
 interface AddDeviceModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (name: string) => Promise<void>;
+  onSubmit: (name: string) => Promise<unknown>;
 }
 
 export function AddDeviceModal({

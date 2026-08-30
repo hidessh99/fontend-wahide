@@ -85,7 +85,7 @@ export function LiveQRModal({
         </div>
 
         {/* QR Code Presentation Box */}
-        <div className="flex flex-col items-center justify-center p-6 rounded-md bg-zinc-100 dark:bg-[#10110e] border border-border/80 min-h-[280px]">
+        <div className="flex flex-col items-center justify-center p-6 rounded-md bg-zinc-100 dark:bg-[#10110e] border border-border/80 min-h-70">
           {status === "AUTHENTICATED" ? (
             <div className="text-center space-y-3 py-6 animate-in zoom-in-95">
               <div className="size-16 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center mx-auto border border-emerald-500/20">

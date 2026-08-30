@@ -266,7 +266,9 @@ export function DeviceList() {
       <AddDeviceModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        onSubmit={createDevice}
+        onSubmit={async (name) => {
+          await createDevice(name);
+        }}
       />
     </div>
   );
