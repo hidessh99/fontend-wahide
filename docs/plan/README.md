@@ -19,3 +19,8 @@ Dokumen perencanaan arsitektur dan kesiapan produksi untuk frontend **Wahide (`f
    - **Scalability & Clean Code**: Isolasi domain service, stateless API client DTOs, dan zero utility spill.
    - **Enterprise Security**: Content Security Policy (CSP), mitigasi CSV Formula Injection (CWE-1236), Cloudflare Turnstile token guard, dan HMAC SHA256 Webhook signatures.
    - **Production Readiness & Quality Gates**: Error Boundary hierarchies, Sentry/APM observability readiness, serta verifikasi ganda `tsc --noEmit` & strict canonical ESLint.
+
+3. **[Sidebar Role RBAC & Single Page Application (SPA) Plan](./sidebar_role_rbac_and_spa_architecture_plan.md)**
+   - **Diferensiasi Role-Based Access Control (RBAC)**: Pemisahan hak akses navigasi menu bisnis antara `SELLER` (Tenant Owner), `AGENT` (Staf CS Operator), dan `SUPER_ADMIN` (Platform Owner).
+   - **Audit Arsitektur SPA (100% Zero Page Reload)**: Navigasi instan `next/link`, pencegatan form `e.preventDefault()`, dan persistensi in-memory JWT / WebSocket state.
+   - **Integrasi Menu Tim CS (`/team`)**: Navigasi khusus delegasi staf operator WhatsApp dengan proteksi role bersyarat.

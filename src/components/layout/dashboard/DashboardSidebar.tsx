@@ -9,6 +9,7 @@ import {
   Smartphone,
   Send,
   Users,
+  UserCheck,
   CreditCard,
   Receipt,
   LifeBuoy,
@@ -17,8 +18,17 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/services/iam/hooks/useAuth";
 import { useI18n } from "@/lib/i18n/context";
+import { UserRole } from "@/services/iam/types/auth.types";
 
-export const DASHBOARD_NAV_ITEMS = [
+export interface DashboardNavItem {
+  key: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  badge?: string;
+  roles?: UserRole[];
+}
+
+export const DASHBOARD_NAV_ITEMS: DashboardNavItem[] = [
   {
     key: "dashboardMenu.overview",
     href: "/dashboard",
@@ -41,14 +51,22 @@ export const DASHBOARD_NAV_ITEMS = [
     icon: Users,
   },
   {
+    key: "dashboardMenu.team",
+    href: "/team",
+    icon: UserCheck,
+    roles: ["SUPER_ADMIN", "SELLER"],
+  },
+  {
     key: "dashboardMenu.subscription",
     href: "/subscription",
     icon: CreditCard,
+    roles: ["SUPER_ADMIN", "SELLER"],
   },
   {
     key: "dashboardMenu.billing",
     href: "/billing",
     icon: Receipt,
+    roles: ["SUPER_ADMIN", "SELLER"],
   },
   {
     key: "dashboardMenu.support",
@@ -93,7 +111,10 @@ export function DashboardSidebar({ onItemClick, className }: DashboardSidebarPro
           {t("dashboardMenu.businessMenu")}
         </p>
 
-        {DASHBOARD_NAV_ITEMS.map((item) => {
+        {DASHBOARD_NAV_ITEMS.filter((item) => {
+          if (!item.roles || !user?.role) return true;
+          return item.roles.includes(user.role);
+        }).map((item) => {
           const isActive =
             item.href === "/dashboard"
               ? pathname === "/dashboard" || pathname === "/"
