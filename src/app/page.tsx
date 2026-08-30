@@ -1,120 +1,268 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { userSchema } from "@/lib/validations/demo";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { useAuth } from "@/services/iam/hooks/useAuth";
+import { parseSpintax } from "@/lib/utils";
+import {
+  ShieldCheck,
+  Zap,
+  Layers,
+  ArrowRight,
+  Sparkles,
+  RefreshCw,
+  LogOut,
+  User,
+} from "lucide-react";
 
-export default function Home() {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [validationResult, setValidationResult] = useState<string | null>(null);
-  const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
+export default function HomePage() {
+  const { user, isAuthenticated, logout } = useAuth();
+  const [spintaxInput, setSpintaxInput] = useState(
+    "{Halo|Hai|Selamat Pagi} {Bpk/Ibu|Kak}, pesanan #{1001|1002|1003} sedang {diproses|dikemas}."
+  );
+  const [spintaxOutput, setSpintaxOutput] = useState(() =>
+    parseSpintax("{Halo|Hai|Selamat Pagi} {Bpk/Ibu|Kak}, pesanan #{1001|1002|1003} sedang {diproses|dikemas}.")
+  );
 
-  const handleValidate = () => {
-    const result = userSchema.safeParse({ username, email });
-    if (result.success) {
-      setIsSuccess(true);
-      setValidationResult(`Validasi Zod Berhasil: ${JSON.stringify(result.data)}`);
-    } else {
-      setIsSuccess(false);
-      const errors = result.error.issues.map((issue) => issue.message).join(", ");
-      setValidationResult(`Validasi Gagal: ${errors}`);
-    }
+  const handleRandomizeSpintax = () => {
+    setSpintaxOutput(parseSpintax(spintaxInput));
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-50 p-6 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
-      <div className="w-full max-w-xl space-y-8 rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="space-y-2 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-300">
-            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            Next.js + Turbopack + Bun Ready
-          </div>
-          <h1 className="text-3xl font-bold tracking-tight">Proyek fontwahide</h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            Next.js versi terbaru dengan Tailwind CSS, shadcn/ui, Zod & TypeScript
-          </p>
-        </div>
+    <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-200">
+      {/* 🌟 Top Navigation Bar (Wise Aesthetic) */}
+      <header className="sticky top-0 z-50 border-b border-border/80 bg-background/80 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2.5">
+            <span className="h-4 w-4 rounded-full bg-[#9fe870] animate-pulse" />
+            <span className="font-black text-2xl tracking-tight text-foreground">
+              Wahide<span className="text-[#9fe870]">.</span>
+            </span>
+          </Link>
 
-        <div className="grid grid-cols-2 gap-3 text-xs sm:grid-cols-4">
-          <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 text-center dark:border-zinc-800 dark:bg-zinc-800/50">
-            <p className="font-semibold">Next.js</p>
-            <p className="text-zinc-500 dark:text-zinc-400">v16.3.3</p>
-          </div>
-          <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 text-center dark:border-zinc-800 dark:bg-zinc-800/50">
-            <p className="font-semibold">Engine</p>
-            <p className="text-zinc-500 dark:text-zinc-400">Turbopack (Rust)</p>
-          </div>
-          <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 text-center dark:border-zinc-800 dark:bg-zinc-800/50">
-            <p className="font-semibold">Package Mgr</p>
-            <p className="text-zinc-500 dark:text-zinc-400">Bun v1.4</p>
-          </div>
-          <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 text-center dark:border-zinc-800 dark:bg-zinc-800/50">
-            <p className="font-semibold">Styling</p>
-            <p className="text-zinc-500 dark:text-zinc-400">Tailwind CSS v4</p>
-          </div>
-        </div>
+          <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-foreground-secondary">
+            <Link href="#features" className="hover:text-foreground transition">
+              Fitur Anti-Ban
+            </Link>
+            <Link href="#architecture" className="hover:text-foreground transition">
+              Arsitektur Microservice
+            </Link>
+            <Link href="#spintax" className="hover:text-foreground transition">
+              Spintax Tester
+            </Link>
+          </nav>
 
-        <div className="space-y-4 rounded-xl border border-zinc-200 p-5 dark:border-zinc-800">
-          <h2 className="text-base font-semibold">Demo Validasi Zod & shadcn/ui Button</h2>
-          <div className="space-y-3">
-            <div>
-              <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
-                Username (3 - 20 karakter)
-              </label>
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="contoh: wahide"
-                className="w-full rounded-md border border-zinc-300 bg-transparent px-3 py-2 text-sm outline-none transition focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 dark:border-zinc-700 dark:focus:border-zinc-400"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
-                Email
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="contoh: user@example.com"
-                className="w-full rounded-md border border-zinc-300 bg-transparent px-3 py-2 text-sm outline-none transition focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 dark:border-zinc-700 dark:focus:border-zinc-400"
-              />
-            </div>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
 
-            <div className="flex gap-2 pt-2">
-              <Button onClick={handleValidate} className="cursor-pointer">
-                Uji Validasi Zod
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setUsername("");
-                  setEmail("");
-                  setValidationResult(null);
-                  setIsSuccess(null);
-                }}
-                className="cursor-pointer"
-              >
-                Reset
-              </Button>
-            </div>
-
-            {validationResult && (
-              <div
-                className={`mt-3 rounded-md p-3 text-xs font-medium ${
-                  isSuccess
-                    ? "border border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-300"
-                    : "border border-rose-200 bg-rose-50 text-rose-800 dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-300"
-                }`}
-              >
-                {validationResult}
+            {isAuthenticated && user ? (
+              <div className="flex items-center gap-3">
+                <Link href="/devices">
+                  <Button variant="primaryPill" size="sm" className="gap-2">
+                    <User className="size-4" />
+                    <span>Dashboard ({user.name.split(" ")[0]})</span>
+                  </Button>
+                </Link>
+                <Button
+                  variant="outlinePill"
+                  size="sm"
+                  onClick={() => logout()}
+                  className="gap-1.5 text-xs text-rose-600 dark:text-rose-400"
+                >
+                  <LogOut className="size-3.5" />
+                  <span className="hidden sm:inline">Keluar</span>
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Link href="/login">
+                  <Button variant="secondaryPill" size="sm">
+                    Masuk
+                  </Button>
+                </Link>
+                <Link href="/register">
+                  <Button variant="primaryPill" size="sm">
+                    Daftar Gratis
+                  </Button>
+                </Link>
               </div>
             )}
           </div>
         </div>
-      </div>
+      </header>
+
+      {/* 🚀 Hero Section (Wise Massive Billboard Typography) */}
+      <main className="flex-1">
+        <section className="py-20 md:py-28 px-6 max-w-7xl mx-auto">
+          <div className="space-y-8 max-w-4xl">
+            <div className="inline-flex items-center gap-2.5 rounded-full bg-surface dark:bg-[#161715] px-4 py-2 border border-border text-xs font-bold shadow-sm">
+              <span className="h-2.5 w-2.5 rounded-full bg-[#9fe870]" />
+              <span>Phase 1 Completed: Wise Design System & IAM Engine Ready</span>
+            </div>
+
+            <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tight leading-[0.88] text-foreground">
+              WhatsApp Gateway tanpa batas memori.
+            </h1>
+
+            <p className="text-xl sm:text-2xl font-semibold text-foreground-secondary leading-relaxed max-w-2xl">
+              Platform SaaS WhatsApp Multi-Tenant & Multi-Device berkinerja tinggi dengan Session Hibernation, 5 Lapis Anti-Ban, dan arsitektur Go Microservices.
+            </p>
+
+            <div className="flex flex-wrap items-center gap-4 pt-4">
+              <Link href="/register">
+                <Button variant="primaryPill" size="lg" className="text-lg font-bold gap-3 shadow-sm">
+                  <span>Mulai Sekarang (Free Trial)</span>
+                  <ArrowRight className="size-5" />
+                </Button>
+              </Link>
+              <Link href="/login">
+                <Button variant="outlinePill" size="lg" className="text-lg font-bold">
+                  Masuk ke Portal
+                </Button>
+              </Link>
+            </div>
+          </div>
+
+          {/* 📊 Key Metric Showcase Cards (Wise Rounded 30px Cards) */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mt-16 pt-8 border-t border-border">
+            <div className="rounded-[26px] bg-surface dark:bg-[#161715] p-6 border border-border shadow-[0_0_0_1px_rgba(14,15,12,0.04)]">
+              <p className="text-xs font-semibold text-foreground-muted uppercase tracking-wider">Device Scale</p>
+              <p className="text-4xl sm:text-5xl font-black text-foreground mt-2 leading-none">10k+</p>
+              <p className="text-xs font-semibold text-foreground-secondary mt-2">Active WhatsApp sessions</p>
+            </div>
+
+            <div className="rounded-[26px] bg-surface dark:bg-[#161715] p-6 border border-border shadow-[0_0_0_1px_rgba(14,15,12,0.04)]">
+              <p className="text-xs font-semibold text-foreground-muted uppercase tracking-wider">RAM Savings</p>
+              <p className="text-4xl sm:text-5xl font-black text-[#163300] dark:text-[#9fe870] mt-2 leading-none">95%</p>
+              <p className="text-xs font-semibold text-foreground-secondary mt-2">Session Hibernation</p>
+            </div>
+
+            <div className="rounded-[26px] bg-surface dark:bg-[#161715] p-6 border border-border shadow-[0_0_0_1px_rgba(14,15,12,0.04)]">
+              <p className="text-xs font-semibold text-foreground-muted uppercase tracking-wider">Wakeup Latency</p>
+              <p className="text-4xl sm:text-5xl font-black text-foreground mt-2 leading-none">&lt;0.3s</p>
+              <p className="text-xs font-semibold text-foreground-secondary mt-2">On-Demand Noise resume</p>
+            </div>
+
+            <div className="rounded-[26px] bg-surface dark:bg-[#161715] p-6 border border-border shadow-[0_0_0_1px_rgba(14,15,12,0.04)]">
+              <p className="text-xs font-semibold text-foreground-muted uppercase tracking-wider">Anti-Ban Protection</p>
+              <p className="text-4xl sm:text-5xl font-black text-foreground mt-2 leading-none">5 Lapis</p>
+              <p className="text-xs font-semibold text-foreground-secondary mt-2">Spintax, Presence & Jitter</p>
+            </div>
+          </div>
+        </section>
+
+        {/* 🧩 Interactive Spintax Tester Section */}
+        <section id="spintax" className="py-16 bg-surface dark:bg-[#161715] border-y border-border px-6">
+          <div className="max-w-4xl mx-auto space-y-8">
+            <div className="space-y-2">
+              <div className="inline-flex items-center gap-2 rounded-full bg-[rgba(159,232,112,0.15)] px-3 py-1 text-xs font-bold text-[#163300] dark:text-[#9fe870]">
+                <Sparkles className="size-3.5" />
+                <span>Live Anti-Ban Spintax Engine</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-black tracking-tight leading-[0.95] text-foreground">
+                Uji Coba Spintax Real-Time
+              </h2>
+              <p className="text-sm font-semibold text-foreground-secondary">
+                Sistem Spintax mengacak variasi kata dalam pesan agar algoritma Meta tidak mendeteksi spam hash berulang.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-2">
+                  Template Spintax
+                </label>
+                <textarea
+                  rows={3}
+                  value={spintaxInput}
+                  onChange={(e) => {
+                    setSpintaxInput(e.target.value);
+                    setSpintaxOutput(parseSpintax(e.target.value));
+                  }}
+                  className="w-full rounded-[20px] bg-background text-foreground font-semibold p-4 border border-border focus:border-[#9fe870] focus:ring-2 focus:ring-[#9fe870] outline-none text-sm transition"
+                />
+              </div>
+
+              <div className="rounded-[24px] bg-[#eef2eb] dark:bg-[#212320] p-6 border border-border space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-wider text-foreground-muted">
+                    Hasil Acak WhatsApp (Client Preview)
+                  </span>
+                  <Button
+                    variant="primaryPill"
+                    size="sm"
+                    onClick={handleRandomizeSpintax}
+                    className="gap-2 text-xs font-bold"
+                  >
+                    <RefreshCw className="size-3.5" />
+                    <span>Acak Variasi Baru</span>
+                  </Button>
+                </div>
+                <p className="text-base sm:text-lg font-bold text-foreground leading-relaxed">
+                  {spintaxOutput || "Silakan masukkan template di atas..."}
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 🛡️ Core Pillars & Architecture */}
+        <section id="features" className="py-20 px-6 max-w-7xl mx-auto space-y-12">
+          <div className="space-y-3 max-w-2xl">
+            <h2 className="text-3xl sm:text-5xl font-black tracking-tight leading-[0.95] text-foreground">
+              Dirancang untuk keandalan maksimal.
+            </h2>
+            <p className="text-base font-semibold text-foreground-secondary">
+              Infrastruktur terdistribusi yang menggabungkan Go Microservices, Redis 7.x Streams, dan Next.js 16.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="rounded-[30px] bg-surface dark:bg-[#161715] p-8 border border-border space-y-4">
+              <div className="h-12 w-12 rounded-full bg-[#9fe870] text-[#163300] flex items-center justify-center font-bold">
+                <ShieldCheck className="size-6" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground">5 Lapis Sistem Anti-Ban</h3>
+              <p className="text-sm font-semibold text-foreground-secondary leading-relaxed">
+                Spintax regex parser, simulasi human typing ChatPresenceComposing, dynamic jitter delay 3-7 detik, kuota account warmup, dan goroutine concurrency throttling.
+              </p>
+            </div>
+
+            <div className="rounded-[30px] bg-surface dark:bg-[#161715] p-8 border border-border space-y-4">
+              <div className="h-12 w-12 rounded-full bg-[#9fe870] text-[#163300] flex items-center justify-center font-bold">
+                <Zap className="size-6" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground">Zero-Heap Event Filter</h3>
+              <p className="text-sm font-semibold text-foreground-secondary leading-relaxed">
+                Membuang jutaan event story, call offer, dan centang abu-abu di baris pertama untuk menjamin alokasi RAM Go tetap stabil di bawah 150 MB.
+              </p>
+            </div>
+
+            <div className="rounded-[30px] bg-surface dark:bg-[#161715] p-8 border border-border space-y-4">
+              <div className="h-12 w-12 rounded-full bg-[#9fe870] text-[#163300] flex items-center justify-center font-bold">
+                <Layers className="size-6" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground">9 Domain Services Terisolasi</h3>
+              <p className="text-sm font-semibold text-foreground-secondary leading-relaxed">
+                Arsitektur frontend modular terisolasi (IAM, WhatsApp, Campaign, Contact, Subscription, Finance, Support, Content, Admin) yang siap untuk multi-domain.
+              </p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      {/* ⚓ Footer */}
+      <footer className="border-t border-border bg-surface dark:bg-[#161715] py-8 px-6">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-semibold text-foreground-muted">
+          <div className="flex items-center gap-2">
+            <span className="h-2.5 w-2.5 rounded-full bg-[#9fe870]" />
+            <span>Wahide Enterprise SaaS WhatsApp Gateway</span>
+          </div>
+          <span>&copy; {new Date().getFullYear()} Wahide. All rights reserved.</span>
+        </div>
+      </footer>
     </div>
   );
 }

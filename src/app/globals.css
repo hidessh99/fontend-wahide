@@ -10,6 +10,14 @@
   --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
+
+  /* Wise Custom Theme Colors */
+  --color-wise-green: #9fe870;
+  --color-dark-green: #163300;
+  --color-light-mint: #e2f6d5;
+  --color-pastel-green: #cdffad;
+  --color-near-black: #0e0f0c;
+
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -39,92 +47,96 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+
+  --radius-sm: 10px;
+  --radius-md: 20px;
+  --radius-lg: 30px;
+  --radius-xl: 40px;
+  --radius-pill: 9999px;
 }
 
+/* Light Theme Variables (Wise Warm Off-White Canvas) */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --background: #fbfcf9;
+  --foreground: #0e0f0c;
+  --card: #ffffff;
+  --card-foreground: #0e0f0c;
+  --popover: #ffffff;
+  --popover-foreground: #0e0f0c;
+  --primary: #9fe870;
+  --primary-foreground: #163300;
+  --secondary: #eef2eb;
+  --secondary-foreground: #0e0f0c;
+  --muted: #f2f4ef;
+  --muted-foreground: #6b7068;
+  --accent: #e2f6d5;
+  --accent-foreground: #163300;
+  --destructive: #d03238;
+  --border: rgba(14, 15, 12, 0.12);
+  --input: rgba(14, 15, 12, 0.15);
+  --ring: #9fe870;
+  --chart-1: #9fe870;
+  --chart-2: #163300;
+  --chart-3: #454745;
+  --chart-4: #ffd11a;
+  --chart-5: #d03238;
+  --radius: 1.25rem;
+  --sidebar: #f2f4ef;
+  --sidebar-foreground: #0e0f0c;
+  --sidebar-primary: #9fe870;
+  --sidebar-primary-foreground: #163300;
+  --sidebar-accent: #e2f6d5;
+  --sidebar-accent-foreground: #163300;
+  --sidebar-border: rgba(14, 15, 12, 0.10);
+  --sidebar-ring: #9fe870;
 }
 
+/* Dark Theme Variables (Wise Deep Luxury Night Mode) */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: #0e0f0c;
+  --foreground: #fbfcf9;
+  --card: #161715;
+  --card-foreground: #fbfcf9;
+  --popover: #161715;
+  --popover-foreground: #fbfcf9;
+  --primary: #9fe870;
+  --primary-foreground: #163300;
+  --secondary: #212320;
+  --secondary-foreground: #fbfcf9;
+  --muted: #212320;
+  --muted-foreground: #9ca396;
+  --accent: rgba(159, 232, 112, 0.15);
+  --accent-foreground: #9fe870;
+  --destructive: #ef4444;
+  --border: rgba(251, 252, 249, 0.12);
+  --input: rgba(251, 252, 249, 0.15);
+  --ring: #9fe870;
+  --chart-1: #9fe870;
+  --chart-2: #cdffad;
+  --chart-3: #868685;
+  --chart-4: #facc15;
+  --chart-5: #ef4444;
+  --sidebar: #131412;
+  --sidebar-foreground: #fbfcf9;
+  --sidebar-primary: #9fe870;
+  --sidebar-primary-foreground: #163300;
+  --sidebar-accent: rgba(159, 232, 112, 0.15);
+  --sidebar-accent-foreground: #9fe870;
+  --sidebar-border: rgba(251, 252, 249, 0.10);
+  --sidebar-ring: #9fe870;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
   html {
     @apply font-sans;
+    font-feature-settings: "calt" 1, "tnum" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    @apply bg-background text-foreground transition-colors duration-200;
   }
 }
