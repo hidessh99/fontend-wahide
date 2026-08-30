@@ -24,3 +24,7 @@ Dokumen perencanaan arsitektur dan kesiapan produksi untuk frontend **Wahide (`f
    - **Diferensiasi Role-Based Access Control (RBAC)**: Pemisahan hak akses navigasi menu bisnis antara `SELLER` (Tenant Owner), `AGENT` (Staf CS Operator), dan `SUPER_ADMIN` (Platform Owner).
    - **Audit Arsitektur SPA (100% Zero Page Reload)**: Navigasi instan `next/link`, pencegatan form `e.preventDefault()`, dan persistensi in-memory JWT / WebSocket state.
    - **Integrasi Menu Tim CS (`/team`)**: Navigasi khusus delegasi staf operator WhatsApp dengan proteksi role bersyarat.
+
+4. **[Backend Role Audit & Frontend Synchronization Plan](./backend_role_audit_and_frontend_synchronization_plan.md)**
+   - **Sinkronisasi Canonical Role Backend Go (`wahide`)**: Penyelarasan konstanta string peran riil Go (`admin`, `seller`, `user`, `reseller`) dengan frontend TypeScript `fontwahide`.
+   - **Helper Tahan Variasi Huruf (*Case-Insensitive & Alias-Safe*)**: Implementasi utilitas `isAdmin()`, `isSeller()`, dan `isUserAgent()` untuk mencegah kegagalan verifikasi hak akses.

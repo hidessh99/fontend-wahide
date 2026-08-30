@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/services/iam/hooks/useAuth";
 import { useI18n } from "@/lib/i18n/context";
-import { UserRole } from "@/services/iam/types/auth.types";
+import { UserRole, isAdmin } from "@/services/iam/types/auth.types";
 
 export interface DashboardNavItem {
   key: string;
@@ -54,19 +54,19 @@ export const DASHBOARD_NAV_ITEMS: DashboardNavItem[] = [
     key: "dashboardMenu.team",
     href: "/team",
     icon: UserCheck,
-    roles: ["SUPER_ADMIN", "SELLER"],
+    roles: ["admin", "seller", "SUPER_ADMIN", "SELLER"],
   },
   {
     key: "dashboardMenu.subscription",
     href: "/subscription",
     icon: CreditCard,
-    roles: ["SUPER_ADMIN", "SELLER"],
+    roles: ["admin", "seller", "SUPER_ADMIN", "SELLER"],
   },
   {
     key: "dashboardMenu.billing",
     href: "/billing",
     icon: Receipt,
-    roles: ["SUPER_ADMIN", "SELLER"],
+    roles: ["admin", "seller", "SUPER_ADMIN", "SELLER"],
   },
   {
     key: "dashboardMenu.support",
@@ -113,7 +113,8 @@ export function DashboardSidebar({ onItemClick, className }: DashboardSidebarPro
 
         {DASHBOARD_NAV_ITEMS.filter((item) => {
           if (!item.roles || !user?.role) return true;
-          return item.roles.includes(user.role);
+          const userRoleLower = user.role.toLowerCase();
+          return item.roles.some((r) => r.toLowerCase() === userRoleLower);
         }).map((item) => {
           const isActive =
             item.href === "/dashboard"
@@ -147,8 +148,8 @@ export function DashboardSidebar({ onItemClick, className }: DashboardSidebarPro
           );
         })}
 
-        {/* Superadmin Menu (Jika Role SUPER_ADMIN) */}
-        {user?.role === "SUPER_ADMIN" && (
+        {/* Superadmin Menu (Jika Role admin / super_admin) */}
+        {isAdmin(user?.role) && (
           <div className="pt-4 mt-4 border-t border-border space-y-1">
             <p className="px-3 text-[11px] font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400 mb-2">
               {t("dashboardMenu.superAdmin")}

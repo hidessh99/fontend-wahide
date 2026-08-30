@@ -1,4 +1,23 @@
-export type UserRole = "SUPER_ADMIN" | "SELLER" | "AGENT" | string;
+// Canonical Backend Role Constants (matching G:\WEB2026\wahide\internal\modules\iam\domain\entity\role.go)
+export type UserRole = "admin" | "seller" | "user" | "reseller" | "SUPER_ADMIN" | "SELLER" | "AGENT" | string;
+
+export function isAdmin(role?: string): boolean {
+  if (!role) return false;
+  const r = role.toLowerCase();
+  return r === "admin" || r === "super_admin";
+}
+
+export function isSeller(role?: string): boolean {
+  if (!role) return false;
+  const r = role.toLowerCase();
+  return r === "seller" || r === "owner";
+}
+
+export function isUserAgent(role?: string): boolean {
+  if (!role) return false;
+  const r = role.toLowerCase();
+  return r === "user" || r === "staff" || r === "agent";
+}
 
 export interface BackendLoginPayload {
   role: string;
