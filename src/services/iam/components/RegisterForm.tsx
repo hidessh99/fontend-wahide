@@ -60,7 +60,7 @@ export function RegisterForm() {
 
     try {
       await register(result.data);
-      router.push("/dashboard");
+      router.push("/login?registered=true");
     } catch {
       turnstileRef.current?.reset();
       setFormData((prev) => ({ ...prev, turnstileToken: "" }));
