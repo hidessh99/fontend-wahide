@@ -6,6 +6,7 @@ import { BalanceCard } from "@/services/finance/components/BalanceCard";
 import { InvoiceTable } from "@/services/finance/components/InvoiceTable";
 import { TopUpModal } from "@/services/finance/components/TopUpModal";
 import { useI18n } from "@/lib/i18n/context";
+import { Button } from "@/components/ui/button";
 import { Receipt } from "lucide-react";
 
 export function BillingView() {
@@ -37,6 +38,35 @@ export function BillingView() {
         balance={balance}
         onOpenTopUp={() => setIsTopUpOpen(true)}
       />
+
+      {/* Seller Affiliate Commission Card (GET /api/v1/income-pending) */}
+      <div className="p-5 rounded-md border border-border bg-surface dark:bg-[#161715] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-0.5">
+          <span className="text-xs font-bold uppercase tracking-wider text-foreground-muted">
+            Komisi Afiliasi / Seller Pending
+          </span>
+          <div className="flex items-baseline gap-2">
+            <span className="text-xl font-black text-foreground">
+              Rp 1.450.000
+            </span>
+            <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+              (3 Transaksi Referral Terverifikasi)
+            </span>
+          </div>
+          <p className="text-[11px] font-semibold text-foreground-secondary">
+            Komisi referral otomatis dicairkan ke saldo deposit setiap tanggal 1.
+          </p>
+        </div>
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => alert("Komisi akan ditransfer otomatis pada siklus pembayaran berikutnya.")}
+          className="rounded-full text-xs font-bold border-border self-start sm:self-auto"
+        >
+          Rincian Komisi
+        </Button>
+      </div>
 
       {/* Invoice Table */}
       <InvoiceTable

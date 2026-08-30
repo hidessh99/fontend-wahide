@@ -45,6 +45,24 @@ export default function AdminLayout({
               <Users className="size-3.5" />
               <span>Users</span>
             </Link>
+            <Link
+              href="/admin/plans"
+              className="px-3 py-1.5 rounded-full text-foreground-secondary hover:text-foreground hover:bg-surface dark:hover:bg-[#161715] transition flex items-center gap-1.5"
+            >
+              <span>Plans</span>
+            </Link>
+            <Link
+              href="/admin/logs"
+              className="px-3 py-1.5 rounded-full text-foreground-secondary hover:text-foreground hover:bg-surface dark:hover:bg-[#161715] transition flex items-center gap-1.5"
+            >
+              <span>Logs</span>
+            </Link>
+            <Link
+              href="/admin/notifications"
+              className="px-3 py-1.5 rounded-full text-foreground-secondary hover:text-foreground hover:bg-surface dark:hover:bg-[#161715] transition flex items-center gap-1.5"
+            >
+              <span>Broadcast</span>
+            </Link>
           </div>
 
           <ThemeToggle />

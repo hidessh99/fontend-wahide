@@ -5,6 +5,7 @@ import { Device, DeviceStatus } from "../types/whatsapp.types";
 import { DeviceCard } from "./DeviceCard";
 import { LiveQRModal } from "./LiveQRModal";
 import { AddDeviceModal } from "./AddDeviceModal";
+import { SendMessageModal } from "./SendMessageModal";
 import { useDevices } from "../hooks/useDevices";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/context";
@@ -17,6 +18,7 @@ import {
   CheckCircle2,
   XCircle,
   Moon,
+  Send,
 } from "lucide-react";
 
 export function DeviceList() {
@@ -42,6 +44,7 @@ export function DeviceList() {
   const [selectedDeviceForQR, setSelectedDeviceForQR] = useState<Device | null>(null);
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isSendModalOpen, setIsSendModalOpen] = useState(false);
 
   const handleOpenQR = (device: Device) => {
     setSelectedDeviceForQR(device);
@@ -180,6 +183,16 @@ export function DeviceList() {
           </Button>
 
           <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsSendModalOpen(true)}
+            className="rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted"
+          >
+            <Send className="size-3.5 text-wise-green" />
+            <span>Kirim Pesan Instan</span>
+          </Button>
+
+          <Button
             variant="primaryPill"
             size="sm"
             onClick={() => setIsAddModalOpen(true)}
@@ -269,6 +282,13 @@ export function DeviceList() {
         onSubmit={async (name) => {
           await createDevice(name);
         }}
+      />
+
+      {/* Send Instant Message Modal */}
+      <SendMessageModal
+        devices={devices}
+        isOpen={isSendModalOpen}
+        onClose={() => setIsSendModalOpen(false)}
       />
     </div>
   );

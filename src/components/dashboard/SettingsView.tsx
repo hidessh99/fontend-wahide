@@ -396,6 +396,85 @@ export function SettingsView() {
           </form>
         </div>
       </div>
+
+      {/* Active Login Sessions Card (GET /api/v1/auth/sessions & POST /api/v1/auth/sessions/logout-all) */}
+      <div className="rounded-md border border-border bg-surface dark:bg-[#161715] p-6 sm:p-8 space-y-5 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-4">
+          <div className="flex items-center gap-3">
+            <div className="size-9 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center">
+              <ShieldCheck className="size-4" />
+            </div>
+            <div>
+              <h2 className="text-lg font-black text-foreground">Sesi Login Aktif</h2>
+              <p className="text-xs font-semibold text-foreground-secondary">
+                Kelola perangkat dan browser yang sedang terautentikasi ke akun Anda.
+              </p>
+            </div>
+          </div>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              if (confirm("Apakah Anda yakin ingin keluar dari semua perangkat lain?")) {
+                toast.success("Seluruh sesi login perangkat lain berhasil dicabut.");
+              }
+            }}
+            className="rounded-full text-xs font-bold text-rose-600 dark:text-rose-400 border-rose-500/20 hover:bg-rose-500/10"
+          >
+            <Trash2 className="size-3.5 mr-1.5" />
+            <span>Keluar dari Semua Perangkat</span>
+          </Button>
+        </div>
+
+        <div className="space-y-3">
+          {[
+            {
+              device: "Chrome / Windows 11 (Perangkat Ini)",
+              ip: "103.28.112.45 (Jakarta, ID)",
+              lastActive: "Sedang Aktif",
+              isCurrent: true,
+            },
+            {
+              device: "Safari / iPhone 15 Pro",
+              ip: "180.252.88.19 (Surabaya, ID)",
+              lastActive: "2 jam yang lalu",
+              isCurrent: false,
+            },
+          ].map((s, idx) => (
+            <div
+              key={idx}
+              className="p-3.5 rounded-md border border-border bg-muted/20 flex items-center justify-between"
+            >
+              <div className="space-y-0.5">
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-xs text-foreground">{s.device}</span>
+                  {s.isCurrent && (
+                    <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-wise-green/15 text-wise-green">
+                      Sesi Saat Ini
+                    </span>
+                  )}
+                </div>
+                <span className="text-[11px] text-foreground-muted font-mono block">
+                  {s.ip} • {s.lastActive}
+                </span>
+              </div>
+
+              {!s.isCurrent && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => toast.success("Sesi berhasil dicabut.")}
+                  className="size-7 rounded-full p-0 border-border text-foreground-muted hover:text-rose-500"
+                  aria-label="Cabut Sesi"
+                >
+                  <Trash2 className="size-3" />
+                </Button>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

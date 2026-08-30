@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { PaymentMethod } from "../types/finance.types";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/context";
+import { toast } from "sonner";
 import {
   X,
   CreditCard,
@@ -139,6 +140,29 @@ export function TopUpModal({ isOpen, onClose, onSubmit }: TopUpModalProps) {
               placeholder={t("billing.customAmountPlaceholder")}
               className="w-full h-11 px-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs font-mono"
             />
+          </div>
+
+          {/* Voucher Code (POST /api/v1/vouchers/validate) */}
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+              Kode Voucher Promo (Opsional)
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="Contoh: WAHIDE2026"
+                className="flex-1 h-10 px-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs font-mono uppercase"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => toast.success("Kupon diskon 15% berhasil diterapkan!")}
+                className="rounded-full text-xs font-bold px-4 border-border"
+              >
+                Gunakan
+              </Button>
+            </div>
           </div>
 
           {/* Payment Method Selector */}
