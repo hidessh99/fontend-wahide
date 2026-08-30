@@ -12,6 +12,7 @@
     "@base-ui/react": "^1.7.0",
     "@marsidev/react-turnstile": "^1.6.1",
     "@shadcn/react": "^0.3.0",
+    "@tanstack/react-virtual": "^3.14.10",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
