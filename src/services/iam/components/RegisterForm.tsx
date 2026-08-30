@@ -7,17 +7,7 @@ import { Button } from "@/components/ui/button";
 import { registerSchema, RegisterInput } from "../schemas/auth.schema";
 import { useAuth } from "../hooks/useAuth";
 import { useI18n } from "@/lib/i18n/context";
-import {
-  User,
-  Mail,
-  Phone,
-  Lock,
-  Eye,
-  EyeOff,
-  ArrowRight,
-  AlertCircle,
-  Loader2,
-} from "lucide-react";
+import { Eye, EyeOff, Lock, Mail, Phone, User, ArrowRight, AlertCircle, Loader2 } from "lucide-react";
 
 export function RegisterForm() {
   const router = useRouter();
@@ -30,7 +20,7 @@ export function RegisterForm() {
     phone: "",
     password: "",
     confirmPassword: "",
-    agreeTerms: true,
+    agreeTerms: false,
   });
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [showPassword, setShowPassword] = useState(false);
@@ -65,9 +55,9 @@ export function RegisterForm() {
 
     try {
       await register(result.data);
-      router.push("/");
+      router.push("/dashboard");
     } catch {
-      // Error ditangani useAuth state
+      // Error ditangani oleh useAuth state
     }
   };
 
@@ -97,7 +87,7 @@ export function RegisterForm() {
               className={`w-full h-12 pl-12 pr-4 rounded-full bg-surface dark:bg-[#161715] text-foreground font-semibold border ${
                 fieldErrors.name
                   ? "border-rose-500 ring-1 ring-rose-500"
-                  : "border-border hover:border-foreground-muted focus:border-[#9fe870] focus:ring-2 focus:ring-[#9fe870]"
+                  : "border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green"
               } outline-none transition text-sm`}
             />
           </div>
@@ -124,7 +114,7 @@ export function RegisterForm() {
               className={`w-full h-12 pl-12 pr-4 rounded-full bg-surface dark:bg-[#161715] text-foreground font-semibold border ${
                 fieldErrors.email
                   ? "border-rose-500 ring-1 ring-rose-500"
-                  : "border-border hover:border-foreground-muted focus:border-[#9fe870] focus:ring-2 focus:ring-[#9fe870]"
+                  : "border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green"
               } outline-none transition text-sm`}
             />
           </div>
@@ -151,7 +141,7 @@ export function RegisterForm() {
               className={`w-full h-12 pl-12 pr-4 rounded-full bg-surface dark:bg-[#161715] text-foreground font-semibold border ${
                 fieldErrors.phone
                   ? "border-rose-500 ring-1 ring-rose-500"
-                  : "border-border hover:border-foreground-muted focus:border-[#9fe870] focus:ring-2 focus:ring-[#9fe870]"
+                  : "border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green"
               } outline-none transition text-sm`}
             />
           </div>
@@ -178,7 +168,7 @@ export function RegisterForm() {
               className={`w-full h-12 pl-12 pr-12 rounded-full bg-surface dark:bg-[#161715] text-foreground font-semibold border ${
                 fieldErrors.password
                   ? "border-rose-500 ring-1 ring-rose-500"
-                  : "border-border hover:border-foreground-muted focus:border-[#9fe870] focus:ring-2 focus:ring-[#9fe870]"
+                  : "border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green"
               } outline-none transition text-sm`}
             />
             <button
@@ -212,7 +202,7 @@ export function RegisterForm() {
               className={`w-full h-12 pl-12 pr-4 rounded-full bg-surface dark:bg-[#161715] text-foreground font-semibold border ${
                 fieldErrors.confirmPassword
                   ? "border-rose-500 ring-1 ring-rose-500"
-                  : "border-border hover:border-foreground-muted focus:border-[#9fe870] focus:ring-2 focus:ring-[#9fe870]"
+                  : "border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green"
               } outline-none transition text-sm`}
             />
           </div>
@@ -231,7 +221,7 @@ export function RegisterForm() {
             name="agreeTerms"
             checked={formData.agreeTerms}
             onChange={handleChange}
-            className="size-4 mt-0.5 rounded accent-[#9fe870] cursor-pointer"
+            className="size-4 mt-0.5 rounded accent-wise-green cursor-pointer"
           />
           <span className="text-xs font-semibold text-foreground-secondary leading-relaxed">
             {t("auth.register.agreeTerms")}
@@ -269,7 +259,7 @@ export function RegisterForm() {
           {t("auth.register.haveAccountPrompt")}{" "}
           <Link
             href="/login"
-            className="font-bold text-[#163300] dark:text-[#9fe870] hover:underline"
+            className="font-bold text-dark-green dark:text-wise-green hover:underline"
           >
             {t("auth.register.loginLink")}
           </Link>

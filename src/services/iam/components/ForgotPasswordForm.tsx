@@ -70,7 +70,7 @@ export function ForgotPasswordForm() {
             }}
             placeholder="nama@perusahaan.com"
             disabled={isLoading}
-            className="w-full h-13 pl-12 pr-4 rounded-full bg-surface dark:bg-[#161715] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-[#9fe870] focus:ring-2 focus:ring-[#9fe870] outline-none transition text-sm"
+            className="w-full h-13 pl-12 pr-4 rounded-full bg-surface dark:bg-[#161715] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-sm"
           />
         </div>
       </div>
