@@ -1,12 +1,60 @@
+// ==============================================================================
+// Wahide Frontend HTTP Client & Standard Backend REST Response Envelope
+// Matches Go Backend: github.com/hidessh99/wahide/internal/shared/response
+// ==============================================================================
+
+export interface GlobalResponse<T = unknown> {
+  success: boolean;
+  message: string;
+  payload?: T;
+  error?: unknown;
+  additional_info?: {
+    code?: string;
+    page?: number;
+    size?: number;
+    total?: number;
+    [key: string]: unknown;
+  } | unknown;
+}
+
+export type ApiResponse<T = unknown> = GlobalResponse<T>;
+
+export interface ApiErrorPayload {
+  success?: boolean;
+  message?: string;
+  error?: string;
+  additional_info?: {
+    code?: string;
+    [key: string]: unknown;
+  } | Array<{ field: string; message: string }> | unknown;
+  field_errors?: Record<string, string[]>;
+}
+
 export class ApiError extends Error {
   public statusCode: number;
-  public data?: unknown;
+  public code?: string;
+  public data?: ApiErrorPayload | unknown;
+  public fieldErrors?: Record<string, string[]> | Array<{ field: string; message: string }>;
 
   constructor(message: string, statusCode: number, data?: unknown) {
     super(message);
     this.name = "ApiError";
     this.statusCode = statusCode;
     this.data = data;
+
+    if (typeof data === "object" && data !== null) {
+      const payload = data as ApiErrorPayload;
+      if (typeof payload.additional_info === "object" && payload.additional_info !== null) {
+        if ("code" in (payload.additional_info as Record<string, unknown>)) {
+          this.code = (payload.additional_info as Record<string, string>).code;
+        } else if (Array.isArray(payload.additional_info)) {
+          this.fieldErrors = payload.additional_info;
+        }
+      }
+      if (payload.field_errors) {
+        this.fieldErrors = payload.field_errors;
+      }
+    }
   }
 }
 
@@ -57,7 +105,7 @@ class HttpClient {
     return queryString ? `${url}?${queryString}` : url;
   }
 
-  public async request<T = unknown>(endpoint: string, options: RequestOptions = {}): Promise<T> {
+  public async request<T = unknown>(endpoint: string, options: RequestOptions = {}): Promise<ApiResponse<T>> {
     const { params, token, tenantId, headers, ...customConfig } = options;
 
     const authToken = token || this.getAuthToken();
@@ -91,11 +139,14 @@ class HttpClient {
       const data = await response.json().catch(() => null);
 
       if (!response.ok) {
-        const errorMessage = data?.message || data?.error || `HTTP Error ${response.status}: ${response.statusText}`;
+        const errorMessage =
+          data?.message ||
+          data?.error ||
+          `HTTP Error ${response.status}: ${response.statusText}`;
         throw new ApiError(errorMessage, response.status, data);
       }
 
-      return data as T;
+      return data as ApiResponse<T>;
     } catch (err: unknown) {
       if (err instanceof ApiError) {
         throw err;
@@ -107,11 +158,11 @@ class HttpClient {
     }
   }
 
-  public get<T = unknown>(endpoint: string, options?: RequestOptions): Promise<T> {
+  public get<T = unknown>(endpoint: string, options?: RequestOptions): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { ...options, method: "GET" });
   }
 
-  public post<T = unknown>(endpoint: string, body?: unknown, options?: RequestOptions): Promise<T> {
+  public post<T = unknown>(endpoint: string, body?: unknown, options?: RequestOptions): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       ...options,
       method: "POST",
@@ -119,7 +170,7 @@ class HttpClient {
     });
   }
 
-  public put<T = unknown>(endpoint: string, body?: unknown, options?: RequestOptions): Promise<T> {
+  public put<T = unknown>(endpoint: string, body?: unknown, options?: RequestOptions): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       ...options,
       method: "PUT",
@@ -127,7 +178,7 @@ class HttpClient {
     });
   }
 
-  public patch<T = unknown>(endpoint: string, body?: unknown, options?: RequestOptions): Promise<T> {
+  public patch<T = unknown>(endpoint: string, body?: unknown, options?: RequestOptions): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       ...options,
       method: "PATCH",
@@ -135,7 +186,7 @@ class HttpClient {
     });
   }
 
-  public delete<T = unknown>(endpoint: string, options?: RequestOptions): Promise<T> {
+  public delete<T = unknown>(endpoint: string, options?: RequestOptions): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { ...options, method: "DELETE" });
   }
 }

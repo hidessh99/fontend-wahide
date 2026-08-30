@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { User, Tenant, AuthResponse } from "../types/auth.types";
+import { User, Tenant } from "../types/auth.types";
 import { authApi } from "../api/auth.api";
 import { userApi } from "../api/user.api";
 import { LoginInput, RegisterInput } from "../schemas/auth.schema";
@@ -39,12 +39,35 @@ export const useAuth = create<AuthState>()(
       login: async (credentials: LoginInput) => {
         set({ isLoading: true, error: null });
         try {
-          const res: AuthResponse = await authApi.login(credentials);
+          const res = await authApi.login(credentials);
+
+          const user: User = {
+            id: res.tenant_id || "",
+            name: res.name || "",
+            email: res.email || "",
+            role: res.role ? res.role.toUpperCase() : "SELLER",
+            tenantId: res.tenant_id || "",
+            createdAt: new Date().toISOString(),
+          };
+
+          const tenant: Tenant = {
+            id: res.tenant_id || "",
+            name: `${res.name}'s Workspace`,
+            planId: "free",
+            planName: "Free Trial",
+            maxDevices: 1,
+            maxAgents: 1,
+            monthlyQuota: 1000,
+            usedQuota: 0,
+            activeDevicesCount: 0,
+            expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          };
+
           set({
-            user: res.user,
-            tenant: res.tenant || null,
+            user,
+            tenant,
             token: res.token,
-            tenantId: res.tenant?.id || res.user.tenantId || null,
+            tenantId: res.tenant_id || null,
             isAuthenticated: true,
             isLoading: false,
           });
@@ -62,14 +85,12 @@ export const useAuth = create<AuthState>()(
       register: async (payload: RegisterInput) => {
         set({ isLoading: true, error: null });
         try {
-          const res: AuthResponse = await authApi.register(payload);
-          set({
-            user: res.user,
-            tenant: res.tenant || null,
-            token: res.token,
-            tenantId: res.tenant?.id || res.user.tenantId || null,
-            isAuthenticated: true,
-            isLoading: false,
+          await authApi.register(payload);
+          // Setelah register berhasil, lakukan auto-login
+          await get().login({
+            email: payload.email,
+            password: payload.password,
+            rememberMe: true,
           });
         } catch (err: unknown) {
           const errorMessage = err instanceof Error ? err.message : "Gagal melakukan registrasi akun.";

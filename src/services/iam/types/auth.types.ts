@@ -1,4 +1,26 @@
-export type UserRole = "SUPER_ADMIN" | "SELLER" | "AGENT";
+export type UserRole = "SUPER_ADMIN" | "SELLER" | "AGENT" | string;
+
+export interface BackendLoginPayload {
+  role: string;
+  tenant_id: string;
+  name: string;
+  email: string;
+  token: string;
+  token_type?: string;
+}
+
+export interface BackendUserPayload {
+  id: string;
+  name: string;
+  email: string;
+  role_name?: string;
+  phone_number?: string;
+  token?: string;
+  balance?: number;
+  income?: number;
+  is_active?: boolean;
+  created_at?: string;
+}
 
 export interface User {
   id: string;
@@ -38,7 +60,7 @@ export interface AuthResponse {
 
 export interface ApiKeyInfo {
   token: string;
-  createdAt: string;
+  createdAt?: string;
   expiresAt?: string;
 }
 

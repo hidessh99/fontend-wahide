@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useSyncExternalStore } from "react";
+import React, { createContext, useContext, useSyncExternalStore } from "react";
 import { Locale, DEFAULT_LOCALE } from "./config";
 
 // Preload dictionaries synchronously to avoid flicker and latency
@@ -45,35 +45,44 @@ interface I18nContextType {
 
 const I18nContext = createContext<I18nContextType | null>(null);
 
-function useIsClient() {
-  const subscribe = React.useCallback(() => () => {}, []);
-  return useSyncExternalStore(subscribe, () => true, () => false);
+const localeListeners = new Set<() => void>();
+
+function subscribeLocale(callback: () => void) {
+  localeListeners.add(callback);
+  return () => {
+    localeListeners.delete(callback);
+  };
+}
+
+function getStoredLocale(): Locale {
+  if (typeof window === "undefined") return DEFAULT_LOCALE;
+  try {
+    const saved = localStorage.getItem("wahide_locale") as Locale;
+    if (saved === "id" || saved === "en") return saved;
+  } catch {
+    return DEFAULT_LOCALE;
+  }
+  return DEFAULT_LOCALE;
 }
 
 export function I18nProvider({ children }: { children: React.ReactNode }) {
-  const isClient = useIsClient();
-  const [locale, setLocaleState] = useState<Locale>(DEFAULT_LOCALE);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const savedLocale = localStorage.getItem("wahide_locale") as Locale;
-      if (savedLocale === "id" || savedLocale === "en") {
-        setLocaleState(savedLocale);
-      }
-    }
-  }, []);
+  const locale = useSyncExternalStore(subscribeLocale, getStoredLocale, () => DEFAULT_LOCALE);
 
   const setLocale = (newLocale: Locale) => {
-    setLocaleState(newLocale);
     if (typeof window !== "undefined") {
-      localStorage.setItem("wahide_locale", newLocale);
-      document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
+      try {
+        localStorage.setItem("wahide_locale", newLocale);
+        document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
+      } catch {
+        // Abaikan storage error di mode private
+      }
+      localeListeners.forEach((listener) => listener());
     }
   };
 
   const t = (path: string, params?: Record<string, string | number>): string => {
     const parts = path.split(".");
-    const currentDict = dictionaries[isClient ? locale : DEFAULT_LOCALE] as Record<string, unknown>;
+    const currentDict = dictionaries[locale] as Record<string, unknown>;
 
     let result: unknown = currentDict;
     for (const part of parts) {

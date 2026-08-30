@@ -1,7 +1,7 @@
 import { httpClient } from "@/lib/api/http-client";
 import { env } from "@/lib/config/env";
 import {
-  AuthResponse,
+  BackendLoginPayload,
   ApiKeyInfo,
 } from "../types/auth.types";
 import {
@@ -14,35 +14,48 @@ import {
 const IAM_BASE = env.NEXT_PUBLIC_IAM_API_URL;
 
 export const authApi = {
-  login: async (payload: LoginInput): Promise<AuthResponse> => {
-    return httpClient.post<AuthResponse>(`${IAM_BASE}/auth/login`, payload);
+  login: async (payload: LoginInput): Promise<BackendLoginPayload> => {
+    const res = await httpClient.post<BackendLoginPayload>(`${IAM_BASE}/auth/login`, payload);
+    return res.payload || (res as unknown as BackendLoginPayload);
   },
 
-  register: async (payload: RegisterInput): Promise<AuthResponse> => {
-    return httpClient.post<AuthResponse>(`${IAM_BASE}/auth/register`, payload);
+  register: async (payload: RegisterInput): Promise<{ message: string }> => {
+    const res = await httpClient.post<{ message: string }>(`${IAM_BASE}/auth/register`, {
+      name: payload.name,
+      email: payload.email,
+      phone_number: payload.phone,
+      password: payload.password,
+    });
+    return { message: res.message || "Registrasi berhasil." };
   },
 
   logout: async (): Promise<{ success: boolean; message: string }> => {
-    return httpClient.post(`${IAM_BASE}/auth/logout`);
+    const res = await httpClient.post(`${IAM_BASE}/auth/logout`);
+    return { success: res.success, message: res.message };
   },
 
   forgotPassword: async (payload: ForgotPasswordInput): Promise<{ message: string }> => {
-    return httpClient.post(`${IAM_BASE}/auth/forgot-password`, payload);
+    const res = await httpClient.post(`${IAM_BASE}/auth/forgot-password`, payload);
+    return { message: res.message || "Tautan pemulihan sandi telah dikirim." };
   },
 
   resetPassword: async (payload: ResetPasswordInput): Promise<{ message: string }> => {
-    return httpClient.post(`${IAM_BASE}/auth/reset-password`, payload);
+    const res = await httpClient.post(`${IAM_BASE}/auth/reset-password`, payload);
+    return { message: res.message || "Password berhasil diatur ulang." };
   },
 
   getApiKey: async (): Promise<{ token: string }> => {
-    return httpClient.get<{ token: string }>(`${IAM_BASE}/auth/token`);
+    const res = await httpClient.get<{ token: string }>(`${IAM_BASE}/auth/token`);
+    return res.payload || { token: "" };
   },
 
   generateApiKey: async (): Promise<ApiKeyInfo> => {
-    return httpClient.post<ApiKeyInfo>(`${IAM_BASE}/auth/token`);
+    const res = await httpClient.post<ApiKeyInfo>(`${IAM_BASE}/auth/token`);
+    return res.payload || { token: "" };
   },
 
   revokeApiKey: async (): Promise<{ success: boolean; message: string }> => {
-    return httpClient.delete(`${IAM_BASE}/auth/token`);
+    const res = await httpClient.delete(`${IAM_BASE}/auth/token`);
+    return { success: res.success, message: res.message };
   },
 };
