@@ -169,7 +169,27 @@ fontwahide/
 │   │
 │   ├── components/                        # Shared Design System
 │   │   ├── ui/                            # 61 Komponen shadcn/ui (Button, Dialog, Card, Sidebar, Sheet, dll)
-│   │   ├── layout/                        # AppHeader, AppSidebar, BreadcrumbNav, UserDropdown, ThemeToggle, LocaleSwitcher
+│   │   ├── layout/                        # Terisolasi Modular per Konteks/Domain
+│   │   │   ├── public/                    # Layout Publik (Landing, Pricing, Blog)
+│   │   │   │   ├── PublicHeader.tsx       # Header Publik + Navigasi & Mobile Sheet
+│   │   │   │   ├── PublicFooter.tsx       # Footer Publik + SLA 99.9% & Legal Links
+│   │   │   │   └── PublicLayout.tsx       # Wrapper Kontainer Halaman Publik
+│   │   │   ├── auth/                      # Layout Autentikasi (Login, Register, Forgot-Password)
+│   │   │   │   ├── AuthHeader.tsx         # Header Minimalis Auth
+│   │   │   │   ├── AuthBanner.tsx         # Banner Visual Wise (Glow Ring & Billboard Headline)
+│   │   │   │   └── AuthLayout.tsx         # Split-screen 2 Kolom Layout Wrapper
+│   │   │   ├── dashboard/                 # Layout Multi-Tenant Dashboard
+│   │   │   │   ├── DashboardHeader.tsx    # Header Dashboard + Breadcrumb + Quota Badge
+│   │   │   │   ├── DashboardSidebar.tsx   # Sidebar Navigasi Persisten + Badge Active Wise
+│   │   │   │   ├── DashboardMobileNav.tsx # Mobile Drawer / Sheet Navigasi
+│   │   │   │   ├── DashboardBreadcrumb.tsx# Breadcrumb Jalur Aktif
+│   │   │   │   └── DashboardUserNav.tsx   # Dropdown Profil, Role Badge & Logout
+│   │   │   ├── admin/                     # Layout Superadmin Platform
+│   │   │   │   ├── AdminHeader.tsx        # Header Superadmin Control Plane + Health Status
+│   │   │   │   └── AdminSidebar.tsx       # Sidebar Khusus Kontrol Superadmin
+│   │   │   └── shared/                    # Kontrol UI Bersama
+│   │   │       ├── ThemeToggle.tsx        # Switcher Dark/Light Mode (Zero FOUC)
+│   │   │       └── LocaleSwitcher.tsx     # Selector Bahasa (ID / EN)
 │   │   ├── shared/                        # EmptyState, ErrorBoundary, DataTable, ConfirmDialog, RBACGuard
 │   │   └── feedback/                      # ToastNotifier, LoadingSkeleton, NetworkOfflineAlert
 │   │

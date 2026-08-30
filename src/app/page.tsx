@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/layout/ThemeToggle";
-import { useAuth } from "@/services/iam/hooks/useAuth";
+import { PublicHeader } from "@/components/layout/public/PublicHeader";
+import { PublicFooter } from "@/components/layout/public/PublicFooter";
 import { parseSpintax } from "@/lib/utils";
 import {
   ShieldCheck,
@@ -13,12 +13,9 @@ import {
   ArrowRight,
   Sparkles,
   RefreshCw,
-  LogOut,
-  User,
 } from "lucide-react";
 
 export default function HomePage() {
-  const { user, isAuthenticated, logout } = useAuth();
   const [spintaxInput, setSpintaxInput] = useState(
     "{Halo|Hai|Selamat Pagi} {Bpk/Ibu|Kak}, pesanan #{1001|1002|1003} sedang {diproses|dikemas}."
   );
@@ -32,66 +29,8 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-200">
-      {/* 🌟 Top Navigation Bar (Wise Aesthetic) */}
-      <header className="sticky top-0 z-50 border-b border-border/80 bg-background/80 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5">
-            <span className="h-4 w-4 rounded-full bg-[#9fe870] animate-pulse" />
-            <span className="font-black text-2xl tracking-tight text-foreground">
-              Wahide<span className="text-[#9fe870]">.</span>
-            </span>
-          </Link>
-
-          <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-foreground-secondary">
-            <Link href="#features" className="hover:text-foreground transition">
-              Fitur Anti-Ban
-            </Link>
-            <Link href="#architecture" className="hover:text-foreground transition">
-              Arsitektur Microservice
-            </Link>
-            <Link href="#spintax" className="hover:text-foreground transition">
-              Spintax Tester
-            </Link>
-          </nav>
-
-          <div className="flex items-center gap-3">
-            <ThemeToggle />
-
-            {isAuthenticated && user ? (
-              <div className="flex items-center gap-3">
-                <Link href="/devices">
-                  <Button variant="primaryPill" size="sm" className="gap-2">
-                    <User className="size-4" />
-                    <span>Dashboard ({user.name.split(" ")[0]})</span>
-                  </Button>
-                </Link>
-                <Button
-                  variant="outlinePill"
-                  size="sm"
-                  onClick={() => logout()}
-                  className="gap-1.5 text-xs text-rose-600 dark:text-rose-400"
-                >
-                  <LogOut className="size-3.5" />
-                  <span className="hidden sm:inline">Keluar</span>
-                </Button>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <Link href="/login">
-                  <Button variant="secondaryPill" size="sm">
-                    Masuk
-                  </Button>
-                </Link>
-                <Link href="/register">
-                  <Button variant="primaryPill" size="sm">
-                    Daftar Gratis
-                  </Button>
-                </Link>
-              </div>
-            )}
-          </div>
-        </div>
-      </header>
+      {/* 🌟 Modular Public Header */}
+      <PublicHeader />
 
       {/* 🚀 Hero Section (Wise Massive Billboard Typography) */}
       <main className="flex-1">
@@ -99,7 +38,7 @@ export default function HomePage() {
           <div className="space-y-8 max-w-4xl">
             <div className="inline-flex items-center gap-2.5 rounded-full bg-surface dark:bg-[#161715] px-4 py-2 border border-border text-xs font-bold shadow-sm">
               <span className="h-2.5 w-2.5 rounded-full bg-[#9fe870]" />
-              <span>Phase 1 Completed: Wise Design System & IAM Engine Ready</span>
+              <span>Phase 1 Completed: Wise Design System & Modular Layouts Ready</span>
             </div>
 
             <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tight leading-[0.88] text-foreground">
@@ -253,16 +192,8 @@ export default function HomePage() {
         </section>
       </main>
 
-      {/* ⚓ Footer */}
-      <footer className="border-t border-border bg-surface dark:bg-[#161715] py-8 px-6">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-semibold text-foreground-muted">
-          <div className="flex items-center gap-2">
-            <span className="h-2.5 w-2.5 rounded-full bg-[#9fe870]" />
-            <span>Wahide Enterprise SaaS WhatsApp Gateway</span>
-          </div>
-          <span>&copy; {new Date().getFullYear()} Wahide. All rights reserved.</span>
-        </div>
-      </footer>
+      {/* ⚓ Modular Public Footer */}
+      <PublicFooter />
     </div>
   );
 }
