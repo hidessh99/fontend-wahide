@@ -42,14 +42,14 @@ export function ForgotPasswordForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-6 w-full max-w-md">
       {successMessage && (
-        <div className="flex items-center gap-3 rounded-[20px] bg-emerald-50 dark:bg-emerald-950/40 p-4 text-sm font-semibold text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900/50">
+        <div className="flex items-center gap-3 rounded-md bg-emerald-50 dark:bg-emerald-950/40 p-4 text-sm font-semibold text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900/50">
           <CheckCircle2 className="size-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
           <span>{successMessage}</span>
         </div>
       )}
 
       {error && (
-        <div className="flex items-center gap-3 rounded-[20px] bg-rose-50 dark:bg-rose-950/40 p-4 text-sm font-semibold text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/50">
+        <div className="flex items-center gap-3 rounded-md bg-rose-50 dark:bg-rose-950/40 p-4 text-sm font-semibold text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/50">
           <AlertCircle className="size-5 shrink-0" />
           <span>{error}</span>
         </div>
