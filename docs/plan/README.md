@@ -28,3 +28,6 @@ Dokumen perencanaan arsitektur dan kesiapan produksi untuk frontend **Wahide (`f
 4. **[Backend Role Audit & Frontend Synchronization Plan](./backend_role_audit_and_frontend_synchronization_plan.md)**
    - **Sinkronisasi Canonical Role Backend Go (`wahide`)**: Penyelarasan konstanta string peran riil Go (`admin`, `seller`, `user`, `reseller`) dengan frontend TypeScript `fontwahide`.
    - **Helper Tahan Variasi Huruf (*Case-Insensitive & Alias-Safe*)**: Implementasi utilitas `isAdmin()`, `isSeller()`, dan `isUserAgent()` untuk mencegah kegagalan verifikasi hak akses.
+
+5. **[Comprehensive Improvement & Future Roadmap Plan](./frontend_comprehensive_improvement_and_future_roadmap_plan.md)**
+   - **Peluang Peningkatan Skala Enterprise**: Analisis 6 pilar strategis meliputi Resiliensi Streaming Real-Time (SSE Heartbeat & Exponential Backoff), Lapisan Caching Data SWR, Command Palette (`Ctrl + K`), Hardening CSP di `next.config.ts`, Deteksi Offline Network, dan Otomasi Pengujian Unit Test Suite.
