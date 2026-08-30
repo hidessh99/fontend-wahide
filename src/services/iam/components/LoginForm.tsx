@@ -84,7 +84,7 @@ export function LoginForm() {
               className={`w-full h-13 pl-12 pr-4 rounded-full bg-surface dark:bg-[#161715] text-foreground font-semibold border ${
                 fieldErrors.email
                   ? "border-rose-500 ring-1 ring-rose-500"
-                  : "border-border hover:border-foreground-muted focus:border-[#9fe870] focus:ring-2 focus:ring-[#9fe870]"
+                  : "border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green"
               } outline-none transition text-sm`}
             />
           </div>
@@ -102,7 +102,7 @@ export function LoginForm() {
             </label>
             <Link
               href="/forgot-password"
-              className="text-xs font-semibold text-[#163300] dark:text-[#9fe870] hover:underline"
+              className="text-xs font-semibold text-dark-green dark:text-wise-green hover:underline"
             >
               {t("auth.login.forgotPasswordLink")}
             </Link>
@@ -119,7 +119,7 @@ export function LoginForm() {
               className={`w-full h-13 pl-12 pr-12 rounded-full bg-surface dark:bg-[#161715] text-foreground font-semibold border ${
                 fieldErrors.password
                   ? "border-rose-500 ring-1 ring-rose-500"
-                  : "border-border hover:border-foreground-muted focus:border-[#9fe870] focus:ring-2 focus:ring-[#9fe870]"
+                  : "border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green"
               } outline-none transition text-sm`}
             />
             <button
@@ -145,7 +145,7 @@ export function LoginForm() {
             name="rememberMe"
             checked={formData.rememberMe}
             onChange={handleChange}
-            className="size-4 rounded accent-[#9fe870] cursor-pointer"
+            className="size-4 rounded accent-wise-green cursor-pointer"
           />
           <span className="text-xs font-semibold text-foreground-secondary">
             {t("auth.login.rememberMe")}
@@ -178,7 +178,7 @@ export function LoginForm() {
           {t("auth.login.noAccountPrompt")}{" "}
           <Link
             href="/register"
-            className="font-bold text-[#163300] dark:text-[#9fe870] hover:underline"
+            className="font-bold text-dark-green dark:text-wise-green hover:underline"
           >
             {t("auth.login.registerLink")}
           </Link>
