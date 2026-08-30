@@ -33,8 +33,8 @@ export function AuthLayout({
         subheadline={bannerSubheadline}
       />
 
-      {/* Kolom Kanan: Form Content Container */}
-      <div className="flex flex-col justify-between p-6 sm:p-12 lg:p-16">
+      {/* Kolom Kanan: Main Content Landmark Container */}
+      <main className="flex flex-col justify-between p-6 sm:p-12 lg:p-16 min-h-screen">
         <div className="lg:hidden">
           <AuthHeader />
         </div>
@@ -43,10 +43,10 @@ export function AuthLayout({
           {children}
         </div>
 
-        <div className="text-center text-xs font-semibold text-foreground-muted pt-4">
+        <footer className="text-center text-xs font-semibold text-foreground-muted pt-4">
           {displayFooterNote}
-        </div>
-      </div>
+        </footer>
+      </main>
     </div>
   );
 }

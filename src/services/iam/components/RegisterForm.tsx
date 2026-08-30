@@ -24,6 +24,7 @@ export function RegisterForm() {
   });
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -184,7 +185,8 @@ export function RegisterForm() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground cursor-pointer"
+                className="absolute right-2 top-1/2 -translate-y-1/2 size-9 flex items-center justify-center rounded-full text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
+                aria-label={showPassword ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}
               >
                 {showPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
               </button>
@@ -203,18 +205,26 @@ export function RegisterForm() {
             <div className="relative">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-foreground-muted" />
               <input
-                type={showPassword ? "text" : "password"}
+                type={showConfirmPassword ? "text" : "password"}
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 placeholder={t("auth.register.confirmPasswordPlaceholder")}
                 disabled={isLoading}
-                className={`w-full h-12 pl-12 pr-4 rounded-full bg-surface dark:bg-[#161715] text-foreground font-semibold border ${
+                className={`w-full h-12 pl-12 pr-12 rounded-full bg-surface dark:bg-[#161715] text-foreground font-semibold border ${
                   fieldErrors.confirmPassword
                     ? "border-rose-500 ring-1 ring-rose-500"
                     : "border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green"
                 } outline-none transition text-sm`}
               />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 size-9 flex items-center justify-center rounded-full text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
+                aria-label={showConfirmPassword ? "Sembunyikan konfirmasi kata sandi" : "Tampilkan konfirmasi kata sandi"}
+              >
+                {showConfirmPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
+              </button>
             </div>
             {fieldErrors.confirmPassword && (
               <p className="mt-1 ml-4 text-xs font-semibold text-rose-600 dark:text-rose-400">
