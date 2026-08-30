@@ -1,23 +1,30 @@
 "use client";
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { TurnstileWidget } from "@/components/ui/TurnstileWidget";
+import { TurnstileInstance } from "@marsidev/react-turnstile";
 import { loginSchema, LoginInput } from "../schemas/auth.schema";
 import { useAuth } from "../hooks/useAuth";
 import { useI18n } from "@/lib/i18n/context";
-import { Eye, EyeOff, Lock, Mail, ArrowRight, AlertCircle, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail, ArrowRight, AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 
 export function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isRegistered = searchParams.get("registered") === "true";
+
   const { login, isLoading, error, clearError } = useAuth();
   const { t } = useI18n();
+  const turnstileRef = useRef<TurnstileInstance>(null);
 
   const [formData, setFormData] = useState<LoginInput>({
     email: "",
     password: "",
     rememberMe: true,
+    turnstileToken: "",
   });
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [showPassword, setShowPassword] = useState(false);
@@ -52,9 +59,10 @@ export function LoginForm() {
 
     try {
       await login(result.data);
-      router.push("/");
+      router.push("/dashboard");
     } catch {
-      // Error ditangani oleh useAuth state
+      turnstileRef.current?.reset();
+      setFormData((prev) => ({ ...prev, turnstileToken: "" }));
     }
   };
 
@@ -69,7 +77,14 @@ export function LoginForm() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-5">
+        {isRegistered && !error && (
+          <div className="flex items-center gap-3 rounded-md bg-emerald-50 dark:bg-emerald-950/40 p-4 text-sm font-semibold text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900/50">
+            <CheckCircle2 className="size-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+            <span>{t("auth.login.registrationSuccess")}</span>
+          </div>
+        )}
+
         {error && (
           <div className="flex items-center gap-3 rounded-md bg-rose-50 dark:bg-rose-950/40 p-4 text-sm font-semibold text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/50">
             <AlertCircle className="size-5 shrink-0" />
@@ -135,7 +150,8 @@ export function LoginForm() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground cursor-pointer"
+                className="absolute right-2 top-1/2 -translate-y-1/2 size-9 flex items-center justify-center rounded-full text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
+                aria-label={showPassword ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}
               >
                 {showPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
               </button>
@@ -163,6 +179,14 @@ export function LoginForm() {
           </label>
         </div>
 
+        {/* Cloudflare Turnstile CAPTCHA Protection */}
+        <TurnstileWidget
+          ref={turnstileRef}
+          onVerify={(token) => setFormData((prev) => ({ ...prev, turnstileToken: token }))}
+          onError={() => setFormData((prev) => ({ ...prev, turnstileToken: "" }))}
+          onExpire={() => setFormData((prev) => ({ ...prev, turnstileToken: "" }))}
+        />
+
         <Button
           type="submit"
           variant="primaryPill"
@@ -183,7 +207,7 @@ export function LoginForm() {
           )}
         </Button>
 
-        <div className="text-center pt-2">
+        <div className="text-center pt-1">
           <p className="text-sm font-semibold text-foreground-secondary">
             {t("auth.login.noAccountPrompt")}{" "}
             <Link
