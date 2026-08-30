@@ -1,7 +1,12 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
+import { useI18n } from "@/lib/i18n/context";
 
 export function PublicFooter() {
+  const { t } = useI18n();
+
   return (
     <footer className="border-t border-border bg-surface dark:bg-[#161715] py-12 px-6">
       <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
@@ -13,22 +18,22 @@ export function PublicFooter() {
             </span>
           </Link>
           <p className="text-xs font-semibold text-foreground-secondary leading-relaxed max-w-xs">
-            Enterprise SaaS WhatsApp Multi-Tenant & Multi-Device Gateway berkinerja tinggi.
+            {t("footer.description")}
           </p>
         </div>
 
         <div className="space-y-3">
-          <p className="text-xs font-bold uppercase tracking-wider text-foreground-muted">Produk</p>
+          <p className="text-xs font-bold uppercase tracking-wider text-foreground-muted">{t("footer.product")}</p>
           <ul className="space-y-2 text-xs font-semibold text-foreground-secondary">
             <li><Link href="/#features" className="hover:text-foreground">Multi-Device Gateway</Link></li>
             <li><Link href="/#spintax" className="hover:text-foreground">Anti-Ban Spintax</Link></li>
             <li><Link href="/#architecture" className="hover:text-foreground">Session Hibernation</Link></li>
-            <li><Link href="/pricing" className="hover:text-foreground">Paket Langganan</Link></li>
+            <li><Link href="/pricing" className="hover:text-foreground">{t("nav.pricing")}</Link></li>
           </ul>
         </div>
 
         <div className="space-y-3">
-          <p className="text-xs font-bold uppercase tracking-wider text-foreground-muted">Developer</p>
+          <p className="text-xs font-bold uppercase tracking-wider text-foreground-muted">{t("footer.developer")}</p>
           <ul className="space-y-2 text-xs font-semibold text-foreground-secondary">
             <li><a href="https://github.com/hidessh99/fontend-wahide" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">GitHub Repo</a></li>
             <li><Link href="/docs/api" className="hover:text-foreground">Katalog REST API</Link></li>
@@ -37,7 +42,7 @@ export function PublicFooter() {
         </div>
 
         <div className="space-y-3">
-          <p className="text-xs font-bold uppercase tracking-wider text-foreground-muted">Legal & Bantuan</p>
+          <p className="text-xs font-bold uppercase tracking-wider text-foreground-muted">{t("footer.legal")}</p>
           <ul className="space-y-2 text-xs font-semibold text-foreground-secondary">
             <li><Link href="/support" className="hover:text-foreground">Helpdesk Support</Link></li>
             <li><Link href="/terms" className="hover:text-foreground">Syarat & Ketentuan</Link></li>
@@ -47,11 +52,11 @@ export function PublicFooter() {
       </div>
 
       <div className="max-w-7xl mx-auto pt-8 border-t border-border/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-semibold text-foreground-muted">
-        <span>&copy; {new Date().getFullYear()} Wahide SaaS Platform. All rights reserved.</span>
+        <span>&copy; {new Date().getFullYear()} Wahide SaaS Platform. {t("footer.rights")}</span>
         <div className="flex items-center gap-4">
-          <span>SLA 99.9% Uptime</span>
+          <span>{t("footer.sla")}</span>
           <span>•</span>
-          <span>AES-GCM 256 Enkripsi</span>
+          <span>{t("footer.encryption")}</span>
         </div>
       </div>
     </footer>

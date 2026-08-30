@@ -1,9 +1,11 @@
 "use client";
 
-import React, { createContext, useContext, useSyncExternalStore } from "react";
+import React, { useCallback } from "react";
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 import { Locale, DEFAULT_LOCALE } from "./config";
 
-// Preload dictionaries synchronously to avoid flicker and latency
+// Preload dictionaries synchronously to avoid flicker and network delay
 import idCommon from "@/locales/id/common.json";
 import idAuth from "@/locales/id/auth.json";
 import idWhatsapp from "@/locales/id/whatsapp.json";
@@ -18,7 +20,7 @@ import enCampaign from "@/locales/en/campaign.json";
 import enBilling from "@/locales/en/billing.json";
 import enSupport from "@/locales/en/support.json";
 
-const dictionaries = {
+const dictionaries: Record<Locale, Record<string, unknown>> = {
   id: {
     common: idCommon,
     auth: idAuth,
@@ -37,104 +39,86 @@ const dictionaries = {
   },
 };
 
-interface I18nContextType {
+interface I18nStoreState {
   locale: Locale;
   setLocale: (locale: Locale) => void;
-  t: (path: string, params?: Record<string, string | number>) => string;
 }
 
-const I18nContext = createContext<I18nContextType | null>(null);
-
-const localeListeners = new Set<() => void>();
-
-function subscribeLocale(callback: () => void) {
-  localeListeners.add(callback);
-  return () => {
-    localeListeners.delete(callback);
-  };
-}
-
-function getStoredLocale(): Locale {
-  if (typeof window === "undefined") return DEFAULT_LOCALE;
-  try {
-    const saved = localStorage.getItem("wahide_locale") as Locale;
-    if (saved === "id" || saved === "en") return saved;
-  } catch {
-    return DEFAULT_LOCALE;
-  }
-  return DEFAULT_LOCALE;
-}
-
-export function I18nProvider({ children }: { children: React.ReactNode }) {
-  const locale = useSyncExternalStore(subscribeLocale, getStoredLocale, () => DEFAULT_LOCALE);
-
-  const setLocale = (newLocale: Locale) => {
-    if (typeof window !== "undefined") {
-      try {
-        localStorage.setItem("wahide_locale", newLocale);
-        document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
-      } catch {
-        // Abaikan storage error di mode private
-      }
-      localeListeners.forEach((listener) => listener());
+export const useI18nStore = create<I18nStoreState>()(
+  persist(
+    (set) => ({
+      locale: DEFAULT_LOCALE,
+      setLocale: (locale: Locale) => {
+        if (typeof document !== "undefined") {
+          try {
+            document.cookie = `NEXT_LOCALE=${locale}; path=/; max-age=31536000; SameSite=Lax`;
+          } catch {
+            // Ignore cookie errors
+          }
+        }
+        set({ locale });
+      },
+    }),
+    {
+      name: "wahide_locale_storage",
+      storage: createJSONStorage(() => localStorage),
     }
-  };
+  )
+);
 
-  const t = (path: string, params?: Record<string, string | number>): string => {
-    const parts = path.split(".");
-    const currentDict = dictionaries[locale] as Record<string, unknown>;
+export function useI18n() {
+  const { locale, setLocale } = useI18nStore();
 
-    let result: unknown = currentDict;
-    for (const part of parts) {
-      if (result && typeof result === "object" && part in result) {
-        result = (result as Record<string, unknown>)[part];
-      } else {
-        result = undefined;
-        break;
-      }
-    }
+  const t = useCallback(
+    (path: string, params?: Record<string, string | number>): string => {
+      const parts = path.split(".");
+      const currentDict = dictionaries[locale] || dictionaries[DEFAULT_LOCALE];
 
-    if (typeof result !== "string") {
-      // Fallback ke ID jika tidak ditemukan
-      let fallbackResult: unknown = dictionaries.id as Record<string, unknown>;
+      let result: unknown = currentDict;
       for (const part of parts) {
-        if (fallbackResult && typeof fallbackResult === "object" && part in fallbackResult) {
-          fallbackResult = (fallbackResult as Record<string, unknown>)[part];
+        if (result && typeof result === "object" && part in result) {
+          result = (result as Record<string, unknown>)[part];
         } else {
-          fallbackResult = undefined;
+          result = undefined;
           break;
         }
       }
-      if (typeof fallbackResult === "string") {
-        result = fallbackResult;
-      } else {
-        return path;
+
+      if (typeof result !== "string") {
+        // Fallback to Indonesian (id)
+        let fallbackResult: unknown = dictionaries.id;
+        for (const part of parts) {
+          if (fallbackResult && typeof fallbackResult === "object" && part in fallbackResult) {
+            fallbackResult = (fallbackResult as Record<string, unknown>)[part];
+          } else {
+            fallbackResult = undefined;
+            break;
+          }
+        }
+        if (typeof fallbackResult === "string") {
+          result = fallbackResult;
+        } else {
+          return path;
+        }
       }
-    }
 
-    let text = result as string;
-    if (params) {
-      Object.entries(params).forEach(([key, val]) => {
-        text = text.replace(new RegExp(`\\{${key}\\}`, "g"), String(val));
-      });
-    }
+      let text = result as string;
+      if (params) {
+        Object.entries(params).forEach(([key, val]) => {
+          text = text.replace(new RegExp(`\\{${key}\\}`, "g"), String(val));
+        });
+      }
 
-    return text;
-  };
-
-  return (
-    <I18nContext.Provider value={{ locale, setLocale, t }}>
-      {children}
-    </I18nContext.Provider>
+      return text;
+    },
+    [locale]
   );
-}
 
-export function useI18n() {
-  const context = useContext(I18nContext);
-  if (!context) {
-    throw new Error("useI18n must be used within an I18nProvider");
-  }
-  return context;
+  return { locale, setLocale, t };
 }
 
 export const useTranslation = useI18n;
+
+export function I18nProvider({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
+}

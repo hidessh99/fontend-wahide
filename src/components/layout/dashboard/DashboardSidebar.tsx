@@ -16,46 +16,47 @@ import {
   ShieldAlert,
 } from "lucide-react";
 import { useAuth } from "@/services/iam/hooks/useAuth";
+import { useI18n } from "@/lib/i18n/context";
 
 export const DASHBOARD_NAV_ITEMS = [
   {
-    title: "Overview",
+    key: "dashboardMenu.overview",
     href: "/dashboard",
     icon: LayoutDashboard,
   },
   {
-    title: "Slot WhatsApp",
+    key: "dashboardMenu.whatsappSlots",
     href: "/devices",
     icon: Smartphone,
     badge: "Engine",
   },
   {
-    title: "Kampanye Broadcast",
+    key: "dashboardMenu.campaigns",
     href: "/campaigns",
     icon: Send,
   },
   {
-    title: "Buku Kontak",
+    key: "dashboardMenu.contacts",
     href: "/contacts",
     icon: Users,
   },
   {
-    title: "Paket & Kuota",
+    key: "dashboardMenu.subscription",
     href: "/subscription",
     icon: CreditCard,
   },
   {
-    title: "Faktur & Tagihan",
+    key: "dashboardMenu.billing",
     href: "/billing",
     icon: Receipt,
   },
   {
-    title: "Tiket Bantuan",
+    key: "dashboardMenu.support",
     href: "/support",
     icon: LifeBuoy,
   },
   {
-    title: "Pengaturan & API",
+    key: "dashboardMenu.settings",
     href: "/settings",
     icon: Settings,
   },
@@ -69,6 +70,7 @@ interface DashboardSidebarProps {
 export function DashboardSidebar({ onItemClick, className }: DashboardSidebarProps) {
   const pathname = usePathname();
   const { user, tenant } = useAuth();
+  const { t } = useI18n();
 
   return (
     <aside className={cn("w-64 flex flex-col bg-surface dark:bg-[#131412] border-r border-border h-full select-none", className)}>
@@ -88,7 +90,7 @@ export function DashboardSidebar({ onItemClick, className }: DashboardSidebarPro
       {/* Nav List */}
       <div className="flex-1 overflow-y-auto px-3 py-6 space-y-1">
         <p className="px-3 text-[11px] font-bold uppercase tracking-wider text-foreground-muted mb-2">
-          Menu Bisnis
+          {t("dashboardMenu.businessMenu")}
         </p>
 
         {DASHBOARD_NAV_ITEMS.map((item) => {
@@ -113,7 +115,7 @@ export function DashboardSidebar({ onItemClick, className }: DashboardSidebarPro
             >
               <div className="flex items-center gap-3">
                 <Icon className={cn("size-4", isActive ? "text-dark-green" : "text-foreground-muted")} />
-                <span>{item.title}</span>
+                <span>{t(item.key)}</span>
               </div>
               {item.badge && !isActive && (
                 <span className="text-[10px] font-bold bg-[#eef2eb] dark:bg-[#212320] text-foreground-muted px-2 py-0.5 rounded-full">
@@ -128,7 +130,7 @@ export function DashboardSidebar({ onItemClick, className }: DashboardSidebarPro
         {user?.role === "SUPER_ADMIN" && (
           <div className="pt-4 mt-4 border-t border-border space-y-1">
             <p className="px-3 text-[11px] font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400 mb-2">
-              Super Admin
+              {t("dashboardMenu.superAdmin")}
             </p>
             <Link
               href="/admin/overview"
@@ -141,7 +143,7 @@ export function DashboardSidebar({ onItemClick, className }: DashboardSidebarPro
               )}
             >
               <ShieldAlert className="size-4" />
-              <span>Sistem Global</span>
+              <span>{t("dashboardMenu.globalSystem")}</span>
             </Link>
           </div>
         )}

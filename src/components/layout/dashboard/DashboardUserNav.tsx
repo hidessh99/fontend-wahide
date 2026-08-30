@@ -4,12 +4,14 @@ import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/services/iam/hooks/useAuth";
+import { useI18n } from "@/lib/i18n/context";
 import { Button } from "@/components/ui/button";
 import { User, LogOut, Shield, Key, ChevronDown } from "lucide-react";
 
 export function DashboardUserNav() {
   const router = useRouter();
   const { user, tenant, logout } = useAuth();
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -66,7 +68,7 @@ export function DashboardUserNav() {
               className="flex items-center gap-2 px-3 py-2 rounded-[12px] hover:bg-muted hover:text-foreground transition"
             >
               <User className="size-3.5" />
-              <span>Profil Akun</span>
+              <span>{t("dashboardMenu.profile")}</span>
             </Link>
             <Link
               href="/settings/api-key"
@@ -74,7 +76,7 @@ export function DashboardUserNav() {
               className="flex items-center gap-2 px-3 py-2 rounded-[12px] hover:bg-muted hover:text-foreground transition"
             >
               <Key className="size-3.5" />
-              <span>API Key Fast-Path</span>
+              <span>{t("dashboardMenu.apiKey")}</span>
             </Link>
             {user.role === "SUPER_ADMIN" && (
               <Link
@@ -83,7 +85,7 @@ export function DashboardUserNav() {
                 className="flex items-center gap-2 px-3 py-2 rounded-[12px] bg-[rgba(159,232,112,0.12)] text-dark-green dark:text-wise-green font-bold transition"
               >
                 <Shield className="size-3.5" />
-                <span>Panel Superadmin</span>
+                <span>{t("dashboardMenu.superadminPanel")}</span>
               </Link>
             )}
           </div>
@@ -96,7 +98,7 @@ export function DashboardUserNav() {
               className="w-full gap-1.5 justify-center text-xs"
             >
               <LogOut className="size-3" />
-              <span>Keluar Sesi</span>
+              <span>{t("dashboardMenu.logoutBtn")}</span>
             </Button>
           </div>
         </div>

@@ -32,7 +32,8 @@ export function AuthBanner({
 
       <div className="space-y-6 z-10 max-w-lg my-auto">
         <div className="inline-flex items-center gap-2 rounded-full bg-[rgba(159,232,112,0.15)] px-4 py-1.5 text-xs font-bold text-wise-green">
-          ⚡ Scale to 10,000+ Active WhatsApp Devices
+          <span className="size-1.5 rounded-full bg-wise-green" />
+          <span>Scale to 10,000+ Active WhatsApp Devices</span>
         </div>
         <h1 className="text-5xl font-black leading-[0.95] tracking-tight text-white">
           {headline}
