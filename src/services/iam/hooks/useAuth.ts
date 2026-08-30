@@ -86,12 +86,7 @@ export const useAuth = create<AuthState>()(
         set({ isLoading: true, error: null });
         try {
           await authApi.register(payload);
-          // Setelah register berhasil, lakukan auto-login
-          await get().login({
-            email: payload.email,
-            password: payload.password,
-            rememberMe: true,
-          });
+          set({ isLoading: false });
         } catch (err: unknown) {
           const errorMessage = err instanceof Error ? err.message : "Gagal melakukan registrasi akun.";
           set({
