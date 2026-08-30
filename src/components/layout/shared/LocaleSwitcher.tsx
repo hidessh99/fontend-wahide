@@ -22,7 +22,7 @@ export function LocaleSwitcher() {
       className="gap-1.5 text-xs font-bold uppercase"
       aria-label="Ganti Bahasa / Switch Language"
     >
-      <Globe className="size-3.5 text-[#163300] dark:text-[#9fe870]" />
+      <Globe className="size-3.5 text-dark-green dark:text-wise-green" />
       <span>{locale.toUpperCase()}</span>
       <span className="text-xs">{LOCALE_LABELS[locale].flag}</span>
     </Button>

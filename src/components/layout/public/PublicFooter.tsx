@@ -7,9 +7,9 @@ export function PublicFooter() {
       <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
         <div className="space-y-3 col-span-2 md:col-span-1">
           <Link href="/" className="flex items-center gap-2">
-            <span className="h-3.5 w-3.5 rounded-full bg-[#9fe870]" />
+            <span className="h-3.5 w-3.5 rounded-full bg-wise-green" />
             <span className="font-black text-xl tracking-tight text-foreground">
-              Wahide<span className="text-[#9fe870]">.</span>
+              Wahide<span className="text-wise-green">.</span>
             </span>
           </Link>
           <p className="text-xs font-semibold text-foreground-secondary leading-relaxed max-w-xs">

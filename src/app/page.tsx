@@ -37,7 +37,7 @@ export default function HomePage() {
         <section className="py-20 md:py-28 px-6 max-w-7xl mx-auto">
           <div className="space-y-8 max-w-4xl">
             <div className="inline-flex items-center gap-2.5 rounded-full bg-surface dark:bg-[#161715] px-4 py-2 border border-border text-xs font-bold shadow-sm">
-              <span className="h-2.5 w-2.5 rounded-full bg-[#9fe870]" />
+              <span className="h-2.5 w-2.5 rounded-full bg-wise-green" />
               <span>Phase 1 Completed: Wise Design System & Modular Layouts Ready</span>
             </div>
 
@@ -74,7 +74,7 @@ export default function HomePage() {
 
             <div className="rounded-[26px] bg-surface dark:bg-[#161715] p-6 border border-border shadow-[0_0_0_1px_rgba(14,15,12,0.04)]">
               <p className="text-xs font-semibold text-foreground-muted uppercase tracking-wider">RAM Savings</p>
-              <p className="text-4xl sm:text-5xl font-black text-[#163300] dark:text-[#9fe870] mt-2 leading-none">95%</p>
+              <p className="text-4xl sm:text-5xl font-black text-dark-green dark:text-wise-green mt-2 leading-none">95%</p>
               <p className="text-xs font-semibold text-foreground-secondary mt-2">Session Hibernation</p>
             </div>
 
@@ -96,7 +96,7 @@ export default function HomePage() {
         <section id="spintax" className="py-16 bg-surface dark:bg-[#161715] border-y border-border px-6">
           <div className="max-w-4xl mx-auto space-y-8">
             <div className="space-y-2">
-              <div className="inline-flex items-center gap-2 rounded-full bg-[rgba(159,232,112,0.15)] px-3 py-1 text-xs font-bold text-[#163300] dark:text-[#9fe870]">
+              <div className="inline-flex items-center gap-2 rounded-full bg-[rgba(159,232,112,0.15)] px-3 py-1 text-xs font-bold text-dark-green dark:text-wise-green">
                 <Sparkles className="size-3.5" />
                 <span>Live Anti-Ban Spintax Engine</span>
               </div>
@@ -120,7 +120,7 @@ export default function HomePage() {
                     setSpintaxInput(e.target.value);
                     setSpintaxOutput(parseSpintax(e.target.value));
                   }}
-                  className="w-full rounded-[20px] bg-background text-foreground font-semibold p-4 border border-border focus:border-[#9fe870] focus:ring-2 focus:ring-[#9fe870] outline-none text-sm transition"
+                  className="w-full rounded-[20px] bg-background text-foreground font-semibold p-4 border border-border focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none text-sm transition"
                 />
               </div>
 
@@ -160,7 +160,7 @@ export default function HomePage() {
 
           <div className="grid md:grid-cols-3 gap-6">
             <div className="rounded-[30px] bg-surface dark:bg-[#161715] p-8 border border-border space-y-4">
-              <div className="h-12 w-12 rounded-full bg-[#9fe870] text-[#163300] flex items-center justify-center font-bold">
+              <div className="h-12 w-12 rounded-full bg-wise-green text-dark-green flex items-center justify-center font-bold">
                 <ShieldCheck className="size-6" />
               </div>
               <h3 className="text-xl font-bold text-foreground">5 Lapis Sistem Anti-Ban</h3>
@@ -170,7 +170,7 @@ export default function HomePage() {
             </div>
 
             <div className="rounded-[30px] bg-surface dark:bg-[#161715] p-8 border border-border space-y-4">
-              <div className="h-12 w-12 rounded-full bg-[#9fe870] text-[#163300] flex items-center justify-center font-bold">
+              <div className="h-12 w-12 rounded-full bg-wise-green text-dark-green flex items-center justify-center font-bold">
                 <Zap className="size-6" />
               </div>
               <h3 className="text-xl font-bold text-foreground">Zero-Heap Event Filter</h3>
@@ -180,7 +180,7 @@ export default function HomePage() {
             </div>
 
             <div className="rounded-[30px] bg-surface dark:bg-[#161715] p-8 border border-border space-y-4">
-              <div className="h-12 w-12 rounded-full bg-[#9fe870] text-[#163300] flex items-center justify-center font-bold">
+              <div className="h-12 w-12 rounded-full bg-wise-green text-dark-green flex items-center justify-center font-bold">
                 <Layers className="size-6" />
               </div>
               <h3 className="text-xl font-bold text-foreground">9 Domain Services Terisolasi</h3>

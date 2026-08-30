@@ -34,12 +34,12 @@ export function ThemeToggle() {
     >
       {isDark ? (
         <>
-          <Sun className="size-3.5 text-[#9fe870]" />
+          <Sun className="size-3.5 text-wise-green" />
           <span>Light</span>
         </>
       ) : (
         <>
-          <Moon className="size-3.5 text-[#163300]" />
+          <Moon className="size-3.5 text-dark-green" />
           <span>Dark</span>
         </>
       )}

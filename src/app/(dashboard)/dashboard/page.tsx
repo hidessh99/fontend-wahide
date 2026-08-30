@@ -23,8 +23,8 @@ export default function DashboardOverviewPage() {
       {/* Welcome Banner (Wise Rounded Card) */}
       <div className="rounded-[30px] bg-surface dark:bg-[#161715] p-6 sm:p-10 border border-border flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 rounded-full bg-[rgba(159,232,112,0.15)] px-3.5 py-1 text-xs font-bold text-[#163300] dark:text-[#9fe870]">
-            <span className="size-2 rounded-full bg-[#9fe870] animate-pulse" />
+          <div className="inline-flex items-center gap-2 rounded-full bg-[rgba(159,232,112,0.15)] px-3.5 py-1 text-xs font-bold text-dark-green dark:text-wise-green">
+            <span className="size-2 rounded-full bg-wise-green animate-pulse" />
             <span>Sesi Gateway Aktif</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-foreground">
@@ -56,7 +56,7 @@ export default function DashboardOverviewPage() {
         <div className="rounded-[24px] bg-surface dark:bg-[#161715] p-6 border border-border space-y-1">
           <div className="flex items-center justify-between text-foreground-muted">
             <span className="text-xs font-bold uppercase tracking-wider">Slot Perangkat</span>
-            <Smartphone className="size-4 text-[#9fe870]" />
+            <Smartphone className="size-4 text-wise-green" />
           </div>
           <p className="text-3xl font-black text-foreground pt-2">
             {tenant?.activeDevicesCount || 0}{" "}
@@ -72,9 +72,9 @@ export default function DashboardOverviewPage() {
         <div className="rounded-[24px] bg-surface dark:bg-[#161715] p-6 border border-border space-y-1">
           <div className="flex items-center justify-between text-foreground-muted">
             <span className="text-xs font-bold uppercase tracking-wider">Sisa Kuota Pesan</span>
-            <Zap className="size-4 text-[#9fe870]" />
+            <Zap className="size-4 text-wise-green" />
           </div>
-          <p className="text-3xl font-black text-[#163300] dark:text-[#9fe870] pt-2">
+          <p className="text-3xl font-black text-dark-green dark:text-wise-green pt-2">
             {((tenant?.monthlyQuota || 1000) - (tenant?.usedQuota || 0)).toLocaleString("id-ID")}
           </p>
           <p className="text-xs font-semibold text-foreground-secondary">
@@ -85,7 +85,7 @@ export default function DashboardOverviewPage() {
         <div className="rounded-[24px] bg-surface dark:bg-[#161715] p-6 border border-border space-y-1">
           <div className="flex items-center justify-between text-foreground-muted">
             <span className="text-xs font-bold uppercase tracking-wider">Total Kontak</span>
-            <Users className="size-4 text-[#9fe870]" />
+            <Users className="size-4 text-wise-green" />
           </div>
           <p className="text-3xl font-black text-foreground pt-2">0</p>
           <p className="text-xs font-semibold text-foreground-secondary">
@@ -110,7 +110,7 @@ export default function DashboardOverviewPage() {
         <div className="rounded-[30px] bg-surface dark:bg-[#161715] p-8 border border-border space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-foreground">Status Perangkat WhatsApp</h2>
-            <Link href="/devices" className="text-xs font-bold text-[#163300] dark:text-[#9fe870] hover:underline flex items-center gap-1">
+            <Link href="/devices" className="text-xs font-bold text-dark-green dark:text-wise-green hover:underline flex items-center gap-1">
               <span>Semua Slot</span>
               <ArrowRight className="size-3.5" />
             </Link>
@@ -129,7 +129,7 @@ export default function DashboardOverviewPage() {
         <div className="rounded-[30px] bg-surface dark:bg-[#161715] p-8 border border-border space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-foreground">Kampanye Terakhir</h2>
-            <Link href="/campaigns" className="text-xs font-bold text-[#163300] dark:text-[#9fe870] hover:underline flex items-center gap-1">
+            <Link href="/campaigns" className="text-xs font-bold text-dark-green dark:text-wise-green hover:underline flex items-center gap-1">
               <span>Riwayat Blast</span>
               <ArrowRight className="size-3.5" />
             </Link>

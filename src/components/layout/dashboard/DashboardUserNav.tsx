@@ -38,7 +38,7 @@ export function DashboardUserNav() {
         className="flex items-center gap-2 p-1.5 rounded-full hover:bg-surface dark:hover:bg-[#161715] transition cursor-pointer border border-transparent hover:border-border"
         aria-expanded={open}
       >
-        <div className="size-8 rounded-full bg-[#9fe870] text-[#163300] font-black text-xs flex items-center justify-center">
+        <div className="size-8 rounded-full bg-wise-green text-dark-green font-black text-xs flex items-center justify-center">
           {user.name.charAt(0).toUpperCase()}
         </div>
         <div className="hidden md:flex flex-col text-left">
@@ -80,7 +80,7 @@ export function DashboardUserNav() {
               <Link
                 href="/admin/overview"
                 onClick={() => setOpen(false)}
-                className="flex items-center gap-2 px-3 py-2 rounded-[12px] bg-[rgba(159,232,112,0.12)] text-[#163300] dark:text-[#9fe870] font-bold transition"
+                className="flex items-center gap-2 px-3 py-2 rounded-[12px] bg-[rgba(159,232,112,0.12)] text-dark-green dark:text-wise-green font-bold transition"
               >
                 <Shield className="size-3.5" />
                 <span>Panel Superadmin</span>

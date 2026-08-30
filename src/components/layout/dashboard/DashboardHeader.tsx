@@ -34,7 +34,7 @@ export function DashboardHeader({ onOpenMobileNav }: DashboardHeaderProps) {
       {/* Kanan: Quota Pill, Locale Switcher, Theme Toggle, & User Dropdown */}
       <div className="flex items-center gap-2.5">
         {tenant && (
-          <div className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[rgba(159,232,112,0.15)] border border-[rgba(159,232,112,0.3)] text-xs font-bold text-[#163300] dark:text-[#9fe870]">
+          <div className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[rgba(159,232,112,0.15)] border border-[rgba(159,232,112,0.3)] text-xs font-bold text-dark-green dark:text-wise-green">
             <Zap className="size-3.5" />
             <span>
               {tenant.usedQuota.toLocaleString("id-ID")} / {tenant.monthlyQuota.toLocaleString("id-ID")}

@@ -19,9 +19,9 @@ export function PublicHeader() {
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-2.5">
-          <span className="h-4 w-4 rounded-full bg-[#9fe870] animate-pulse" />
+          <span className="h-4 w-4 rounded-full bg-wise-green animate-pulse" />
           <span className="font-black text-2xl tracking-tight text-foreground">
-            Wahide<span className="text-[#9fe870]">.</span>
+            Wahide<span className="text-wise-green">.</span>
           </span>
         </Link>
 
