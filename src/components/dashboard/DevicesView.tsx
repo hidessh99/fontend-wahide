@@ -2,6 +2,7 @@
 
 import React from "react";
 import { DeviceList } from "@/services/whatsapp/components/DeviceList";
+import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { useI18n } from "@/lib/i18n/context";
 import { Smartphone } from "lucide-react";
 
@@ -27,8 +28,10 @@ export function DevicesView() {
         </div>
       </div>
 
-      {/* Main Content Component */}
-      <DeviceList />
+      {/* Main Content Component with Error Boundary */}
+      <ErrorBoundary fallbackTitle="Gagal Memuat Node Sesi WhatsApp">
+        <DeviceList />
+      </ErrorBoundary>
     </div>
   );
 }

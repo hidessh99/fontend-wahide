@@ -5,6 +5,7 @@ import { useContacts } from "@/services/contact/hooks/useContacts";
 import { ContactTable } from "@/services/contact/components/ContactTable";
 import { ContactModal } from "@/services/contact/components/ContactModal";
 import { ImportCsvModal } from "@/services/contact/components/ImportCsvModal";
+import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { Contact, CreateContactInput } from "@/services/contact/types/contact.types";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/context";
@@ -253,14 +254,16 @@ export function ContactsView() {
           )}
         </div>
       ) : (
-        <ContactTable
-          contacts={filteredContacts}
-          selectedIds={selectedIds}
-          onToggleSelectOne={toggleSelectOne}
-          onToggleSelectAll={toggleSelectAll}
-          onEdit={handleEdit}
-          onDelete={deleteContact}
-        />
+        <ErrorBoundary fallbackTitle="Gagal Merender Tabel Kontak Virtual">
+          <ContactTable
+            contacts={filteredContacts}
+            selectedIds={selectedIds}
+            onToggleSelectOne={toggleSelectOne}
+            onToggleSelectAll={toggleSelectAll}
+            onEdit={handleEdit}
+            onDelete={deleteContact}
+          />
+        </ErrorBoundary>
       )}
 
       {/* Add / Edit Contact Modal */}

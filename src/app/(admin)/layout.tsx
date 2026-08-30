@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ShieldAlert, ArrowLeft, LayoutDashboard, Users } from "lucide-react";
 import { ThemeToggle } from "@/components/layout/shared/ThemeToggle";
 import { LocaleSwitcher } from "@/components/layout/shared/LocaleSwitcher";
+import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 
 export default function AdminLayout({
   children,
@@ -78,8 +79,12 @@ export default function AdminLayout({
         </div>
       </header>
 
-      {/* Main Admin Content */}
-      <main className="flex-1">{children}</main>
+      {/* Main Admin Content with Error Boundary */}
+      <main className="flex-1">
+        <ErrorBoundary fallbackTitle="Terjadi Kendala Memuat Modul Superadmin">
+          {children}
+        </ErrorBoundary>
+      </main>
     </div>
   );
 }

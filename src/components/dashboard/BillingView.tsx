@@ -5,6 +5,7 @@ import { useBilling } from "@/services/finance/hooks/useBilling";
 import { BalanceCard } from "@/services/finance/components/BalanceCard";
 import { InvoiceTable } from "@/services/finance/components/InvoiceTable";
 import { TopUpModal } from "@/services/finance/components/TopUpModal";
+import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { useI18n } from "@/lib/i18n/context";
 import { Button } from "@/components/ui/button";
 import { Receipt } from "lucide-react";
@@ -33,11 +34,13 @@ export function BillingView() {
         </div>
       </div>
 
-      {/* Balance Card */}
-      <BalanceCard
-        balance={balance}
-        onOpenTopUp={() => setIsTopUpOpen(true)}
-      />
+      {/* Balance Card with Error Boundary */}
+      <ErrorBoundary fallbackTitle="Gagal Memuat Saldo Deposit">
+        <BalanceCard
+          balance={balance}
+          onOpenTopUp={() => setIsTopUpOpen(true)}
+        />
+      </ErrorBoundary>
 
       {/* Seller Affiliate Commission Card (GET /api/v1/income-pending) */}
       <div className="p-5 rounded-md border border-border bg-surface dark:bg-[#161715] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -68,11 +71,13 @@ export function BillingView() {
         </Button>
       </div>
 
-      {/* Invoice Table */}
-      <InvoiceTable
-        invoices={invoices}
-        onDownload={downloadInvoice}
-      />
+      {/* Invoice Table with Error Boundary */}
+      <ErrorBoundary fallbackTitle="Gagal Memuat Riwayat Faktur">
+        <InvoiceTable
+          invoices={invoices}
+          onDownload={downloadInvoice}
+        />
+      </ErrorBoundary>
 
       {/* Top Up Modal */}
       <TopUpModal

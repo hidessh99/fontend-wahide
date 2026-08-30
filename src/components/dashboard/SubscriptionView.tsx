@@ -5,6 +5,7 @@ import { useSubscription } from "@/services/subscription/hooks/useSubscription";
 import { QuotaDialCard } from "@/services/subscription/components/QuotaDialCard";
 import { PlanCardGrid } from "@/services/subscription/components/PlanCardGrid";
 import { WebhookConfigCard } from "@/services/subscription/components/WebhookConfigCard";
+import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { useI18n } from "@/lib/i18n/context";
 import { CreditCard } from "lucide-react";
 
@@ -39,23 +40,29 @@ export function SubscriptionView() {
         </div>
       </div>
 
-      {/* Quota Dial Gauge Card */}
-      <QuotaDialCard subscription={subscription} />
+      {/* Quota Dial Gauge Card with Error Boundary */}
+      <ErrorBoundary fallbackTitle="Gagal Memuat Meteran Kuota Pesan">
+        <QuotaDialCard subscription={subscription} />
+      </ErrorBoundary>
 
-      {/* Subscription Plans Grid */}
-      <PlanCardGrid
-        plans={plans}
-        currentSubscription={subscription}
-        onUpgradePlan={upgradePlan}
-      />
+      {/* Subscription Plans Grid with Error Boundary */}
+      <ErrorBoundary fallbackTitle="Gagal Memuat Daftar Paket Langganan">
+        <PlanCardGrid
+          plans={plans}
+          currentSubscription={subscription}
+          onUpgradePlan={upgradePlan}
+        />
+      </ErrorBoundary>
 
-      {/* Webhook Configuration Card */}
-      <WebhookConfigCard
-        config={webhookConfig}
-        onSave={saveWebhook}
-        onRegenerateSecret={regenerateSecret}
-        onCopySecret={copySecret}
-      />
+      {/* Webhook Configuration Card with Error Boundary */}
+      <ErrorBoundary fallbackTitle="Gagal Memuat Pengaturan Webhook">
+        <WebhookConfigCard
+          config={webhookConfig}
+          onSave={saveWebhook}
+          onRegenerateSecret={regenerateSecret}
+          onCopySecret={copySecret}
+        />
+      </ErrorBoundary>
     </div>
   );
 }

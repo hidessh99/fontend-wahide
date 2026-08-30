@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useTeam } from "@/services/team/hooks/useTeam";
 import { AgentRole } from "@/services/team/types/team.types";
 import { Button } from "@/components/ui/button";
+import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { useI18n } from "@/lib/i18n/context";
 import {
   Users,
@@ -86,87 +87,89 @@ export function TeamView() {
         </Button>
       </div>
 
-      {/* Agents Table */}
-      <div className="rounded-md border border-border bg-surface dark:bg-[#161715] overflow-hidden shadow-sm">
-        <div className="grid grid-cols-12 gap-3 px-5 py-3.5 bg-muted/60 border-b border-border text-xs font-bold uppercase tracking-wider text-foreground-muted select-none">
-          <div className="col-span-4 sm:col-span-3">{t("team.tableHeaderName")}</div>
-          <div className="col-span-3 sm:col-span-3">{t("team.tableHeaderPhone")}</div>
-          <div className="hidden sm:block sm:col-span-2">{t("team.tableHeaderRole")}</div>
-          <div className="hidden sm:block sm:col-span-2 text-center">{t("team.tableHeaderDevices")}</div>
-          <div className="col-span-3 sm:col-span-1 text-center">{t("team.tableHeaderStatus")}</div>
-          <div className="col-span-2 sm:col-span-1 text-right">{t("team.tableHeaderAction")}</div>
+      {/* Agents Table with Error Boundary */}
+      <ErrorBoundary fallbackTitle="Gagal Memuat Daftar Tim Staf Agen">
+        <div className="rounded-md border border-border bg-surface dark:bg-[#161715] overflow-hidden shadow-sm">
+          <div className="grid grid-cols-12 gap-3 px-5 py-3.5 bg-muted/60 border-b border-border text-xs font-bold uppercase tracking-wider text-foreground-muted select-none">
+            <div className="col-span-4 sm:col-span-3">{t("team.tableHeaderName")}</div>
+            <div className="col-span-3 sm:col-span-3">{t("team.tableHeaderPhone")}</div>
+            <div className="hidden sm:block sm:col-span-2">{t("team.tableHeaderRole")}</div>
+            <div className="hidden sm:block sm:col-span-2 text-center">{t("team.tableHeaderDevices")}</div>
+            <div className="col-span-3 sm:col-span-1 text-center">{t("team.tableHeaderStatus")}</div>
+            <div className="col-span-2 sm:col-span-1 text-right">{t("team.tableHeaderAction")}</div>
+          </div>
+
+          {agents.length === 0 ? (
+            <div className="p-12 text-center space-y-2">
+              <Users className="size-10 text-foreground-muted mx-auto" />
+              <h3 className="font-bold text-sm text-foreground">{t("team.noAgents")}</h3>
+              <p className="text-xs text-foreground-secondary">{t("team.noAgentsDesc")}</p>
+            </div>
+          ) : (
+            <div className="divide-y divide-border/50 text-xs font-semibold">
+              {agents.map((agt) => (
+                <div
+                  key={agt.id}
+                  className="grid grid-cols-12 gap-3 px-5 py-4 items-center hover:bg-muted/40 transition-colors"
+                >
+                  {/* Name & Email */}
+                  <div className="col-span-4 sm:col-span-3 space-y-0.5">
+                    <span className="font-bold text-foreground block truncate">{agt.name}</span>
+                    <span className="text-[11px] text-foreground-muted block truncate font-mono">
+                      {agt.email}
+                    </span>
+                  </div>
+
+                  {/* Phone */}
+                  <div className="col-span-3 sm:col-span-3 font-mono text-foreground-secondary text-[11px] truncate">
+                    +{agt.phone}
+                  </div>
+
+                  {/* Role */}
+                  <div className="hidden sm:block sm:col-span-2">
+                    <span
+                      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                        agt.role === "SUPERVISOR"
+                          ? "bg-wise-green/15 text-wise-green border border-wise-green/30"
+                          : "bg-muted text-foreground-secondary border border-border"
+                      }`}
+                    >
+                      <ShieldCheck className="size-3" />
+                      <span>{agt.role === "SUPERVISOR" ? "Supervisor" : "CS Agent"}</span>
+                    </span>
+                  </div>
+
+                  {/* Devices */}
+                  <div className="hidden sm:flex sm:col-span-2 items-center justify-center gap-1 font-mono text-[11px] text-foreground-secondary">
+                    <Smartphone className="size-3.5 text-foreground-muted" />
+                    <span>{agt.assignedDevicesCount} Device</span>
+                  </div>
+
+                  {/* Status */}
+                  <div className="col-span-3 sm:col-span-1 flex justify-center">
+                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                      <CheckCircle2 className="size-3" />
+                      <span className="hidden sm:inline">Aktif</span>
+                    </span>
+                  </div>
+
+                  {/* Action */}
+                  <div className="col-span-2 sm:col-span-1 flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(agt.id, agt.name)}
+                      className="size-7 rounded-full flex items-center justify-center text-foreground-muted hover:text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"
+                      aria-label={`Hapus ${agt.name}`}
+                    >
+                      <Trash2 className="size-3.5" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-
-        {agents.length === 0 ? (
-          <div className="p-12 text-center space-y-2">
-            <Users className="size-10 text-foreground-muted mx-auto" />
-            <h3 className="font-bold text-sm text-foreground">{t("team.noAgents")}</h3>
-            <p className="text-xs text-foreground-secondary">{t("team.noAgentsDesc")}</p>
-          </div>
-        ) : (
-          <div className="divide-y divide-border/50 text-xs font-semibold">
-            {agents.map((agt) => (
-              <div
-                key={agt.id}
-                className="grid grid-cols-12 gap-3 px-5 py-4 items-center hover:bg-muted/40 transition-colors"
-              >
-                {/* Name & Email */}
-                <div className="col-span-4 sm:col-span-3 space-y-0.5">
-                  <span className="font-bold text-foreground block truncate">{agt.name}</span>
-                  <span className="text-[11px] text-foreground-muted block truncate font-mono">
-                    {agt.email}
-                  </span>
-                </div>
-
-                {/* Phone */}
-                <div className="col-span-3 sm:col-span-3 font-mono text-foreground-secondary text-[11px] truncate">
-                  +{agt.phone}
-                </div>
-
-                {/* Role */}
-                <div className="hidden sm:block sm:col-span-2">
-                  <span
-                    className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                      agt.role === "SUPERVISOR"
-                        ? "bg-wise-green/15 text-wise-green border border-wise-green/30"
-                        : "bg-muted text-foreground-secondary border border-border"
-                    }`}
-                  >
-                    <ShieldCheck className="size-3" />
-                    <span>{agt.role === "SUPERVISOR" ? t("team.roleSupervisor") : t("team.roleAgent")}</span>
-                  </span>
-                </div>
-
-                {/* Assigned Devices */}
-                <div className="hidden sm:flex sm:col-span-2 items-center justify-center gap-1.5 text-foreground-secondary font-mono">
-                  <Smartphone className="size-3.5 text-foreground-muted" />
-                  <span>{agt.assignedDevicesCount} Slot</span>
-                </div>
-
-                {/* Status */}
-                <div className="col-span-3 sm:col-span-1 flex justify-center">
-                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-                    <CheckCircle2 className="size-3" />
-                    <span className="hidden sm:inline">{t("team.statusActive")}</span>
-                  </span>
-                </div>
-
-                {/* Action */}
-                <div className="col-span-2 sm:col-span-1 flex justify-end">
-                  <button
-                    type="button"
-                    onClick={() => handleDelete(agt.id, agt.name)}
-                    className="size-7 rounded-full flex items-center justify-center text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"
-                    aria-label={`Hapus ${agt.name}`}
-                  >
-                    <Trash2 className="size-3.5" />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      </ErrorBoundary>
 
       {/* Modal Add Agent */}
       {isModalOpen && (

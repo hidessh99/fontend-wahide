@@ -6,6 +6,7 @@ import { useDevices } from "@/services/whatsapp/hooks/useDevices";
 import { useSubscription } from "@/services/subscription/hooks/useSubscription";
 import { useCampaigns } from "@/services/campaign/hooks/useCampaigns";
 import { useContacts } from "@/services/contact/hooks/useContacts";
+import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { Button } from "@/components/ui/button";
 import {
   Smartphone,
@@ -153,108 +154,112 @@ export function DashboardOverviewView() {
 
       {/* Main 2-Column Split: Active Devices & Broadcast Campaigns */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Active WhatsApp Devices */}
-        <div className="rounded-md border border-border bg-surface dark:bg-[#161715] p-6 space-y-4">
-          <div className="flex items-center justify-between border-b border-border pb-3">
-            <div className="flex items-center gap-2">
-              <Radio className="size-4 text-wise-green" />
-              <h2 className="font-extrabold text-sm sm:text-base text-foreground">
-                Node Sesi WhatsApp
-              </h2>
+        {/* Active WhatsApp Devices with Error Boundary */}
+        <ErrorBoundary fallbackTitle="Gagal Memuat Ringkasan Sesi WhatsApp">
+          <div className="rounded-md border border-border bg-surface dark:bg-[#161715] p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-border pb-3">
+              <div className="flex items-center gap-2">
+                <Radio className="size-4 text-wise-green" />
+                <h2 className="font-extrabold text-sm sm:text-base text-foreground">
+                  Node Sesi WhatsApp
+                </h2>
+              </div>
+              <Link
+                href="/devices"
+                className="text-xs font-bold text-wise-green hover:underline inline-flex items-center gap-1"
+              >
+                <span>Lihat Semua</span>
+                <ArrowRight className="size-3" />
+              </Link>
             </div>
-            <Link
-              href="/devices"
-              className="text-xs font-bold text-wise-green hover:underline inline-flex items-center gap-1"
-            >
-              <span>Lihat Semua</span>
-              <ArrowRight className="size-3" />
-            </Link>
-          </div>
 
-          {devices.length === 0 ? (
-            <div className="p-8 text-center text-xs text-foreground-secondary">
-              Belum ada perangkat yang terhubung.
-            </div>
-          ) : (
-            <div className="space-y-2.5">
-              {devices.slice(0, 3).map((d) => (
-                <div
-                  key={d.id}
-                  className="p-3 rounded-md border border-border bg-surface dark:bg-[#10110e] flex items-center justify-between"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="size-8 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center">
-                      <Smartphone className="size-4" />
-                    </div>
-                    <div>
-                      <span className="font-bold text-xs text-foreground block">{d.name}</span>
-                      <span className="text-[11px] text-foreground-muted font-mono">
-                        +{d.phone || "Menunggu Pairing"}
-                      </span>
-                    </div>
-                  </div>
-
-                  <span
-                    className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                      d.status === "CONNECTED"
-                        ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
-                        : "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"
-                    }`}
+            {devices.length === 0 ? (
+              <div className="p-8 text-center text-xs text-foreground-secondary">
+                Belum ada perangkat yang terhubung.
+              </div>
+            ) : (
+              <div className="space-y-2.5">
+                {devices.slice(0, 3).map((d) => (
+                  <div
+                    key={d.id}
+                    className="p-3 rounded-md border border-border bg-surface dark:bg-[#10110e] flex items-center justify-between"
                   >
-                    <CheckCircle2 className="size-2.5" />
-                    <span>{d.status}</span>
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+                    <div className="flex items-center gap-3">
+                      <div className="size-8 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center">
+                        <Smartphone className="size-4" />
+                      </div>
+                      <div>
+                        <span className="font-bold text-xs text-foreground block">{d.name}</span>
+                        <span className="text-[11px] text-foreground-muted font-mono">
+                          +{d.phone || "Menunggu Pairing"}
+                        </span>
+                      </div>
+                    </div>
 
-        {/* Broadcast Campaigns Activity */}
-        <div className="rounded-md border border-border bg-surface dark:bg-[#161715] p-6 space-y-4">
-          <div className="flex items-center justify-between border-b border-border pb-3">
-            <div className="flex items-center gap-2">
-              <Layers className="size-4 text-wise-green" />
-              <h2 className="font-extrabold text-sm sm:text-base text-foreground">
-                Kampanye Broadcast Terkini
-              </h2>
-            </div>
-            <Link
-              href="/campaigns"
-              className="text-xs font-bold text-wise-green hover:underline inline-flex items-center gap-1"
-            >
-              <span>Lihat Semua</span>
-              <ArrowRight className="size-3" />
-            </Link>
-          </div>
-
-          {campaigns.length === 0 ? (
-            <div className="p-8 text-center text-xs text-foreground-secondary">
-              Belum ada kampanye siaran yang dibuat.
-            </div>
-          ) : (
-            <div className="space-y-2.5">
-              {campaigns.slice(0, 3).map((c) => (
-                <div
-                  key={c.id}
-                  className="p-3 rounded-md border border-border bg-surface dark:bg-[#10110e] flex items-center justify-between"
-                >
-                  <div className="space-y-0.5">
-                    <span className="font-bold text-xs text-foreground block">{c.name}</span>
-                    <span className="text-[10px] text-foreground-muted block">
-                      {c.sentCount} dari {c.totalRecipients} pesan terkirim
+                    <span
+                      className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                        d.status === "CONNECTED"
+                          ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
+                          : "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"
+                      }`}
+                    >
+                      <CheckCircle2 className="size-2.5" />
+                      <span>{d.status}</span>
                     </span>
                   </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </ErrorBoundary>
 
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-wise-green/10 text-wise-green border border-wise-green/20">
-                    <ShieldCheck className="size-2.5" />
-                    <span>{c.status}</span>
-                  </span>
-                </div>
-              ))}
+        {/* Broadcast Campaigns Activity with Error Boundary */}
+        <ErrorBoundary fallbackTitle="Gagal Memuat Ringkasan Kampanye">
+          <div className="rounded-md border border-border bg-surface dark:bg-[#161715] p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-border pb-3">
+              <div className="flex items-center gap-2">
+                <Layers className="size-4 text-wise-green" />
+                <h2 className="font-extrabold text-sm sm:text-base text-foreground">
+                  Kampanye Broadcast Terkini
+                </h2>
+              </div>
+              <Link
+                href="/campaigns"
+                className="text-xs font-bold text-wise-green hover:underline inline-flex items-center gap-1"
+              >
+                <span>Lihat Semua</span>
+                <ArrowRight className="size-3" />
+              </Link>
             </div>
-          )}
-        </div>
+
+            {campaigns.length === 0 ? (
+              <div className="p-8 text-center text-xs text-foreground-secondary">
+                Belum ada kampanye siaran yang dibuat.
+              </div>
+            ) : (
+              <div className="space-y-2.5">
+                {campaigns.slice(0, 3).map((c) => (
+                  <div
+                    key={c.id}
+                    className="p-3 rounded-md border border-border bg-surface dark:bg-[#10110e] flex items-center justify-between"
+                  >
+                    <div className="space-y-0.5">
+                      <span className="font-bold text-xs text-foreground block">{c.name}</span>
+                      <span className="text-[10px] text-foreground-muted block">
+                        {c.sentCount} dari {c.totalRecipients} pesan terkirim
+                      </span>
+                    </div>
+
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-wise-green/10 text-wise-green border border-wise-green/20">
+                      <ShieldCheck className="size-2.5" />
+                      <span>{c.status}</span>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </ErrorBoundary>
       </div>
     </div>
   );

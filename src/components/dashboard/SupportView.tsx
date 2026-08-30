@@ -2,6 +2,7 @@
 
 import React from "react";
 import { TicketList } from "@/services/support/components/TicketList";
+import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { useI18n } from "@/lib/i18n/context";
 import { LifeBuoy } from "lucide-react";
 
@@ -27,8 +28,10 @@ export function SupportView() {
         </div>
       </div>
 
-      {/* Main Ticket List Component */}
-      <TicketList />
+      {/* Main Ticket List Component with Error Boundary */}
+      <ErrorBoundary fallbackTitle="Gagal Memuat Daftar Tiket Bantuan">
+        <TicketList />
+      </ErrorBoundary>
     </div>
   );
 }

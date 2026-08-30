@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { CampaignList } from "@/services/campaign/components/CampaignList";
 import { MessageLogsTable } from "@/services/campaign/components/MessageLogsTable";
+import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { useI18n } from "@/lib/i18n/context";
 import { Send, Layers, ListChecks } from "lucide-react";
 
@@ -57,8 +58,16 @@ export function CampaignsView() {
         </div>
       </div>
 
-      {/* Main Content Tab */}
-      {activeTab === "campaigns" ? <CampaignList /> : <MessageLogsTable />}
+      {/* Main Content Tab with Error Boundary */}
+      {activeTab === "campaigns" ? (
+        <ErrorBoundary fallbackTitle="Gagal Memuat Daftar Kampanye Siaran">
+          <CampaignList />
+        </ErrorBoundary>
+      ) : (
+        <ErrorBoundary fallbackTitle="Gagal Memuat Log Audit Pesan">
+          <MessageLogsTable />
+        </ErrorBoundary>
+      )}
     </div>
   );
 }
