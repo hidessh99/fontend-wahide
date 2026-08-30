@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { TurnstileWidget } from "@/components/ui/TurnstileWidget";
+import { TurnstileInstance } from "@marsidev/react-turnstile";
 import { registerSchema, RegisterInput } from "../schemas/auth.schema";
 import { useAuth } from "../hooks/useAuth";
 import { useI18n } from "@/lib/i18n/context";
@@ -13,6 +15,7 @@ export function RegisterForm() {
   const router = useRouter();
   const { register, isLoading, error, clearError } = useAuth();
   const { t } = useI18n();
+  const turnstileRef = useRef<TurnstileInstance>(null);
 
   const [formData, setFormData] = useState<RegisterInput>({
     name: "",
@@ -21,6 +24,7 @@ export function RegisterForm() {
     password: "",
     confirmPassword: "",
     agreeTerms: false,
+    turnstileToken: "",
   });
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [showPassword, setShowPassword] = useState(false);
@@ -58,7 +62,8 @@ export function RegisterForm() {
       await register(result.data);
       router.push("/dashboard");
     } catch {
-      // Error ditangani oleh useAuth state
+      turnstileRef.current?.reset();
+      setFormData((prev) => ({ ...prev, turnstileToken: "" }));
     }
   };
 
@@ -73,7 +78,7 @@ export function RegisterForm() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
           <div className="flex items-center gap-3 rounded-md bg-rose-50 dark:bg-rose-950/40 p-4 text-sm font-semibold text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/50">
             <AlertCircle className="size-5 shrink-0" />
@@ -81,7 +86,7 @@ export function RegisterForm() {
           </div>
         )}
 
-        <div className="space-y-4">
+        <div className="space-y-3.5">
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
               {t("auth.register.nameLabel")}
@@ -234,7 +239,7 @@ export function RegisterForm() {
           </div>
         </div>
 
-        <div className="pt-1">
+        <div className="pt-0.5">
           <label className="flex items-start gap-2.5 cursor-pointer select-none">
             <input
               type="checkbox"
@@ -253,6 +258,14 @@ export function RegisterForm() {
             </p>
           )}
         </div>
+
+        {/* Cloudflare Turnstile CAPTCHA Protection */}
+        <TurnstileWidget
+          ref={turnstileRef}
+          onVerify={(token) => setFormData((prev) => ({ ...prev, turnstileToken: token }))}
+          onError={() => setFormData((prev) => ({ ...prev, turnstileToken: "" }))}
+          onExpire={() => setFormData((prev) => ({ ...prev, turnstileToken: "" }))}
+        />
 
         <Button
           type="submit"

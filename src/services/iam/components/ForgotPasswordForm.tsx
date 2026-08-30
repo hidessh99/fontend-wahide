@@ -1,16 +1,23 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { forgotPasswordSchema } from "../schemas/auth.schema";
+import { TurnstileWidget } from "@/components/ui/TurnstileWidget";
+import { TurnstileInstance } from "@marsidev/react-turnstile";
+import { forgotPasswordSchema, ForgotPasswordInput } from "../schemas/auth.schema";
 import { authApi } from "../api/auth.api";
 import { useI18n } from "@/lib/i18n/context";
 import { Mail, ArrowLeft, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 
 export function ForgotPasswordForm() {
   const { t } = useI18n();
-  const [email, setEmail] = useState("");
+  const turnstileRef = useRef<TurnstileInstance>(null);
+
+  const [formData, setFormData] = useState<ForgotPasswordInput>({
+    email: "",
+    turnstileToken: "",
+  });
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -20,7 +27,7 @@ export function ForgotPasswordForm() {
     setError(null);
     setSuccessMessage(null);
 
-    const result = forgotPasswordSchema.safeParse({ email });
+    const result = forgotPasswordSchema.safeParse(formData);
     if (!result.success) {
       setError(result.error.issues[0]?.message || "Format email tidak valid");
       return;
@@ -28,9 +35,11 @@ export function ForgotPasswordForm() {
 
     setIsLoading(true);
     try {
-      const res = await authApi.forgotPassword({ email });
+      const res = await authApi.forgotPassword({ email: result.data.email });
       setSuccessMessage(res.message || "Tautan pemulihan password telah dikirim ke email Anda.");
     } catch (err: unknown) {
+      turnstileRef.current?.reset();
+      setFormData((prev) => ({ ...prev, turnstileToken: "" }));
       if (err instanceof Error) {
         setError(err.message);
       } else {
@@ -52,7 +61,7 @@ export function ForgotPasswordForm() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-5">
         {successMessage && (
           <div className="flex items-center gap-3 rounded-md bg-emerald-50 dark:bg-emerald-950/40 p-4 text-sm font-semibold text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900/50">
             <CheckCircle2 className="size-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
@@ -75,9 +84,9 @@ export function ForgotPasswordForm() {
             <Mail className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-foreground-muted" />
             <input
               type="email"
-              value={email}
+              value={formData.email}
               onChange={(e) => {
-                setEmail(e.target.value);
+                setFormData((prev) => ({ ...prev, email: e.target.value }));
                 setError(null);
               }}
               placeholder={t("auth.forgotPassword.emailPlaceholder")}
@@ -86,6 +95,14 @@ export function ForgotPasswordForm() {
             />
           </div>
         </div>
+
+        {/* Cloudflare Turnstile CAPTCHA Protection */}
+        <TurnstileWidget
+          ref={turnstileRef}
+          onVerify={(token) => setFormData((prev) => ({ ...prev, turnstileToken: token }))}
+          onError={() => setFormData((prev) => ({ ...prev, turnstileToken: "" }))}
+          onExpire={() => setFormData((prev) => ({ ...prev, turnstileToken: "" }))}
+        />
 
         <Button
           type="submit"
@@ -104,7 +121,7 @@ export function ForgotPasswordForm() {
           )}
         </Button>
 
-        <div className="text-center pt-2">
+        <div className="text-center pt-1">
           <Link
             href="/login"
             className="inline-flex items-center gap-2 text-sm font-bold text-foreground-secondary hover:text-foreground"

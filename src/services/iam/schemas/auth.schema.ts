@@ -4,6 +4,7 @@ export const loginSchema = z.object({
   email: z.string().email("Format email tidak valid"),
   password: z.string().min(6, "Password minimal 6 karakter"),
   rememberMe: z.boolean().default(true),
+  turnstileToken: z.string().optional(),
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;
@@ -22,6 +23,7 @@ export const registerSchema = z
     agreeTerms: z.boolean().refine((val) => val === true, {
       message: "Anda wajib menyetujui Syarat dan Ketentuan layanan",
     }),
+    turnstileToken: z.string().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Konfirmasi password tidak cocok",
@@ -32,6 +34,7 @@ export type RegisterInput = z.infer<typeof registerSchema>;
 
 export const forgotPasswordSchema = z.object({
   email: z.string().email("Format email tidak valid"),
+  turnstileToken: z.string().optional(),
 });
 
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
@@ -41,6 +44,7 @@ export const resetPasswordSchema = z
     token: z.string().min(1, "Token verifikasi wajib diisi"),
     password: z.string().min(8, "Password baru minimal 8 karakter"),
     confirmPassword: z.string(),
+    turnstileToken: z.string().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Konfirmasi password tidak cocok",
