@@ -1,0 +1,138 @@
+"use client";
+
+import React, { useState } from "react";
+import { UserItem, AdjustBalanceInput } from "../types/admin.types";
+import { Button } from "@/components/ui/button";
+import { useI18n } from "@/lib/i18n/context";
+import { X, Sliders, Loader2, Save } from "lucide-react";
+
+interface AdjustBalanceModalProps {
+  user: UserItem | null;
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (data: AdjustBalanceInput) => Promise<unknown>;
+}
+
+export function AdjustBalanceModal({
+  user,
+  isOpen,
+  onClose,
+  onSubmit,
+}: AdjustBalanceModalProps) {
+  const { t } = useI18n();
+  const [addQuota, setAddQuota] = useState<number>(1000);
+  const [addBalance, setAddBalance] = useState<number>(50000);
+  const [isLoading, setIsLoading] = useState(false);
+
+  if (!isOpen || !user) return null;
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      await onSubmit({
+        userId: user.id,
+        addQuota: Number(addQuota) || 0,
+        addBalance: Number(addBalance) || 0,
+      });
+      onClose();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/70 backdrop-blur-sm animate-in fade-in">
+      <div className="relative w-full max-w-md rounded-md border border-border bg-surface dark:bg-[#161715] shadow-2xl overflow-hidden p-6 sm:p-8 space-y-5">
+        {/* Header */}
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-3">
+            <div className="size-10 rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+              <Sliders className="size-5" />
+            </div>
+            <div>
+              <h2 className="text-lg sm:text-xl font-black text-foreground tracking-tight">
+                {t("admin.adjustModalTitle")}
+              </h2>
+              <p className="text-xs font-semibold text-foreground-secondary">
+                {t("admin.adjustModalSubtitle", { name: user.name })}
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
+            aria-label="Tutup"
+          >
+            <X className="size-4" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4 pt-1">
+          {/* Add Quota */}
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+              {t("admin.addQuotaLabel")} (Saat ini: {user.quotaRemaining})
+            </label>
+            <input
+              type="number"
+              step={100}
+              value={addQuota}
+              onChange={(e) => setAddQuota(parseInt(e.target.value, 10) || 0)}
+              className="w-full h-11 px-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs font-mono"
+            />
+          </div>
+
+          {/* Add Balance */}
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+              {t("admin.addBalanceLabel")} (Saat ini: Rp {user.depositBalance.toLocaleString("id-ID")})
+            </label>
+            <input
+              type="number"
+              step={10000}
+              value={addBalance}
+              onChange={(e) => setAddBalance(parseInt(e.target.value, 10) || 0)}
+              className="w-full h-11 px-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs font-mono"
+            />
+          </div>
+
+          {/* Footer */}
+          <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-border/80">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={onClose}
+              disabled={isLoading}
+              className="rounded-full text-xs font-bold px-4 border-border hover:border-foreground-muted"
+            >
+              Batal
+            </Button>
+            <Button
+              type="submit"
+              variant="primaryPill"
+              size="sm"
+              disabled={isLoading}
+              className="text-xs font-bold gap-1.5 px-6 shadow-sm"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="size-3.5 animate-spin" />
+                  <span>{t("admin.submittingAdjust")}</span>
+                </>
+              ) : (
+                <>
+                  <Save className="size-3.5" />
+                  <span>{t("admin.submitAdjust")}</span>
+                </>
+              )}
+            </Button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
