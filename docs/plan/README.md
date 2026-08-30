@@ -31,3 +31,7 @@ Dokumen perencanaan arsitektur dan kesiapan produksi untuk frontend **Wahide (`f
 
 5. **[Comprehensive Improvement & Future Roadmap Plan](./frontend_comprehensive_improvement_and_future_roadmap_plan.md)**
    - **Peluang Peningkatan Skala Enterprise**: Analisis 6 pilar strategis meliputi Resiliensi Streaming Real-Time (SSE Heartbeat & Exponential Backoff), Lapisan Caching Data SWR, Command Palette (`Ctrl + K`), Hardening CSP di `next.config.ts`, Deteksi Offline Network, dan Otomasi Pengujian Unit Test Suite.
+
+6. **[i18n Comprehensive Audit & Implementation Plan](./i18n_comprehensive_audit_and_implementation_plan.md)**
+   - **Cakupan 100% Bilingual (ID & EN)**: Audit menyeluruh seluruh modul komponen di `src/components/` dan `src/services/` untuk mengeliminasi string hardcoded.
+   - **Roadmap Eksekusi 5 Fase**: Pendaftaran kamus lengkap di `context.tsx`, penerjemahan pesan instan WhatsApp, tabel log kampanye, kupon voucher & komisi, blog CMS publik, hingga seluruh portal Superadmin.
