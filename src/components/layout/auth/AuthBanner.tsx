@@ -1,5 +1,8 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
+import { useI18n } from "@/lib/i18n/context";
 
 interface AuthBannerProps {
   badgeText?: string;
@@ -8,10 +11,16 @@ interface AuthBannerProps {
 }
 
 export function AuthBanner({
-  badgeText = "Enterprise Gateway",
-  headline = "WhatsApp Gateway tanpa batas memori.",
-  subheadline = "Platform SaaS WhatsApp Multi-Tenant & Multi-Device berkinerja tinggi dengan Session Hibernation, 5 Lapis Anti-Ban, dan arsitektur Go Microservices.",
+  badgeText,
+  headline,
+  subheadline,
 }: AuthBannerProps) {
+  const { t } = useI18n();
+
+  const displayBadge = badgeText || t("auth.banner.defaultBadge");
+  const displayHeadline = headline || t("auth.banner.defaultHeadline");
+  const displaySubheadline = subheadline || t("auth.banner.defaultSubheadline");
+
   return (
     <div className="hidden lg:flex flex-col justify-between p-12 bg-near-black text-foreground relative overflow-hidden">
       {/* Subtle Green Glow Ring */}
@@ -26,26 +35,26 @@ export function AuthBanner({
           </span>
         </Link>
         <span className="text-xs font-semibold uppercase tracking-widest text-[#868685] bg-[#1b1d1a] px-3 py-1 rounded-full border border-white/10">
-          {badgeText}
+          {displayBadge}
         </span>
       </div>
 
       <div className="space-y-6 z-10 max-w-lg my-auto">
         <div className="inline-flex items-center gap-2 rounded-full bg-[rgba(159,232,112,0.15)] px-4 py-1.5 text-xs font-bold text-wise-green">
           <span className="size-1.5 rounded-full bg-wise-green" />
-          <span>Scale to 10,000+ Active WhatsApp Devices</span>
+          <span>{t("auth.banner.scaleTag")}</span>
         </div>
         <h1 className="text-5xl font-black leading-[0.95] tracking-tight text-white">
-          {headline}
+          {displayHeadline}
         </h1>
         <p className="text-lg font-semibold text-[#c2c5be] leading-relaxed">
-          {subheadline}
+          {displaySubheadline}
         </p>
       </div>
 
       <div className="flex items-center justify-between text-xs font-semibold text-[#868685] z-10 border-t border-white/10 pt-6">
-        <span>&copy; {new Date().getFullYear()} Wahide SaaS Platform</span>
-        <span>5-Layer Anti-Ban Protected</span>
+        <span>&copy; {new Date().getFullYear()} {t("auth.banner.rightsNote")}</span>
+        <span>{t("auth.banner.antiBanNote")}</span>
       </div>
     </div>
   );

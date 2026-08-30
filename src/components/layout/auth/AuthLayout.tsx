@@ -1,6 +1,9 @@
+"use client";
+
 import React from "react";
 import { AuthBanner } from "./AuthBanner";
 import { AuthHeader } from "./AuthHeader";
+import { useI18n } from "@/lib/i18n/context";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -15,8 +18,12 @@ export function AuthLayout({
   bannerBadge,
   bannerHeadline,
   bannerSubheadline,
-  footerNote = "Platform terenkripsi dengan AES-GCM 256 & Session Isolation",
+  footerNote,
 }: AuthLayoutProps) {
+  const { t } = useI18n();
+
+  const displayFooterNote = footerNote || t("auth.layout.footerNote");
+
   return (
     <div className="min-h-screen grid lg:grid-cols-2 bg-background">
       {/* Kolom Kiri: Visual Banner */}
@@ -37,7 +44,7 @@ export function AuthLayout({
         </div>
 
         <div className="text-center text-xs font-semibold text-foreground-muted pt-4">
-          {footerNote}
+          {displayFooterNote}
         </div>
       </div>
     </div>

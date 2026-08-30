@@ -5,9 +5,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { forgotPasswordSchema } from "../schemas/auth.schema";
 import { authApi } from "../api/auth.api";
+import { useI18n } from "@/lib/i18n/context";
 import { Mail, ArrowLeft, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 
 export function ForgotPasswordForm() {
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -57,7 +59,7 @@ export function ForgotPasswordForm() {
 
       <div>
         <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-2">
-          Email Terdaftar
+          {t("auth.forgotPassword.emailLabel")}
         </label>
         <div className="relative">
           <Mail className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-foreground-muted" />
@@ -68,7 +70,7 @@ export function ForgotPasswordForm() {
               setEmail(e.target.value);
               setError(null);
             }}
-            placeholder="nama@perusahaan.com"
+            placeholder={t("auth.forgotPassword.emailPlaceholder")}
             disabled={isLoading}
             className="w-full h-13 pl-12 pr-4 rounded-full bg-surface dark:bg-[#161715] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-sm"
           />
@@ -85,10 +87,10 @@ export function ForgotPasswordForm() {
         {isLoading ? (
           <>
             <Loader2 className="size-5 animate-spin" />
-            <span>Mengirim Link...</span>
+            <span>{t("auth.forgotPassword.loadingButton")}</span>
           </>
         ) : (
-          <span>Kirim Instruksi Reset</span>
+          <span>{t("auth.forgotPassword.submitButton")}</span>
         )}
       </Button>
 
@@ -98,7 +100,7 @@ export function ForgotPasswordForm() {
           className="inline-flex items-center gap-2 text-sm font-bold text-foreground-secondary hover:text-foreground"
         >
           <ArrowLeft className="size-4" />
-          <span>Kembali ke Halaman Login</span>
+          <span>{t("auth.forgotPassword.backToLogin")}</span>
         </Link>
       </div>
     </form>

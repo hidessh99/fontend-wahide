@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useCallback } from "react";
+import React, { createContext, useCallback } from "react";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { Locale, DEFAULT_LOCALE } from "./config";
 
-// Preload dictionaries synchronously to avoid flicker and network delay
 import idCommon from "@/locales/id/common.json";
 import idAuth from "@/locales/id/auth.json";
 import idWhatsapp from "@/locales/id/whatsapp.json";
@@ -66,6 +65,35 @@ export const useI18nStore = create<I18nStoreState>()(
   )
 );
 
+function resolvePath(dict: Record<string, unknown>, parts: string[]): string | undefined {
+  let result: unknown = dict;
+  for (const part of parts) {
+    if (result && typeof result === "object" && part in result) {
+      result = (result as Record<string, unknown>)[part];
+    } else {
+      result = undefined;
+      break;
+    }
+  }
+  if (typeof result === "string") return result;
+
+  // Check in 'common' namespace if not found at root
+  if (dict.common && typeof dict.common === "object") {
+    let commonResult: unknown = dict.common;
+    for (const part of parts) {
+      if (commonResult && typeof commonResult === "object" && part in commonResult) {
+        commonResult = (commonResult as Record<string, unknown>)[part];
+      } else {
+        commonResult = undefined;
+        break;
+      }
+    }
+    if (typeof commonResult === "string") return commonResult;
+  }
+
+  return undefined;
+}
+
 export function useI18n() {
   const { locale, setLocale } = useI18nStore();
 
@@ -74,38 +102,20 @@ export function useI18n() {
       const parts = path.split(".");
       const currentDict = dictionaries[locale] || dictionaries[DEFAULT_LOCALE];
 
-      let result: unknown = currentDict;
-      for (const part of parts) {
-        if (result && typeof result === "object" && part in result) {
-          result = (result as Record<string, unknown>)[part];
-        } else {
-          result = undefined;
-          break;
-        }
+      let text = resolvePath(currentDict, parts);
+
+      // Fallback to Indonesian (id)
+      if (!text && locale !== "id") {
+        text = resolvePath(dictionaries.id, parts);
       }
 
-      if (typeof result !== "string") {
-        // Fallback to Indonesian (id)
-        let fallbackResult: unknown = dictionaries.id;
-        for (const part of parts) {
-          if (fallbackResult && typeof fallbackResult === "object" && part in fallbackResult) {
-            fallbackResult = (fallbackResult as Record<string, unknown>)[part];
-          } else {
-            fallbackResult = undefined;
-            break;
-          }
-        }
-        if (typeof fallbackResult === "string") {
-          result = fallbackResult;
-        } else {
-          return path;
-        }
+      if (!text) {
+        return path;
       }
 
-      let text = result as string;
       if (params) {
         Object.entries(params).forEach(([key, val]) => {
-          text = text.replace(new RegExp(`\\{${key}\\}`, "g"), String(val));
+          text = text?.replace(new RegExp(`\\{${key}\\}`, "g"), String(val));
         });
       }
 
@@ -114,11 +124,23 @@ export function useI18n() {
     [locale]
   );
 
-  return { locale, setLocale, t };
+  return {
+    locale,
+    setLocale,
+    t,
+  };
 }
 
-export const useTranslation = useI18n;
+const I18nContext = createContext<{ locale: Locale; setLocale: (locale: Locale) => void }>({
+  locale: DEFAULT_LOCALE,
+  setLocale: () => {},
+});
 
 export function I18nProvider({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+  const { locale, setLocale } = useI18nStore();
+  return (
+    <I18nContext.Provider value={{ locale, setLocale }}>
+      {children}
+    </I18nContext.Provider>
+  );
 }
