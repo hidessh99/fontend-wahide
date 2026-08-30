@@ -109,5 +109,33 @@
   "theme": {
     "light": "Light",
     "dark": "Dark"
+  },
+  "errorBoundary": {
+    "defaultTitle": "Component Error Occurred",
+    "defaultDesc": "An unexpected error occurred while loading this section. Your data remains safe.",
+    "retryBtn": "Reload Section",
+    "reportDesc": "If the issue persists, please contact technical support."
+  },
+  "settings": {
+    "title": "Settings & API Integrations",
+    "subtitle": "Manage your business profile, active device login sessions, and API Key tokens.",
+    "tabProfile": "Account Profile",
+    "tabSecurity": "Sessions & Security",
+    "tabApiKey": "API Key Fast-Path",
+    "profileName": "Full Name",
+    "profileEmail": "Registered Email",
+    "profilePhone": "WhatsApp Contact Phone",
+    "saveProfile": "Save Profile Changes",
+    "profileSaved": "Profile updated successfully.",
+    "activeSessions": "Active Login Sessions",
+    "activeSessionsDesc": "List of devices currently authenticated and authorized to access your account.",
+    "terminateAll": "Sign Out All Other Sessions",
+    "sessionsTerminated": "All other sessions have been terminated successfully.",
+    "apiKeyTitle": "Fast-Path WhatsApp Gateway API Key",
+    "apiKeyDesc": "Use this secret token to dispatch WhatsApp messages directly from your external backend servers.",
+    "copyKey": "Copy Token",
+    "keyCopied": "API Key copied to clipboard!",
+    "regenerateKey": "Regenerate New Token",
+    "keyRegenerated": "New API Key token generated successfully."
   }
 }

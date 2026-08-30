@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useAuth } from "@/services/iam/hooks/useAuth";
 import { authApi } from "@/services/iam/api/auth.api";
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/lib/i18n/context";
 import { toast } from "sonner";
 import {
   Settings,
@@ -22,6 +23,7 @@ import {
 } from "lucide-react";
 
 export function SettingsView() {
+  const { t } = useI18n();
   const { user, tenant } = useAuth();
   const [apiKey, setApiKey] = useState<string>("hide_live_984f8812a3b04c89b27658df2026");
   const [showKey, setShowKey] = useState(false);
@@ -41,19 +43,19 @@ export function SettingsView() {
 
   const handleCopyKey = () => {
     navigator.clipboard.writeText(apiKey);
-    toast.success("API Key disalin ke clipboard.");
+    toast.success(t("settings.keyCopied"));
   };
 
   const handleRegenerateKey = async () => {
-    if (confirm("Apakah Anda yakin ingin membuat ulang API Key? Token lama tidak akan bisa digunakan lagi.")) {
+    if (confirm(t("settings.apiKeyDesc"))) {
       setIsKeyLoading(true);
       try {
         const res = await authApi.generateApiKey();
         setApiKey(res.token || "hide_live_" + Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2));
-        toast.success("API Key baru berhasil diterbitkan.");
+        toast.success(t("settings.keyRegenerated"));
       } catch {
         setApiKey("hide_live_" + Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2));
-        toast.success("API Key baru berhasil diterbitkan.");
+        toast.success(t("settings.keyRegenerated"));
       } finally {
         setIsKeyLoading(false);
       }

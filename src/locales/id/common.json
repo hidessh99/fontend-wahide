@@ -109,5 +109,33 @@
   "theme": {
     "light": "Terang",
     "dark": "Gelap"
+  },
+  "errorBoundary": {
+    "defaultTitle": "Komponen Mengalami Kendala",
+    "defaultDesc": "Terjadi kesalahan yang tidak terduga saat memuat bagian modul ini. Data Anda tetap aman.",
+    "retryBtn": "Coba Muat Ulang",
+    "reportDesc": "Jika kendala terus berlanjut, hubungi tim dukungan teknis."
+  },
+  "settings": {
+    "title": "Pengaturan & Integrasi API",
+    "subtitle": "Kelola profil akun bisnis Anda, manajemen sesi perangkat, dan integrasi API Key.",
+    "tabProfile": "Profil Akun",
+    "tabSecurity": "Sesi Login & Keamanan",
+    "tabApiKey": "API Key Fast-Path",
+    "profileName": "Nama Lengkap",
+    "profileEmail": "Email Terdaftar",
+    "profilePhone": "Nomor WhatsApp Kontak",
+    "saveProfile": "Simpan Perubahan Profil",
+    "profileSaved": "Profil berhasil diperbarui.",
+    "activeSessions": "Sesi Login & Perangkat Aktif",
+    "activeSessionsDesc": "Daftar perangkat yang saat ini memiliki akses sesi aktif ke akun Anda.",
+    "terminateAll": "Keluar dari Semua Perangkat Lain",
+    "sessionsTerminated": "Semua sesi lain berhasil dihentikan.",
+    "apiKeyTitle": "Token API Gateway Pengiriman Cepat",
+    "apiKeyDesc": "Gunakan API key ini untuk mengintegrasikan pengiriman WhatsApp langsung dari backend eksternal Anda.",
+    "copyKey": "Salin Token",
+    "keyCopied": "API Key berhasil disalin ke clipboard!",
+    "regenerateKey": "Regenerasi Token Baru",
+    "keyRegenerated": "Token API baru berhasil dibuat."
   }
 }

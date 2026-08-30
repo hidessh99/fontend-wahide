@@ -53,8 +53,8 @@ export function TeamView() {
     }
   };
 
-  const handleDelete = async (id: string, agentName: string) => {
-    if (confirm(`Apakah Anda yakin ingin menonaktifkan agen ${agentName}?`)) {
+  const handleDelete = async (id: string) => {
+    if (confirm(t("team.deleteAgentConfirm"))) {
       await deleteAgent(id);
     }
   };
@@ -142,14 +142,14 @@ export function TeamView() {
                   {/* Devices */}
                   <div className="hidden sm:flex sm:col-span-2 items-center justify-center gap-1 font-mono text-[11px] text-foreground-secondary">
                     <Smartphone className="size-3.5 text-foreground-muted" />
-                    <span>{agt.assignedDevicesCount} Device</span>
+                    <span>{agt.assignedDevicesCount} Slot</span>
                   </div>
 
                   {/* Status */}
                   <div className="col-span-3 sm:col-span-1 flex justify-center">
                     <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
                       <CheckCircle2 className="size-3" />
-                      <span className="hidden sm:inline">Aktif</span>
+                      <span className="hidden sm:inline">{t("team.statusActive")}</span>
                     </span>
                   </div>
 
@@ -157,9 +157,9 @@ export function TeamView() {
                   <div className="col-span-2 sm:col-span-1 flex justify-end">
                     <button
                       type="button"
-                      onClick={() => handleDelete(agt.id, agt.name)}
+                      onClick={() => handleDelete(agt.id)}
                       className="size-7 rounded-full flex items-center justify-center text-foreground-muted hover:text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"
-                      aria-label={`Hapus ${agt.name}`}
+                      aria-label={`${t("actions.delete")} ${agt.name}`}
                     >
                       <Trash2 className="size-3.5" />
                     </button>

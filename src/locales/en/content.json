@@ -1,0 +1,13 @@
+{
+  "badge": "Articles & Engineering Docs",
+  "title": "Wahide Blog & Engineering Guides",
+  "subtitle": "Learn about WhatsApp multi-device architecture, anti-ban techniques, and enterprise webhook integrations.",
+  "readArticle": "Read",
+  "backToBlog": "Back to Blog",
+  "shareArticle": "Share",
+  "shareSuccess": "Article link copied to clipboard.",
+  "notFoundTitle": "Article Not Found",
+  "notFoundDesc": "The article you are looking for may have been moved or deleted.",
+  "publishedOn": "Published on",
+  "byAuthor": "By"
+}

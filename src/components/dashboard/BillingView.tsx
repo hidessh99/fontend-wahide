@@ -46,28 +46,28 @@ export function BillingView() {
       <div className="p-5 rounded-md border border-border bg-surface dark:bg-[#161715] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-0.5">
           <span className="text-xs font-bold uppercase tracking-wider text-foreground-muted">
-            Komisi Afiliasi / Seller Pending
+            {t("billing.affiliateTitle")}
           </span>
           <div className="flex items-baseline gap-2">
             <span className="text-xl font-black text-foreground">
               Rp 1.450.000
             </span>
             <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
-              (3 Transaksi Referral Terverifikasi)
+              {t("billing.affiliateVerified", { count: 3 })}
             </span>
           </div>
           <p className="text-[11px] font-semibold text-foreground-secondary">
-            Komisi referral otomatis dicairkan ke saldo deposit setiap tanggal 1.
+            {t("billing.affiliateDesc")}
           </p>
         </div>
 
         <Button
           variant="outline"
           size="sm"
-          onClick={() => alert("Komisi akan ditransfer otomatis pada siklus pembayaran berikutnya.")}
+          onClick={() => alert(t("billing.affiliateAlert"))}
           className="rounded-full text-xs font-bold border-border self-start sm:self-auto"
         >
-          Rincian Komisi
+          {t("billing.affiliateDetailsBtn")}
         </Button>
       </div>
 

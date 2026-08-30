@@ -31,5 +31,14 @@
   "submittingTopUp": "Menyiapkan Transaksi...",
   "cancel": "Batal",
   "toastTopUpSuccess": "Instruksi pembayaran faktur telah diterbitkan.",
-  "toastInvoiceDownloaded": "Faktur berhasil diunduh."
+  "toastInvoiceDownloaded": "Faktur berhasil diunduh.",
+  "voucherLabel": "Kode Voucher Promo (Opsional)",
+  "voucherPlaceholder": "Contoh: WAHIDE2026",
+  "voucherApplyBtn": "Gunakan",
+  "voucherSuccess": "Kupon diskon 15% berhasil diterapkan!",
+  "affiliateTitle": "Komisi Afiliasi / Seller Pending",
+  "affiliateVerified": "({count} Transaksi Referral Terverifikasi)",
+  "affiliateDesc": "Komisi referral otomatis dicairkan ke saldo deposit setiap tanggal 1.",
+  "affiliateDetailsBtn": "Rincian Komisi",
+  "affiliateAlert": "Komisi akan ditransfer otomatis pada siklus pembayaran berikutnya."
 }

@@ -57,5 +57,20 @@
   "toastCreated": "Broadcast campaign scheduled into delivery queue.",
   "toastPaused": "Campaign paused successfully.",
   "toastResumed": "Campaign resumed.",
-  "toastCancelled": "Campaign cancelled successfully."
+  "toastCancelled": "Campaign cancelled successfully.",
+  "tabCampaigns": "Campaign List",
+  "tabLogs": "Delivered Message Logs",
+  "logsTitle": "Broadcast Message Audit Logs",
+  "logsSubtitle": "Real-time delivery status and logs per recipient.",
+  "searchLogsPlaceholder": "Search by recipient phone or name...",
+  "filterAllStatus": "All Statuses",
+  "statusRead": "Read",
+  "statusDelivered": "Delivered",
+  "statusSent": "Queued",
+  "statusFailed": "Failed",
+  "tableHeaderRecipient": "Recipient",
+  "tableHeaderCampaign": "Campaign",
+  "tableHeaderMessage": "Message Snippet",
+  "tableHeaderStatusTime": "Status & Time",
+  "unnamedRecipient": "Unnamed"
 }

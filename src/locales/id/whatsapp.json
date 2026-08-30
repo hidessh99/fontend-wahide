@@ -53,5 +53,18 @@
   "toastDisconnected": "Sesi WhatsApp berhasil diputuskan.",
   "toastHibernated": "Sesi perangkat berhasil dihibernasi (hemat memori).",
   "toastWoken": "Sesi perangkat berhasil dibangunkan.",
-  "toastPairingSuccess": "Perangkat WhatsApp '{name}' berhasil terhubung!"
+  "toastPairingSuccess": "Perangkat WhatsApp '{name}' berhasil terhubung!",
+  "fastSendBtn": "Kirim Pesan Instan",
+  "fastSendTitle": "Kirim Pesan WhatsApp Cepat",
+  "fastSendSubtitle": "Kirim pesan teks langsung atau tes koneksi gateway secara instan.",
+  "selectSenderDevice": "Pilih Perangkat Pengirim",
+  "recipientPhoneLabel": "Nomor WhatsApp Tujuan",
+  "recipientPhonePlaceholder": "Contoh: 6281234567890",
+  "recipientPhoneHint": "Gunakan kode negara tanpa spasi atau simbol (misal: 62812xxx).",
+  "messageTextLabel": "Isi Pesan",
+  "messageTextPlaceholder": "Ketik pesan WhatsApp yang ingin dikirimkan...",
+  "submitSend": "Kirim Sekarang",
+  "submittingSend": "Mengirimkan Pesan...",
+  "sendSuccess": "Pesan WhatsApp berhasil dikirim!",
+  "noConnectedDevices": "Tidak ada perangkat yang terhubung. Silakan hubungkan perangkat terlebih dahulu."
 }

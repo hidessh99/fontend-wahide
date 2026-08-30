@@ -9,15 +9,25 @@ import idCommon from "@/locales/id/common.json";
 import idAuth from "@/locales/id/auth.json";
 import idWhatsapp from "@/locales/id/whatsapp.json";
 import idCampaign from "@/locales/id/campaign.json";
+import idContact from "@/locales/id/contact.json";
+import idSubscription from "@/locales/id/subscription.json";
 import idBilling from "@/locales/id/billing.json";
 import idSupport from "@/locales/id/support.json";
+import idTeam from "@/locales/id/team.json";
+import idAdmin from "@/locales/id/admin.json";
+import idContent from "@/locales/id/content.json";
 
 import enCommon from "@/locales/en/common.json";
 import enAuth from "@/locales/en/auth.json";
 import enWhatsapp from "@/locales/en/whatsapp.json";
 import enCampaign from "@/locales/en/campaign.json";
+import enContact from "@/locales/en/contact.json";
+import enSubscription from "@/locales/en/subscription.json";
 import enBilling from "@/locales/en/billing.json";
 import enSupport from "@/locales/en/support.json";
+import enTeam from "@/locales/en/team.json";
+import enAdmin from "@/locales/en/admin.json";
+import enContent from "@/locales/en/content.json";
 
 const dictionaries: Record<Locale, Record<string, unknown>> = {
   id: {
@@ -25,16 +35,26 @@ const dictionaries: Record<Locale, Record<string, unknown>> = {
     auth: idAuth,
     whatsapp: idWhatsapp,
     campaign: idCampaign,
+    contact: idContact,
+    subscription: idSubscription,
     billing: idBilling,
     support: idSupport,
+    team: idTeam,
+    admin: idAdmin,
+    content: idContent,
   },
   en: {
     common: enCommon,
     auth: enAuth,
     whatsapp: enWhatsapp,
     campaign: enCampaign,
+    contact: enContact,
+    subscription: enSubscription,
     billing: enBilling,
     support: enSupport,
+    team: enTeam,
+    admin: enAdmin,
+    content: enContent,
   },
 };
 

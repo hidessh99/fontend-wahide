@@ -41,7 +41,7 @@ export function CampaignsView() {
             }`}
           >
             <Layers className="size-3.5" />
-            <span>Daftar Kampanye</span>
+            <span>{t("campaign.tabCampaigns")}</span>
           </button>
           <button
             type="button"
@@ -53,7 +53,7 @@ export function CampaignsView() {
             }`}
           >
             <ListChecks className="size-3.5" />
-            <span>Log Pesan Terkirim</span>
+            <span>{t("campaign.tabLogs")}</span>
           </button>
         </div>
       </div>

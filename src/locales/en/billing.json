@@ -31,5 +31,14 @@
   "submittingTopUp": "Preparing Checkout...",
   "cancel": "Cancel",
   "toastTopUpSuccess": "Payment invoice instructions issued successfully.",
-  "toastInvoiceDownloaded": "Invoice downloaded successfully."
+  "toastInvoiceDownloaded": "Invoice downloaded successfully.",
+  "voucherLabel": "Promo Voucher Code (Optional)",
+  "voucherPlaceholder": "e.g. WAHIDE2026",
+  "voucherApplyBtn": "Apply",
+  "voucherSuccess": "15% discount coupon applied successfully!",
+  "affiliateTitle": "Pending Seller / Affiliate Commission",
+  "affiliateVerified": "({count} Verified Referral Transactions)",
+  "affiliateDesc": "Referral commissions are automatically credited to your deposit balance on the 1st of each month.",
+  "affiliateDetailsBtn": "Commission Details",
+  "affiliateAlert": "Commissions will be transferred automatically during the next payout cycle."
 }

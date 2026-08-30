@@ -53,5 +53,18 @@
   "toastDisconnected": "WhatsApp session disconnected successfully.",
   "toastHibernated": "Device session hibernated (memory-saving mode).",
   "toastWoken": "Device session resumed successfully.",
-  "toastPairingSuccess": "WhatsApp device '{name}' connected successfully!"
+  "toastPairingSuccess": "WhatsApp device '{name}' connected successfully!",
+  "fastSendBtn": "Instant Fast-Send",
+  "fastSendTitle": "Send Instant WhatsApp Message",
+  "fastSendSubtitle": "Send a direct message or quickly test your gateway connectivity.",
+  "selectSenderDevice": "Select Sending Device",
+  "recipientPhoneLabel": "Destination WhatsApp Number",
+  "recipientPhonePlaceholder": "e.g. 6281234567890",
+  "recipientPhoneHint": "Use country code without spaces or symbols (e.g., 62812xxx).",
+  "messageTextLabel": "Message Body",
+  "messageTextPlaceholder": "Type the WhatsApp message you want to deliver...",
+  "submitSend": "Send Now",
+  "submittingSend": "Sending Message...",
+  "sendSuccess": "WhatsApp message delivered successfully!",
+  "noConnectedDevices": "No devices connected. Please link a WhatsApp device first."
 }

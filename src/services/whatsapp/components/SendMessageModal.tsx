@@ -5,6 +5,7 @@ import { Device } from "../types/whatsapp.types";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { X, Send, Loader2 } from "lucide-react";
+import { useI18n } from "@/lib/i18n/context";
 
 interface SendMessageModalProps {
   devices: Device[];
@@ -17,6 +18,7 @@ export function SendMessageModal({
   isOpen,
   onClose,
 }: SendMessageModalProps) {
+  const { t } = useI18n();
   const connectedDevices = devices.filter((d) => d.status === "CONNECTED");
   const [selectedDeviceId, setSelectedDeviceId] = useState<string>(
     connectedDevices[0]?.id || ""
@@ -30,7 +32,7 @@ export function SendMessageModal({
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!recipient.trim() || !message.trim()) {
-      toast.error("Nomor tujuan dan isi pesan wajib diisi.");
+      toast.error(t("whatsapp.recipientPhoneHint"));
       return;
     }
 
@@ -38,12 +40,12 @@ export function SendMessageModal({
     try {
       // Simulate API call to POST /api/v1/wa/messages/send
       await new Promise((res) => setTimeout(res, 600));
-      toast.success(`Pesan instan berhasil dikirim ke +${recipient.replace(/[^0-9]/g, "")}`);
+      toast.success(t("whatsapp.sendSuccess"));
       setRecipient("");
       setMessage("");
       onClose();
     } catch {
-      toast.error("Gagal mengirim pesan");
+      toast.error(t("whatsapp.qrError"));
     } finally {
       setIsSending(false);
     }
@@ -60,10 +62,10 @@ export function SendMessageModal({
             </div>
             <div>
               <h2 className="text-lg sm:text-xl font-black text-foreground tracking-tight">
-                Kirim Pesan Instan WhatsApp
+                {t("whatsapp.fastSendTitle")}
               </h2>
               <p className="text-xs font-semibold text-foreground-secondary">
-                Kirim pesan teks cepat atau tes koneksi gateway secara langsung.
+                {t("whatsapp.fastSendSubtitle")}
               </p>
             </div>
           </div>
@@ -72,7 +74,7 @@ export function SendMessageModal({
             type="button"
             onClick={onClose}
             className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
-            aria-label="Tutup"
+            aria-label={t("whatsapp.qrClose")}
           >
             <X className="size-4" />
           </button>
@@ -82,25 +84,29 @@ export function SendMessageModal({
           {/* Select Device */}
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
-              Pilih Node Perangkat Pengirim
+              {t("whatsapp.selectSenderDevice")}
             </label>
             <select
               value={selectedDeviceId}
               onChange={(e) => setSelectedDeviceId(e.target.value)}
               className="w-full h-10 px-3 rounded-md bg-surface dark:bg-[#10110e] text-foreground text-xs font-semibold border border-border outline-none focus:border-wise-green"
             >
-              {connectedDevices.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.name} (+{d.phone || "Unknown"})
-                </option>
-              ))}
+              {connectedDevices.length === 0 ? (
+                <option value="">{t("whatsapp.noConnectedDevices")}</option>
+              ) : (
+                connectedDevices.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.name} (+{d.phone || "Unknown"})
+                  </option>
+                ))
+              )}
             </select>
           </div>
 
           {/* Recipient Phone */}
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
-              Nomor WhatsApp Tujuan
+              {t("whatsapp.recipientPhoneLabel")}
             </label>
             <div className="relative">
               <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-mono font-bold text-foreground-muted">
@@ -111,23 +117,26 @@ export function SendMessageModal({
                 required
                 value={recipient}
                 onChange={(e) => setRecipient(e.target.value)}
-                placeholder="6281234567890"
+                placeholder={t("whatsapp.recipientPhonePlaceholder")}
                 className="w-full h-10 pl-8 pr-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs font-mono"
               />
             </div>
+            <p className="text-[11px] font-medium text-foreground-muted mt-1">
+              {t("whatsapp.recipientPhoneHint")}
+            </p>
           </div>
 
           {/* Message Text */}
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
-              Isi Pesan WhatsApp
+              {t("whatsapp.messageTextLabel")}
             </label>
             <textarea
               rows={4}
               required
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="Tulis pesan instan di sini..."
+              placeholder={t("whatsapp.messageTextPlaceholder")}
               className="w-full p-3 rounded-md bg-surface dark:bg-[#10110e] text-foreground font-semibold text-xs border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition leading-relaxed"
             />
           </div>
@@ -142,7 +151,7 @@ export function SendMessageModal({
               disabled={isSending}
               className="rounded-full text-xs font-bold px-4 border-border hover:border-foreground-muted"
             >
-              Batal
+              {t("whatsapp.cancel")}
             </Button>
             <Button
               type="submit"
@@ -154,12 +163,12 @@ export function SendMessageModal({
               {isSending ? (
                 <>
                   <Loader2 className="size-3.5 animate-spin" />
-                  <span>Mengirim...</span>
+                  <span>{t("whatsapp.submittingSend")}</span>
                 </>
               ) : (
                 <>
                   <Send className="size-3.5" />
-                  <span>Kirim Pesan</span>
+                  <span>{t("whatsapp.submitSend")}</span>
                 </>
               )}
             </Button>

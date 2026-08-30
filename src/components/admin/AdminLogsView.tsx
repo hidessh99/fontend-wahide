@@ -2,9 +2,11 @@
 
 import React from "react";
 import { AuditLogsTable } from "@/services/admin/components/AuditLogsTable";
+import { useI18n } from "@/lib/i18n/context";
 import { ShieldCheck } from "lucide-react";
 
 export function AdminLogsView() {
+  const { t } = useI18n();
   return (
     <div className="space-y-8 max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
       <div className="flex items-center gap-2.5 border-b border-border pb-4">
@@ -12,9 +14,9 @@ export function AdminLogsView() {
           <ShieldCheck className="size-5" />
         </div>
         <div>
-          <h1 className="text-2xl font-black text-foreground">Audit &amp; Keamanan Sistem</h1>
+          <h1 className="text-2xl font-black text-foreground">{t("admin.logsTitle")}</h1>
           <p className="text-xs font-semibold text-foreground-secondary">
-            Inspeksi log autentikasi, akses API, dan audit trail operasional server.
+            {t("admin.logsSubtitle")}
           </p>
         </div>
       </div>

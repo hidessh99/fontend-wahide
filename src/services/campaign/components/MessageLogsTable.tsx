@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Search, CheckCheck, Check, AlertCircle } from "lucide-react";
+import { useI18n } from "@/lib/i18n/context";
 
 export interface MessageLogItem {
   id: string;
@@ -46,6 +47,7 @@ const DEFAULT_LOGS: MessageLogItem[] = [
 ];
 
 export function MessageLogsTable() {
+  const { t } = useI18n();
   const [logs] = useState<MessageLogItem[]>(DEFAULT_LOGS);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
@@ -67,21 +69,21 @@ export function MessageLogsTable() {
         return (
           <span className="inline-flex items-center gap-1 text-[11px] font-bold text-sky-500">
             <CheckCheck className="size-3.5" />
-            <span>Dibaca</span>
+            <span>{t("campaign.statusRead")}</span>
           </span>
         );
       case "DELIVERED":
         return (
           <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
             <CheckCheck className="size-3.5" />
-            <span>Terkirim</span>
+            <span>{t("campaign.statusDelivered")}</span>
           </span>
         );
       case "FAILED":
         return (
           <span className="inline-flex items-center gap-1 text-[11px] font-bold text-rose-600 dark:text-rose-400">
             <AlertCircle className="size-3.5" />
-            <span>Gagal</span>
+            <span>{t("campaign.statusFailed")}</span>
           </span>
         );
       case "SENT":
@@ -89,7 +91,7 @@ export function MessageLogsTable() {
         return (
           <span className="inline-flex items-center gap-1 text-[11px] font-bold text-foreground-muted">
             <Check className="size-3.5" />
-            <span>Diproses</span>
+            <span>{t("campaign.statusSent")}</span>
           </span>
         );
     }
@@ -105,7 +107,7 @@ export function MessageLogsTable() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Cari nomor atau nama penerima..."
+            placeholder={t("campaign.searchLogsPlaceholder")}
             className="w-full h-10 pl-10 pr-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs"
           />
         </div>
@@ -116,10 +118,10 @@ export function MessageLogsTable() {
             onChange={(e) => setStatusFilter(e.target.value)}
             className="h-10 px-3 rounded-full bg-surface dark:bg-[#10110e] text-foreground text-xs font-semibold border border-border outline-none focus:border-wise-green"
           >
-            <option value="ALL">Semua Status</option>
-            <option value="READ">Dibaca</option>
-            <option value="DELIVERED">Terkirim</option>
-            <option value="FAILED">Gagal</option>
+            <option value="ALL">{t("campaign.filterAllStatus")}</option>
+            <option value="READ">{t("campaign.statusRead")}</option>
+            <option value="DELIVERED">{t("campaign.statusDelivered")}</option>
+            <option value="FAILED">{t("campaign.statusFailed")}</option>
           </select>
         </div>
       </div>
@@ -127,10 +129,10 @@ export function MessageLogsTable() {
       {/* Logs Table */}
       <div className="rounded-md border border-border bg-surface dark:bg-[#161715] overflow-hidden shadow-sm">
         <div className="grid grid-cols-12 gap-3 px-5 py-3.5 bg-muted/60 border-b border-border text-xs font-bold uppercase tracking-wider text-foreground-muted select-none">
-          <div className="col-span-4 sm:col-span-3">Penerima</div>
-          <div className="hidden sm:block sm:col-span-3">Kampanye</div>
-          <div className="col-span-5 sm:col-span-4">Cuplikan Pesan</div>
-          <div className="col-span-3 sm:col-span-2 text-right">Status &amp; Waktu</div>
+          <div className="col-span-4 sm:col-span-3">{t("campaign.tableHeaderRecipient")}</div>
+          <div className="hidden sm:block sm:col-span-3">{t("campaign.tableHeaderCampaign")}</div>
+          <div className="col-span-5 sm:col-span-4">{t("campaign.tableHeaderMessage")}</div>
+          <div className="col-span-3 sm:col-span-2 text-right">{t("campaign.tableHeaderStatusTime")}</div>
         </div>
 
         <div className="divide-y divide-border/50 text-xs font-semibold">
@@ -142,7 +144,7 @@ export function MessageLogsTable() {
               {/* Recipient */}
               <div className="col-span-4 sm:col-span-3 space-y-0.5">
                 <span className="font-bold text-foreground block truncate">
-                  {log.recipientName || "Tanpa Nama"}
+                  {log.recipientName || t("campaign.unnamedRecipient")}
                 </span>
                 <span className="text-[11px] text-foreground-muted font-mono block">
                   +{log.recipientPhone}

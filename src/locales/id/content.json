@@ -1,0 +1,13 @@
+{
+  "badge": "Artikel & Dokumentasi Teknis",
+  "title": "Blog & Panduan Rekayasa Wahide",
+  "subtitle": "Pelajari arsitektur WhatsApp multi-device, teknik anti-ban, dan integrasi webhook enterprise.",
+  "readArticle": "Baca",
+  "backToBlog": "Kembali ke Blog",
+  "shareArticle": "Bagikan",
+  "shareSuccess": "Link artikel disalin ke clipboard.",
+  "notFoundTitle": "Artikel Tidak Ditemukan",
+  "notFoundDesc": "Artikel yang Anda cari mungkin telah dipindahkan atau dihapus.",
+  "publishedOn": "Diterbitkan pada",
+  "byAuthor": "Oleh"
+}

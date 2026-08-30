@@ -2,9 +2,11 @@
 
 import React from "react";
 import { PlansManagementTable } from "@/services/admin/components/PlansManagementTable";
+import { useI18n } from "@/lib/i18n/context";
 import { CreditCard } from "lucide-react";
 
 export function AdminPlansView() {
+  const { t } = useI18n();
   return (
     <div className="space-y-8 max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
       <div className="flex items-center gap-2.5 border-b border-border pb-4">
@@ -12,9 +14,9 @@ export function AdminPlansView() {
           <CreditCard className="size-5" />
         </div>
         <div>
-          <h1 className="text-2xl font-black text-foreground">Kelola Paket &amp; Kuota</h1>
+          <h1 className="text-2xl font-black text-foreground">{t("admin.plansTitle")}</h1>
           <p className="text-xs font-semibold text-foreground-secondary">
-            Pengaturan batasan tiering langganan platform Wahide SaaS.
+            {t("admin.plansSubtitle")}
           </p>
         </div>
       </div>

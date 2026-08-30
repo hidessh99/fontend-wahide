@@ -57,5 +57,20 @@
   "toastCreated": "Kampanye broadcast berhasil dijadwalkan ke antrean pengiriman.",
   "toastPaused": "Kampanye berhasil dijeda.",
   "toastResumed": "Kampanye dilanjutkan.",
-  "toastCancelled": "Kampanye berhasil dibatalkan."
+  "toastCancelled": "Kampanye berhasil dibatalkan.",
+  "tabCampaigns": "Daftar Kampanye",
+  "tabLogs": "Log Pesan Terkirim",
+  "logsTitle": "Audit Log Pengiriman Pesan",
+  "logsSubtitle": "Catatan real-time status pengiriman pesan WhatsApp per penerima.",
+  "searchLogsPlaceholder": "Cari nomor atau nama penerima...",
+  "filterAllStatus": "Semua Status",
+  "statusRead": "Dibaca",
+  "statusDelivered": "Terkirim",
+  "statusSent": "Diproses",
+  "statusFailed": "Gagal",
+  "tableHeaderRecipient": "Penerima",
+  "tableHeaderCampaign": "Kampanye",
+  "tableHeaderMessage": "Cuplikan Pesan",
+  "tableHeaderStatusTime": "Status & Waktu",
+  "unnamedRecipient": "Tanpa Nama"
 }

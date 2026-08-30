@@ -145,22 +145,22 @@ export function TopUpModal({ isOpen, onClose, onSubmit }: TopUpModalProps) {
           {/* Voucher Code (POST /api/v1/vouchers/validate) */}
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
-              Kode Voucher Promo (Opsional)
+              {t("billing.voucherLabel")}
             </label>
             <div className="flex gap-2">
               <input
                 type="text"
-                placeholder="Contoh: WAHIDE2026"
+                placeholder={t("billing.voucherPlaceholder")}
                 className="flex-1 h-10 px-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs font-mono uppercase"
               />
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => toast.success("Kupon diskon 15% berhasil diterapkan!")}
+                onClick={() => toast.success(t("billing.voucherSuccess"))}
                 className="rounded-full text-xs font-bold px-4 border-border"
               >
-                Gunakan
+                {t("billing.voucherApplyBtn")}
               </Button>
             </div>
           </div>
