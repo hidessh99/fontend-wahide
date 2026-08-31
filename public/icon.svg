@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#141c28"/>
+      <stop offset="100%" stop-color="#080c14"/>
+    </radialGradient>
+
+    <!-- Cyan Shield Gradient -->
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f5ff"/>
+      <stop offset="40%" stop-color="#00d2ff"/>
+      <stop offset="100%" stop-color="#0072ff"/>
+    </linearGradient>
+
+    <!-- Glowing Cyan Filter -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Dark Rounded Container -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)"/>
+  <rect width="504" height="504" x="4" y="4" rx="108" fill="none" stroke="#00f5ff" stroke-opacity="0.25" stroke-width="3"/>
+
+  <!-- Inverted Triangle Badge -->
+  <polygon points="96,120 416,120 256,432" fill="url(#shieldGrad)" filter="url(#glow)"/>
+  <polygon points="106,126 406,126 256,420" fill="url(#shieldGrad)"/>
+
+  <!-- Stealth Walking Silhouette Figure -->
+  <g fill="#0c121e">
+    <!-- Head & Cap -->
+    <circle cx="264" cy="180" r="16"/>
+    <path d="M252,176 C256,168 274,166 280,172 C284,176 280,184 274,186 Z"/>
+
+    <!-- Body Torso -->
+    <path d="M256,198 C266,198 274,204 276,218 L280,268 C280,274 276,280 268,282 L260,284 L252,246 L244,282 C240,278 238,272 240,264 L244,216 C246,204 250,198 256,198 Z"/>
+
+    <!-- Arms & Stride Motion -->
+    <path d="M276,218 L296,248 C298,252 296,256 292,258 L284,260 L274,236 Z"/>
+    <path d="M246,218 L232,244 C230,248 232,254 236,256 L244,256 L250,232 Z"/>
+
+    <!-- Legs Walking Forward Stride -->
+    <!-- Forward Leg (Right) -->
+    <path d="M266,280 L292,342 C294,348 296,354 302,358 L312,364 C316,366 314,372 308,372 L288,370 C282,370 280,364 278,358 L258,300 Z"/>
+    
+    <!-- Trailing Leg (Left) -->
+    <path d="M248,280 L226,334 C222,342 216,350 210,356 L200,364 C196,368 194,364 196,360 L208,344 C214,336 220,324 228,300 Z"/>
+
+    <!-- Dissolving Digital Data Pixels / Bubbles on Trailing Side -->
+    <rect x="214" y="196" width="10" height="10" rx="2"/>
+    <rect x="198" y="210" width="8" height="8" rx="1.5"/>
+    <rect x="224" y="218" width="7" height="7" rx="1.5"/>
+    <rect x="186" y="226" width="10" height="10" rx="2"/>
+    <rect x="204" y="238" width="9" height="9" rx="2"/>
+    <rect x="174" y="244" width="7" height="7" rx="1.5"/>
+    <rect x="192" y="254" width="11" height="11" rx="2.5"/>
+    <rect x="212" y="266" width="8" height="8" rx="1.5"/>
+    <rect x="166" y="270" width="9" height="9" rx="2"/>
+    <rect x="180" y="282" width="10" height="10" rx="2"/>
+    <rect x="198" y="296" width="7" height="7" rx="1.5"/>
+    <rect x="160" y="298" width="8" height="8" rx="1.5"/>
+    <rect x="174" y="312" width="11" height="11" rx="2.5"/>
+    <rect x="188" y="328" width="9" height="9" rx="2"/>
+    <rect x="152" y="324" width="7" height="7" rx="1.5"/>
+    <rect x="166" y="342" width="8" height="8" rx="1.5"/>
+
+    <!-- Small Data Micro-Dots -->
+    <circle cx="218" cy="180" r="3.5"/>
+    <circle cx="192" cy="198" r="3"/>
+    <circle cx="178" cy="214" r="4"/>
+    <circle cx="160" cy="236" r="3.5"/>
+    <circle cx="148" cy="262" r="4"/>
+    <circle cx="140" cy="288" r="3"/>
+    <circle cx="154" cy="360" r="3.5"/>
+    <circle cx="176" cy="370" r="4"/>
+  </g>
+</svg>

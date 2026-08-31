@@ -57,3 +57,6 @@ Dokumen perencanaan arsitektur dan kesiapan produksi untuk frontend **Wahide (`f
 
 13. **[Public Footer Overhaul & Postman API Plan](./public_footer_overhaul_and_postman_api_plan.md)**
     - **Pembaruan Footer & Tautan Postman API**: Memperbarui identitas operasional *Hide Digital Security*, email, jam operasional fast-response, menautkan dokumentasi Postman API resmi, serta merapikan link Developer dan Legal.
+
+14. **[Hero Subtitle Enterprise Copywriting Plan](./hero_subtitle_enterprise_copywriting_plan.md)**
+    - **Penyelarasan Copywriting Hero Subtitle**: Mengubah teks deskripsi utama landing page untuk fokus pada fitur ekosistem WhatsApp bisnis (chatbot, CS multi-agent, notifikasi otomatis, blast massal, media file, & buku kontak).

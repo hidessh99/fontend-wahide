@@ -2,8 +2,8 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { parseSpintax } from "@/lib/utils";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn, parseSpintax } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n/context";
 import { MessageSimulator } from "./MessageSimulator";
 import { ApiCodeSandbox } from "./ApiCodeSandbox";
@@ -61,16 +61,24 @@ export function HomeView() {
           </p>
 
           <div className="flex flex-wrap items-center gap-4 pt-2">
-            <Link href="/register">
-              <Button variant="primaryPill" size="default" className="text-sm sm:text-base font-bold gap-3 px-7 py-6 shadow-sm">
-                <span>{t("common.hero.ctaTrial")}</span>
-                <ArrowRight className="size-4" />
-              </Button>
+            <Link
+              href="/register"
+              className={cn(
+                buttonVariants({ variant: "primaryPill", size: "default" }),
+                "text-sm sm:text-base font-bold gap-3 px-7 py-6 shadow-sm min-h-12"
+              )}
+            >
+              <span>{t("common.hero.ctaTrial")}</span>
+              <ArrowRight className="size-4" />
             </Link>
-            <Link href="/login">
-              <Button variant="outline" size="default" className="rounded-full text-sm sm:text-base font-bold px-7 py-6 border-border hover:border-foreground-muted">
-                {t("common.hero.ctaLogin")}
-              </Button>
+            <Link
+              href="/login"
+              className={cn(
+                buttonVariants({ variant: "outline", size: "default" }),
+                "rounded-full text-sm sm:text-base font-bold px-7 py-6 border-border hover:border-foreground-muted min-h-12"
+              )}
+            >
+              {t("common.hero.ctaLogin")}
             </Link>
           </div>
 
@@ -102,26 +110,26 @@ export function HomeView() {
 
           <div className="rounded-md bg-surface dark:bg-[#161715] p-6 border border-border shadow-xs space-y-1">
             <p className="text-xs font-semibold text-foreground-muted uppercase tracking-wider">{t("common.metrics.antiBan")}</p>
-            <p className="text-3xl sm:text-4xl font-black text-foreground font-mono">5 Lapis</p>
+            <p className="text-3xl sm:text-4xl font-black text-dark-green dark:text-wise-green font-mono">5-Layer</p>
             <p className="text-xs font-semibold text-foreground-secondary">{t("common.metrics.antiBanDesc")}</p>
           </div>
         </div>
       </section>
 
-      {/* 2. Interactive WhatsApp Message Simulator */}
+      {/* 2. Interactive WhatsApp Simulator Showcase */}
       <section className="px-6 max-w-7xl mx-auto">
         <MessageSimulator />
       </section>
 
-      {/* 3. Spintax Playground Section */}
-      <section id="spintax" className="py-16 bg-surface dark:bg-[#161715] border-y border-border px-6">
-        <div className="max-w-4xl mx-auto space-y-8">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 rounded-full bg-wise-green/20 dark:bg-wise-green/15 px-3 py-1 text-xs font-bold text-dark-green dark:text-wise-green">
+      {/* 3. Spintax Anti-Ban Engine Section */}
+      <section id="spintax" className="px-6 max-w-7xl mx-auto">
+        <div className="p-8 sm:p-12 rounded-lg border border-border bg-surface dark:bg-[#161715] space-y-8 shadow-sm">
+          <div className="space-y-2 max-w-2xl">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green">
               <Sparkles className="size-3.5" />
               <span>{t("common.spintaxSection.badge")}</span>
             </div>
-            <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-foreground">
+            <h2 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
               {t("common.spintaxSection.title")}
             </h2>
             <p className="text-xs sm:text-sm font-semibold text-foreground-secondary leading-relaxed">
@@ -131,10 +139,16 @@ export function HomeView() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-xs font-bold text-foreground-muted uppercase tracking-wider">
+              <label
+                htmlFor="spintax-template-input"
+                className="text-xs font-bold text-foreground-muted uppercase tracking-wider block"
+              >
                 {t("common.spintaxSection.templateLabel")}
               </label>
               <textarea
+                id="spintax-template-input"
+                name="spintaxTemplate"
+                aria-label={t("common.spintaxSection.templateLabel")}
                 value={spintaxInput}
                 onChange={(e) => setSpintaxInput(e.target.value)}
                 rows={4}
@@ -144,10 +158,17 @@ export function HomeView() {
 
             <div className="space-y-2 flex flex-col justify-between">
               <div className="space-y-2">
-                <label className="text-xs font-bold text-foreground-muted uppercase tracking-wider">
+                <label
+                  htmlFor="spintax-result-output"
+                  className="text-xs font-bold text-foreground-muted uppercase tracking-wider block"
+                >
                   {t("common.spintaxSection.resultLabel")}
                 </label>
-                <div className="rounded-md border border-border bg-background p-4 text-xs font-semibold text-foreground min-h-24 flex items-center">
+                <div
+                  id="spintax-result-output"
+                  aria-live="polite"
+                  className="rounded-md border border-border bg-background p-4 text-xs font-semibold text-foreground min-h-24 flex items-center"
+                >
                   &quot;{spintaxOutput}&quot;
                 </div>
               </div>
@@ -171,11 +192,11 @@ export function HomeView() {
         <ApiCodeSandbox />
       </section>
 
-      {/* 5. 9 Core Enterprise Features Matrix */}
-      <section id="features" className="py-12 px-6 max-w-7xl mx-auto space-y-12">
+      {/* 5. 9 Core Enterprise Features Grid */}
+      <section id="features" className="px-6 max-w-7xl mx-auto space-y-12">
         <div className="text-center space-y-3 max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green">
-            <Layers className="size-3.5" />
+            <Zap className="size-3.5" />
             <span>{t("common.landing.features.badge")}</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-black text-foreground tracking-tight">
@@ -188,86 +209,97 @@ export function HomeView() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
-            { title: t("common.landing.features.f1Title"), desc: t("common.landing.features.f1Desc"), icon: Zap },
-            { title: t("common.landing.features.f2Title"), desc: t("common.landing.features.f2Desc"), icon: Sliders },
-            { title: t("common.landing.features.f3Title"), desc: t("common.landing.features.f3Desc"), icon: Activity },
-            { title: t("common.landing.features.f4Title"), desc: t("common.landing.features.f4Desc"), icon: Bot },
-            { title: t("common.landing.features.f5Title"), desc: t("common.landing.features.f5Desc"), icon: FileSpreadsheet },
-            { title: t("common.landing.features.f6Title"), desc: t("common.landing.features.f6Desc"), icon: Clock },
-            { title: t("common.landing.features.f7Title"), desc: t("common.landing.features.f7Desc"), icon: Users },
-            { title: t("common.landing.features.f8Title"), desc: t("common.landing.features.f8Desc"), icon: CheckCircle2 },
-            { title: t("common.landing.features.f9Title"), desc: t("common.landing.features.f9Desc"), icon: Cpu },
-          ].map((item, idx) => {
-            const Icon = item.icon;
-            return (
-              <div
-                key={idx}
-                className="p-6 sm:p-8 rounded-lg border border-border bg-surface dark:bg-[#161715] space-y-3 hover:border-foreground-muted transition shadow-xs"
-              >
-                <div className="size-10 rounded-full bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center">
-                  <Icon className="size-5" />
-                </div>
-                <h3 className="text-base font-black text-foreground">{item.title}</h3>
-                <p className="text-xs font-semibold text-foreground-secondary leading-relaxed">
-                  {item.desc}
-                </p>
+            { icon: Cpu, title: t("common.landing.features.f1Title"), desc: t("common.landing.features.f1Desc") },
+            { icon: RefreshCw, title: t("common.landing.features.f2Title"), desc: t("common.landing.features.f2Desc") },
+            { icon: Activity, title: t("common.landing.features.f3Title"), desc: t("common.landing.features.f3Desc") },
+            { icon: Bot, title: t("common.landing.features.f4Title"), desc: t("common.landing.features.f4Desc") },
+            { icon: FileSpreadsheet, title: t("common.landing.features.f5Title"), desc: t("common.landing.features.f5Desc") },
+            { icon: Clock, title: t("common.landing.features.f6Title"), desc: t("common.landing.features.f6Desc") },
+            { icon: Users, title: t("common.landing.features.f7Title"), desc: t("common.landing.features.f7Desc") },
+            { icon: Layers, title: t("common.landing.features.f8Title"), desc: t("common.landing.features.f8Desc") },
+            { icon: Sliders, title: t("common.landing.features.f9Title"), desc: t("common.landing.features.f9Desc") },
+          ].map((feat, i) => (
+            <div
+              key={i}
+              className="p-6 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-3 hover:border-wise-green/50 transition duration-150 shadow-xs"
+            >
+              <div className="size-10 rounded-full bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center">
+                <feat.icon className="size-5" />
               </div>
-            );
-          })}
+              <h3 className="text-base font-bold text-foreground">{feat.title}</h3>
+              <p className="text-xs font-semibold text-foreground-secondary leading-relaxed">{feat.desc}</p>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* 6. Technical Comparison Table */}
-      <section id="architecture" className="py-16 bg-surface dark:bg-[#161715] border-y border-border px-6">
-        <div className="max-w-5xl mx-auto space-y-10">
-          <div className="text-center space-y-2">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green">
-              <Cpu className="size-3.5" />
-              <span>{t("common.landing.comparison.badge")}</span>
-            </div>
-            <h2 className="text-2xl sm:text-4xl font-black text-foreground tracking-tight">
-              {t("common.landing.comparison.title")}
-            </h2>
-            <p className="text-xs sm:text-sm font-semibold text-foreground-secondary">
-              {t("common.landing.comparison.subtitle")}
-            </p>
+      {/* 6. Technical Architecture Comparison Table */}
+      <section id="architecture" className="px-6 max-w-7xl mx-auto space-y-8">
+        <div className="text-center space-y-3 max-w-3xl mx-auto">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green">
+            <Layers className="size-3.5" />
+            <span>{t("common.landing.comparison.badge")}</span>
           </div>
+          <h2 className="text-3xl sm:text-4xl font-black text-foreground tracking-tight">
+            {t("common.landing.comparison.title")}
+          </h2>
+          <p className="text-xs sm:text-sm font-semibold text-foreground-secondary leading-relaxed">
+            {t("common.landing.comparison.subtitle")}
+          </p>
+        </div>
 
-          <div className="rounded-lg border border-border bg-background overflow-hidden shadow-sm">
-            <div className="grid grid-cols-12 gap-3 px-6 py-4 bg-muted/60 border-b border-border text-xs font-bold uppercase tracking-wider text-foreground-muted select-none">
-              <div className="col-span-5">{t("common.landing.comparison.colFeature")}</div>
-              <div className="col-span-4 text-dark-green dark:text-wise-green font-black">{t("common.landing.comparison.colWahide")}</div>
-              <div className="col-span-3 text-foreground-muted">{t("common.landing.comparison.colOthers")}</div>
-            </div>
-
-            <div className="divide-y divide-border/60 text-xs font-semibold">
-              {[
-                { f: t("common.landing.comparison.row1Feature"), w: t("common.landing.comparison.row1Wahide"), o: t("common.landing.comparison.row1Others"), ok: true },
-                { f: t("common.landing.comparison.row2Feature"), w: t("common.landing.comparison.row2Wahide"), o: t("common.landing.comparison.row2Others"), ok: true },
-                { f: t("common.landing.comparison.row3Feature"), w: t("common.landing.comparison.row3Wahide"), o: t("common.landing.comparison.row3Others"), ok: true },
-                { f: t("common.landing.comparison.row4Feature"), w: t("common.landing.comparison.row4Wahide"), o: t("common.landing.comparison.row4Others"), ok: true },
-                { f: t("common.landing.comparison.row5Feature"), w: t("common.landing.comparison.row5Wahide"), o: t("common.landing.comparison.row5Others"), ok: true },
-              ].map((row, idx) => (
-                <div key={idx} className="grid grid-cols-12 gap-3 px-6 py-4 items-center hover:bg-muted/20 transition">
-                  <div className="col-span-5 font-bold text-foreground">{row.f}</div>
-                  <div className="col-span-4 font-bold flex items-center gap-1.5 text-dark-green dark:text-wise-green">
-                    <Check className="size-4 shrink-0 text-dark-green dark:text-wise-green" />
-                    <span>{row.w}</span>
-                  </div>
-                  <div className="col-span-3 text-foreground-muted flex items-center gap-1.5">
-                    <X className="size-3.5 shrink-0 text-rose-500" />
-                    <span>{row.o}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+        <div className="overflow-x-auto rounded-lg border border-border bg-surface dark:bg-[#161715] shadow-xs">
+          <table className="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr className="border-b border-border bg-muted/40 text-foreground font-bold">
+                <th className="p-4 sm:p-5 w-1/3">{t("common.landing.comparison.colFeature")}</th>
+                <th className="p-4 sm:p-5 w-1/3 text-dark-green dark:text-wise-green font-black">{t("common.landing.comparison.colWahide")}</th>
+                <th className="p-4 sm:p-5 w-1/3 text-foreground-muted">{t("common.landing.comparison.colOthers")}</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border text-foreground-secondary font-semibold">
+              <tr>
+                <td className="p-4 sm:p-5 font-bold text-foreground">{t("common.landing.comparison.row1Feature")}</td>
+                <td className="p-4 sm:p-5 text-dark-green dark:text-wise-green font-bold bg-wise-green/5">{t("common.landing.comparison.row1Wahide")}</td>
+                <td className="p-4 sm:p-5 text-rose-500">{t("common.landing.comparison.row1Others")}</td>
+              </tr>
+              <tr>
+                <td className="p-4 sm:p-5 font-bold text-foreground">{t("common.landing.comparison.row2Feature")}</td>
+                <td className="p-4 sm:p-5 text-dark-green dark:text-wise-green font-bold bg-wise-green/5">{t("common.landing.comparison.row2Wahide")}</td>
+                <td className="p-4 sm:p-5">{t("common.landing.comparison.row2Others")}</td>
+              </tr>
+              <tr>
+                <td className="p-4 sm:p-5 font-bold text-foreground">{t("common.landing.comparison.row3Feature")}</td>
+                <td className="p-4 sm:p-5 text-dark-green dark:text-wise-green font-bold bg-wise-green/5">{t("common.landing.comparison.row3Wahide")}</td>
+                <td className="p-4 sm:p-5">{t("common.landing.comparison.row3Others")}</td>
+              </tr>
+              <tr>
+                <td className="p-4 sm:p-5 font-bold text-foreground">{t("common.landing.comparison.row4Feature")}</td>
+                <td className="p-4 sm:p-5 text-dark-green dark:text-wise-green font-bold bg-wise-green/5 flex items-center gap-1.5">
+                  <Check className="size-4 text-dark-green dark:text-wise-green shrink-0" />
+                  <span>{t("common.landing.comparison.row4Wahide")}</span>
+                </td>
+                <td className="p-4 sm:p-5 text-foreground-muted flex items-center gap-1.5">
+                  <X className="size-4 text-rose-400 shrink-0" />
+                  <span>{t("common.landing.comparison.row4Others")}</span>
+                </td>
+              </tr>
+              <tr>
+                <td className="p-4 sm:p-5 font-bold text-foreground">{t("common.landing.comparison.row5Feature")}</td>
+                <td className="p-4 sm:p-5 text-dark-green dark:text-wise-green font-bold bg-wise-green/5 flex items-center gap-1.5">
+                  <Check className="size-4 text-dark-green dark:text-wise-green shrink-0" />
+                  <span>{t("common.landing.comparison.row5Wahide")}</span>
+                </td>
+                <td className="p-4 sm:p-5 text-foreground-muted">{t("common.landing.comparison.row5Others")}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </section>
 
-      {/* 7. Transparent Pricing Grid */}
-      <section id="pricing" className="py-12 px-6 max-w-7xl mx-auto space-y-12">
-        <div className="text-center space-y-3 max-w-2xl mx-auto">
+      {/* 7. Transparent 3-Tier Pricing Grid */}
+      <section id="pricing" className="px-6 max-w-7xl mx-auto space-y-12">
+        <div className="text-center space-y-3 max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green">
             <CreditCard className="size-3.5" />
             <span>{t("common.landing.pricing.badge")}</span>
@@ -280,8 +312,8 @@ export function HomeView() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
-          {/* Plan 1: Free Trial */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+          {/* Plan 1: Starter Free Trial */}
           <div className="p-8 rounded-lg border border-border bg-surface dark:bg-[#161715] flex flex-col justify-between space-y-6 shadow-xs">
             <div className="space-y-4">
               <div>
@@ -310,11 +342,17 @@ export function HomeView() {
               </ul>
             </div>
 
-            <Link href="/register" className="block pt-4">
-              <Button variant="outline" size="default" className="w-full rounded-full text-xs font-bold border-border hover:border-foreground-muted">
+            <div className="pt-4">
+              <Link
+                href="/register"
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "default" }),
+                  "w-full text-xs font-bold border-border hover:border-foreground-muted min-h-11"
+                )}
+              >
                 {t("common.landing.pricing.p1Btn")}
-              </Button>
-            </Link>
+              </Link>
+            </div>
           </div>
 
           {/* Plan 2: Pro Merchant (Highlighted) */}
@@ -351,11 +389,17 @@ export function HomeView() {
               </ul>
             </div>
 
-            <Link href="/register" className="block pt-4">
-              <Button variant="primaryPill" size="default" className="w-full text-xs font-bold shadow-sm">
+            <div className="pt-4">
+              <Link
+                href="/register"
+                className={cn(
+                  buttonVariants({ variant: "primaryPill", size: "default" }),
+                  "w-full text-xs font-bold shadow-sm min-h-11"
+                )}
+              >
                 {t("common.landing.pricing.p2Btn")}
-              </Button>
-            </Link>
+              </Link>
+            </div>
           </div>
 
           {/* Plan 3: Enterprise Gateway */}
@@ -388,11 +432,17 @@ export function HomeView() {
               </ul>
             </div>
 
-            <Link href="/contact" className="block pt-4">
-              <Button variant="outline" size="default" className="w-full rounded-full text-xs font-bold border-border hover:border-foreground-muted">
+            <div className="pt-4">
+              <Link
+                href="/contact"
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "default" }),
+                  "w-full text-xs font-bold border-border hover:border-foreground-muted min-h-11"
+                )}
+              >
                 {t("common.landing.pricing.p3Btn")}
-              </Button>
-            </Link>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -415,16 +465,24 @@ export function HomeView() {
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-            <Link href="/register">
-              <Button variant="primaryPill" size="default" className="gap-2 px-8 py-6 font-bold text-sm sm:text-base shadow-sm">
-                <span>{t("common.landing.cta.btnTrial")}</span>
-                <ArrowRight className="size-4" />
-              </Button>
+            <Link
+              href="/register"
+              className={cn(
+                buttonVariants({ variant: "primaryPill", size: "default" }),
+                "gap-2 px-8 py-6 font-bold text-sm sm:text-base shadow-sm min-h-12"
+              )}
+            >
+              <span>{t("common.landing.cta.btnTrial")}</span>
+              <ArrowRight className="size-4" />
             </Link>
-            <Link href="/contact">
-              <Button variant="secondaryPill" size="default" className="px-8 py-6 font-bold text-sm sm:text-base">
-                <span>{t("common.landing.cta.btnContact")}</span>
-              </Button>
+            <Link
+              href="/contact"
+              className={cn(
+                buttonVariants({ variant: "secondaryPill", size: "default" }),
+                "px-8 py-6 font-bold text-sm sm:text-base min-h-12"
+              )}
+            >
+              <span>{t("common.landing.cta.btnContact")}</span>
             </Link>
           </div>
         </div>

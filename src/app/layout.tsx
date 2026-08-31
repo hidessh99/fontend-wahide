@@ -26,10 +26,10 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
     default: "Wahide - Enterprise WhatsApp Multi-Tenant Gateway",
-    template: "%s | Wahide Enterprise WhatsApp Gateway",
+    template: "%s | Wahide Gateway",
   },
   description:
-    "Platform SaaS WhatsApp Multi-Tenant & Multi-Device berkinerja tinggi dengan Session Hibernation hemat RAM 95%, 5 Lapis Anti-Ban, Spintax Engine, dan arsitektur Go Microservices.",
+    "Platform SaaS WhatsApp Multi-Tenant multi agten & Multi-Device berkinerja tinggi dengan Session Hibernation hemat RAM 95%, 5 Lapis Anti-Ban, Spintax Engine, .",
   keywords: [
     "WhatsApp Gateway",
     "WhatsApp API Gateway",
@@ -42,9 +42,9 @@ export const metadata: Metadata = {
     "Wahide Gateway",
     "Go Microservices WhatsApp",
   ],
-  authors: [{ name: "Wahide Engineering Team", url: siteUrl }],
+  authors: [{ name: "Hide Digital Security", url: siteUrl }],
   creator: "Wahide",
-  publisher: "Wahide Enterprise SaaS",
+  publisher: "Hide Digital Security",
   applicationName: "Wahide",
   generator: "Next.js 16",
   formatDetection: {
@@ -58,6 +58,18 @@ export const metadata: Metadata = {
       "id-ID": siteUrl,
       "en-US": `${siteUrl}/en`,
     },
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/icon.png", sizes: "512x512", type: "image/png" },
+    ],
+    shortcut: "/favicon.svg",
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
   },
   openGraph: {
     title: "Wahide - Enterprise WhatsApp Multi-Tenant Gateway",

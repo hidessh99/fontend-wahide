@@ -16,7 +16,7 @@
   "hero": {
     "badge": "Industrial Scale Multi-Device WhatsApp Gateway Infrastructure",
     "title": "Send bulk WhatsApp messages & REST API without limits.",
-    "subtitle": "Fastest multi-device WhatsApp gateway powered by 5-Layer Anti-Ban, dynamic Spintax, load-balanced device rotation, and 95% lower memory footprint with Go Microservices.",
+    "subtitle": "Fastest multi-device WhatsApp gateway powered by 5-Layer Anti-Ban, dynamic Spintax, and load-balanced device rotation. Supports diverse WhatsApp-based workflows including chatbots, customer service systems, automated alerts, and broadcast campaigns with full support for text, media files, and efficient contact management.",
     "ctaTrial": "Start Free (1,500 Messages)",
     "ctaLogin": "Access Dashboard",
     "trustBadge": "Trusted by thousands of businesses for e-commerce, OTPs, and real-time alerts."

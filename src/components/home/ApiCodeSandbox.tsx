@@ -160,7 +160,7 @@ export function ApiCodeSandbox() {
                   className={`px-3 py-1 rounded text-xs font-bold transition ${
                     isActive
                       ? "bg-wise-green text-near-black"
-                      : "text-white/60 hover:text-white hover:bg-white/5"
+                      : "text-white/80 hover:text-white hover:bg-white/5"
                   }`}
                 >
                   {CODE_SNIPPETS[key].langName}
@@ -171,7 +171,7 @@ export function ApiCodeSandbox() {
 
           <button
             onClick={handleCopy}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/10 hover:bg-white/15 text-white/80 hover:text-white transition text-[11px] font-sans font-semibold shrink-0"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/10 hover:bg-white/15 text-white/90 hover:text-white transition text-[11px] font-sans font-semibold shrink-0"
           >
             {isCopied ? (
               <>
@@ -188,7 +188,7 @@ export function ApiCodeSandbox() {
         </div>
 
         {/* Code Pre Block */}
-        <div className="p-4 sm:p-6 overflow-x-auto text-white/90 leading-relaxed font-mono text-[11px] sm:text-xs">
+        <div className="p-4 sm:p-6 overflow-x-auto text-white/95 leading-relaxed font-mono text-[11px] sm:text-xs">
           <pre>
             <code>{CODE_SNIPPETS[activeLang].code}</code>
           </pre>

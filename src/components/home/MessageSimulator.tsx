@@ -103,12 +103,12 @@ export function MessageSimulator() {
                 <span>Wahide Official Store</span>
                 <ShieldCheck className="size-3 text-wise-green inline" />
               </div>
-              <div className="text-[10px] text-white/60 font-mono">
+              <div className="text-[10px] text-white/80 font-mono">
                 {isSimulating ? "mengetik pesan..." : "+62 877-1113-01818 • Online"}
               </div>
             </div>
           </div>
-          <div className="text-[10px] font-mono text-white/50">Gateway Node 01</div>
+          <div className="text-[10px] font-mono text-white/75">Gateway Node 01</div>
         </div>
 
         {/* Message Bubble Content based on activeTab */}
@@ -116,11 +116,11 @@ export function MessageSimulator() {
           {showDelivered && (
             <div className="bg-[#1b2b1d] border border-wise-green/30 p-3.5 rounded-xl rounded-tl-none space-y-2.5 max-w-[92%] shadow-md animate-in fade-in slide-in-from-bottom-2 duration-200">
               {activeTab === "TEXT" && (
-                <div className="space-y-1 text-xs leading-relaxed text-white/90">
+                <div className="space-y-1 text-xs leading-relaxed text-white/95">
                   <p>
                     Halo <strong>Budi Santoso</strong>! Pesanan #INV-9821 telah kami konfirmasi dan saat ini dalam proses pengemasan.
                   </p>
-                  <p className="text-[11px] text-white/70">
+                  <p className="text-[11px] text-white/85">
                     Estimasi pengiriman tiba besok sore via JNE Reguler. Terima kasih telah berbelanja!
                   </p>
                 </div>
@@ -132,10 +132,10 @@ export function MessageSimulator() {
                     <FileText className="size-7 text-rose-400 shrink-0" />
                     <div className="overflow-hidden">
                       <div className="font-bold text-white text-[11px] truncate">Invoice_INV-9821_Wahide.pdf</div>
-                      <div className="text-[10px] text-white/50 font-mono">142 KB • Dokumen PDF</div>
+                      <div className="text-[10px] text-white/75 font-mono">142 KB • Dokumen PDF</div>
                     </div>
                   </div>
-                  <p className="text-[11px] text-white/90 leading-relaxed">
+                  <p className="text-[11px] text-white/95 leading-relaxed">
                     Berikut kami lampirkan salinan resmi faktur pembayaran Anda.
                   </p>
                 </div>
@@ -143,11 +143,11 @@ export function MessageSimulator() {
 
               {activeTab === "OTP" && (
                 <div className="space-y-2 text-xs">
-                  <p className="text-white/80">Kode Verifikasi Keamanan Akun Anda:</p>
+                  <p className="text-white/90">Kode Verifikasi Keamanan Akun Anda:</p>
                   <div className="p-2.5 rounded bg-black/60 border border-wise-green/40 text-center font-mono font-black text-lg tracking-widest text-wise-green">
                     849 - 201
                   </div>
-                  <p className="text-[10px] text-white/60">
+                  <p className="text-[10px] text-white/80">
                     Jangan bagikan kode ini kepada siapa pun termasuk staf Wahide. Berlaku 5 menit.
                   </p>
                 </div>
@@ -155,7 +155,7 @@ export function MessageSimulator() {
 
               {activeTab === "BUTTON" && (
                 <div className="space-y-2.5 text-xs">
-                  <p className="text-white/90">
+                  <p className="text-white/95">
                     Tiket bantuan #TKT-4412 telah selesai diproses oleh tim CS. Silakan pilih tindakan selanjutnya:
                   </p>
                   <div className="space-y-1.5 pt-1">
@@ -163,7 +163,7 @@ export function MessageSimulator() {
                       <CheckCheck className="size-3.5" />
                       <span>Konfirmasi Masalah Selesai</span>
                     </button>
-                    <button className="w-full h-8 px-3 rounded bg-white/10 hover:bg-white/15 text-[11px] font-bold text-white/90 flex items-center justify-center gap-1.5 border border-white/10 transition">
+                    <button className="w-full h-8 px-3 rounded bg-white/10 hover:bg-white/15 text-[11px] font-bold text-white/95 flex items-center justify-center gap-1.5 border border-white/10 transition">
                       <ExternalLink className="size-3.5" />
                       <span>Lihat Rincian Tiket Online</span>
                     </button>
@@ -173,18 +173,18 @@ export function MessageSimulator() {
 
               {activeTab === "LIST" && (
                 <div className="space-y-2.5 text-xs">
-                  <p className="text-white/90">
+                  <p className="text-white/95">
                     Selamat datang di Bot Otomasi Wahide! Silakan pilih opsi layanan:
                   </p>
                   <div className="p-2 rounded bg-black/40 border border-white/10 space-y-1.5">
-                    <div className="text-[10px] font-bold text-white/50 uppercase tracking-wider">PILIHAN MENU:</div>
-                    <div className="text-[11px] font-semibold text-white/90 pl-1 border-l-2 border-wise-green">
+                    <div className="text-[10px] font-bold text-white/80 uppercase tracking-wider">PILIHAN MENU:</div>
+                    <div className="text-[11px] font-semibold text-white/95 pl-1 border-l-2 border-wise-green">
                       1. Cek Kuota Pesan Gateway
                     </div>
-                    <div className="text-[11px] font-semibold text-white/90 pl-1 border-l-2 border-transparent">
+                    <div className="text-[11px] font-semibold text-white/95 pl-1 border-l-2 border-transparent">
                       2. Status Perangkat WhatsApp
                     </div>
-                    <div className="text-[11px] font-semibold text-white/90 pl-1 border-l-2 border-transparent">
+                    <div className="text-[11px] font-semibold text-white/95 pl-1 border-l-2 border-transparent">
                       3. Sambungkan ke Agen CS Manusia
                     </div>
                   </div>
@@ -192,7 +192,7 @@ export function MessageSimulator() {
               )}
 
               {/* Timestamp & Double Blue Ticks */}
-              <div className="flex items-center justify-end gap-1 text-[10px] text-white/50 font-mono pt-1">
+              <div className="flex items-center justify-end gap-1 text-[10px] text-white/75 font-mono pt-1">
                 <span>10:42 WIB</span>
                 <CheckCheck className="size-3.5 text-[#53bdeb]" />
               </div>
