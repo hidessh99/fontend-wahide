@@ -18,174 +18,162 @@ export function useQRPairing({
   onError,
 }: UseQRPairingProps) {
   const [qrCode, setQrCode] = useState<string | null>(null);
-  const [pairingCode, setPairingCode] = useState<string | null>(null);
   const [status, setStatus] = useState<DeviceStatus | "LOADING" | "ERROR" | "AUTHENTICATED">("LOADING");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [countdown, setCountdown] = useState<number>(20);
-  const [retryCount, setRetryCount] = useState<number>(0);
 
-  const eventSourceRef = useRef<EventSource | null>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isMountedRef = useRef<boolean>(true);
+  const statusPollRef = useRef<NodeJS.Timeout | null>(null);
+  const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const MAX_RETRY_ATTEMPTS = 5;
+  const stopPolling = useCallback(() => {
+    if (statusPollRef.current) {
+      clearInterval(statusPollRef.current);
+      statusPollRef.current = null;
+    }
+  }, []);
 
+  const stopCountdown = useCallback(() => {
+    if (countdownTimerRef.current) {
+      clearInterval(countdownTimerRef.current);
+      countdownTimerRef.current = null;
+    }
+  }, []);
+
+  // 1. Initial QR Request when Modal Opens
   useEffect(() => {
-    if (!isOpen || !deviceId) {
+    let isMounted = true;
+    isMountedRef.current = true;
+
+    const init = async () => {
+      if (!isOpen || !deviceId) {
+        return;
+      }
+
+      try {
+        const res = await whatsappApi.pairDevice(deviceId);
+        if (!isMounted) return;
+
+        if (res && res.qr_code) {
+          let formattedQR = res.qr_code;
+          if (!formattedQR.startsWith("data:image/") && !formattedQR.startsWith("http")) {
+            formattedQR = `data:image/png;base64,${formattedQR}`;
+          }
+          setQrCode(formattedQR);
+          setStatus("PAIRING");
+          setCountdown(20);
+        } else {
+          setStatus("PAIRING");
+        }
+      } catch (err: unknown) {
+        if (!isMounted) return;
+        const msg = err instanceof Error ? err.message : "Gagal meminta QR Code pairing";
+        setStatus("ERROR");
+        setErrorMessage(msg);
+        onError?.(msg);
+      }
+    };
+
+    if (isOpen && deviceId) {
+      init();
+    }
+
+    return () => {
+      isMounted = false;
+      isMountedRef.current = false;
+      stopPolling();
+      stopCountdown();
+    };
+  }, [isOpen, deviceId, onError, stopPolling, stopCountdown]);
+
+  // 2. Countdown Timer (20s)
+  useEffect(() => {
+    if (!isOpen || status !== "PAIRING") {
+      stopCountdown();
       return;
     }
 
-    let isMounted = true;
-    let es: EventSource | null = null;
-    let timer: NodeJS.Timeout | null = null;
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
 
-    const connect = (attempt: number = 0) => {
-      if (!isMounted) return;
+    countdownTimerRef.current = timer;
 
-      const streamUrl = whatsappApi.getQRStreamUrl(deviceId);
-
-      timer = setInterval(() => {
-        setCountdown((prev) => (prev > 1 ? prev - 1 : 20));
-      }, 1000);
-      timerRef.current = timer;
-
-      try {
-        es = new EventSource(streamUrl);
-        eventSourceRef.current = es;
-
-        es.onmessage = (event) => {
-          if (!isMounted) return;
-          try {
-            const data: QREventData = JSON.parse(event.data);
-
-            if (data.status === "AUTHENTICATED" || data.status === "CONNECTED") {
-              setStatus("AUTHENTICATED");
-              onSuccess?.(data);
-              return;
-            }
-
-            if (data.qrCode) {
-              setQrCode(data.qrCode);
-              setStatus("PAIRING");
-              setCountdown(data.expiresIn || 20);
-            }
-
-            if (data.pairingCode) {
-              setPairingCode(data.pairingCode);
-            }
-          } catch {
-            if (event.data.length > 50) {
-              setQrCode(event.data);
-              setStatus("PAIRING");
-            }
-          }
-        };
-
-        es.addEventListener("qr", (event: MessageEvent) => {
-          if (!isMounted) return;
-          try {
-            const data = JSON.parse(event.data);
-            setQrCode(data.qrCode || data);
-            setStatus("PAIRING");
-            setCountdown(data.expiresIn || 20);
-          } catch {
-            setQrCode(event.data);
-            setStatus("PAIRING");
-          }
-        });
-
-        es.addEventListener("authenticated", (event: MessageEvent) => {
-          if (!isMounted) return;
-          setStatus("AUTHENTICATED");
-          try {
-            const data = JSON.parse(event.data);
-            onSuccess?.(data);
-          } catch {
-            onSuccess?.();
-          }
-        });
-
-        es.addEventListener("error", (event: MessageEvent) => {
-          if (!isMounted) return;
-          try {
-            const data = JSON.parse(event.data);
-            setErrorMessage(data.message || "Koneksi stream terputus");
-          } catch {
-            setErrorMessage("Gagal menyambungkan ke stream pairing WhatsApp");
-          }
-          setStatus("ERROR");
-          onError?.("Gagal menyambungkan ke stream pairing");
-        });
-
-        es.onerror = () => {
-          if (!isMounted) return;
-          if (es) {
-            es.close();
-            eventSourceRef.current = null;
-          }
-
-          // Exponential Backoff with Jitter Reconnect Strategy
-          if (attempt < MAX_RETRY_ATTEMPTS) {
-            const backoffMs = Math.min(
-              1000 * Math.pow(1.5, attempt) + Math.random() * 500,
-              8000
-            );
-            reconnectTimeoutRef.current = setTimeout(() => {
-              if (isMounted) {
-                setRetryCount(attempt + 1);
-                connect(attempt + 1);
-              }
-            }, backoffMs);
-          } else {
-            setStatus("ERROR");
-            setErrorMessage("Koneksi ke gateway terputus setelah beberapa percobaan. Silakan coba lagi.");
-          }
-        };
-      } catch (err: unknown) {
-        queueMicrotask(() => {
-          if (!isMounted) return;
-          const msg = err instanceof Error ? err.message : "Gagal memulai pairing";
-          setStatus("ERROR");
-          setErrorMessage(msg);
-          onError?.(msg);
-        });
-      }
-    };
-
-    connect(0);
-
-    // Teardown Cleanup (Zero Memory Leak)
     return () => {
-      isMounted = false;
-      if (timer) {
-        clearInterval(timer);
-        timerRef.current = null;
-      }
-      if (reconnectTimeoutRef.current) {
-        clearTimeout(reconnectTimeoutRef.current);
-        reconnectTimeoutRef.current = null;
-      }
-      if (es) {
-        es.close();
-        eventSourceRef.current = null;
-      }
+      clearInterval(timer);
     };
-  }, [deviceId, isOpen, onSuccess, onError]);
+  }, [isOpen, status, stopCountdown]);
 
-  const retry = useCallback(() => {
+  // 3. Lightweight Status Polling Watcher (every 3s to auto-detect successful scan)
+  useEffect(() => {
+    if (!isOpen || !deviceId || status === "AUTHENTICATED") {
+      stopPolling();
+      return;
+    }
+
+    const interval = setInterval(async () => {
+      try {
+        const devices = await whatsappApi.getDevices();
+        if (!isMountedRef.current) return;
+
+        const currentDev = devices.find((d) => d.id === deviceId);
+        if (currentDev && (currentDev.status === "CONNECTED" || (currentDev.status as string) === "ONLINE")) {
+          setStatus("AUTHENTICATED");
+          stopPolling();
+          stopCountdown();
+          onSuccess?.({ status: "AUTHENTICATED" });
+        }
+      } catch {
+        // Silently continue polling
+      }
+    }, 3000);
+
+    statusPollRef.current = interval;
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [isOpen, deviceId, status, onSuccess, stopPolling, stopCountdown]);
+
+  const retry = useCallback(async () => {
+    if (!deviceId) return;
     setStatus("LOADING");
     setErrorMessage(null);
     setCountdown(20);
-    setRetryCount(0);
-  }, []);
+
+    try {
+      const res = await whatsappApi.pairDevice(deviceId);
+      if (!isMountedRef.current) return;
+
+      if (res && res.qr_code) {
+        let formattedQR = res.qr_code;
+        if (!formattedQR.startsWith("data:image/") && !formattedQR.startsWith("http")) {
+          formattedQR = `data:image/png;base64,${formattedQR}`;
+        }
+        setQrCode(formattedQR);
+        setStatus("PAIRING");
+      }
+    } catch (err: unknown) {
+      if (!isMountedRef.current) return;
+      const msg = err instanceof Error ? err.message : "Gagal meminta QR Code pairing";
+      setStatus("ERROR");
+      setErrorMessage(msg);
+      onError?.(msg);
+    }
+  }, [deviceId, onError]);
 
   return {
     qrCode,
-    pairingCode,
+    pairingCode: null,
     status,
     errorMessage,
     countdown,
-    retryCount,
+    retryCount: 0,
     retry,
   };
 }

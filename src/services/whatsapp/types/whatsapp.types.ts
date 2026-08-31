@@ -2,9 +2,10 @@ export type DeviceStatus = "CONNECTED" | "PAIRING" | "DISCONNECTED" | "HIBERNATE
 
 export interface Device {
   id: string;
-  name: string;
+  name?: string;
+  push_name?: string | null;
+  pushName?: string | null;
   phone: string | null;
-  pushName: string | null;
   status: DeviceStatus;
   batteryLevel: number | null;
   isCharging: boolean;
@@ -22,8 +23,14 @@ export interface QREventData {
 }
 
 export interface CreateDeviceInput {
-  name: string;
+  push_name: string;
 }
+
+export interface PairDeviceResponse {
+  device_id: string;
+  qr_code: string;
+}
+
 
 export interface DeviceStats {
   total: number;

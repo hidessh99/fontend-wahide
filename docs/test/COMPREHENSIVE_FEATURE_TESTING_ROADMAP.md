@@ -52,7 +52,7 @@
 
 ## 📊 3. Modul Dashboard Utama & Multi-Tenant State (`/dashboard`)
 
-- [ ] **3.1 Kartu Metrik KPI Ringkasan Bisnis** — `/dashboard` — Periksa 4 kartu ringkasan (Total Kontak, Kampanye Aktif, Sisa Kuota Pesan, Perangkat Terhubung) → Angka statistik sinkron dengan session tenant di Zustand.
+- [x] **3.1 Kartu Metrik KPI Ringkasan Bisnis** — `/dashboard` — Periksa 4 kartu ringkasan (Total Kontak, Kampanye Aktif, Sisa Kuota Pesan, Perangkat Terhubung) → Angka statistik sinkron dengan session tenant di Zustand.
 - [ ] **3.2 Tabel Sesi Node WhatsApp Terkini** — `/dashboard` — Periksa tabel perangkat aktif di bawah widget ringkasan → Status badge (*CONNECTED / PAIRING / DISCONNECTED*) tampil dengan warna indikator yang tepat.
 - [ ] **3.3 Widget Riwayat Kampanye Broadcast Terkini** — `/dashboard` — Periksa log pesan siaran terbaru → Tanggal, nama kampanye, persentase progress blast tampil realtime.
 - [ ] **3.4 Tombol Navigasi Cepat (Quick Action Pills)** — `/dashboard` — Klik tombol *Tambah Perangkat*, *Buat Kampanye*, *Top-Up Saldo* → Modal wizard terkait langsung terbuka seketika via dynamic code-splitting.

@@ -114,12 +114,13 @@ export function DeviceCard({
           </div>
           <div>
             <h2 className="font-extrabold text-base sm:text-lg text-foreground tracking-tight line-clamp-1">
-              {device.name}
+              {device.push_name || device.pushName || device.name || "WhatsApp Device"}
             </h2>
             <p className="text-xs font-semibold text-foreground-secondary">
-              {device.phone || device.pushName || "Nomor Belum Tertaut"}
+              {device.phone || device.push_name || device.pushName || "Nomor Belum Tertaut"}
             </p>
           </div>
+
         </div>
 
         <div className="flex items-center gap-2">

@@ -3,7 +3,8 @@
 // Matches Go Backend: github.com/hidessh99/wahide/internal/shared/response
 // ==============================================================================
 
-import { getCookie } from "@/lib/storage/cookies";
+import { getCookie, deleteCookie } from "@/lib/storage/cookies";
+
 
 export interface GlobalResponse<T = unknown> {
   success: boolean;
@@ -150,12 +151,34 @@ class HttpClient {
           return this.request<T>(endpoint, { ...options, retries: retries - 1 });
         }
 
+        // Auto-Logout & Session Cleanup on HTTP 401 (Session Revoked / Expired Token)
+        if (
+          response.status === 401 &&
+          typeof window !== "undefined" &&
+          !endpoint.includes("/auth/login") &&
+          !endpoint.includes("/auth/register") &&
+          !endpoint.includes("/auth/forgot-password") &&
+          !endpoint.includes("/auth/reset-password")
+        ) {
+          deleteCookie("wahide_session_token");
+          deleteCookie("wahide_user_role");
+          localStorage.removeItem("wahide_auth_storage");
+
+          const currentPath = window.location.pathname;
+          if (currentPath !== "/login" && currentPath !== "/register") {
+            // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+            window.location.href = "/login?session_expired=1";
+          }
+        }
+
+
         const errorMessage =
           data?.message ||
           data?.error ||
           `HTTP Error ${response.status}: ${response.statusText}`;
         throw new ApiError(errorMessage, response.status, data);
       }
+
 
       return data as ApiResponse<T>;
     } catch (err: unknown) {

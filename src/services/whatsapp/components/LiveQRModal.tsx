@@ -70,7 +70,7 @@ export function LiveQRModal({
               {t("whatsapp.qrModalTitle")}
             </h2>
             <p className="text-xs sm:text-sm font-semibold text-foreground-secondary">
-              Slot: <span className="text-foreground font-bold">{device.name}</span>
+              Slot: <span className="text-foreground font-bold">{device.push_name || device.pushName || device.name || "WhatsApp Device"}</span>
             </p>
           </div>
 
@@ -133,7 +133,6 @@ export function LiveQRModal({
                     className="size-48 sm:size-52 object-contain"
                   />
                 ) : (
-                  /* Fallback if Base64 raw string without prefix */
                   <Image
                     src={`data:image/png;base64,${qrCode}`}
                     alt="WhatsApp QR Code"
@@ -145,13 +144,25 @@ export function LiveQRModal({
                 )}
               </div>
 
-              {/* Countdown Indicator */}
-              <div className="flex items-center gap-2 text-xs font-semibold text-foreground-secondary">
-                <RefreshCw className="size-3.5 animate-spin text-wise-green" />
-                <span>
-                  {t("whatsapp.qrExpiresIn", { seconds: countdown.toString() })}
-                </span>
-              </div>
+              {/* Countdown Indicator or Expired Refresh */}
+              {countdown > 0 ? (
+                <div className="flex items-center gap-2 text-xs font-semibold text-foreground-secondary">
+                  <RefreshCw className="size-3.5 animate-spin text-wise-green" />
+                  <span>
+                    {t("whatsapp.qrExpiresIn", { seconds: countdown.toString() })}
+                  </span>
+                </div>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={retry}
+                  className="rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted"
+                >
+                  <RefreshCw className="size-3.5 text-wise-green" />
+                  <span>QR Kedaluwarsa - Muat Ulang</span>
+                </Button>
+              )}
             </div>
           ) : (
             <div className="text-center space-y-3 py-8">
@@ -162,6 +173,7 @@ export function LiveQRModal({
             </div>
           )}
         </div>
+
 
         {/* Step-by-Step Instructions */}
         <div className="space-y-2.5 rounded-md bg-surface dark:bg-[#1b1d1a] p-4 border border-border text-xs font-semibold">

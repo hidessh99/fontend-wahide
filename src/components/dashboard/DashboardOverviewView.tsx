@@ -252,11 +252,14 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
                         <Smartphone className="size-4" />
                       </div>
                       <div>
-                        <span className="font-bold text-xs text-foreground block">{d.name}</span>
+                        <span className="font-bold text-xs text-foreground block">
+                          {d.push_name || d.pushName || d.name || "WhatsApp Device"}
+                        </span>
                         <span className="text-[11px] text-foreground-muted font-mono">
                           +{d.phone || "Menunggu Pairing"}
                         </span>
                       </div>
+
                     </div>
 
                     <span

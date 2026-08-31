@@ -53,11 +53,12 @@ export function useDevices() {
 
   const createDevice = async (name: string): Promise<Device> => {
     try {
-      const newDevice = await whatsappApi.createDevice({ name });
+      const newDevice = await whatsappApi.createDevice({ push_name: name });
       setDevices((prev) => [newDevice, ...prev]);
       toast.success(t("whatsapp.toastCreated"));
       return newDevice;
     } catch (err: unknown) {
+
       const msg = err instanceof Error ? err.message : "Gagal membuat slot perangkat";
       toast.error(msg);
       throw err;
@@ -126,11 +127,11 @@ export function useDevices() {
 
   const filteredDevices = useMemo(() => {
     return devices.filter((device) => {
+      const devName = device.push_name || device.pushName || device.name || "";
       const matchesSearch =
         searchQuery === "" ||
-        device.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (device.phone && device.phone.includes(searchQuery)) ||
-        (device.pushName && device.pushName.toLowerCase().includes(searchQuery.toLowerCase()));
+        devName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        Boolean(device.phone && device.phone.includes(searchQuery));
 
       const matchesStatus =
         statusFilter === "ALL" || device.status === statusFilter;
@@ -138,6 +139,7 @@ export function useDevices() {
       return matchesSearch && matchesStatus;
     });
   }, [devices, searchQuery, statusFilter]);
+
 
   const stats: DeviceStats = useMemo(() => {
     return {
