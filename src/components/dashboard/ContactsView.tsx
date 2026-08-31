@@ -25,7 +25,7 @@ import {
   Trash2,
   Search,
   RefreshCw,
-  Tag as TagIcon,
+  X,
 } from "lucide-react";
 
 export function ContactsView() {
@@ -33,16 +33,15 @@ export function ContactsView() {
   const {
     contacts,
     filteredContacts,
-    allTags,
     isLoading,
     searchQuery,
     setSearchQuery,
-    selectedTag,
-    setSelectedTag,
     selectedIds,
     toggleSelectOne,
     toggleSelectAll,
     fetchContacts,
+    executeSearch,
+    clearSearch,
     createContact,
     updateContact,
     deleteContact,
@@ -145,51 +144,50 @@ export function ContactsView() {
 
       {/* Filter Toolbar & Actions */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-md border border-border bg-surface dark:bg-[#161715]">
-        {/* Search Input */}
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={t("contact.searchPlaceholder")}
-            className="w-full h-10 pl-10 pr-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs"
-          />
-        </div>
-
-        {/* Tag Filters & Bulk Delete */}
-        <div className="flex flex-wrap items-center gap-2">
-          {allTags.length > 0 && (
-            <div className="flex items-center gap-1.5 overflow-x-auto p-1 rounded-full bg-muted border border-border text-xs font-bold max-w-xs scrollbar-none">
+        {/* Search Form with Submit Button */}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            executeSearch();
+          }}
+          className="flex-1 max-w-lg flex items-center gap-2"
+        >
+          <div className="relative flex-1">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={t("contact.searchPlaceholder")}
+              className="w-full h-10 pl-10 pr-9 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs"
+            />
+            {searchQuery && (
               <button
                 type="button"
-                onClick={() => setSelectedTag("ALL")}
-                className={`px-3 py-1.5 rounded-full transition cursor-pointer whitespace-nowrap ${
-                  selectedTag === "ALL"
-                    ? "bg-surface dark:bg-[#161715] text-foreground shadow-sm font-extrabold"
-                    : "text-foreground-secondary hover:text-foreground"
-                }`}
+                onClick={clearSearch}
+                className="absolute right-3 top-1/2 -translate-y-1/2 size-5 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
+                title="Hapus Pencarian"
+                aria-label="Hapus Pencarian"
               >
-                {t("contact.filterTag")}
+                <X className="size-3" />
               </button>
-              {allTags.map((tag) => (
-                <button
-                  key={tag}
-                  type="button"
-                  onClick={() => setSelectedTag(tag)}
-                  className={`px-3 py-1.5 rounded-full transition cursor-pointer whitespace-nowrap flex items-center gap-1 ${
-                    selectedTag === tag
-                      ? "bg-surface dark:bg-[#161715] text-foreground shadow-sm font-extrabold"
-                      : "text-foreground-secondary hover:text-foreground"
-                  }`}
-                >
-                  <TagIcon className="size-2.5" />
-                  <span>{tag}</span>
-                </button>
-              ))}
-            </div>
-          )}
+            )}
+          </div>
 
+          <Button
+            type="submit"
+            variant="primaryPill"
+            size="sm"
+            disabled={isLoading}
+            className="h-10 px-4.5 rounded-full text-xs font-bold gap-1.5 shrink-0 shadow-xs cursor-pointer"
+          >
+            <Search className="size-3.5" />
+            <span>{t("contact.searchBtn") || "Cari"}</span>
+          </Button>
+        </form>
+
+        {/* Bulk Delete & Refresh Actions */}
+        <div className="flex items-center gap-2">
           {selectedIds.size > 0 && (
             <Button
               variant="outline"
@@ -205,7 +203,7 @@ export function ContactsView() {
           <Button
             variant="outline"
             size="sm"
-            onClick={fetchContacts}
+            onClick={() => fetchContacts()}
             disabled={isLoading}
             className="rounded-full size-9 p-0 border-border hover:border-foreground-muted"
             aria-label="Refresh Kontak"
@@ -225,17 +223,17 @@ export function ContactsView() {
           </div>
           <div className="space-y-1 max-w-sm">
             <h3 className="font-extrabold text-base sm:text-lg text-foreground">
-              {searchQuery || selectedTag !== "ALL"
+              {searchQuery
                 ? t("contact.noSearchResults")
                 : t("contact.noContacts")}
             </h3>
             <p className="text-xs font-semibold text-foreground-secondary">
-              {searchQuery || selectedTag !== "ALL"
-                ? "Coba sesuaikan kata kunci pencarian atau ganti filter tag."
+              {searchQuery
+                ? "Coba sesuaikan kata kunci pencarian nama atau nomor WhatsApp."
                 : t("contact.noContactsDesc")}
             </p>
           </div>
-          {(!searchQuery && selectedTag === "ALL") && (
+          {!searchQuery && (
             <div className="flex items-center gap-2 pt-2">
               <Button
                 variant="outline"

@@ -4,7 +4,7 @@ import React, { useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Contact } from "../types/contact.types";
 import { useI18n } from "@/lib/i18n/context";
-import { Edit2, Trash2, Tag as TagIcon, Check } from "lucide-react";
+import { Edit2, Trash2, Check } from "lucide-react";
 
 interface ContactTableProps {
   contacts: Contact[];
@@ -55,10 +55,9 @@ export function ContactTable({
             {isAllSelected && <Check className="size-3 stroke-3" />}
           </button>
         </div>
-        <div className="col-span-4 sm:col-span-3">{t("contact.tableHeaderName")}</div>
-        <div className="col-span-4 sm:col-span-3">{t("contact.tableHeaderPhone")}</div>
-        <div className="hidden sm:block sm:col-span-3">{t("contact.tableHeaderTags")}</div>
-        <div className="col-span-3 sm:col-span-2 text-right">{t("contact.tableHeaderActions")}</div>
+        <div className="col-span-6 sm:col-span-5">{t("contact.tableHeaderName")}</div>
+        <div className="col-span-4 sm:col-span-5">{t("contact.tableHeaderPhone")}</div>
+        <div className="col-span-1 text-right">{t("contact.tableHeaderActions")}</div>
       </div>
 
       {/* Virtualized Table Body */}
@@ -113,34 +112,17 @@ export function ContactTable({
                 </div>
 
                 {/* Name Column */}
-                <div className="col-span-4 sm:col-span-3 font-bold text-foreground truncate">
+                <div className="col-span-6 sm:col-span-5 font-bold text-foreground truncate">
                   {contact.name}
                 </div>
 
                 {/* Phone Column */}
-                <div className="col-span-4 sm:col-span-3 text-foreground-secondary font-mono text-[11px] truncate">
+                <div className="col-span-4 sm:col-span-5 text-foreground-secondary font-mono text-[11px] truncate">
                   +{contact.phone}
                 </div>
 
-                {/* Tags Column */}
-                <div className="hidden sm:flex sm:col-span-3 flex-wrap items-center gap-1.5 overflow-hidden">
-                  {contact.tags && contact.tags.length > 0 ? (
-                    contact.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-muted text-foreground-secondary border border-border"
-                      >
-                        <TagIcon className="size-2.5 text-foreground-muted" />
-                        <span>{tag}</span>
-                      </span>
-                    ))
-                  ) : (
-                    <span className="text-foreground-muted text-[11px]">-</span>
-                  )}
-                </div>
-
                 {/* Action Buttons */}
-                <div className="col-span-3 sm:col-span-2 flex items-center justify-end gap-1.5">
+                <div className="col-span-1 flex items-center justify-end gap-1.5">
                   <button
                     type="button"
                     onClick={() => onEdit(contact)}

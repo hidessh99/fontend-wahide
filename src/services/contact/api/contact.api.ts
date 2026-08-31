@@ -5,9 +5,17 @@ import { Contact, CreateContactInput } from "../types/contact.types";
 const CONTACT_BASE = env.NEXT_PUBLIC_WHATSAPP_API_URL;
 
 export const contactApi = {
-  getContacts: async (): Promise<Contact[]> => {
+  getContacts: async (params?: { search?: string; tag?: string }): Promise<Contact[]> => {
     try {
-      const res = await httpClient.get<Contact[]>(`${CONTACT_BASE}/contacts`);
+      const query = new URLSearchParams();
+      if (params?.search && params.search.trim()) {
+        query.set("search", params.search.trim());
+      }
+      if (params?.tag && params.tag !== "ALL") {
+        query.set("tag", params.tag);
+      }
+      const queryString = query.toString() ? `?${query.toString()}` : "";
+      const res = await httpClient.get<Contact[]>(`${CONTACT_BASE}/contacts${queryString}`);
       return res.payload || (Array.isArray(res) ? res : []);
     } catch {
       return [];

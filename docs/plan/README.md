@@ -48,3 +48,12 @@ Daftar dokumen perencanaan arsitektur, optimasi performa, dan standarisasi tekni
 
 15. **[Checkout URL Direct Payment Gateway Redirect Plan](./checkout_url_direct_payment_gateway_redirect_plan.md)**
     - **Direct Redirect ke Link Payment Gateway (checkout_url)**: Ekstraksi `checkout_url` / `redirect_url` dari REST API payment gateway dan direct redirect tab baru saat tombol Bayar diklik tanpa membuka modal popup topup.
+
+16. **[Contacts Server-Side Search and Submit Plan](./contacts_server_side_search_and_submit_plan.md)**
+    - **Pencarian Kontak Berbasis Server (Server-Side Search) dengan Tombol Submit**: Penambahan tombol submit "Cari" dan penanganan pemanggilan API `GET /contacts?search=query` saat Enter / klik Cari.
+
+17. **[Contact Table Tag Column Removal Plan](./contact_table_tag_column_removal_plan.md)**
+    - **Penghapusan Kolom Tag / Segmen pada Tabel Kontak**: Menghapus kolom Tag / Segmen yang tidak didukung backend Go dan memperluas kolom Nama Kontak serta Nomor WhatsApp.
+
+18. **[Pure Server-Side Contact Search Plan](./pure_server_side_contact_search_plan.md)**
+    - **Pencarian Kontak Pure Server-Side (Submit-Only Trigger)**: Memisahkan state input draft dari query aktif sehingga pengetikan tidak menyaring tabel lokal, melainkan murni memanggil backend saat klik Cari atau tekan Enter.

@@ -25,7 +25,6 @@ function ContactForm({
   const { t } = useI18n();
   const [name, setName] = useState(contact?.name || "");
   const [phone, setPhone] = useState(contact?.phone || "");
-  const [tagsStr, setTagsStr] = useState(contact?.tags ? contact.tags.join(", ") : "");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -47,11 +46,6 @@ function ContactForm({
       return;
     }
 
-    const tags = tagsStr
-      .split(",")
-      .map((t) => t.trim())
-      .filter((t) => t.length > 0);
-
     setIsLoading(true);
     setError(null);
 
@@ -59,7 +53,6 @@ function ContactForm({
       await onSubmit({
         name: name.trim(),
         phone: cleanPhone,
-        tags,
       });
       onClose();
     } catch (err: unknown) {
@@ -104,20 +97,6 @@ function ContactForm({
           placeholder={t("contact.phonePlaceholder")}
           disabled={isLoading}
           className="w-full h-11 px-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs font-mono"
-        />
-      </div>
-
-      <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
-          {t("contact.tagsLabel")}
-        </label>
-        <input
-          type="text"
-          value={tagsStr}
-          onChange={(e) => setTagsStr(e.target.value)}
-          placeholder={t("contact.tagsPlaceholder")}
-          disabled={isLoading}
-          className="w-full h-11 px-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs"
         />
       </div>
 

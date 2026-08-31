@@ -15,19 +15,34 @@ export function useContacts() {
   const [selectedTag, setSelectedTag] = useState("ALL");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
-  const fetchContacts = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const data = await contactApi.getContacts();
-      setContacts(data);
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal memuat kontak";
-      setError(msg);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const fetchContacts = useCallback(
+    async (customParams?: { search?: string; tag?: string }) => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const search = customParams?.search !== undefined ? customParams.search : searchQuery;
+        const tag = customParams?.tag !== undefined ? customParams.tag : selectedTag;
+        const data = await contactApi.getContacts({ search, tag });
+        setContacts(data);
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : "Gagal memuat kontak";
+        setError(msg);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [searchQuery, selectedTag]
+  );
+
+  const executeSearch = async (overrideQuery?: string) => {
+    const q = overrideQuery !== undefined ? overrideQuery : searchQuery;
+    await fetchContacts({ search: q, tag: selectedTag });
+  };
+
+  const clearSearch = async () => {
+    setSearchQuery("");
+    await fetchContacts({ search: "", tag: selectedTag });
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -181,6 +196,8 @@ export function useContacts() {
     toggleSelectOne,
     toggleSelectAll,
     fetchContacts,
+    executeSearch,
+    clearSearch,
     createContact,
     updateContact,
     deleteContact,
