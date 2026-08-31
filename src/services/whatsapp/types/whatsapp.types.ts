@@ -31,6 +31,16 @@ export interface PairDeviceResponse {
   qr_code: string;
 }
 
+export interface PairPhoneInput {
+  phone: string;
+}
+
+export interface PairPhoneResponse {
+  device_id: string;
+  pairing_code: string;
+}
+
+
 
 export interface DeviceStats {
   total: number;

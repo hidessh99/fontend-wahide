@@ -17,10 +17,13 @@ export function useQRPairing({
   onSuccess,
   onError,
 }: UseQRPairingProps) {
+  const [pairMode, setPairMode] = useState<"QR" | "PHONE">("QR");
   const [qrCode, setQrCode] = useState<string | null>(null);
+  const [pairingCode, setPairingCode] = useState<string | null>(null);
   const [status, setStatus] = useState<DeviceStatus | "LOADING" | "ERROR" | "AUTHENTICATED">("LOADING");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [countdown, setCountdown] = useState<number>(20);
+  const [isLoadingCode, setIsLoadingCode] = useState<boolean>(false);
 
   const isMountedRef = useRef<boolean>(true);
   const statusPollRef = useRef<NodeJS.Timeout | null>(null);
@@ -40,13 +43,13 @@ export function useQRPairing({
     }
   }, []);
 
-  // 1. Initial QR Request when Modal Opens
+  // 1. Initial QR Request when Modal Opens in QR mode
   useEffect(() => {
     let isMounted = true;
     isMountedRef.current = true;
 
     const init = async () => {
-      if (!isOpen || !deviceId) {
+      if (!isOpen || !deviceId || pairMode !== "QR") {
         return;
       }
 
@@ -74,7 +77,7 @@ export function useQRPairing({
       }
     };
 
-    if (isOpen && deviceId) {
+    if (isOpen && deviceId && pairMode === "QR") {
       init();
     }
 
@@ -84,11 +87,11 @@ export function useQRPairing({
       stopPolling();
       stopCountdown();
     };
-  }, [isOpen, deviceId, onError, stopPolling, stopCountdown]);
+  }, [isOpen, deviceId, pairMode, onError, stopPolling, stopCountdown]);
 
-  // 2. Countdown Timer (20s)
+  // 2. Countdown Timer (20s for QR code)
   useEffect(() => {
-    if (!isOpen || status !== "PAIRING") {
+    if (!isOpen || status !== "PAIRING" || pairMode !== "QR") {
       stopCountdown();
       return;
     }
@@ -107,9 +110,9 @@ export function useQRPairing({
     return () => {
       clearInterval(timer);
     };
-  }, [isOpen, status, stopCountdown]);
+  }, [isOpen, status, pairMode, stopCountdown]);
 
-  // 3. Lightweight Status Polling Watcher (every 3s to auto-detect successful scan)
+  // 3. Lightweight Status Polling Watcher (every 3s to auto-detect successful scan or pairing code entered)
   useEffect(() => {
     if (!isOpen || !deviceId || status === "AUTHENTICATED") {
       stopPolling();
@@ -140,6 +143,7 @@ export function useQRPairing({
     };
   }, [isOpen, deviceId, status, onSuccess, stopPolling, stopCountdown]);
 
+  // 4. Manual QR Retry
   const retry = useCallback(async () => {
     if (!deviceId) return;
     setStatus("LOADING");
@@ -167,13 +171,40 @@ export function useQRPairing({
     }
   }, [deviceId, onError]);
 
+  // 5. Request 8-Character Phone Pairing Code
+  const requestPairingCode = useCallback(async (phone: string) => {
+    if (!deviceId) return null;
+    setIsLoadingCode(true);
+    setErrorMessage(null);
+
+    try {
+      const res = await whatsappApi.pairPhone(deviceId, phone);
+      if (!isMountedRef.current) return null;
+
+      setPairingCode(res.pairing_code);
+      setStatus("PAIRING");
+      setIsLoadingCode(false);
+      return res.pairing_code;
+    } catch (err: unknown) {
+      if (!isMountedRef.current) return null;
+      const msg = err instanceof Error ? err.message : "Gagal meminta kode pairing nomor";
+      setErrorMessage(msg);
+      setIsLoadingCode(false);
+      onError?.(msg);
+      return null;
+    }
+  }, [deviceId, onError]);
+
   return {
+    pairMode,
+    setPairMode,
     qrCode,
-    pairingCode: null,
+    pairingCode,
     status,
     errorMessage,
     countdown,
-    retryCount: 0,
+    isLoadingCode,
+    requestPairingCode,
     retry,
   };
 }

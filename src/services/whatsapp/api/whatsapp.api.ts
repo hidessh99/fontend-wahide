@@ -1,6 +1,6 @@
 import { httpClient } from "@/lib/api/http-client";
 import { env } from "@/lib/config/env";
-import { Device, CreateDeviceInput, PairDeviceResponse } from "../types/whatsapp.types";
+import { Device, CreateDeviceInput, PairDeviceResponse, PairPhoneResponse } from "../types/whatsapp.types";
 
 const WHATSAPP_BASE = env.NEXT_PUBLIC_WHATSAPP_API_URL;
 
@@ -26,6 +26,14 @@ export const whatsappApi = {
     const res = await httpClient.post<PairDeviceResponse>(`${WHATSAPP_BASE}/whatsapp/devices/${id}/pair`);
     return res.payload || (res as unknown as PairDeviceResponse);
   },
+
+  pairPhone: async (id: string, phone: string): Promise<PairPhoneResponse> => {
+    const res = await httpClient.post<PairPhoneResponse>(`${WHATSAPP_BASE}/whatsapp/devices/${id}/pair-phone`, {
+      phone,
+    });
+    return res.payload || (res as unknown as PairPhoneResponse);
+  },
+
 
   deleteDevice: async (id: string): Promise<{ success: boolean; message: string }> => {
     const res = await httpClient.delete(`${WHATSAPP_BASE}/whatsapp/devices/${id}`);
