@@ -134,8 +134,12 @@ export default function RootLayout({
   return (
     <html lang="id" className={`${inter.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
-        <link rel="preconnect" href={siteUrl} crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href={siteUrl} />
+        {siteUrl && !siteUrl.includes("localhost") && (
+          <>
+            <link rel="preconnect" href={siteUrl} crossOrigin="anonymous" />
+            <link rel="dns-prefetch" href={siteUrl} />
+          </>
+        )}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
