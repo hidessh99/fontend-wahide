@@ -148,7 +148,7 @@ export function MessageLogsTable() {
 
         <div
           ref={parentRef}
-          className="max-h-[480px] overflow-auto divide-y divide-border/50 text-xs font-semibold"
+          className="max-h-120 overflow-auto divide-y divide-border/50 text-xs font-semibold"
         >
           <div
             style={{
