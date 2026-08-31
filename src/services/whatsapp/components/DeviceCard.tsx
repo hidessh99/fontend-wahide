@@ -92,14 +92,14 @@ export function DeviceCard({
     return (
       <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground-secondary">
         {device.isCharging ? (
-          <BatteryCharging className="size-4 text-wise-green" />
+          <BatteryCharging className="size-4 text-dark-green dark:text-wise-green" />
         ) : isLow ? (
           <BatteryLow className="size-4 text-rose-500" />
         ) : (
           <Battery className="size-4 text-foreground-muted" />
         )}
         <span>{device.batteryLevel}%</span>
-        {device.isCharging && <span className="text-[10px] text-wise-green font-bold">({t("whatsapp.charging")})</span>}
+        {device.isCharging && <span className="text-[10px] text-dark-green dark:text-wise-green font-bold">({t("whatsapp.charging")})</span>}
       </div>
     );
   };

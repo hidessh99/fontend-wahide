@@ -4,14 +4,15 @@ import React from "react";
 import { Invoice, InvoiceStatus } from "../types/finance.types";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/context";
-import { Download, FileText, CheckCircle2, Clock, AlertCircle } from "lucide-react";
+import { FileText, CheckCircle2, Clock, AlertCircle, CreditCard } from "lucide-react";
 
 interface InvoiceTableProps {
   invoices: Invoice[];
-  onDownload: (invoice: Invoice) => void;
+  onViewReceipt: (invoice: Invoice) => void;
+  onPay?: (invoice: Invoice) => void;
 }
 
-export function InvoiceTable({ invoices, onDownload }: InvoiceTableProps) {
+export function InvoiceTable({ invoices, onViewReceipt, onPay }: InvoiceTableProps) {
   const { t } = useI18n();
 
   const renderStatusBadge = (status: InvoiceStatus) => {
@@ -71,54 +72,82 @@ export function InvoiceTable({ invoices, onDownload }: InvoiceTableProps) {
           </div>
         ) : (
           <div className="divide-y divide-border/50 text-xs font-semibold">
-            {invoices.map((inv) => (
-              <div
-                key={inv.id}
-                className="grid grid-cols-12 gap-3 px-5 py-3.5 items-center hover:bg-muted/40 transition-colors"
-              >
-                {/* Invoice Number & Date */}
-                <div className="col-span-4 sm:col-span-3 space-y-0.5">
-                  <span className="font-bold text-foreground block font-mono text-[11px] truncate">
-                    {inv.invoiceNumber}
-                  </span>
-                  <span className="text-[10px] text-foreground-muted block">
-                    {new Date(inv.createdAt).toLocaleDateString("id-ID", {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                    })}
-                  </span>
-                </div>
+            {invoices.map((inv) => {
+              const safeAmount = Number(inv.amount ?? 0);
+              const dateStr = inv.createdAt
+                ? new Date(inv.createdAt).toLocaleDateString("id-ID", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  })
+                : "-";
 
-                {/* Description */}
-                <div className="hidden sm:block sm:col-span-4 text-foreground-secondary truncate">
-                  {inv.description}
-                </div>
+              return (
+                <div
+                  key={inv.id}
+                  className="grid grid-cols-12 gap-3 px-5 py-3.5 items-center hover:bg-muted/40 transition-colors"
+                >
+                  {/* Invoice Number & Date */}
+                  <div className="col-span-4 sm:col-span-3 space-y-0.5">
+                    <span className="font-bold text-foreground block font-mono text-[11px] truncate">
+                      {inv.invoiceNumber || "INV-WAHIDE"}
+                    </span>
+                    <span className="text-[10px] text-foreground-muted block">
+                      {dateStr}
+                    </span>
+                  </div>
 
-                {/* Amount */}
-                <div className="col-span-3 sm:col-span-2 font-mono font-bold text-foreground truncate">
-                  Rp {inv.amount.toLocaleString("id-ID")}
-                </div>
+                  {/* Description */}
+                  <div className="hidden sm:block sm:col-span-4 text-foreground-secondary truncate">
+                    {inv.description || "Layanan WhatsApp Gateway"}
+                  </div>
 
-                {/* Status Badge */}
-                <div className="col-span-3 sm:col-span-2 flex justify-center">
-                  {renderStatusBadge(inv.status)}
-                </div>
+                  {/* Amount */}
+                  <div className="col-span-3 sm:col-span-2 font-mono font-bold text-foreground truncate">
+                    Rp {safeAmount.toLocaleString("id-ID")}
+                  </div>
 
-                {/* Action */}
-                <div className="col-span-2 sm:col-span-1 flex justify-end">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => onDownload(inv)}
-                    className="size-8 rounded-full p-0 border-border hover:border-foreground-muted"
-                    aria-label={`Unduh ${inv.invoiceNumber}`}
-                  >
-                    <Download className="size-3.5 text-foreground-secondary" />
-                  </Button>
+                  {/* Status Badge */}
+                  <div className="col-span-3 sm:col-span-2 flex justify-center">
+                    {renderStatusBadge(inv.status)}
+                  </div>
+
+                  {/* Conditional Action Column */}
+                  <div className="col-span-2 sm:col-span-1 flex justify-end items-center">
+                    {inv.status === "PENDING" ? (
+                      <Button
+                        variant="primaryPill"
+                        size="sm"
+                        onClick={() => {
+                          if (inv.paymentUrl || inv.invoiceUrl) {
+                            window.open(inv.paymentUrl || inv.invoiceUrl, "_blank", "noopener,noreferrer");
+                          } else if (onPay) {
+                            onPay(inv);
+                          }
+                        }}
+                        className="h-7 px-3 text-[10px] font-bold gap-1 rounded-full shadow-xs cursor-pointer"
+                      >
+                        <CreditCard className="size-3" />
+                        <span>{t("billing.payNow")}</span>
+                      </Button>
+                    ) : inv.status === "PAID" ? (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => onViewReceipt(inv)}
+                        className="h-7 px-2.5 text-[10px] font-bold gap-1 rounded-full border-border hover:border-foreground-muted cursor-pointer"
+                        title={t("billing.viewInvoice")}
+                      >
+                        <FileText className="size-3 text-foreground-secondary" />
+                        <span>{t("billing.viewInvoice")}</span>
+                      </Button>
+                    ) : (
+                      <span className="text-foreground-muted text-xs font-mono pr-2">-</span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

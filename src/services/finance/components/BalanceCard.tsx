@@ -17,7 +17,7 @@ export function BalanceCard({ balance, onOpenTopUp }: BalanceCardProps) {
   return (
     <div className="rounded-md border border-border bg-surface dark:bg-[#161715] p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6 shadow-sm">
       <div className="flex items-center gap-4">
-        <div className="size-14 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center shrink-0">
+        <div className="size-14 rounded-full bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center shrink-0">
           <Wallet className="size-7" />
         </div>
         <div className="space-y-1">
@@ -28,7 +28,7 @@ export function BalanceCard({ balance, onOpenTopUp }: BalanceCardProps) {
             <span className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
               Rp {(balance?.amount || 0).toLocaleString("id-ID")}
             </span>
-            <span className="text-xs font-semibold text-wise-green">IDR</span>
+            <span className="text-xs font-semibold text-dark-green dark:text-wise-green">IDR</span>
           </div>
           <p className="text-[11px] font-semibold text-foreground-secondary">
             {t("billing.depositBalanceDesc")}

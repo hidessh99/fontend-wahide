@@ -108,7 +108,7 @@ export function LiveQRModal({
         {/* Sticky Header */}
         <div className="flex items-start justify-between p-5 sm:p-6 pb-4 border-b border-border shrink-0">
           <div className="space-y-1">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-wise-green/15 text-wise-green mb-1">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green border border-wise-green/30 mb-1">
               <ShieldCheck className="size-3.5" />
               <span>Multi-Device End-to-End Encrypted</span>
             </div>
@@ -287,8 +287,8 @@ export function LiveQRModal({
                       >
                         {copied ? (
                           <>
-                            <Check className="size-3.5 text-wise-green" />
-                            <span className="text-wise-green">Kode Tersalin!</span>
+                            <Check className="size-3.5 text-dark-green dark:text-wise-green" />
+                            <span className="text-dark-green dark:text-wise-green font-bold">Kode Tersalin!</span>
                           </>
                         ) : (
                           <>

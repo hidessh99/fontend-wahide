@@ -7,6 +7,8 @@ import { BalanceCard } from "@/services/finance/components/BalanceCard";
 import { InvoiceTable } from "@/services/finance/components/InvoiceTable";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { useI18n } from "@/lib/i18n/context";
+import { toast } from "sonner";
+import { Invoice } from "@/services/finance/types/finance.types";
 import { Receipt } from "lucide-react";
 
 const TopUpModal = dynamic(
@@ -14,10 +16,16 @@ const TopUpModal = dynamic(
   { ssr: false }
 );
 
+const InvoiceReceiptModal = dynamic(
+  () => import("@/services/finance/components/InvoiceReceiptModal").then((m) => m.InvoiceReceiptModal),
+  { ssr: false }
+);
+
 export function BillingView() {
   const { t } = useI18n();
-  const { balance, invoices, createTopUp, downloadInvoice } = useBilling();
+  const { balance, invoices, createTopUp } = useBilling();
   const [isTopUpOpen, setIsTopUpOpen] = useState(false);
+  const [selectedReceipt, setSelectedReceipt] = useState<Invoice | null>(null);
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
@@ -25,7 +33,7 @@ export function BillingView() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
-            <div className="size-9 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center">
+            <div className="size-9 rounded-full bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center">
               <Receipt className="size-5" />
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
@@ -50,7 +58,15 @@ export function BillingView() {
       <ErrorBoundary fallbackTitle="Gagal Memuat Riwayat Faktur">
         <InvoiceTable
           invoices={invoices}
-          onDownload={downloadInvoice}
+          onViewReceipt={(inv) => setSelectedReceipt(inv)}
+          onPay={(inv) => {
+            const targetUrl = inv.paymentUrl || inv.invoiceUrl;
+            if (targetUrl) {
+              window.open(targetUrl, "_blank", "noopener,noreferrer");
+            } else {
+              toast.info(`Membuka instruksi pembayaran faktur ${inv.invoiceNumber}...`);
+            }
+          }}
         />
       </ErrorBoundary>
 
@@ -59,6 +75,13 @@ export function BillingView() {
         isOpen={isTopUpOpen}
         onClose={() => setIsTopUpOpen(false)}
         onSubmit={createTopUp}
+      />
+
+      {/* Official Invoice Receipt Modal (Print / Save as PDF) */}
+      <InvoiceReceiptModal
+        isOpen={!!selectedReceipt}
+        onClose={() => setSelectedReceipt(null)}
+        invoice={selectedReceipt}
       />
     </div>
   );

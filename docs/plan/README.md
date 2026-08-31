@@ -30,3 +30,21 @@ Daftar dokumen perencanaan arsitektur, optimasi performa, dan standarisasi tekni
 
 9. **[Subscription undefined toLocaleString Fix Plan](./subscription_undefined_tolocalestring_fix_plan.md)**
    - **Perbaikan Error TypeError toLocaleString pada Halaman Subscription**: Normalisasi data respon backend Go (`snake_case` $\to$ `camelCase`) dan implementasi rendering defensif pada `QuotaDialCard` dan `PlanCardGrid`.
+
+10. **[Light Mode Color Contrast Accessibility Plan](./light_mode_color_contrast_accessibility_plan.md)**
+    - **Standarisasi Kontras Warna Light Mode (WCAG AAA Compliance)**: Mengganti penggunaan `text-wise-green` neon pada mode terang menjadi `text-dark-green dark:text-wise-green` dan `bg-light-mint dark:bg-wise-green/15` untuk tautan "Lihat Semua", badge, dan ikon.
+
+11. **[Deposit Balance Label Streamlining Plan](./deposit_balance_label_streamlining_plan.md)**
+    - **Penyederhanaan Label "Saldo Deposit"**: Menghilangkan kata redundan "Pesan" pada judul kartu saldo di halaman Billing menjadi "Saldo Deposit" (ID) / "Deposit Balance" (EN).
+
+12. **[Invoice Conditional Action & Payment Link Plan](./invoice_conditional_action_payment_link_plan.md)**
+    - **Aksi Faktur Kondisional & Tautan Pembayaran Tagihan**: Menampilkan tombol "Bayar" aktif saat status PENDING dan otomatis menyembunyikan tombol bayar saat status PAID.
+
+13. **[Official Invoice Receipt & Payment Flow Plan](./official_invoice_receipt_and_payment_flow_plan.md)**
+    - **Alur Pembayaran Tagihan & Modal Faktur Resmi (Print / Save PDF)**: Implementasi tombol bayar langsung untuk tagihan PENDING dan modal faktur resmi berstempel LUNAS lengkap dengan fitur Cetak / Simpan PDF untuk tagihan PAID.
+
+14. **[Invoice Amount undefined toLocaleString Fix Plan](./invoice_amount_undefined_tolocalestring_fix_plan.md)**
+    - **Perbaikan Error TypeError toLocaleString pada InvoiceTable**: Normalisasi DTO `snake_case` backend Go dan defensive rendering fallback `Number(inv.amount ?? 0)`.
+
+15. **[Checkout URL Direct Payment Gateway Redirect Plan](./checkout_url_direct_payment_gateway_redirect_plan.md)**
+    - **Direct Redirect ke Link Payment Gateway (checkout_url)**: Ekstraksi `checkout_url` / `redirect_url` dari REST API payment gateway dan direct redirect tab baru saat tombol Bayar diklik tanpa membuka modal popup topup.

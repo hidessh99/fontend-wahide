@@ -32,6 +32,19 @@ export function useDashboardStats() {
       } else {
         const data = await userApi.getDashboardStats();
         setUserStats(data);
+        if (data) {
+          const currentTenant = useAuth.getState().tenant;
+          if (currentTenant) {
+            useAuth.getState().setTenant({
+              ...currentTenant,
+              planName: data.plan_name || currentTenant.planName,
+              maxDevices: data.device_limit || currentTenant.maxDevices,
+              monthlyQuota: data.monthly_message_limit,
+              usedQuota: data.total_messages_sent,
+              activeDevicesCount: data.connected_devices,
+            });
+          }
+        }
       }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal memuat statistik dasbor";
@@ -60,6 +73,19 @@ export function useDashboardStats() {
           const data = await userApi.getDashboardStats();
           if (isMounted) {
             setUserStats(data);
+            if (data) {
+              const currentTenant = useAuth.getState().tenant;
+              if (currentTenant) {
+                useAuth.getState().setTenant({
+                  ...currentTenant,
+                  planName: data.plan_name || currentTenant.planName,
+                  maxDevices: data.device_limit || currentTenant.maxDevices,
+                  monthlyQuota: data.monthly_message_limit,
+                  usedQuota: data.total_messages_sent,
+                  activeDevicesCount: data.connected_devices,
+                });
+              }
+            }
             setIsLoading(false);
           }
         }

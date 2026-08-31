@@ -53,8 +53,8 @@
 ## 📊 3. Modul Dashboard Utama & Multi-Tenant State (`/dashboard`)
 
 - [x] **3.1 Kartu Metrik KPI Ringkasan Bisnis** — `/dashboard` — Periksa 4 kartu ringkasan (Total Kontak, Kampanye Aktif, Sisa Kuota Pesan, Perangkat Terhubung) → Angka statistik sinkron dengan session tenant di Zustand.
-- [ ] **3.2 Tabel Sesi Node WhatsApp Terkini** — `/dashboard` — Periksa tabel perangkat aktif di bawah widget ringkasan → Status badge (*CONNECTED / PAIRING / DISCONNECTED*) tampil dengan warna indikator yang tepat.
-- [ ] **3.3 Widget Riwayat Kampanye Broadcast Terkini** — `/dashboard` — Periksa log pesan siaran terbaru → Tanggal, nama kampanye, persentase progress blast tampil realtime.
+- [x] **3.2 Tabel Sesi Node WhatsApp Terkini** — `/dashboard` — Periksa tabel perangkat aktif di bawah widget ringkasan → Status badge (*CONNECTED / PAIRING / DISCONNECTED*) tampil dengan warna indikator yang tepat.
+- [x] **3.3 Widget Riwayat Kampanye Broadcast Terkini** — `/dashboard` — Periksa log pesan siaran terbaru → Tanggal, nama kampanye, persentase progress blast tampil realtime.
 - [ ] **3.4 Tombol Navigasi Cepat (Quick Action Pills)** — `/dashboard` — Klik tombol *Tambah Perangkat*, *Buat Kampanye*, *Top-Up Saldo* → Modal wizard terkait langsung terbuka seketika via dynamic code-splitting.
 - [ ] **3.5 Eliminasi Unnecessary Re-renders** — Buka React DevTools Profiler saat navigasi antar tab dasbor → Header dan Sidebar tidak mengalami re-render ulang berkat atomic Zustand selectors.
 
@@ -62,9 +62,9 @@
 
 ## 📱 4. Modul Manajemen Perangkat WhatsApp & Live QR SSE Streaming (`/devices`)
 
-- [ ] **4.1 Daftar Slot Perangkat (Device Grid/List)** — `/devices` — Periksa daftar nomor WhatsApp yang terdaftar → Nama perangkat, nomor telepon, badge status koneksi, dan tombol aksi (*Scan QR*, *Kirim Pesan Uji*, *Disconnect*, *Hapus*) tampil akurat.
+- [x] **4.1 Daftar Slot Perangkat (Device Grid/List)** — `/devices` — Periksa daftar nomor WhatsApp yang terdaftar → Nama perangkat, nomor telepon, badge status koneksi, dan tombol aksi (*Scan QR*, *Kirim Pesan Uji*, *Disconnect*, *Hapus*) tampil akurat.
 - [ ] **4.2 Modal Tambah Slot Perangkat Baru** — `/devices` — Klik *Tambah Perangkat* → Modal `AddDeviceModal` dimuat secara dinamis, masukkan nama slot (misal: *CS Support 1*), klik Simpan → Slot perangkat baru terbentuk.
-- [ ] **4.3 Live QR Streaming Pairing (SSE Engine)** — `/devices` — Klik *Hubungkan / Scan QR* pada slot → Modal `LiveQRModal` terbuka, stream Server-Sent Events (SSE) aktif, kode QR berganti otomatis tiap 20 detik dengan hitung mundur.
+- [x] **4.3 Live QR Streaming Pairing (SSE Engine)** — `/devices` — Klik *Hubungkan / Scan QR* pada slot → Modal `LiveQRModal` terbuka, stream Server-Sent Events (SSE) aktif, kode QR berganti otomatis tiap 20 detik dengan hitung mundur.
 - [ ] **4.4 Exponential Backoff + Jitter Reconnect Test** — `/devices` — Putuskan koneksi internet/gateway saat popup QR aktif → Sistem mencoba reconnect dengan jeda bertingkat ($1s \to 1.5s \to 2.25s \dots$), tidak terjadi memory leak atau loop CPU tanpa batas.
 - [ ] **4.5 Teardown Cleanup Anti-Memory Leak** — `/devices` — Tutup modal `LiveQRModal` saat countdown masih berjalan → `EventSource.close()` seketika memutus koneksi socket, `clearInterval` mematikan timer, RAM browser tetap stabil < 15MB.
 - [ ] **4.6 Kirim Pesan Uji Coba Cepat (Test Message)** — `/devices` — Klik *Kirim Pesan Uji* pada slot terhubung → Masukkan nomor WhatsApp tujuan (diawali `62`) dan isi pesan, klik Kirim → Toast sukses muncul.
@@ -74,8 +74,8 @@
 
 ## 👥 5. Modul Kontak & Manajemen Audiens Virtualized (`/contacts`)
 
-- [ ] **5.1 Virtual Scrolling 60 FPS Skala Masif** — `/contacts` — Buka daftar ribuan kontak → Tabel menggunakan `@tanstack/react-virtual`, scrolling sangat mulus pada 60 FPS, hanya ~15 elemen DOM yang dirender secara aktif.
-- [ ] **5.2 Tambah Kontak Manual Baru** — `/contacts` — Klik *Tambah Kontak* → Modal `ContactModal` terbuka dinamis, masukkan Nama, Nomor WhatsApp (`628xxx`), Tag/Grup, dan Atribut Kustom → Kontak tersimpan dan tampil di tabel.
+- [x] **5.1 Virtual Scrolling 60 FPS Skala Masif** — `/contacts` — Buka daftar ribuan kontak → Tabel menggunakan `@tanstack/react-virtual`, scrolling sangat mulus pada 60 FPS, hanya ~15 elemen DOM yang dirender secara aktif.
+- [x] **5.2 Tambah Kontak Manual Baru** — `/contacts` — Klik *Tambah Kontak* → Modal `ContactModal` terbuka dinamis, masukkan Nama, Nomor WhatsApp (`628xxx`), Tag/Grup, dan Atribut Kustom → Kontak tersimpan dan tampil di tabel.
 - [ ] **5.3 Import Kontak Massal via CSV (Import Wizard)** — `/contacts` — Klik *Import CSV* → Modal `ImportCsvModal` terbuka, upload file `.csv`, lakukan mapping kolom (Nama, Telepon, Tag) → Progress bar impor berjalan, validasi nomor duplikat/invalid terdeteksi.
 - [ ] **5.4 Pencarian & Filter Kontak Instan** — `/contacts` — Ketik nama/nomor di kolom pencarian atau filter berdasarkan Tag → Tabel melakukan filter reaktif tanpa reload halaman.
 - [ ] **5.5 Edit & Hapus Kontak** — `/contacts` — Klik ikon Edit pada baris kontak → Form terisi data lama, ubah data dan simpan; klik Hapus → Kontak terhapus dari daftar.
@@ -97,11 +97,11 @@
 
 ## 💳 7. Modul Saldo Deposit, Billing & Invoice (`/billing`)
 
-- [ ] **7.1 Kartu Saldo Deposit & Kuota WhatsApp** — `/billing` — Periksa widget saldo wallet (IDR) dan sisa kuota pesan WhatsApp bulanan → Nilai saldo terformat Rupiah standar (`Rp xxx.xxx`).
-- [ ] **7.2 Modal Top-Up Saldo Instan (QRIS & Virtual Account)** — `/billing` — Klik *Top-Up Saldo* → Modal `TopUpModal` terbuka dinamis, pilih nominal (misal: Rp 100.000), pilih metode QRIS/BCA VA → QRIS / Nomor VA tampil jelas.
-- [ ] **7.3 Simulasi Auto-Check Pembayaran** — `/billing` — Setelah melakukan pembayaran simulasi → Sistem mendeteksi status sukses dan saldo wallet bertambah secara otomatis tanpa reload halaman.
-- [ ] **7.4 Tabel Riwayat Invoice & Filter Transaksi** — `/billing` — Periksa daftar invoice tagihan → Filter berdasarkan status *PAID / PENDING / EXPIRED*, pagination berfungsi normal.
-- [ ] **7.5 Export Lembar Invoice ke PDF** — `/billing` — Klik tombol *Download Invoice PDF* pada baris transaksi → Berkas PDF invoice resmi Wahide terunduh dengan rincian pajak dan timestamp transaksi.
+- [x] **7.1 Kartu Saldo Deposit & Kuota WhatsApp** — `/billing` — Periksa widget saldo wallet (IDR) dan sisa kuota pesan WhatsApp bulanan → Nilai saldo terformat Rupiah standar (`Rp xxx.xxx`).
+- [x] **7.2 Modal Top-Up Saldo Instan (QRIS & Virtual Account)** — `/billing` — Klik *Top-Up Saldo* → Modal `TopUpModal` terbuka dinamis, pilih nominal (misal: Rp 100.000), pilih metode QRIS/BCA VA → QRIS / Nomor VA tampil jelas.
+- [x] **7.3 Simulasi Auto-Check Pembayaran** — `/billing` — Setelah melakukan pembayaran simulasi → Sistem mendeteksi status sukses dan saldo wallet bertambah secara otomatis tanpa reload halaman.
+- [x] **7.4 Tabel Riwayat Invoice & Filter Transaksi** — `/billing` — Periksa daftar invoice tagihan → Filter berdasarkan status *PAID / PENDING / EXPIRED*, pagination berfungsi normal.
+- [x] **7.5 Export Lembar Invoice ke PDF** — `/billing` — Klik tombol *Download Invoice PDF* pada baris transaksi → Berkas PDF invoice resmi Wahide terunduh dengan rincian pajak dan timestamp transaksi.
 
 ---
 

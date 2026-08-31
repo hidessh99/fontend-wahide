@@ -55,7 +55,7 @@ export function QuotaDialCard({ subscription }: QuotaDialCardProps) {
       {/* Header Row */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-wise-green/15 text-wise-green mb-1">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green border border-wise-green/30 mb-1">
             <Zap className="size-3.5" />
             <span>Paket Aktif: {subscription.planName || "Free Trial"}</span>
           </div>

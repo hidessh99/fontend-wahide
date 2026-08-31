@@ -188,7 +188,7 @@ export function ImportCsvModal({
         {parsedData.length > 0 && (
           <div className="space-y-2">
             <div className="flex items-center justify-between text-xs font-bold text-foreground">
-              <span className="flex items-center gap-1.5 text-wise-green">
+              <span className="flex items-center gap-1.5 text-dark-green dark:text-wise-green font-semibold">
                 <CheckCircle2 className="size-4" />
                 <span>{t("contact.importPreviewTitle", { count: parsedData.length.toString() })}</span>
               </span>

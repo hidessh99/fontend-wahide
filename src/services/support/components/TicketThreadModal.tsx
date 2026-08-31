@@ -60,7 +60,7 @@ export function TicketThreadModal({
         <div className="flex items-start justify-between border-b border-border pb-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="font-mono text-xs font-bold text-wise-green bg-wise-green/15 px-2.5 py-0.5 rounded-full">
+              <span className="font-mono text-xs font-bold text-dark-green dark:text-wise-green bg-light-mint dark:bg-wise-green/15 px-2.5 py-0.5 rounded-full border border-wise-green/30">
                 {ticket.ticketNumber}
               </span>
               <span className="text-xs font-semibold text-foreground-muted">
@@ -94,8 +94,8 @@ export function TicketThreadModal({
               <div className="flex items-center gap-1.5 text-[11px] font-bold text-foreground-muted px-1">
                 {msg.isStaff ? (
                   <>
-                    <ShieldCheck className="size-3.5 text-wise-green" />
-                    <span className="text-wise-green font-extrabold">{msg.senderName}</span>
+                    <ShieldCheck className="size-3.5 text-dark-green dark:text-wise-green" />
+                    <span className="text-dark-green dark:text-wise-green font-extrabold">{msg.senderName}</span>
                   </>
                 ) : (
                   <>

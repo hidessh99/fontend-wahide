@@ -1,7 +1,7 @@
 {
-  "title": "Invoices & Billing",
+  "title": "Balance & Invoices",
   "subtitle": "Manage message quota deposit balances, subscription payment history, and download official invoices.",
-  "depositBalanceTitle": "Message Deposit Balance",
+  "depositBalanceTitle": "Deposit Balance",
   "depositBalanceDesc": "Balances can be used to purchase additional broadcast message quota on-demand.",
   "topUpBalance": "Top-Up Balance",
   "invoicesTitle": "Invoice Payment History",
@@ -33,5 +33,9 @@
   "voucherLabel": "Promo Voucher Code (Optional)",
   "voucherPlaceholder": "e.g. WAHIDE2026",
   "voucherApplyBtn": "Apply",
-  "voucherSuccess": "15% discount coupon applied successfully!"
+  "voucherSuccess": "15% discount coupon applied successfully!",
+  "payNow": "Pay",
+  "viewInvoice": "Invoice",
+  "officialInvoiceTitle": "Official Payment Invoice",
+  "printReceipt": "Print / Save as PDF"
 }

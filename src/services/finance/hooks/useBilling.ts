@@ -53,9 +53,12 @@ export function useBilling() {
 
   const createTopUp = async (amount: number, paymentMethod: PaymentMethod): Promise<Invoice> => {
     try {
-      const { invoice } = await financeApi.createTopUp({ amount, paymentMethod });
+      const { invoice, invoiceUrl } = await financeApi.createTopUp({ amount, paymentMethod });
       setInvoices((prev) => [invoice, ...prev]);
       toast.success(t("billing.toastTopUpSuccess"));
+      if (invoiceUrl && typeof window !== "undefined") {
+        window.open(invoiceUrl, "_blank", "noopener,noreferrer");
+      }
       return invoice;
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal memproses top-up";

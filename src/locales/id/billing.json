@@ -1,7 +1,7 @@
 {
-  "title": "Faktur & Tagihan",
+  "title": "Saldo dan Faktur",
   "subtitle": "Kelola saldo deposit kuota pesan, riwayat pembayaran langganan, dan unduh faktur resmi.",
-  "depositBalanceTitle": "Saldo Deposit Pesan",
+  "depositBalanceTitle": "Saldo Deposit",
   "depositBalanceDesc": "Saldo dapat digunakan untuk membeli kuota tambahan on-demand.",
   "topUpBalance": "Top-Up Saldo",
   "invoicesTitle": "Riwayat Faktur Pembayaran",
@@ -33,5 +33,9 @@
   "voucherLabel": "Kode Voucher Promo (Opsional)",
   "voucherPlaceholder": "Contoh: WAHIDE2026",
   "voucherApplyBtn": "Gunakan",
-  "voucherSuccess": "Kupon diskon 15% berhasil diterapkan!"
+  "voucherSuccess": "Kupon diskon 15% berhasil diterapkan!",
+  "payNow": "Bayar",
+  "viewInvoice": "Faktur",
+  "officialInvoiceTitle": "Faktur Pembayaran Resmi",
+  "printReceipt": "Cetak / Simpan PDF"
 }

@@ -123,7 +123,7 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
               size="sm"
               className="rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted"
             >
-              <Smartphone className="size-3.5 text-wise-green" />
+              <Smartphone className="size-3.5 text-dark-green dark:text-wise-green" />
               <span>Perangkat ({totalDevCount}/{stats.device_limit})</span>
             </Button>
           </Link>
@@ -148,7 +148,7 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
             <span className="text-xs font-bold uppercase tracking-wider text-foreground-muted">
               WhatsApp Terhubung
             </span>
-            <div className="size-8 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center">
+            <div className="size-8 rounded-full bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center">
               <Smartphone className="size-4" />
             </div>
           </div>
@@ -191,9 +191,18 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
           <div className="text-2xl font-black text-foreground tracking-tight">
             {stats.total_contacts.toLocaleString("id-ID")} Kontak
           </div>
-          <span className="text-[11px] font-semibold text-foreground-muted block">
-            Saldo: Rp {stats.balance.toLocaleString("id-ID")}
-          </span>
+          <div className="flex items-center justify-between pt-0.5">
+            <span className="text-[11px] font-semibold text-foreground-muted">
+              Saldo: <strong className="text-foreground font-mono">Rp {stats.balance.toLocaleString("id-ID")}</strong>
+            </span>
+            <Link
+              href="/billing"
+              className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green border border-wise-green/30 hover:opacity-80 transition cursor-pointer"
+            >
+              <Plus className="size-2.5" />
+              <span>Top-Up</span>
+            </Link>
+          </div>
         </div>
 
         {/* Campaigns Count */}
@@ -222,14 +231,14 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
           <div className="rounded-md border border-border bg-surface dark:bg-[#161715] p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <div className="flex items-center gap-2">
-                <Radio className="size-4 text-wise-green" />
+                <Radio className="size-4 text-dark-green dark:text-wise-green" />
                 <h2 className="font-extrabold text-sm sm:text-base text-foreground">
                   Node Sesi WhatsApp
                 </h2>
               </div>
               <Link
                 href="/devices"
-                className="text-xs font-bold text-wise-green hover:underline inline-flex items-center gap-1"
+                className="text-xs font-bold text-dark-green dark:text-wise-green hover:underline inline-flex items-center gap-1"
               >
                 <span>Lihat Semua</span>
                 <ArrowRight className="size-3" />
@@ -248,7 +257,7 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
                     className="p-3 rounded-md border border-border bg-surface dark:bg-[#10110e] flex items-center justify-between"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="size-8 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center">
+                      <div className="size-8 rounded-full bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center">
                         <Smartphone className="size-4" />
                       </div>
                       <div>
@@ -284,14 +293,14 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
           <div className="rounded-md border border-border bg-surface dark:bg-[#161715] p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <div className="flex items-center gap-2">
-                <Layers className="size-4 text-wise-green" />
+                <Layers className="size-4 text-dark-green dark:text-wise-green" />
                 <h2 className="font-extrabold text-sm sm:text-base text-foreground">
                   Kampanye Broadcast Terkini
                 </h2>
               </div>
               <Link
                 href="/campaigns"
-                className="text-xs font-bold text-wise-green hover:underline inline-flex items-center gap-1"
+                className="text-xs font-bold text-dark-green dark:text-wise-green hover:underline inline-flex items-center gap-1"
               >
                 <span>Lihat Semua</span>
                 <ArrowRight className="size-3" />
@@ -316,7 +325,7 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
                       </span>
                     </div>
 
-                    <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-wise-green/10 text-wise-green border border-wise-green/20">
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-light-mint dark:bg-wise-green/10 text-dark-green dark:text-wise-green border border-wise-green/30">
                       <ShieldCheck className="size-2.5" />
                       <span>{c.status}</span>
                     </span>
@@ -367,7 +376,7 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
               size="sm"
               className="rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted"
             >
-              <Users className="size-3.5 text-wise-green" />
+              <Users className="size-3.5 text-dark-green dark:text-wise-green" />
               <span>Kelola Pengguna</span>
             </Button>
           </Link>
@@ -392,7 +401,7 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
             <span className="text-xs font-bold uppercase tracking-wider text-foreground-muted">
               Pengguna Platform
             </span>
-            <div className="size-8 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center">
+            <div className="size-8 rounded-full bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center">
               <Users className="size-4" />
             </div>
           </div>
@@ -466,14 +475,14 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
           <div className="rounded-md border border-border bg-surface dark:bg-[#161715] p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <div className="flex items-center gap-2">
-                <Users className="size-4 text-wise-green" />
+                <Users className="size-4 text-dark-green dark:text-wise-green" />
                 <h2 className="font-extrabold text-sm sm:text-base text-foreground">
                   Pengguna Baru Mendaftar
                 </h2>
               </div>
               <Link
                 href="/admin/users"
-                className="text-xs font-bold text-wise-green hover:underline inline-flex items-center gap-1"
+                className="text-xs font-bold text-dark-green dark:text-wise-green hover:underline inline-flex items-center gap-1"
               >
                 <span>Kelola Semua</span>
                 <ArrowRight className="size-3" />
@@ -513,14 +522,14 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
           <div className="rounded-md border border-border bg-surface dark:bg-[#161715] p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <div className="flex items-center gap-2">
-                <CreditCard className="size-4 text-wise-green" />
+                <CreditCard className="size-4 text-dark-green dark:text-wise-green" />
                 <h2 className="font-extrabold text-sm sm:text-base text-foreground">
                   Transaksi &amp; Pembayaran Terkini
                 </h2>
               </div>
               <Link
                 href="/admin/overview"
-                className="text-xs font-bold text-wise-green hover:underline inline-flex items-center gap-1"
+                className="text-xs font-bold text-dark-green dark:text-wise-green hover:underline inline-flex items-center gap-1"
               >
                 <span>Lihat Laporan</span>
                 <ArrowRight className="size-3" />

@@ -401,7 +401,7 @@ export function CampaignWizardModal({
                   <button
                     type="button"
                     onClick={insertSpintaxSample}
-                    className="px-2.5 py-1 rounded-full bg-wise-green/15 hover:bg-wise-green/25 text-[11px] font-bold text-wise-green border border-wise-green/20"
+                    className="px-2.5 py-1 rounded-full bg-light-mint dark:bg-wise-green/15 hover:bg-light-mint/80 dark:hover:bg-wise-green/25 text-[11px] font-bold text-dark-green dark:text-wise-green border border-wise-green/30"
                   >
                     + {t("campaign.insertSpintax")}
                   </button>
@@ -427,7 +427,7 @@ export function CampaignWizardModal({
                       {t("campaign.jitterSliderDesc")}
                     </span>
                   </div>
-                  <span className="px-3 py-1 rounded-full bg-wise-green/15 text-wise-green font-black text-xs">
+                  <span className="px-3 py-1 rounded-full bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green font-black text-xs border border-wise-green/30">
                     {jitterDelaySeconds} Detik
                   </span>
                 </div>

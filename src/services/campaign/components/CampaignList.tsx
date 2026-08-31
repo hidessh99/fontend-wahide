@@ -207,7 +207,7 @@ export function CampaignList() {
                         percent: percent.toString(),
                       })}
                     </span>
-                    <span className="text-wise-green font-mono">{percent}%</span>
+                    <span className="text-dark-green dark:text-wise-green font-mono">{percent}%</span>
                   </div>
                   <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
                     <div

@@ -217,7 +217,7 @@ export function TicketList() {
                 {/* Subject & Number */}
                 <div className="col-span-6 sm:col-span-5 space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-[10px] font-bold text-wise-green bg-wise-green/15 px-2 py-0.5 rounded-full">
+                    <span className="font-mono text-[10px] font-bold text-dark-green dark:text-wise-green bg-light-mint dark:bg-wise-green/15 px-2 py-0.5 rounded-full border border-wise-green/30">
                       {tkt.ticketNumber}
                     </span>
                     <span className="text-[11px] text-foreground-muted sm:hidden">

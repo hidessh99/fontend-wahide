@@ -9,6 +9,8 @@ export interface Invoice {
   amount: number;
   status: InvoiceStatus;
   paymentMethod?: PaymentMethod;
+  paymentUrl?: string;
+  invoiceUrl?: string;
   paidAt?: string;
   createdAt: string;
 }
