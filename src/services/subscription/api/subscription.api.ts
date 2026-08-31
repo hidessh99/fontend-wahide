@@ -1,5 +1,6 @@
 import { httpClient } from "@/lib/api/http-client";
 import { env } from "@/lib/config/env";
+import { generateSecureRandomString } from "@/lib/utils";
 import { SubscriptionPlan, TenantSubscription, WebhookConfig } from "../types/subscription.types";
 
 const SUBSCRIPTION_BASE = env.NEXT_PUBLIC_WHATSAPP_API_URL;
@@ -133,6 +134,6 @@ export const subscriptionApi = {
 
   regenerateWebhookSecret: async (): Promise<{ secret: string }> => {
     const res = await httpClient.post<{ secret: string }>(`${SUBSCRIPTION_BASE}/subscription/webhook/regenerate-secret`);
-    return { secret: res.payload?.secret || "whsec_live_" + Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2) };
+    return { secret: res.payload?.secret || generateSecureRandomString("whsec_live_", 24) };
   },
 };

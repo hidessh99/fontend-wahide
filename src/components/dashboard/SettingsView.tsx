@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useAuth } from "@/services/iam/hooks/useAuth";
 import { authApi } from "@/services/iam/api/auth.api";
+import { generateSecureRandomString } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/context";
 import { toast } from "sonner";
@@ -51,10 +52,10 @@ export function SettingsView() {
       setIsKeyLoading(true);
       try {
         const res = await authApi.generateApiKey();
-        setApiKey(res.token || "hide_live_" + Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2));
+        setApiKey(res.token || generateSecureRandomString("hide_live_", 24));
         toast.success(t("settings.keyRegenerated"));
       } catch {
-        setApiKey("hide_live_" + Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2));
+        setApiKey(generateSecureRandomString("hide_live_", 24));
         toast.success(t("settings.keyRegenerated"));
       } finally {
         setIsKeyLoading(false);

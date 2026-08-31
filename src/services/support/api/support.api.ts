@@ -48,7 +48,7 @@ export const supportApi = {
     return (
       res.payload || {
         id: "tkt_" + Date.now(),
-        ticketNumber: "TKT-" + Math.floor(1000 + Math.random() * 9000),
+        ticketNumber: "TKT-" + Date.now().toString().slice(-4),
         subject: payload.subject,
         category: payload.category,
         priority: payload.priority,
