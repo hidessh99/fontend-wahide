@@ -77,9 +77,16 @@ export function LiveQRModal({
 
   const handleRequestCode = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!phoneNumber.trim()) return;
-    await requestPairingCode(phoneNumber.trim());
+    let raw = phoneNumber.trim().replace(/\D/g, "");
+    if (!raw) return;
+    if (raw.startsWith("0")) {
+      raw = "62" + raw.slice(1);
+    } else if (raw.startsWith("8")) {
+      raw = "62" + raw;
+    }
+    await requestPairingCode(raw);
   };
+
 
   const handleCopyCode = () => {
     if (!pairingCode) return;

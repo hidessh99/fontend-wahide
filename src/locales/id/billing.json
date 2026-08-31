@@ -23,10 +23,8 @@
   "selectAmountLabel": "Pilih Nominal Top-Up",
   "customAmountLabel": "Atau Masukkan Nominal Kustom",
   "customAmountPlaceholder": "Min. Rp 50.000",
-  "selectPaymentMethod": "Pilih Metode Pembayaran",
+  "selectPaymentMethod": "Metode Pembayaran",
   "payWithQris": "QRIS Instan (GoPay, OVO, Dana, BCA)",
-  "payWithVa": "Virtual Account Bank (BCA, Mandiri, BNI, BRI)",
-  "payWithCard": "Kartu Kredit / Debit Online",
   "submitTopUp": "Bayar Sekarang",
   "submittingTopUp": "Menyiapkan Transaksi...",
   "cancel": "Batal",
@@ -35,10 +33,5 @@
   "voucherLabel": "Kode Voucher Promo (Opsional)",
   "voucherPlaceholder": "Contoh: WAHIDE2026",
   "voucherApplyBtn": "Gunakan",
-  "voucherSuccess": "Kupon diskon 15% berhasil diterapkan!",
-  "affiliateTitle": "Komisi Afiliasi / Seller Pending",
-  "affiliateVerified": "({count} Transaksi Referral Terverifikasi)",
-  "affiliateDesc": "Komisi referral otomatis dicairkan ke saldo deposit setiap tanggal 1.",
-  "affiliateDetailsBtn": "Rincian Komisi",
-  "affiliateAlert": "Komisi akan ditransfer otomatis pada siklus pembayaran berikutnya."
+  "voucherSuccess": "Kupon diskon 15% berhasil diterapkan!"
 }

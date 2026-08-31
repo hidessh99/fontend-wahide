@@ -15,3 +15,12 @@ Daftar dokumen perencanaan arsitektur, optimasi performa, dan standarisasi tekni
 
 4. **[Modal Viewport Responsiveness & Accessibility Plan](./modal_viewport_responsiveness_and_accessibility_plan.md)**
    - **Standardisasi Responsivitas Viewport & Aksesibilitas Modal**: Mengatasi masalah modal QR terpotong di layar laptop kecil, mengaktifkan scroll internal `max-h-[90vh]`, click outside to close, dan tombol `Escape` keyboard di seluruh modal.
+
+5. **[Device Action CTA Refinement Plan](./device_action_cta_refinement_plan.md)**
+   - **Penyempurnaan Label CTA Kartu Perangkat ("Hubungkan")**: Analisis semantik antarmuka dan penggantian tombol "Scan QR Code" menjadi "Hubungkan" (ID) / "Connect" (EN) untuk meningkatkan kejelasan tujuan pengguna (*Action-Oriented UX*).
+
+6. **[Device Card Action Buttons Streamlining Plan](./device_card_action_buttons_streamlining_plan.md)**
+   - **Penyederhanaan Tombol Aksi Kartu Perangkat ("Putuskan" & "Hibernasi")**: Mengoptimalkan micro-copy tombol side-by-side pada kartu slot perangkat agar hemat ruang (~45%), bebas dari text-wrapping, dan proporsional di seluruh resolusi layar.
+
+7. **[Billing Affiliate Section Cleanup Plan](./billing_affiliate_section_cleanup_plan.md)**
+   - **Pembersihan Section Komisi Afiliasi / Seller Pending**: Menghapus kartu hardcoded komisi afiliasi pada halaman billing agar antarmuka fokus murni pada saldo deposit dan faktur transaksi resmi.

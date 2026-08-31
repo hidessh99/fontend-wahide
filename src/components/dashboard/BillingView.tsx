@@ -7,7 +7,6 @@ import { BalanceCard } from "@/services/finance/components/BalanceCard";
 import { InvoiceTable } from "@/services/finance/components/InvoiceTable";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { useI18n } from "@/lib/i18n/context";
-import { Button } from "@/components/ui/button";
 import { Receipt } from "lucide-react";
 
 const TopUpModal = dynamic(
@@ -46,35 +45,6 @@ export function BillingView() {
           onOpenTopUp={() => setIsTopUpOpen(true)}
         />
       </ErrorBoundary>
-
-      {/* Seller Affiliate Commission Card (GET /api/v1/income-pending) */}
-      <div className="p-5 rounded-md border border-border bg-surface dark:bg-[#161715] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="space-y-0.5">
-          <span className="text-xs font-bold uppercase tracking-wider text-foreground-muted">
-            {t("billing.affiliateTitle")}
-          </span>
-          <div className="flex items-baseline gap-2">
-            <span className="text-xl font-black text-foreground">
-              Rp 1.450.000
-            </span>
-            <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
-              {t("billing.affiliateVerified", { count: 3 })}
-            </span>
-          </div>
-          <p className="text-[11px] font-semibold text-foreground-secondary">
-            {t("billing.affiliateDesc")}
-          </p>
-        </div>
-
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => alert(t("billing.affiliateAlert"))}
-          className="rounded-full text-xs font-bold border-border self-start sm:self-auto"
-        >
-          {t("billing.affiliateDetailsBtn")}
-        </Button>
-      </div>
 
       {/* Invoice Table with Error Boundary */}
       <ErrorBoundary fallbackTitle="Gagal Memuat Riwayat Faktur">
