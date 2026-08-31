@@ -14,12 +14,12 @@
     "logout": "Keluar"
   },
   "hero": {
-    "badge": "Infrastruktur WhatsApp Multi-Device Gateway Skala Industri",
-    "title": "Kirim pesan WhatsApp massal & API tanpa batas.",
+    "badge": "WhatsApp Multi-Device Gateway & REST API",
+    "title": "Kirim Pesan WhatsApp Massal Lebih Cepat, Aman, dan Tanpa Blokir.",
     "subtitle": "Gateway WhatsApp multi-device tercepat dengan 5 Lapis Anti-Ban, Spintax dinamis, dan rotasi load-balancing nomor. Mendukung berbagai aplikasi berbasis WhatsApp, termasuk chatbot, sistem layanan pelanggan, notifikasi otomatis, dan kampanye pesan massal. Platform ini menawarkan fitur lengkap untuk mengirim pesan teks, gambar, serta file media, sekaligus mengelola daftar kontak secara efisien.",
     "ctaTrial": "Mulai Gratis (1.500 Pesan)",
     "ctaLogin": "Masuk ke Dasbor",
-    "trustBadge": "Dipercaya ribuan bisnis untuk transaksi e-commerce, OTP, & notifikasi real-time."
+    "trustBadge": "Tanpa kartu kredit • Siap integrasi dalam 5 menit • Enkripsi end-to-end"
   },
   "metrics": {
     "deviceScale": "Skala Perangkat",

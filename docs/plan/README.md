@@ -69,3 +69,6 @@ Dokumen perencanaan arsitektur dan kesiapan produksi untuk frontend **Wahide (`f
 
 17. **[Meta Cloud API Drop-in Compatibility Plan](./meta_cloud_api_compatibility_copywriting_plan.md)**
     - **Kompatibilitas Penuh Meta WhatsApp Cloud API**: Menambahkan callout profesional pada section REST API Sandbox yang mengedukasi developer bahwa integrasi Meta Cloud API dapat langsung beralih ke Wahide cukup dengan mengganti Base URL tanpa rombak kode.
+
+18. **[Hero Headline Wise Copywriting Plan](./hero_headline_wise_copywriting_plan.md)**
+    - **Penyelarasan Judul Hero Gaya Wise**: Mengganti judul kaku bernuansa AI slop menjadi judul berorientasi aksi dan manfaat nyata: *"Kirim Pesan WhatsApp Massal Lebih Cepat, Aman, dan Tanpa Blokir."*
