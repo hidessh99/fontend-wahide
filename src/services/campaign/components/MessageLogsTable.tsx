@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { Search, CheckCheck, Check, AlertCircle } from "lucide-react";
 import { useI18n } from "@/lib/i18n/context";
 
@@ -51,6 +52,7 @@ export function MessageLogsTable() {
   const [logs] = useState<MessageLogItem[]>(DEFAULT_LOGS);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
+  const parentRef = useRef<HTMLDivElement>(null);
 
   const filteredLogs = logs.filter((l) => {
     const matchSearch =
@@ -61,6 +63,15 @@ export function MessageLogsTable() {
 
     const matchStatus = statusFilter === "ALL" || l.status === statusFilter;
     return matchSearch && matchStatus;
+  });
+
+  // High-Throughput DOM Virtualization
+  // eslint-disable-next-line react-hooks/incompatible-library
+  const rowVirtualizer = useVirtualizer({
+    count: filteredLogs.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 64,
+    overscan: 5,
   });
 
   const renderStatusBadge = (status: MessageLogItem["status"]) => {
@@ -126,7 +137,7 @@ export function MessageLogsTable() {
         </div>
       </div>
 
-      {/* Logs Table */}
+      {/* Logs Virtualized Table */}
       <div className="rounded-md border border-border bg-surface dark:bg-[#161715] overflow-hidden shadow-sm">
         <div className="grid grid-cols-12 gap-3 px-5 py-3.5 bg-muted/60 border-b border-border text-xs font-bold uppercase tracking-wider text-foreground-muted select-none">
           <div className="col-span-4 sm:col-span-3">{t("campaign.tableHeaderRecipient")}</div>
@@ -135,49 +146,71 @@ export function MessageLogsTable() {
           <div className="col-span-3 sm:col-span-2 text-right">{t("campaign.tableHeaderStatusTime")}</div>
         </div>
 
-        <div className="divide-y divide-border/50 text-xs font-semibold">
-          {filteredLogs.map((log) => (
-            <div
-              key={log.id}
-              className="grid grid-cols-12 gap-3 px-5 py-3.5 items-center hover:bg-muted/40 transition-colors"
-            >
-              {/* Recipient */}
-              <div className="col-span-4 sm:col-span-3 space-y-0.5">
-                <span className="font-bold text-foreground block truncate">
-                  {log.recipientName || t("campaign.unnamedRecipient")}
-                </span>
-                <span className="text-[11px] text-foreground-muted font-mono block">
-                  +{log.recipientPhone}
-                </span>
-              </div>
+        <div
+          ref={parentRef}
+          className="max-h-[480px] overflow-auto divide-y divide-border/50 text-xs font-semibold"
+        >
+          <div
+            style={{
+              height: `${rowVirtualizer.getTotalSize()}px`,
+              width: "100%",
+              position: "relative",
+            }}
+          >
+            {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+              const log = filteredLogs[virtualRow.index];
+              return (
+                <div
+                  key={log.id}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: `${virtualRow.size}px`,
+                    transform: `translateY(${virtualRow.start}px)`,
+                  }}
+                  className="grid grid-cols-12 gap-3 px-5 py-3 items-center hover:bg-muted/40 transition-colors"
+                >
+                  {/* Recipient */}
+                  <div className="col-span-4 sm:col-span-3 space-y-0.5">
+                    <span className="font-bold text-foreground block truncate">
+                      {log.recipientName || t("campaign.unnamedRecipient")}
+                    </span>
+                    <span className="text-[11px] text-foreground-muted font-mono block">
+                      +{log.recipientPhone}
+                    </span>
+                  </div>
 
-              {/* Campaign */}
-              <div className="hidden sm:block sm:col-span-3 text-foreground-secondary truncate">
-                {log.campaignName}
-              </div>
+                  {/* Campaign */}
+                  <div className="hidden sm:block sm:col-span-3 text-foreground-secondary truncate">
+                    {log.campaignName}
+                  </div>
 
-              {/* Message Snippet */}
-              <div className="col-span-5 sm:col-span-4 text-foreground-secondary truncate">
-                {log.messageSnippet}
-                {log.errorMessage && (
-                  <span className="text-[10px] text-rose-500 block truncate font-mono">
-                    {log.errorMessage}
-                  </span>
-                )}
-              </div>
+                  {/* Message Snippet */}
+                  <div className="col-span-5 sm:col-span-4 text-foreground-secondary truncate">
+                    <span className="block truncate">{log.messageSnippet}</span>
+                    {log.errorMessage && (
+                      <span className="text-[10px] text-rose-500 block truncate font-mono">
+                        {log.errorMessage}
+                      </span>
+                    )}
+                  </div>
 
-              {/* Status & Time */}
-              <div className="col-span-3 sm:col-span-2 flex flex-col items-end justify-center space-y-0.5">
-                {renderStatusBadge(log.status)}
-                <span className="text-[10px] text-foreground-muted font-mono">
-                  {new Date(log.sentAt).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </span>
-              </div>
-            </div>
-          ))}
+                  {/* Status & Time */}
+                  <div className="col-span-3 sm:col-span-2 flex flex-col items-end justify-center space-y-0.5">
+                    {renderStatusBadge(log.status)}
+                    <span className="text-[10px] text-foreground-muted font-mono">
+                      {new Date(log.sentAt).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

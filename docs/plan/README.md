@@ -75,3 +75,6 @@ Dokumen perencanaan arsitektur dan kesiapan produksi untuk frontend **Wahide (`f
 
 19. **[Frontend Performance & Speed Optimization Plan](./frontend_performance_and_speed_optimization_plan.md)**
     - **Audit Kinerja & Optimasi Kecepatan Frontend**: Dekomposisi Server vs Client Components, isolasi SpintaxSandbox, tree-shaking `optimizePackageImports`, serta kompresi HTTP untuk mencapai sub-second load time.
+
+20. **[Comprehensive Architecture & Performance Review](./comprehensive_architecture_and_performance_review.md)**
+    - **Audit Arsitektur Menyeluruh & Analisis Bottleneck**: Evaluasi komprehensif sistem frontend Next.js 16 (Edge Middleware route protection, Server Component streaming boundaries, Query cache deduplication, SSE resilience, table virtualization, dan HTTP client timeouts).

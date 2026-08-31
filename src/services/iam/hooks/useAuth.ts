@@ -6,6 +6,7 @@ import { User, Tenant } from "../types/auth.types";
 import { authApi } from "../api/auth.api";
 import { userApi } from "../api/user.api";
 import { LoginInput, RegisterInput } from "../schemas/auth.schema";
+import { setCookie, deleteCookie } from "@/lib/storage/cookies";
 
 interface AuthState {
   user: User | null;
@@ -63,6 +64,13 @@ export const useAuth = create<AuthState>()(
             expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
           };
 
+          // Synchronize cookies for 0ms Edge Middleware route protection
+          setCookie("wahide_session_token", res.token, 2592000);
+          setCookie("wahide_user_role", user.role, 2592000);
+          if (res.tenant_id) {
+            setCookie("wahide_tenant_id", res.tenant_id, 2592000);
+          }
+
           set({
             user,
             tenant,
@@ -103,6 +111,11 @@ export const useAuth = create<AuthState>()(
             await authApi.logout().catch(() => null);
           }
         } finally {
+          // Clear cookies for Edge Middleware
+          deleteCookie("wahide_session_token");
+          deleteCookie("wahide_user_role");
+          deleteCookie("wahide_tenant_id");
+
           set({
             user: null,
             tenant: null,

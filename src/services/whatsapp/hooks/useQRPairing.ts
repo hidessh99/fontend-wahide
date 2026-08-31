@@ -22,9 +22,13 @@ export function useQRPairing({
   const [status, setStatus] = useState<DeviceStatus | "LOADING" | "ERROR" | "AUTHENTICATED">("LOADING");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [countdown, setCountdown] = useState<number>(20);
+  const [retryCount, setRetryCount] = useState<number>(0);
 
   const eventSourceRef = useRef<EventSource | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const MAX_RETRY_ATTEMPTS = 5;
 
   useEffect(() => {
     if (!isOpen || !deviceId) {
@@ -35,7 +39,9 @@ export function useQRPairing({
     let es: EventSource | null = null;
     let timer: NodeJS.Timeout | null = null;
 
-    const connect = () => {
+    const connect = (attempt: number = 0) => {
+      if (!isMounted) return;
+
       const streamUrl = whatsappApi.getQRStreamUrl(deviceId);
 
       timer = setInterval(() => {
@@ -113,8 +119,27 @@ export function useQRPairing({
 
         es.onerror = () => {
           if (!isMounted) return;
-          setStatus("ERROR");
-          setErrorMessage("Koneksi ke gateway terputus");
+          if (es) {
+            es.close();
+            eventSourceRef.current = null;
+          }
+
+          // Exponential Backoff with Jitter Reconnect Strategy
+          if (attempt < MAX_RETRY_ATTEMPTS) {
+            const backoffMs = Math.min(
+              1000 * Math.pow(1.5, attempt) + Math.random() * 500,
+              8000
+            );
+            reconnectTimeoutRef.current = setTimeout(() => {
+              if (isMounted) {
+                setRetryCount(attempt + 1);
+                connect(attempt + 1);
+              }
+            }, backoffMs);
+          } else {
+            setStatus("ERROR");
+            setErrorMessage("Koneksi ke gateway terputus setelah beberapa percobaan. Silakan coba lagi.");
+          }
         };
       } catch (err: unknown) {
         queueMicrotask(() => {
@@ -127,7 +152,7 @@ export function useQRPairing({
       }
     };
 
-    connect();
+    connect(0);
 
     // Teardown Cleanup (Zero Memory Leak)
     return () => {
@@ -135,6 +160,10 @@ export function useQRPairing({
       if (timer) {
         clearInterval(timer);
         timerRef.current = null;
+      }
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+        reconnectTimeoutRef.current = null;
       }
       if (es) {
         es.close();
@@ -147,6 +176,7 @@ export function useQRPairing({
     setStatus("LOADING");
     setErrorMessage(null);
     setCountdown(20);
+    setRetryCount(0);
   }, []);
 
   return {
@@ -155,6 +185,7 @@ export function useQRPairing({
     status,
     errorMessage,
     countdown,
+    retryCount,
     retry,
   };
 }

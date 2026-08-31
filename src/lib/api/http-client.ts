@@ -3,6 +3,8 @@
 // Matches Go Backend: github.com/hidessh99/wahide/internal/shared/response
 // ==============================================================================
 
+import { getCookie } from "@/lib/storage/cookies";
+
 export interface GlobalResponse<T = unknown> {
   success: boolean;
   message: string;
@@ -62,11 +64,18 @@ interface RequestOptions extends RequestInit {
   params?: Record<string, string | number | boolean | undefined>;
   token?: string;
   tenantId?: string;
+  timeoutMs?: number;
+  retries?: number;
 }
 
 class HttpClient {
   private getAuthToken(): string | null {
     if (typeof window === "undefined") return null;
+    // 1. Try Cookie First
+    const cookieToken = getCookie("wahide_session_token");
+    if (cookieToken) return cookieToken;
+
+    // 2. Fallback to localStorage
     try {
       const authStorage = localStorage.getItem("wahide_auth_storage");
       if (authStorage) {
@@ -81,6 +90,11 @@ class HttpClient {
 
   private getActiveTenantId(): string | null {
     if (typeof window === "undefined") return null;
+    // 1. Try Cookie First
+    const cookieTenantId = getCookie("wahide_tenant_id");
+    if (cookieTenantId) return cookieTenantId;
+
+    // 2. Fallback to localStorage
     try {
       const authStorage = localStorage.getItem("wahide_auth_storage");
       if (authStorage) {
@@ -106,7 +120,15 @@ class HttpClient {
   }
 
   public async request<T = unknown>(endpoint: string, options: RequestOptions = {}): Promise<ApiResponse<T>> {
-    const { params, token, tenantId, headers, ...customConfig } = options;
+    const {
+      params,
+      token,
+      tenantId,
+      headers,
+      timeoutMs = 15000,
+      retries = 0,
+      ...customConfig
+    } = options;
 
     const authToken = token || this.getAuthToken();
     const activeTenant = tenantId || this.getActiveTenantId();
@@ -126,8 +148,13 @@ class HttpClient {
 
     const fullUrl = this.buildUrl(endpoint, params);
 
+    // Timeout Abort Controller
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
     const config: RequestInit = {
       ...customConfig,
+      signal: customConfig.signal || controller.signal,
       headers: {
         ...defaultHeaders,
         ...(headers as Record<string, string>),
@@ -136,9 +163,19 @@ class HttpClient {
 
     try {
       const response = await fetch(fullUrl, config);
+      clearTimeout(timeoutId);
+
       const data = await response.json().catch(() => null);
 
       if (!response.ok) {
+        // Retry policy for idempotent GET on 502/503/504
+        const method = (customConfig.method || "GET").toUpperCase();
+        if (retries > 0 && method === "GET" && [502, 503, 504].includes(response.status)) {
+          const backoff = Math.floor(300 + Math.random() * 500);
+          await new Promise((res) => setTimeout(res, backoff));
+          return this.request<T>(endpoint, { ...options, retries: retries - 1 });
+        }
+
         const errorMessage =
           data?.message ||
           data?.error ||
@@ -148,10 +185,15 @@ class HttpClient {
 
       return data as ApiResponse<T>;
     } catch (err: unknown) {
+      clearTimeout(timeoutId);
+
       if (err instanceof ApiError) {
         throw err;
       }
       if (err instanceof Error) {
+        if (err.name === "AbortError") {
+          throw new ApiError("Batas waktu koneksi habis (Timeout 15 detik). Server tidak merespons.", 408);
+        }
         throw new ApiError(err.message, 500);
       }
       throw new ApiError("Gagal menghubungi server. Periksa koneksi internet.", 500);
@@ -159,7 +201,7 @@ class HttpClient {
   }
 
   public get<T = unknown>(endpoint: string, options?: RequestOptions): Promise<ApiResponse<T>> {
-    return this.request<T>(endpoint, { ...options, method: "GET" });
+    return this.request<T>(endpoint, { ...options, method: "GET", retries: options?.retries ?? 1 });
   }
 
   public post<T = unknown>(endpoint: string, body?: unknown, options?: RequestOptions): Promise<ApiResponse<T>> {
