@@ -172,10 +172,14 @@ class HttpClient {
         }
 
 
-        const errorMessage =
-          data?.message ||
-          data?.error ||
-          `HTTP Error ${response.status}: ${response.statusText}`;
+        let errorMessage = `HTTP Error ${response.status}: ${response.statusText}`;
+        if (typeof data?.message === "string" && data.message) {
+          errorMessage = data.message;
+        } else if (typeof data?.error === "string" && data.error) {
+          errorMessage = data.error;
+        } else if (data?.error && typeof data.error === "object" && "message" in data.error) {
+          errorMessage = String((data.error as Record<string, unknown>).message);
+        }
         throw new ApiError(errorMessage, response.status, data);
       }
 
