@@ -43,29 +43,29 @@ export function HomeView() {
   };
 
   return (
-    <div className="space-y-24 py-8">
+    <div className="space-y-20 sm:space-y-28 py-6 sm:py-10">
       {/* 1. Hero Section */}
-      <section className="py-12 md:py-20 px-6 max-w-7xl mx-auto">
-        <div className="space-y-8 max-w-4xl">
-          <div className="inline-flex items-center gap-2.5 rounded-full bg-surface dark:bg-[#161715] px-4 py-2 border border-border text-xs font-bold shadow-xs">
-            <span className="h-2.5 w-2.5 rounded-full bg-wise-green animate-pulse" />
+      <section className="px-4 sm:px-6 max-w-5xl mx-auto">
+        <div className="space-y-6 sm:space-y-8">
+          <div className="inline-flex items-center gap-2 rounded-full bg-surface dark:bg-[#161715] px-3.5 py-1.5 border border-border text-xs font-bold shadow-xs">
+            <span className="h-2 w-2 rounded-full bg-wise-green animate-pulse" />
             <span>{t("common.hero.badge")}</span>
           </div>
 
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[0.92] text-foreground">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.04] text-foreground max-w-3xl">
             {t("common.hero.title")}
           </h1>
 
-          <p className="text-base sm:text-xl font-semibold text-foreground-secondary leading-relaxed max-w-2xl">
+          <p className="text-sm sm:text-base lg:text-lg font-semibold text-foreground-secondary leading-relaxed max-w-2xl">
             {t("common.hero.subtitle")}
           </p>
 
-          <div className="flex flex-wrap items-center gap-4 pt-2">
+          <div className="flex flex-wrap items-center gap-3.5 pt-1">
             <Link
               href="/register"
               className={cn(
                 buttonVariants({ variant: "primaryPill", size: "default" }),
-                "text-sm sm:text-base font-bold gap-3 px-7 py-6 shadow-sm min-h-12"
+                "text-sm sm:text-base font-bold gap-2.5 px-6 sm:px-7 py-5 sm:py-6 shadow-sm min-h-12"
               )}
             >
               <span>{t("common.hero.ctaTrial")}</span>
@@ -75,56 +75,56 @@ export function HomeView() {
               href="/login"
               className={cn(
                 buttonVariants({ variant: "outline", size: "default" }),
-                "rounded-full text-sm sm:text-base font-bold px-7 py-6 border-border hover:border-foreground-muted min-h-12"
+                "rounded-full text-sm sm:text-base font-bold px-6 sm:px-7 py-5 sm:py-6 border-border hover:border-foreground-muted min-h-12"
               )}
             >
               {t("common.hero.ctaLogin")}
             </Link>
           </div>
 
-          <div className="flex items-center gap-2 text-xs font-semibold text-foreground-muted pt-2">
+          <div className="flex items-center gap-2 text-xs font-semibold text-foreground-muted pt-1">
             <CheckCircle2 className="size-3.5 text-dark-green dark:text-wise-green" />
             <span>{t("common.hero.trustBadge")}</span>
           </div>
         </div>
 
-        {/* Key Metrics Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mt-16 pt-8 border-t border-border">
-          <div className="rounded-md bg-surface dark:bg-[#161715] p-6 border border-border shadow-xs space-y-1">
-            <p className="text-xs font-semibold text-foreground-muted uppercase tracking-wider">{t("common.metrics.deviceScale")}</p>
-            <p className="text-3xl sm:text-4xl font-black text-foreground font-mono">10.000+</p>
+        {/* Key Metrics Bento Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 mt-12 pt-8 border-t border-border/80">
+          <div className="rounded-lg bg-surface dark:bg-[#161715] p-4 sm:p-5 border border-border shadow-xs space-y-1">
+            <p className="text-[11px] font-bold text-foreground-muted uppercase tracking-wider">{t("common.metrics.deviceScale")}</p>
+            <p className="text-2xl sm:text-3xl font-black text-foreground font-mono">10.000+</p>
             <p className="text-xs font-semibold text-foreground-secondary">{t("common.metrics.deviceScaleDesc")}</p>
           </div>
 
-          <div className="rounded-md bg-surface dark:bg-[#161715] p-6 border border-border shadow-xs space-y-1">
-            <p className="text-xs font-semibold text-foreground-muted uppercase tracking-wider">{t("common.metrics.ramSavings")}</p>
-            <p className="text-3xl sm:text-4xl font-black text-dark-green dark:text-wise-green font-mono">95%</p>
+          <div className="rounded-lg bg-surface dark:bg-[#161715] p-4 sm:p-5 border border-border shadow-xs space-y-1">
+            <p className="text-[11px] font-bold text-foreground-muted uppercase tracking-wider">{t("common.metrics.ramSavings")}</p>
+            <p className="text-2xl sm:text-3xl font-black text-dark-green dark:text-wise-green font-mono">95%</p>
             <p className="text-xs font-semibold text-foreground-secondary">{t("common.metrics.ramSavingsDesc")}</p>
           </div>
 
-          <div className="rounded-md bg-surface dark:bg-[#161715] p-6 border border-border shadow-xs space-y-1">
-            <p className="text-xs font-semibold text-foreground-muted uppercase tracking-wider">{t("common.metrics.wakeupLatency")}</p>
-            <p className="text-3xl sm:text-4xl font-black text-foreground font-mono">&lt; 0.3s</p>
+          <div className="rounded-lg bg-surface dark:bg-[#161715] p-4 sm:p-5 border border-border shadow-xs space-y-1">
+            <p className="text-[11px] font-bold text-foreground-muted uppercase tracking-wider">{t("common.metrics.wakeupLatency")}</p>
+            <p className="text-2xl sm:text-3xl font-black text-foreground font-mono">&lt; 0.3s</p>
             <p className="text-xs font-semibold text-foreground-secondary">{t("common.metrics.wakeupLatencyDesc")}</p>
           </div>
 
-          <div className="rounded-md bg-surface dark:bg-[#161715] p-6 border border-border shadow-xs space-y-1">
-            <p className="text-xs font-semibold text-foreground-muted uppercase tracking-wider">{t("common.metrics.antiBan")}</p>
-            <p className="text-3xl sm:text-4xl font-black text-dark-green dark:text-wise-green font-mono">5-Layer</p>
+          <div className="rounded-lg bg-surface dark:bg-[#161715] p-4 sm:p-5 border border-border shadow-xs space-y-1">
+            <p className="text-[11px] font-bold text-foreground-muted uppercase tracking-wider">{t("common.metrics.antiBan")}</p>
+            <p className="text-2xl sm:text-3xl font-black text-dark-green dark:text-wise-green font-mono">5-Layer</p>
             <p className="text-xs font-semibold text-foreground-secondary">{t("common.metrics.antiBanDesc")}</p>
           </div>
         </div>
       </section>
 
       {/* 2. Interactive WhatsApp Simulator Showcase */}
-      <section className="px-6 max-w-7xl mx-auto">
+      <section className="px-4 sm:px-6 max-w-4xl mx-auto">
         <MessageSimulator />
       </section>
 
       {/* 3. Spintax Anti-Ban Engine Section */}
-      <section id="spintax" className="px-6 max-w-7xl mx-auto">
-        <div className="p-8 sm:p-12 rounded-lg border border-border bg-surface dark:bg-[#161715] space-y-8 shadow-sm">
-          <div className="space-y-2 max-w-2xl">
+      <section id="spintax" className="px-4 sm:px-6 max-w-4xl mx-auto">
+        <div className="p-6 sm:p-8 rounded-lg border border-border bg-surface dark:bg-[#161715] space-y-6 shadow-sm">
+          <div className="space-y-2 max-w-xl">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green">
               <Sparkles className="size-3.5" />
               <span>{t("common.spintaxSection.badge")}</span>
@@ -137,7 +137,7 @@ export function HomeView() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="space-y-2">
               <label
                 htmlFor="spintax-template-input"
@@ -188,18 +188,18 @@ export function HomeView() {
       </section>
 
       {/* 4. Developer REST API & Webhooks Code Sandbox */}
-      <section className="px-6 max-w-7xl mx-auto">
+      <section className="px-4 sm:px-6 max-w-4xl mx-auto">
         <ApiCodeSandbox />
       </section>
 
       {/* 5. 9 Core Enterprise Features Grid */}
-      <section id="features" className="px-6 max-w-7xl mx-auto space-y-12">
-        <div className="text-center space-y-3 max-w-3xl mx-auto">
+      <section id="features" className="px-4 sm:px-6 max-w-6xl mx-auto space-y-10">
+        <div className="text-center space-y-2.5 max-w-2xl mx-auto">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green">
             <Zap className="size-3.5" />
             <span>{t("common.landing.features.badge")}</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-black text-foreground tracking-tight">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-foreground tracking-tight">
             {t("common.landing.features.title")}
           </h2>
           <p className="text-xs sm:text-sm font-semibold text-foreground-secondary leading-relaxed">
@@ -207,7 +207,7 @@ export function HomeView() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
           {[
             { icon: Cpu, title: t("common.landing.features.f1Title"), desc: t("common.landing.features.f1Desc") },
             { icon: RefreshCw, title: t("common.landing.features.f2Title"), desc: t("common.landing.features.f2Desc") },
@@ -221,12 +221,12 @@ export function HomeView() {
           ].map((feat, i) => (
             <div
               key={i}
-              className="p-6 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-3 hover:border-wise-green/50 transition duration-150 shadow-xs"
+              className="p-5 sm:p-6 rounded-lg border border-border bg-surface dark:bg-[#161715] space-y-2.5 hover:border-wise-green/50 transition duration-150 shadow-xs"
             >
-              <div className="size-10 rounded-full bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center">
-                <feat.icon className="size-5" />
+              <div className="size-9 rounded-full bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center">
+                <feat.icon className="size-4.5" />
               </div>
-              <h3 className="text-base font-bold text-foreground">{feat.title}</h3>
+              <h3 className="text-sm sm:text-base font-bold text-foreground">{feat.title}</h3>
               <p className="text-xs font-semibold text-foreground-secondary leading-relaxed">{feat.desc}</p>
             </div>
           ))}
@@ -234,13 +234,13 @@ export function HomeView() {
       </section>
 
       {/* 6. Technical Architecture Comparison Table */}
-      <section id="architecture" className="px-6 max-w-7xl mx-auto space-y-8">
-        <div className="text-center space-y-3 max-w-3xl mx-auto">
+      <section id="architecture" className="px-4 sm:px-6 max-w-4xl mx-auto space-y-8">
+        <div className="text-center space-y-2.5 max-w-xl mx-auto">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green">
             <Layers className="size-3.5" />
             <span>{t("common.landing.comparison.badge")}</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-black text-foreground tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
             {t("common.landing.comparison.title")}
           </h2>
           <p className="text-xs sm:text-sm font-semibold text-foreground-secondary leading-relaxed">
@@ -298,13 +298,13 @@ export function HomeView() {
       </section>
 
       {/* 7. Transparent 3-Tier Pricing Grid */}
-      <section id="pricing" className="px-6 max-w-7xl mx-auto space-y-12">
-        <div className="text-center space-y-3 max-w-3xl mx-auto">
+      <section id="pricing" className="px-4 sm:px-6 max-w-5xl mx-auto space-y-10">
+        <div className="text-center space-y-2.5 max-w-xl mx-auto">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green">
             <CreditCard className="size-3.5" />
             <span>{t("common.landing.pricing.badge")}</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-black text-foreground tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
             {t("common.landing.pricing.title")}
           </h2>
           <p className="text-xs sm:text-sm font-semibold text-foreground-secondary leading-relaxed">
@@ -312,16 +312,16 @@ export function HomeView() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
           {/* Plan 1: Starter Free Trial */}
-          <div className="p-8 rounded-lg border border-border bg-surface dark:bg-[#161715] flex flex-col justify-between space-y-6 shadow-xs">
+          <div className="p-6 sm:p-7 rounded-lg border border-border bg-surface dark:bg-[#161715] flex flex-col justify-between space-y-6 shadow-xs">
             <div className="space-y-4">
               <div>
-                <h3 className="text-lg font-black text-foreground">{t("common.landing.pricing.p1Name")}</h3>
+                <h3 className="text-base sm:text-lg font-black text-foreground">{t("common.landing.pricing.p1Name")}</h3>
                 <p className="text-xs font-semibold text-foreground-secondary mt-1">{t("common.landing.pricing.p1Desc")}</p>
               </div>
 
-              <div className="flex items-baseline gap-1 pt-2">
+              <div className="flex items-baseline gap-1 pt-1">
                 <span className="text-3xl sm:text-4xl font-black text-foreground font-mono">{t("common.landing.pricing.p1Price")}</span>
                 <span className="text-xs font-semibold text-foreground-muted">{t("common.landing.pricing.p1Period")}</span>
               </div>
@@ -342,7 +342,7 @@ export function HomeView() {
               </ul>
             </div>
 
-            <div className="pt-4">
+            <div className="pt-2">
               <Link
                 href="/register"
                 className={cn(
@@ -356,18 +356,18 @@ export function HomeView() {
           </div>
 
           {/* Plan 2: Pro Merchant (Highlighted) */}
-          <div className="p-8 rounded-lg border-2 border-wise-green bg-wise-green/5 dark:bg-wise-green/10 flex flex-col justify-between space-y-6 shadow-md relative">
-            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-wise-green text-near-black text-[10px] font-black uppercase tracking-wider shadow-xs">
+          <div className="p-6 sm:p-7 rounded-lg border-2 border-wise-green bg-wise-green/5 dark:bg-wise-green/10 flex flex-col justify-between space-y-6 shadow-md relative">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-wise-green text-near-black text-[10px] font-black uppercase tracking-wider shadow-xs">
               {t("common.landing.pricing.p2Badge")}
             </div>
 
             <div className="space-y-4">
               <div>
-                <h3 className="text-lg font-black text-foreground">{t("common.landing.pricing.p2Name")}</h3>
+                <h3 className="text-base sm:text-lg font-black text-foreground">{t("common.landing.pricing.p2Name")}</h3>
                 <p className="text-xs font-semibold text-foreground-secondary mt-1">{t("common.landing.pricing.p2Desc")}</p>
               </div>
 
-              <div className="flex items-baseline gap-1 pt-2">
+              <div className="flex items-baseline gap-1 pt-1">
                 <span className="text-3xl sm:text-4xl font-black text-foreground font-mono">{t("common.landing.pricing.p2Price")}</span>
                 <span className="text-xs font-semibold text-foreground-muted">{t("common.landing.pricing.p2Period")}</span>
               </div>
@@ -389,7 +389,7 @@ export function HomeView() {
               </ul>
             </div>
 
-            <div className="pt-4">
+            <div className="pt-2">
               <Link
                 href="/register"
                 className={cn(
@@ -403,14 +403,14 @@ export function HomeView() {
           </div>
 
           {/* Plan 3: Enterprise Gateway */}
-          <div className="p-8 rounded-lg border border-border bg-surface dark:bg-[#161715] flex flex-col justify-between space-y-6 shadow-xs">
+          <div className="p-6 sm:p-7 rounded-lg border border-border bg-surface dark:bg-[#161715] flex flex-col justify-between space-y-6 shadow-xs">
             <div className="space-y-4">
               <div>
-                <h3 className="text-lg font-black text-foreground">{t("common.landing.pricing.p3Name")}</h3>
+                <h3 className="text-base sm:text-lg font-black text-foreground">{t("common.landing.pricing.p3Name")}</h3>
                 <p className="text-xs font-semibold text-foreground-secondary mt-1">{t("common.landing.pricing.p3Desc")}</p>
               </div>
 
-              <div className="flex items-baseline gap-1 pt-2">
+              <div className="flex items-baseline gap-1 pt-1">
                 <span className="text-3xl sm:text-4xl font-black text-foreground font-mono">{t("common.landing.pricing.p3Price")}</span>
                 <span className="text-xs font-semibold text-foreground-muted">{t("common.landing.pricing.p3Period")}</span>
               </div>
@@ -432,7 +432,7 @@ export function HomeView() {
               </ul>
             </div>
 
-            <div className="pt-4">
+            <div className="pt-2">
               <Link
                 href="/contact"
                 className={cn(
@@ -448,15 +448,15 @@ export function HomeView() {
       </section>
 
       {/* 8. FAQ Accordion */}
-      <section id="faq" className="py-16 bg-surface dark:bg-[#161715] border-y border-border px-6">
+      <section id="faq" className="px-4 sm:px-6 max-w-3xl mx-auto">
         <FaqAccordion />
       </section>
 
       {/* 9. Final High-Impact CTA Banner */}
-      <section className="px-6 max-w-7xl mx-auto">
-        <div className="p-8 sm:p-14 rounded-lg border border-wise-green/40 bg-wise-green/10 dark:bg-wise-green/5 text-center space-y-6 shadow-sm">
-          <div className="space-y-2 max-w-2xl mx-auto">
-            <h2 className="text-3xl sm:text-5xl font-black text-foreground tracking-tight leading-tight">
+      <section className="px-4 sm:px-6 max-w-4xl mx-auto">
+        <div className="p-8 sm:p-12 rounded-lg border border-wise-green/40 bg-wise-green/10 dark:bg-wise-green/5 text-center space-y-6 shadow-sm">
+          <div className="space-y-2 max-w-xl mx-auto">
+            <h2 className="text-2xl sm:text-4xl font-black text-foreground tracking-tight leading-tight">
               {t("common.landing.cta.title")}
             </h2>
             <p className="text-xs sm:text-sm font-semibold text-foreground-secondary leading-relaxed">
@@ -464,12 +464,12 @@ export function HomeView() {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
             <Link
               href="/register"
               className={cn(
                 buttonVariants({ variant: "primaryPill", size: "default" }),
-                "gap-2 px-8 py-6 font-bold text-sm sm:text-base shadow-sm min-h-12"
+                "gap-2 px-7 py-5 font-bold text-sm sm:text-base shadow-sm min-h-12"
               )}
             >
               <span>{t("common.landing.cta.btnTrial")}</span>
@@ -479,7 +479,7 @@ export function HomeView() {
               href="/contact"
               className={cn(
                 buttonVariants({ variant: "secondaryPill", size: "default" }),
-                "px-8 py-6 font-bold text-sm sm:text-base min-h-12"
+                "px-7 py-5 font-bold text-sm sm:text-base min-h-12"
               )}
             >
               <span>{t("common.landing.cta.btnContact")}</span>

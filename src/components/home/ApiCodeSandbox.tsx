@@ -1,18 +1,31 @@
 "use client";
 
 import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/context";
+import { env } from "@/lib/config/env";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { Code2, Copy, Check, ArrowRight } from "lucide-react";
-import Link from "next/link";
+import { Code2, Copy, Check, ExternalLink } from "lucide-react";
 
 type LangType = "curl" | "nodejs" | "go" | "php" | "python";
 
-const CODE_SNIPPETS: Record<LangType, { langName: string; code: string }> = {
-  curl: {
-    langName: "cURL",
-    code: `curl -X POST https://api.wahide.id/v1/messages/send \\
+const POSTMAN_DOCS_URL = "https://documenter.getpostman.com/view/26294023/2sBYAuSqz3";
+
+export function ApiCodeSandbox() {
+  const { t } = useI18n();
+  const [activeLang, setActiveLang] = useState<LangType>("curl");
+  const [isCopied, setIsCopied] = useState(false);
+
+  // Dynamic API endpoint from environment configuration
+  const apiEndpoint = env.NEXT_PUBLIC_WHATSAPP_API_URL
+    ? `${env.NEXT_PUBLIC_WHATSAPP_API_URL.replace(/\/+$/, "")}/messages/send`
+    : "https://api.wahide.id/v1/messages/send";
+
+  const codeSnippets: Record<LangType, { langName: string; code: string }> = {
+    curl: {
+      langName: "cURL",
+      code: `curl -X POST ${apiEndpoint} \\
   -H "Authorization: Bearer hide_live_984f8812a3b04c89b27658df2026" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -21,10 +34,10 @@ const CODE_SNIPPETS: Record<LangType, { langName: string; code: string }> = {
     "message": "Halo Budi Santoso, pesanan #{1001|1002} sedang dikemas!",
     "spintax": true
   }'`,
-  },
-  nodejs: {
-    langName: "Node.js (Fetch)",
-    code: `const response = await fetch("https://api.wahide.id/v1/messages/send", {
+    },
+    nodejs: {
+      langName: "Node.js (Fetch)",
+      code: `const response = await fetch("${apiEndpoint}", {
   method: "POST",
   headers: {
     "Authorization": "Bearer hide_live_984f8812a3b04c89b27658df2026",
@@ -40,10 +53,10 @@ const CODE_SNIPPETS: Record<LangType, { langName: string; code: string }> = {
 
 const data = await response.json();
 console.log("Message Dispatched:", data.payload.message_id);`,
-  },
-  go: {
-    langName: "Go",
-    code: `package main
+    },
+    go: {
+      langName: "Go",
+      code: `package main
 
 import (
     "bytes"
@@ -58,7 +71,7 @@ func main() {
         "message":   "Faktur #INV-9821 telah lunas.",
     })
 
-    req, _ := http.NewRequest("POST", "https://api.wahide.id/v1/messages/send", bytes.NewBuffer(payload))
+    req, _ := http.NewRequest("POST", "${apiEndpoint}", bytes.NewBuffer(payload))
     req.Header.Set("Authorization", "Bearer hide_live_984f8812a3b04c89b27658df2026")
     req.Header.Set("Content-Type", "application/json")
 
@@ -66,14 +79,14 @@ func main() {
     resp, _ := client.Do(req)
     defer resp.Body.Close()
 }`,
-  },
-  php: {
-    langName: "PHP (Laravel)",
-    code: `use Illuminate\\Support\\Facades\\Http;
+    },
+    php: {
+      langName: "PHP (Laravel)",
+      code: `use Illuminate\\Support\\Facades\\Http;
 
 $response = Http::withHeaders([
     'Authorization' => 'Bearer hide_live_984f8812a3b04c89b27658df2026',
-])->post('https://api.wahide.id/v1/messages/send', [
+])->post('${apiEndpoint}', [
     'device_id' => '01J00000000000000000000001',
     'phone'     => '6281234567890',
     'message'   => 'Pesanan Anda sedang dikirimkan via kurir!',
@@ -83,12 +96,12 @@ $response = Http::withHeaders([
 if ($response->successful()) {
     $messageId = $response->json('payload.message_id');
 }`,
-  },
-  python: {
-    langName: "Python",
-    code: `import requests
+    },
+    python: {
+      langName: "Python",
+      code: `import requests
 
-url = "https://api.wahide.id/v1/messages/send"
+url = "${apiEndpoint}"
 headers = {
     "Authorization": "Bearer hide_live_984f8812a3b04c89b27658df2026",
     "Content-Type": "application/json"
@@ -102,26 +115,21 @@ payload = {
 
 response = requests.post(url, json=payload, headers=headers)
 print(response.json())`,
-  },
-};
-
-export function ApiCodeSandbox() {
-  const { t } = useI18n();
-  const [activeLang, setActiveLang] = useState<LangType>("curl");
-  const [isCopied, setIsCopied] = useState(false);
+    },
+  };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(CODE_SNIPPETS[activeLang].code);
+    navigator.clipboard.writeText(codeSnippets[activeLang].code);
     setIsCopied(true);
     toast.success(t("common.landing.apiSandbox.copied"));
     setTimeout(() => setIsCopied(false), 2000);
   };
 
   return (
-    <div className="rounded-lg border border-border bg-surface dark:bg-[#161715] p-6 sm:p-10 shadow-sm space-y-8">
+    <div className="rounded-lg border border-border bg-surface dark:bg-[#161715] p-6 sm:p-8 shadow-sm space-y-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border pb-6">
-        <div className="space-y-2 max-w-2xl">
+        <div className="space-y-2 max-w-xl">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green">
             <Code2 className="size-3.5" />
             <span>{t("common.landing.apiSandbox.badge")}</span>
@@ -134,16 +142,18 @@ export function ApiCodeSandbox() {
           </p>
         </div>
 
-        <Link href="/contact">
-          <Button
-            variant="outline"
-            size="sm"
-            className="rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted shrink-0"
-          >
-            <span>{t("common.landing.apiSandbox.docsBtn")}</span>
-            <ArrowRight className="size-3.5" />
-          </Button>
-        </Link>
+        <a
+          href={POSTMAN_DOCS_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={cn(
+            buttonVariants({ variant: "outline", size: "sm" }),
+            "rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted shrink-0 min-h-9"
+          )}
+        >
+          <span>{t("common.landing.apiSandbox.docsBtn")}</span>
+          <ExternalLink className="size-3.5" />
+        </a>
       </div>
 
       {/* Code Container */}
@@ -151,7 +161,7 @@ export function ApiCodeSandbox() {
         {/* Language Tabs & Copy Button */}
         <div className="flex items-center justify-between px-4 py-2.5 bg-black/50 border-b border-white/10">
           <div className="flex items-center gap-1 overflow-x-auto">
-            {(Object.keys(CODE_SNIPPETS) as LangType[]).map((key) => {
+            {(Object.keys(codeSnippets) as LangType[]).map((key) => {
               const isActive = activeLang === key;
               return (
                 <button
@@ -163,7 +173,7 @@ export function ApiCodeSandbox() {
                       : "text-white/80 hover:text-white hover:bg-white/5"
                   }`}
                 >
-                  {CODE_SNIPPETS[key].langName}
+                  {codeSnippets[key].langName}
                 </button>
               );
             })}
@@ -171,7 +181,7 @@ export function ApiCodeSandbox() {
 
           <button
             onClick={handleCopy}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/10 hover:bg-white/15 text-white/90 hover:text-white transition text-[11px] font-sans font-semibold shrink-0"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/10 hover:bg-white/15 text-white/90 hover:text-white transition text-[11px] font-sans font-semibold shrink-0 min-h-7"
           >
             {isCopied ? (
               <>
@@ -190,7 +200,7 @@ export function ApiCodeSandbox() {
         {/* Code Pre Block */}
         <div className="p-4 sm:p-6 overflow-x-auto text-white/95 leading-relaxed font-mono text-[11px] sm:text-xs">
           <pre>
-            <code>{CODE_SNIPPETS[activeLang].code}</code>
+            <code>{codeSnippets[activeLang].code}</code>
           </pre>
         </div>
       </div>

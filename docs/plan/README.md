@@ -60,3 +60,6 @@ Dokumen perencanaan arsitektur dan kesiapan produksi untuk frontend **Wahide (`f
 
 14. **[Hero Subtitle Enterprise Copywriting Plan](./hero_subtitle_enterprise_copywriting_plan.md)**
     - **Penyelarasan Copywriting Hero Subtitle**: Mengubah teks deskripsi utama landing page untuk fokus pada fitur ekosistem WhatsApp bisnis (chatbot, CS multi-agent, notifikasi otomatis, blast massal, media file, & buku kontak).
+
+15. **[Landing Page Width & UI/UX Refinement Plan](./landing_page_width_and_ui_ux_refinement_plan.md)**
+    - **Audit Tata Letak & Pembatasan Lebar Kontainer (UI/UX)**: Menghilangkan kesan halaman terlalu melebar (*stretched*) dengan menerapkan hierarki kontainer Tier-1 (`max-w-6xl`, `max-w-5xl`, `max-w-4xl`, `max-w-3xl`) yang ergonomis, rapi, dan nyaman dibaca.

@@ -10,7 +10,7 @@ export function PublicFooter() {
 
   return (
     <footer className="border-t border-border bg-surface dark:bg-[#161715] py-12 px-4 sm:px-6 lg:px-8 transition-colors">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 mb-12">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 mb-12">
         {/* Brand & Operating Hours Information */}
         <div className="space-y-3.5 sm:col-span-2 lg:col-span-1">
           <Link href="/" className="flex items-center gap-2.5 group">
@@ -128,7 +128,7 @@ export function PublicFooter() {
       </div>
 
       {/* Footer Copyright & Trust SLA Bar */}
-      <div className="max-w-7xl mx-auto pt-8 border-t border-border/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-semibold text-foreground-muted">
+      <div className="max-w-6xl mx-auto pt-8 border-t border-border/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-semibold text-foreground-muted">
         <span>&copy; {new Date().getFullYear()} Hide Group. {t("footer.rights")}</span>
         <div className="flex items-center gap-4 text-[11px]">
           <span>{t("footer.sla")}</span>
