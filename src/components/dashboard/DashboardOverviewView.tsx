@@ -21,6 +21,7 @@ import {
   CreditCard,
   RefreshCw,
   Wallet,
+  ArrowUpRight,
 } from "lucide-react";
 
 
@@ -97,15 +98,65 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
   const totalDevCount = stats.total_devices || devices.length;
   const quotaRemaining = Math.max(0, stats.monthly_message_limit - stats.total_messages_sent);
 
+  const isFreePlan =
+    !stats.plan_name ||
+    stats.plan_name.toUpperCase() === "FREE" ||
+    stats.plan_name.toUpperCase() === "STARTER";
+
+  let expirationLabel = "Masa Aktif Langganan: Selamanya (Unlimited)";
+  let isExpiringSoon = false;
+  let isExpired = false;
+
+  if (!isFreePlan && stats.subscription_expires_at) {
+    const expDate = new Date(stats.subscription_expires_at);
+    const now = new Date();
+    const diffTime = expDate.getTime() - now.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    const formattedDate = expDate.toLocaleDateString("id-ID", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+
+    if (diffDays <= 0 || stats.plan_status === "EXPIRED") {
+      isExpired = true;
+      expirationLabel = `Masa Aktif Berakhir (${formattedDate})`;
+    } else if (diffDays <= 7) {
+      isExpiringSoon = true;
+      expirationLabel = `Berlaku s/d ${formattedDate} (Sisa ${diffDays} Hari)`;
+    } else {
+      expirationLabel = `Berlaku s/d ${formattedDate} (Sisa ${diffDays} Hari)`;
+    }
+  }
+
   return (
     <div className="space-y-8 max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
       {/* Welcome & Quick Action Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-foreground/5 text-foreground-secondary border border-border">
-              Paket {stats.plan_name} ({stats.plan_status})
+        <div className="space-y-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <span
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border transition ${
+                isExpired
+                  ? "bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/30"
+                  : isExpiringSoon
+                  ? "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/30"
+                  : "bg-surface dark:bg-[#161715] text-foreground-secondary border-border"
+              }`}
+            >
+              <span className="font-black text-foreground">Paket {stats.plan_name}</span>
+              <span className="text-foreground-muted">•</span>
+              <span>{isFreePlan ? "Masa Aktif Langganan: Selamanya (Unlimited)" : expirationLabel}</span>
             </span>
+
+            <Link
+              href="/subscription"
+              className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green border border-wise-green/30 hover:opacity-85 transition cursor-pointer"
+            >
+              <span>{isFreePlan ? "Tingkatkan Paket" : isExpiringSoon || isExpired ? "Perpanjang" : "Ubah Paket"}</span>
+              <ArrowUpRight className="size-3 stroke-2.5" />
+            </Link>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
             Dasbor Bisnis &amp; Ringkasan

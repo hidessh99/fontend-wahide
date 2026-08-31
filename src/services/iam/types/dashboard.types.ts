@@ -41,6 +41,7 @@ export interface UserDashboardStats {
   total_messages_sent: number;
   plan_name: string;
   plan_status: string;
+  subscription_expires_at?: string;
   device_limit: number;
   monthly_message_limit: number;
   open_tickets: number;

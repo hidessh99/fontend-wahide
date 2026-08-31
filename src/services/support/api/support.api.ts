@@ -1,37 +1,47 @@
 import { httpClient } from "@/lib/api/http-client";
 import { env } from "@/lib/config/env";
-import { Ticket, CreateTicketInput, TicketMessage, GetTicketsParams, TicketListResponse } from "../types/support.types";
+import {
+  Ticket,
+  CreateTicketInput,
+  TicketMessage,
+  GetTicketsParams,
+  TicketListResponse,
+  TicketCategory,
+  TicketPriority,
+  TicketStatus,
+} from "../types/support.types";
 
 const SUPPORT_BASE = env.NEXT_PUBLIC_WHATSAPP_API_URL;
 
-export const DEFAULT_TICKETS: Ticket[] = [
-  {
-    id: "tkt_001",
-    ticketNumber: "TKT-8821",
-    subject: "Integrasi Webhook Signature HMAC SHA256",
-    category: "API",
-    priority: "MEDIUM",
-    status: "RESOLVED",
-    messages: [
-      {
-        id: "msg_01",
-        senderName: "Budi Santoso",
-        isStaff: false,
-        content: "Halo tim support, bagaimana cara memverifikasi signature header X-Wahide-Signature-256 di framework Express Node.js?",
-        createdAt: "2026-08-20T10:00:00Z",
-      },
-      {
-        id: "msg_02",
-        senderName: "Wahide Engineer",
-        isStaff: true,
-        content: "Halo Pak Budi! Anda dapat menggunakan modul crypto bawaan Node.js dengan algoritma sha256 dan signing secret yang tertera di menu Settings > Webhook.",
-        createdAt: "2026-08-20T10:15:00Z",
-      },
-    ],
-    createdAt: "2026-08-20T10:00:00Z",
-    updatedAt: "2026-08-20T10:15:00Z",
-  },
-];
+export function normalizeTicket(raw: Record<string, unknown>): Ticket {
+  return {
+    id: String(raw.id || ""),
+    ticketNumber: String(raw.ticketNumber || raw.ref_number || raw.ticket_number || raw.id || "TKT"),
+    subject: String(raw.subject || ""),
+    category: (String(raw.category || "GENERAL").toUpperCase() as TicketCategory),
+    priority: (String(raw.priority || "MEDIUM").toUpperCase() as TicketPriority),
+    status: (String(raw.status || "OPEN").toUpperCase() as TicketStatus),
+    messages: Array.isArray(raw.messages)
+      ? (raw.messages as Record<string, unknown>[]).map((m) => ({
+          id: String(m.id || ""),
+          senderName: String(m.senderName || m.sender_name || (m.isStaff || m.is_staff ? "Staff Support" : "Anda")),
+          isStaff: Boolean(m.isStaff || m.is_staff),
+          content: String(m.content || m.message || ""),
+          createdAt: String(m.createdAt || m.created_at || new Date().toISOString()),
+        }))
+      : [
+          {
+            id: String(raw.id || "msg_init"),
+            senderName: "Anda",
+            isStaff: false,
+            content: String(raw.message || ""),
+            createdAt: String(raw.createdAt || raw.created_at || new Date().toISOString()),
+          },
+        ],
+    createdAt: String(raw.createdAt || raw.created_at || new Date().toISOString()),
+    updatedAt: String(raw.updatedAt || raw.updated_at || new Date().toISOString()),
+  };
+}
 
 export const supportApi = {
   getTickets: async (params?: GetTicketsParams): Promise<TicketListResponse> => {
@@ -48,9 +58,10 @@ export const supportApi = {
         query.set("status", params.status);
       }
       const queryString = `?${query.toString()}`;
-      const res = await httpClient.get<Ticket[]>(`${SUPPORT_BASE}/support/tickets${queryString}`);
+      const res = await httpClient.get<unknown>(`${SUPPORT_BASE}/support/tickets${queryString}`);
       const rawList = res.payload || (Array.isArray(res) ? res : []);
-      const tickets = Array.isArray(rawList) && rawList.length > 0 ? (rawList as Ticket[]) : [];
+      const rawArray = Array.isArray(rawList) ? (rawList as Record<string, unknown>[]) : [];
+      const tickets = rawArray.map(normalizeTicket);
 
       const addInfo = res.additional_info as { total?: number; page?: number; size?: number } | undefined;
       const total = typeof addInfo?.total === "number" ? addInfo.total : tickets.length;
@@ -58,15 +69,15 @@ export const supportApi = {
       const resSize = typeof addInfo?.size === "number" ? addInfo.size : pageSize;
 
       return {
-        tickets: tickets.length > 0 ? tickets : DEFAULT_TICKETS,
-        total: total > 0 ? total : DEFAULT_TICKETS.length,
+        tickets,
+        total,
         page: resPage,
         pageSize: resSize,
       };
     } catch {
       return {
-        tickets: DEFAULT_TICKETS,
-        total: DEFAULT_TICKETS.length,
+        tickets: [],
+        total: 0,
         page: params?.page ?? 1,
         pageSize: params?.pageSize ?? 10,
       };
@@ -74,40 +85,20 @@ export const supportApi = {
   },
 
   createTicket: async (payload: CreateTicketInput): Promise<Ticket> => {
-    const res = await httpClient.post<Ticket>(`${SUPPORT_BASE}/support/tickets`, payload);
-    return (
-      res.payload || {
-        id: "tkt_" + Date.now(),
-        ticketNumber: "TKT-" + Date.now().toString().slice(-4),
-        subject: payload.subject,
-        category: payload.category,
-        priority: payload.priority,
-        status: "OPEN",
-        messages: [
-          {
-            id: "msg_" + Date.now(),
-            senderName: "Anda",
-            isStaff: false,
-            content: payload.message,
-            createdAt: new Date().toISOString(),
-          },
-        ],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      }
-    );
+    const res = await httpClient.post<Record<string, unknown>>(`${SUPPORT_BASE}/support/tickets`, payload);
+    const raw = res.payload || (res as unknown as Record<string, unknown>);
+    return normalizeTicket(raw);
   },
 
   replyTicket: async (id: string, content: string): Promise<TicketMessage> => {
-    const res = await httpClient.post<TicketMessage>(`${SUPPORT_BASE}/support/tickets/${id}/reply`, { content });
-    return (
-      res.payload || {
-        id: "msg_" + Date.now(),
-        senderName: "Anda",
-        isStaff: false,
-        content,
-        createdAt: new Date().toISOString(),
-      }
-    );
+    const res = await httpClient.post<Record<string, unknown>>(`${SUPPORT_BASE}/support/tickets/${id}/reply`, { content });
+    const raw = res.payload || (res as unknown as Record<string, unknown>);
+    return {
+      id: String(raw.id || "msg_" + Date.now()),
+      senderName: String(raw.senderName || raw.sender_name || "Anda"),
+      isStaff: Boolean(raw.isStaff || raw.is_staff),
+      content: String(raw.content || content),
+      createdAt: String(raw.createdAt || raw.created_at || new Date().toISOString()),
+    };
   },
 };

@@ -172,6 +172,10 @@
   },
   "dashboardMenu": {
     "businessMenu": "Business Menu",
+    "groupGeneral": "General",
+    "groupWhatsapp": "WhatsApp Engine",
+    "groupAccount": "Account & Billing",
+    "groupSupport": "Helpdesk & Support",
     "overview": "Overview",
     "whatsappSlots": "WhatsApp Slots",
     "campaigns": "Broadcast Campaigns",

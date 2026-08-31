@@ -87,3 +87,15 @@ Daftar dokumen perencanaan arsitektur, optimasi performa, dan standarisasi tekni
 
 28. **[WhatsApp Device Offline on Restart Plan](./whatsapp_device_offline_on_restart_plan.md)**
     - **Rencana Status Perangkat Menjadi OFFLINE Saat Server Go Direstart / Dimatikan**: Menyesuaikan status perangkat saat server mati atau boot ulang menjadi `OFFLINE` (Disconnected), dan hanya `HIBERNATED` jika tombol Hibernasi diklik secara sengaja.
+
+29. **[Subscription Upgrade Endpoint & Business Scenarios Plan](./subscription_upgrade_endpoint_and_scenarios_plan.md)**
+    - **Rencana Implementasi Endpoint Upgrade Subscription & Skenario Bisnis (Fix 404 Not Found)**: Implementasi rute `POST /subscription/upgrade`, handler, usecase, ACID transaction, serta rekonsiliasi masa aktif dan kuota langganan di backend Go.
+
+30. **[Dashboard Active Subscription Expiration UI/UX Plan](./dashboard_active_plan_expiration_ui_ux_plan.md)**
+    - **Rencana & Evaluasi UI/UX: Masa Aktif Langganan Tenant (Subscription Expiration) pada Dashboard**: Menampilkan status masa aktif langganan tenant pada header dasbor dengan membedakan Langganan FREE (Selamanya/Lifetime) dan Langganan Berbayar (Berdasarkan `subscriptions.expired_at` & Hitungan Sisa Hari).
+
+31. **[Sidebar Role-Based Grouping UI/UX Plan](./sidebar_role_based_grouping_ui_ux_plan.md)**
+    - **Rencana & Evaluasi UI/UX: Restrukturisasi Sidebar Navigasi Berbasis Grouping & Pemisahan Role (Sleek & Clean)**: Menghapus badge FREE di header logo, menghapus footer box Anti-Ban, memisahkan navigasi role (Admin, Seller, Agent), dan mengelompokkan menu menjadi 4 kategori terstruktur (*General*, *WhatsApp Engine*, *Account & Billing*, *Support*).
+
+32. **[Support Tickets Route & Mapping Plan](./support_tickets_route_and_mapping_plan.md)**
+    - **Rencana Implementasi: Perbaikan Route Support Tickets (Fix 404 Not Found)**: Mendaftarkan alias route `/support/tickets`, `/support/ticket`, `/tickets`, `/ticket` di backend Go dan menyempurnakan normalisasi DTO di frontend.

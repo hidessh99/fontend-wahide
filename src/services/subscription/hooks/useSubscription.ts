@@ -63,7 +63,8 @@ export function useSubscription() {
   const upgradePlan = async (planId: string) => {
     try {
       const res = await subscriptionApi.upgradePlan(planId);
-      toast.success("Permintaan upgrade paket berhasil diajukan.");
+      toast.success("Paket langganan berhasil diperbarui.");
+      await fetchSubscriptionData();
       return res;
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal upgrade paket";

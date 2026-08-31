@@ -172,6 +172,10 @@
   },
   "dashboardMenu": {
     "businessMenu": "Menu Bisnis",
+    "groupGeneral": "Menu Utama",
+    "groupWhatsapp": "WhatsApp Engine",
+    "groupAccount": "Manajemen & Akun",
+    "groupSupport": "Pusat Bantuan",
     "overview": "Overview",
     "whatsappSlots": "Slot WhatsApp",
     "campaigns": "Kampanye Broadcast",
