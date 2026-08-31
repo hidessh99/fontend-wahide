@@ -59,7 +59,10 @@
       "subtitle": "Send WhatsApp messages from your application backend with just a few lines of encrypted REST API code.",
       "copyBtn": "Copy Code",
       "copied": "Code snippet copied to clipboard!",
-      "docsBtn": "View REST API Documentation"
+      "docsBtn": "View REST API Documentation",
+      "metaCompatBadge": "Drop-in Replacement",
+      "metaCompatTitle": "Instant Migration from Meta WhatsApp Cloud API — Simply Switch the Base URL",
+      "metaCompatDesc": "Already integrated with Meta Facebook Cloud API? Wahide provides drop-in compatibility with standard Meta payload structures. Keep your existing backend architecture intact—simply update your Base URL endpoint to Wahide Gateway."
     },
     "features": {
       "badge": "9 Enterprise Feature Pillars",

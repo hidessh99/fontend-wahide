@@ -59,7 +59,10 @@
       "subtitle": "Kirim pesan WhatsApp dari backend aplikasi Anda hanya dengan beberapa baris kode REST API terenkripsi.",
       "copyBtn": "Salin Kode",
       "copied": "Snippet kode berhasil disalin ke clipboard!",
-      "docsBtn": "Buka Dokumentasi REST API"
+      "docsBtn": "Buka Dokumentasi REST API",
+      "metaCompatBadge": "Drop-in Replacement",
+      "metaCompatTitle": "Migrasi Instan dari Meta WhatsApp Cloud API — Cukup Ganti Base URL",
+      "metaCompatDesc": "Sudah menggunakan integrasi REST API Meta Facebook? Wahide mendukung struktur payload standar Meta Cloud API secara drop-in. Anda tidak perlu merombak logika backend aplikasi Anda—cukup ubah Base URL endpoint ke Wahide Gateway untuk langsung mulai beroperasi."
     },
     "features": {
       "badge": "9 Pilar Fitur Enterprise",

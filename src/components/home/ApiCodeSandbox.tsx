@@ -6,7 +6,7 @@ import { useI18n } from "@/lib/i18n/context";
 import { env } from "@/lib/config/env";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { Code2, Copy, Check, ExternalLink } from "lucide-react";
+import { Code2, Copy, Check, ExternalLink, Workflow } from "lucide-react";
 
 type LangType = "curl" | "nodejs" | "go" | "php" | "python";
 
@@ -202,6 +202,26 @@ print(response.json())`,
           <pre>
             <code>{codeSnippets[activeLang].code}</code>
           </pre>
+        </div>
+      </div>
+
+      {/* Meta WhatsApp Cloud API Drop-in Compatibility Callout */}
+      <div className="rounded-lg border border-wise-green/30 bg-wise-green/5 dark:bg-wise-green/10 p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-3.5 shadow-xs">
+        <div className="size-9 rounded-full bg-wise-green/20 text-dark-green dark:text-wise-green flex items-center justify-center shrink-0">
+          <Workflow className="size-4.5" />
+        </div>
+        <div className="space-y-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="px-2 py-0.5 rounded-full bg-wise-green text-near-black text-[10px] font-black uppercase tracking-wider">
+              {t("common.landing.apiSandbox.metaCompatBadge")}
+            </span>
+            <h3 className="text-xs sm:text-sm font-bold text-foreground">
+              {t("common.landing.apiSandbox.metaCompatTitle")}
+            </h3>
+          </div>
+          <p className="text-xs font-semibold text-foreground-secondary leading-relaxed">
+            {t("common.landing.apiSandbox.metaCompatDesc")}
+          </p>
         </div>
       </div>
     </div>
