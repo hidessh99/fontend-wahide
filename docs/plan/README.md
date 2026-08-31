@@ -63,3 +63,9 @@ Dokumen perencanaan arsitektur dan kesiapan produksi untuk frontend **Wahide (`f
 
 15. **[Landing Page Width & UI/UX Refinement Plan](./landing_page_width_and_ui_ux_refinement_plan.md)**
     - **Audit Tata Letak & Pembatasan Lebar Kontainer (UI/UX)**: Menghilangkan kesan halaman terlalu melebar (*stretched*) dengan menerapkan hierarki kontainer Tier-1 (`max-w-6xl`, `max-w-5xl`, `max-w-4xl`, `max-w-3xl`) yang ergonomis, rapi, dan nyaman dibaca.
+
+16. **[Remove Technical Architecture Comparison Section Plan](./remove_technical_architecture_comparison_section_plan.md)**
+    - **Penghapusan Section Komparasi Arsitektur**: Menghapus tabel perbandingan teknis whatsmeow vs Chromium dari landing page untuk menyederhanakan alur narasi produk langsung ke fitur dan harga.
+
+17. **[Meta Cloud API Drop-in Compatibility Plan](./meta_cloud_api_compatibility_copywriting_plan.md)**
+    - **Kompatibilitas Penuh Meta WhatsApp Cloud API**: Menambahkan callout profesional pada section REST API Sandbox yang mengedukasi developer bahwa integrasi Meta Cloud API dapat langsung beralih ke Wahide cukup dengan mengganti Base URL tanpa rombak kode.

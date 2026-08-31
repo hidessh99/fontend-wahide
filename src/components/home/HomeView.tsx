@@ -22,7 +22,6 @@ import {
   Clock,
   CheckCircle2,
   Check,
-  X,
   CreditCard,
   Sliders,
 } from "lucide-react";
@@ -233,71 +232,7 @@ export function HomeView() {
         </div>
       </section>
 
-      {/* 6. Technical Architecture Comparison Table */}
-      <section id="architecture" className="px-4 sm:px-6 max-w-4xl mx-auto space-y-8">
-        <div className="text-center space-y-2.5 max-w-xl mx-auto">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green">
-            <Layers className="size-3.5" />
-            <span>{t("common.landing.comparison.badge")}</span>
-          </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
-            {t("common.landing.comparison.title")}
-          </h2>
-          <p className="text-xs sm:text-sm font-semibold text-foreground-secondary leading-relaxed">
-            {t("common.landing.comparison.subtitle")}
-          </p>
-        </div>
-
-        <div className="overflow-x-auto rounded-lg border border-border bg-surface dark:bg-[#161715] shadow-xs">
-          <table className="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr className="border-b border-border bg-muted/40 text-foreground font-bold">
-                <th className="p-4 sm:p-5 w-1/3">{t("common.landing.comparison.colFeature")}</th>
-                <th className="p-4 sm:p-5 w-1/3 text-dark-green dark:text-wise-green font-black">{t("common.landing.comparison.colWahide")}</th>
-                <th className="p-4 sm:p-5 w-1/3 text-foreground-muted">{t("common.landing.comparison.colOthers")}</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border text-foreground-secondary font-semibold">
-              <tr>
-                <td className="p-4 sm:p-5 font-bold text-foreground">{t("common.landing.comparison.row1Feature")}</td>
-                <td className="p-4 sm:p-5 text-dark-green dark:text-wise-green font-bold bg-wise-green/5">{t("common.landing.comparison.row1Wahide")}</td>
-                <td className="p-4 sm:p-5 text-rose-500">{t("common.landing.comparison.row1Others")}</td>
-              </tr>
-              <tr>
-                <td className="p-4 sm:p-5 font-bold text-foreground">{t("common.landing.comparison.row2Feature")}</td>
-                <td className="p-4 sm:p-5 text-dark-green dark:text-wise-green font-bold bg-wise-green/5">{t("common.landing.comparison.row2Wahide")}</td>
-                <td className="p-4 sm:p-5">{t("common.landing.comparison.row2Others")}</td>
-              </tr>
-              <tr>
-                <td className="p-4 sm:p-5 font-bold text-foreground">{t("common.landing.comparison.row3Feature")}</td>
-                <td className="p-4 sm:p-5 text-dark-green dark:text-wise-green font-bold bg-wise-green/5">{t("common.landing.comparison.row3Wahide")}</td>
-                <td className="p-4 sm:p-5">{t("common.landing.comparison.row3Others")}</td>
-              </tr>
-              <tr>
-                <td className="p-4 sm:p-5 font-bold text-foreground">{t("common.landing.comparison.row4Feature")}</td>
-                <td className="p-4 sm:p-5 text-dark-green dark:text-wise-green font-bold bg-wise-green/5 flex items-center gap-1.5">
-                  <Check className="size-4 text-dark-green dark:text-wise-green shrink-0" />
-                  <span>{t("common.landing.comparison.row4Wahide")}</span>
-                </td>
-                <td className="p-4 sm:p-5 text-foreground-muted flex items-center gap-1.5">
-                  <X className="size-4 text-rose-400 shrink-0" />
-                  <span>{t("common.landing.comparison.row4Others")}</span>
-                </td>
-              </tr>
-              <tr>
-                <td className="p-4 sm:p-5 font-bold text-foreground">{t("common.landing.comparison.row5Feature")}</td>
-                <td className="p-4 sm:p-5 text-dark-green dark:text-wise-green font-bold bg-wise-green/5 flex items-center gap-1.5">
-                  <Check className="size-4 text-dark-green dark:text-wise-green shrink-0" />
-                  <span>{t("common.landing.comparison.row5Wahide")}</span>
-                </td>
-                <td className="p-4 sm:p-5 text-foreground-muted">{t("common.landing.comparison.row5Others")}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      {/* 7. Transparent 3-Tier Pricing Grid */}
+      {/* 6. Transparent 3-Tier Pricing Grid */}
       <section id="pricing" className="px-4 sm:px-6 max-w-5xl mx-auto space-y-10">
         <div className="text-center space-y-2.5 max-w-xl mx-auto">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green">
