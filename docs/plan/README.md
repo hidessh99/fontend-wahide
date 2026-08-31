@@ -84,3 +84,6 @@ Dokumen perencanaan arsitektur dan kesiapan produksi untuk frontend **Wahide (`f
 
 22. **[Dynamic Preconnect via siteUrl Plan](./dynamic_preconnect_api_origin_plan.md)**
     - **Preconnect & DNS-Prefetch Dinamis Berbasis siteUrl**: Mengganti URL hardcoded `https://api.wahide.id` pada `layout.tsx` menjadi dinamis menggunakan konstanta `siteUrl` (`env.NEXT_PUBLIC_APP_URL || "https://wahide.id"`) agar konsisten dan adaptif antar lingkungan.
+
+23. **[Turbopack Dev Diagnostics & Filesystem Tuning Plan](./turbopack_dev_diagnostics_and_filesystem_tuning_plan.md)**
+    - **Analisis & Tuning Diagnostik Turbopack**: Penjelasan mendalam mengenai log cache self-healing Turbopack, peringatan filesystem benchmark drive sekunder Windows, auto-sync tsconfig.json, dan optimasi status eksperimental tree-shaking.
