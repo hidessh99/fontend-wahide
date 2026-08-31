@@ -1,8 +1,10 @@
 import { httpClient } from "@/lib/api/http-client";
 import { env } from "@/lib/config/env";
 import { AdminMetrics, UserItem, AdjustBalanceInput } from "../types/admin.types";
+import { AdminDashboardStats } from "@/services/iam/types/dashboard.types";
 
 const ADMIN_BASE = env.NEXT_PUBLIC_IAM_API_URL;
+
 
 export const DEFAULT_USERS: UserItem[] = [
   {
@@ -77,4 +79,25 @@ export const adminApi = {
     const res = await httpClient.post(`${ADMIN_BASE}/admin/users/${payload.userId}/adjust`, payload);
     return { success: res.success, message: res.message || "Saldo dan kuota berhasil diperbarui" };
   },
+
+  getAdminDashboardStats: async (): Promise<AdminDashboardStats> => {
+    const res = await httpClient.get<AdminDashboardStats>(`${ADMIN_BASE}/admin/dashboard/stats`);
+    return (
+      res.payload || {
+        total_users: 0,
+        total_tenants: 0,
+        total_devices: 0,
+        connected_devices: 0,
+        total_campaigns: 0,
+        total_messages_sent: 0,
+        total_transactions: 0,
+        pending_withdrawals: 0,
+        active_tickets: 0,
+        recent_users: [],
+        recent_transactions: [],
+        recent_withdrawals: [],
+      }
+    );
+  },
 };
+

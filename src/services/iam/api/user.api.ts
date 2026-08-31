@@ -1,6 +1,7 @@
 import { httpClient } from "@/lib/api/http-client";
 import { env } from "@/lib/config/env";
-import { User, DashboardStats, BackendUserPayload } from "../types/auth.types";
+import { User, BackendUserPayload } from "../types/auth.types";
+import { UserDashboardStats } from "../types/dashboard.types";
 import { ChangePasswordInput } from "../schemas/auth.schema";
 
 const IAM_BASE = env.NEXT_PUBLIC_IAM_API_URL;
@@ -27,16 +28,26 @@ export const userApi = {
     return { success: res.success, message: res.message };
   },
 
-  getDashboardStats: async (): Promise<DashboardStats> => {
-    const res = await httpClient.get<DashboardStats>(`${IAM_BASE}/users/dashboard/stats`);
+  getDashboardStats: async (): Promise<UserDashboardStats> => {
+    const res = await httpClient.get<UserDashboardStats>(`${IAM_BASE}/users/dashboard/stats`);
     return (
       res.payload || {
-        totalMessagesSent: 0,
-        totalDevicesConnected: 0,
-        quotaRemaining: 1000,
-        activeCampaignsCount: 0,
-        totalContacts: 0,
+        balance: 0,
+        income: 0,
+        total_devices: 0,
+        connected_devices: 0,
+        total_contacts: 0,
+        total_campaigns: 0,
+        total_messages_sent: 0,
+        plan_name: "FREE",
+        plan_status: "ACTIVE",
+        device_limit: 1,
+        monthly_message_limit: 1200,
+        open_tickets: 0,
+        recent_activities: [],
+        recent_invoices: [],
       }
     );
   },
 };
+

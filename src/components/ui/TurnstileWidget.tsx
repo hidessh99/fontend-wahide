@@ -18,7 +18,7 @@ export const TurnstileWidget = forwardRef<TurnstileInstance, TurnstileWidgetProp
     const { locale } = useI18n();
 
     return (
-      <div className={cn("flex justify-center w-full min-h-[65px] py-1", className)}>
+      <div className={cn("flex justify-center w-full min-h-16.25 py-1", className)}>
         <Turnstile
           ref={ref}
           siteKey={env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
@@ -29,6 +29,8 @@ export const TurnstileWidget = forwardRef<TurnstileInstance, TurnstileWidgetProp
             theme: "auto",
             language: locale === "en" ? "en" : "id",
             size: "normal",
+            retry: "auto",
+            refreshExpired: "auto",
           }}
         />
       </div>
