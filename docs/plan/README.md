@@ -35,3 +35,7 @@ Dokumen perencanaan arsitektur dan kesiapan produksi untuk frontend **Wahide (`f
 6. **[i18n Comprehensive Audit & Implementation Plan](./i18n_comprehensive_audit_and_implementation_plan.md)**
    - **Cakupan 100% Bilingual (ID & EN)**: Audit menyeluruh seluruh modul komponen di `src/components/` dan `src/services/` untuk mengeliminasi string hardcoded.
    - **Roadmap Eksekusi 5 Fase**: Pendaftaran kamus lengkap di `context.tsx`, penerjemahan pesan instan WhatsApp, tabel log kampanye, kupon voucher & komisi, blog CMS publik, hingga seluruh portal Superadmin.
+
+7. **[Public Legal & Company Pages Architecture Plan](./public_legal_and_company_pages_plan.md)**
+   - **Halaman Profil & Legalitas Resmi Hide Group**: Pembuatan halaman Tentang Kami (`/about`), Hubungi Kami (`/contact`), Kebijakan Privasi (`/privacy` berstandar UU PDP & GDPR), dan Syarat & Ketentuan Layanan (`/terms` & `/tos`).
+   - **Integrasi Data Perusahaan Terverifikasi**: Alamat kantor Semarang, email `admin@hidessh.com`, dan hotline WhatsApp `0877111301818` dengan penyesuaian navigasi Header & Footer.
