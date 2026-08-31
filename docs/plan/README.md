@@ -12,3 +12,6 @@ Daftar dokumen perencanaan arsitektur, optimasi performa, dan standarisasi tekni
 
 3. **[Auth Session & Storage Unification Plan](./auth_session_storage_unification_plan.md)**
    - **Unifikasi & Penyederhanaan Penyimpanan Autentikasi**: Analisis batas arsitektur Edge Runtime vs Client React, eliminasi duplikasi cookie `wahide_tenant_id` yang redundan, dan standarisasi Single Source of Truth.
+
+4. **[Modal Viewport Responsiveness & Accessibility Plan](./modal_viewport_responsiveness_and_accessibility_plan.md)**
+   - **Standardisasi Responsivitas Viewport & Aksesibilitas Modal**: Mengatasi masalah modal QR terpotong di layar laptop kecil, mengaktifkan scroll internal `max-h-[90vh]`, click outside to close, dan tombol `Escape` keyboard di seluruh modal.

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CreateCampaignInput } from "../types/campaign.types";
 import { useDevices } from "@/services/whatsapp/hooks/useDevices";
 import { useContacts } from "@/services/contact/hooks/useContacts";
@@ -56,6 +56,16 @@ export function CampaignWizardModal({
     setTemplate,
     randomize,
   } = useSpintax("{Halo|Hi|Selamat Siang} Kak {nama}, dapatkan penawaran spesial {diskon 50%|potongan harga} hari ini!");
+
+  // Escape key to dismiss
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -141,8 +151,13 @@ export function CampaignWizardModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/70 backdrop-blur-sm animate-in fade-in">
-      <div className="relative w-full max-w-2xl rounded-md border border-border bg-surface dark:bg-[#161715] shadow-2xl overflow-hidden p-6 sm:p-8 space-y-6 max-h-[90vh] flex flex-col justify-between">
+    <div
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+      className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-sm p-3 sm:p-6 flex min-h-full items-center justify-center animate-in fade-in"
+    >
+      <div className="relative w-full max-w-2xl max-h-[90vh] flex flex-col rounded-md border border-border bg-surface dark:bg-[#161715] shadow-2xl overflow-hidden animate-in zoom-in-95 p-6 sm:p-8 space-y-6">
         {/* Header with Step Tracker */}
         <div className="space-y-3">
           <div className="flex items-start justify-between">

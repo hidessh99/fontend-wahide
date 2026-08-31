@@ -23,6 +23,16 @@ export function TicketThreadModal({
   const [replyText, setReplyText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  // Escape key to dismiss
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen || !ticket) return null;
 
   const handleSend = async (e: React.FormEvent) => {
@@ -39,8 +49,13 @@ export function TicketThreadModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/70 backdrop-blur-sm animate-in fade-in">
-      <div className="relative w-full max-w-2xl rounded-md border border-border bg-surface dark:bg-[#161715] shadow-2xl overflow-hidden p-6 sm:p-8 space-y-5 max-h-[85vh] flex flex-col justify-between">
+    <div
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+      className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-sm p-3 sm:p-6 flex min-h-full items-center justify-center animate-in fade-in"
+    >
+      <div className="relative w-full max-w-2xl max-h-[90vh] flex flex-col justify-between rounded-md border border-border bg-surface dark:bg-[#161715] shadow-2xl overflow-hidden animate-in zoom-in-95 p-6 sm:p-8 space-y-5">
         {/* Header */}
         <div className="flex items-start justify-between border-b border-border pb-4">
           <div className="space-y-1">
