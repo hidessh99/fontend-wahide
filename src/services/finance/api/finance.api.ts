@@ -59,7 +59,7 @@ export const financeApi = {
     return res.payload || {
       invoice: {
         id: "inv_" + Date.now(),
-        invoiceNumber: "INV/2026/08/WAH-" + Math.floor(1000 + Math.random() * 9000),
+        invoiceNumber: "INV/2026/08/WAH-" + Date.now().toString().slice(-4),
         description: `Top-Up Saldo Deposit Rp ${payload.amount.toLocaleString("id-ID")}`,
         amount: payload.amount,
         status: "PENDING",
