@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     template: "%s | Wahide Gateway",
   },
   description:
-    "Platform SaaS WhatsApp Multi-Tenant multi agten & Multi-Device berkinerja tinggi dengan Session Hibernation hemat RAM 95%, 5 Lapis Anti-Ban, Spintax Engine, .",
+    "Platform SaaS WhatsApp Multi-Tenant, Multi-Agent & Multi-Device berkinerja tinggi dengan Session Hibernation hemat RAM 95%, 5 Lapis Anti-Ban, dan Spintax Engine.",
   keywords: [
     "WhatsApp Gateway",
     "WhatsApp API Gateway",
@@ -119,7 +119,7 @@ const jsonLd = {
     },
     {
       "@type": "Organization",
-      "name": "Wahide",
+      "name": "Hide Digital Security ",
       "url": siteUrl,
       "logo": `${siteUrl}/logo.png`,
     },
@@ -134,6 +134,8 @@ export default function RootLayout({
   return (
     <html lang="id" className={`${inter.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
+        <link rel="preconnect" href={siteUrl} crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href={siteUrl} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

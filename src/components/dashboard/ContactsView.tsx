@@ -1,14 +1,22 @@
 "use client";
 
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import { useContacts } from "@/services/contact/hooks/useContacts";
 import { ContactTable } from "@/services/contact/components/ContactTable";
-import { ContactModal } from "@/services/contact/components/ContactModal";
-import { ImportCsvModal } from "@/services/contact/components/ImportCsvModal";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { Contact, CreateContactInput } from "@/services/contact/types/contact.types";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/context";
+
+const ContactModal = dynamic(
+  () => import("@/services/contact/components/ContactModal").then((m) => m.ContactModal),
+  { ssr: false }
+);
+const ImportCsvModal = dynamic(
+  () => import("@/services/contact/components/ImportCsvModal").then((m) => m.ImportCsvModal),
+  { ssr: false }
+);
 import {
   Users,
   UserPlus,

@@ -1,12 +1,20 @@
 "use client";
 
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import { Ticket, TicketStatus } from "../types/support.types";
-import { CreateTicketModal } from "./CreateTicketModal";
-import { TicketThreadModal } from "./TicketThreadModal";
 import { useSupport } from "../hooks/useSupport";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/context";
+
+const CreateTicketModal = dynamic(
+  () => import("./CreateTicketModal").then((m) => m.CreateTicketModal),
+  { ssr: false }
+);
+const TicketThreadModal = dynamic(
+  () => import("./TicketThreadModal").then((m) => m.TicketThreadModal),
+  { ssr: false }
+);
 import {
   LifeBuoy,
   Plus,

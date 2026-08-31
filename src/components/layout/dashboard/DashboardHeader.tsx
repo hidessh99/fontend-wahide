@@ -13,7 +13,7 @@ interface DashboardHeaderProps {
 }
 
 export function DashboardHeader({ onOpenMobileNav }: DashboardHeaderProps) {
-  const { tenant } = useAuth();
+  const tenant = useAuth((s) => s.tenant);
 
   return (
     <header className="sticky top-0 z-40 h-18 border-b border-border bg-background/80 backdrop-blur-md px-4 sm:px-8 flex items-center justify-between">

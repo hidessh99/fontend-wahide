@@ -1,14 +1,25 @@
 "use client";
 
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import { Device, DeviceStatus } from "../types/whatsapp.types";
 import { DeviceCard } from "./DeviceCard";
-import { LiveQRModal } from "./LiveQRModal";
-import { AddDeviceModal } from "./AddDeviceModal";
-import { SendMessageModal } from "./SendMessageModal";
 import { useDevices } from "../hooks/useDevices";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/context";
+
+const LiveQRModal = dynamic(
+  () => import("./LiveQRModal").then((m) => m.LiveQRModal),
+  { ssr: false }
+);
+const AddDeviceModal = dynamic(
+  () => import("./AddDeviceModal").then((m) => m.AddDeviceModal),
+  { ssr: false }
+);
+const SendMessageModal = dynamic(
+  () => import("./SendMessageModal").then((m) => m.SendMessageModal),
+  { ssr: false }
+);
 import {
   Smartphone,
   Plus,

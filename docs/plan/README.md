@@ -78,3 +78,9 @@ Dokumen perencanaan arsitektur dan kesiapan produksi untuk frontend **Wahide (`f
 
 20. **[Comprehensive Architecture & Performance Review](./comprehensive_architecture_and_performance_review.md)**
     - **Audit Arsitektur Menyeluruh & Analisis Bottleneck**: Evaluasi komprehensif sistem frontend Next.js 16 (Edge Middleware route protection, Server Component streaming boundaries, Query cache deduplication, SSE resilience, table virtualization, dan HTTP client timeouts).
+
+21. **[Deep Codebase Re-Audit & Production Hardening Plan](./deep_codebase_reaudit_and_production_hardening_plan.md)**
+    - **Re-Audit Menyeluruh & Pengerasan Produksi Lanjutan**: Implementasi dynamic code-splitting modal via `next/dynamic`, virtualisasi tabel audit admin, atomic Zustand selectors, dan resource preconnect untuk performa puncak tanpa potensi bug masa depan.
+
+22. **[Dynamic Preconnect via siteUrl Plan](./dynamic_preconnect_api_origin_plan.md)**
+    - **Preconnect & DNS-Prefetch Dinamis Berbasis siteUrl**: Mengganti URL hardcoded `https://api.wahide.id` pada `layout.tsx` menjadi dinamis menggunakan konstanta `siteUrl` (`env.NEXT_PUBLIC_APP_URL || "https://wahide.id"`) agar konsisten dan adaptif antar lingkungan.

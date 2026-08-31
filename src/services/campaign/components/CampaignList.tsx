@@ -1,11 +1,16 @@
 "use client";
 
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import { CampaignStatus } from "../types/campaign.types";
-import { CampaignWizardModal } from "./CampaignWizardModal";
 import { useCampaigns } from "../hooks/useCampaigns";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/context";
+
+const CampaignWizardModal = dynamic(
+  () => import("./CampaignWizardModal").then((m) => m.CampaignWizardModal),
+  { ssr: false }
+);
 import {
   Send,
   Plus,

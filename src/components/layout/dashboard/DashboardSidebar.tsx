@@ -87,7 +87,8 @@ interface DashboardSidebarProps {
 
 export function DashboardSidebar({ onItemClick, className }: DashboardSidebarProps) {
   const pathname = usePathname();
-  const { user, tenant } = useAuth();
+  const user = useAuth((s) => s.user);
+  const tenant = useAuth((s) => s.tenant);
   const { t } = useI18n();
 
   return (

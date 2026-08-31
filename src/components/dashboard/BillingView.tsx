@@ -1,14 +1,19 @@
 "use client";
 
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import { useBilling } from "@/services/finance/hooks/useBilling";
 import { BalanceCard } from "@/services/finance/components/BalanceCard";
 import { InvoiceTable } from "@/services/finance/components/InvoiceTable";
-import { TopUpModal } from "@/services/finance/components/TopUpModal";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { useI18n } from "@/lib/i18n/context";
 import { Button } from "@/components/ui/button";
 import { Receipt } from "lucide-react";
+
+const TopUpModal = dynamic(
+  () => import("@/services/finance/components/TopUpModal").then((m) => m.TopUpModal),
+  { ssr: false }
+);
 
 export function BillingView() {
   const { t } = useI18n();
