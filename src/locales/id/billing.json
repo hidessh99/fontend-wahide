@@ -22,7 +22,7 @@
   "topUpModalSubtitle": "Pilih nominal deposit untuk menambah saldo kuota pesan broadcast Anda.",
   "selectAmountLabel": "Pilih Nominal Top-Up",
   "customAmountLabel": "Atau Masukkan Nominal Kustom",
-  "customAmountPlaceholder": "Min. Rp 50.000",
+  "customAmountPlaceholder": "Min. Rp 10.000",
   "selectPaymentMethod": "Metode Pembayaran",
   "payWithQris": "QRIS Instan (GoPay, OVO, Dana, BCA)",
   "submitTopUp": "Bayar Sekarang",

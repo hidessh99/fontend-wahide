@@ -24,3 +24,9 @@ Daftar dokumen perencanaan arsitektur, optimasi performa, dan standarisasi tekni
 
 7. **[Billing Affiliate Section Cleanup Plan](./billing_affiliate_section_cleanup_plan.md)**
    - **Pembersihan Section Komisi Afiliasi / Seller Pending**: Menghapus kartu hardcoded komisi afiliasi pada halaman billing agar antarmuka fokus murni pada saldo deposit dan faktur transaksi resmi.
+
+8. **[Top-Up Micro Denominations & Min. Limit Plan](./topup_micro_denominations_plan.md)**
+   - **Penyesuaian Pilihan Nominal Deposit & Minimal Rp 10.000**: Memperbarui preset nominal deposit menjadi Rp 10.000, Rp 20.000, Rp 50.000, Rp 100.000 dan mengatur batas validasi minimum top-up menjadi Rp 10.000.
+
+9. **[Subscription undefined toLocaleString Fix Plan](./subscription_undefined_tolocalestring_fix_plan.md)**
+   - **Perbaikan Error TypeError toLocaleString pada Halaman Subscription**: Normalisasi data respon backend Go (`snake_case` $\to$ `camelCase`) dan implementasi rendering defensif pada `QuotaDialCard` dan `PlanCardGrid`.

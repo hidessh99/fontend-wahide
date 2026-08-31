@@ -20,11 +20,11 @@ interface TopUpModalProps {
   onSubmit: (amount: number, paymentMethod: PaymentMethod) => Promise<unknown>;
 }
 
-const PRESET_AMOUNTS = [100000, 250000, 500000, 1000000];
+const PRESET_AMOUNTS = [10000, 20000, 50000, 100000];
 
 export function TopUpModal({ isOpen, onClose, onSubmit }: TopUpModalProps) {
   const { t } = useI18n();
-  const [selectedAmount, setSelectedAmount] = useState<number>(250000);
+  const [selectedAmount, setSelectedAmount] = useState<number>(20000);
   const [customAmount, setCustomAmount] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -47,8 +47,8 @@ export function TopUpModal({ isOpen, onClose, onSubmit }: TopUpModalProps) {
       ? parseInt(customAmount.replace(/[^0-9]/g, ""), 10)
       : selectedAmount;
 
-    if (!finalAmount || finalAmount < 50000) {
-      setError("Nominal top-up minimum Rp 50.000.");
+    if (!finalAmount || finalAmount < 10000) {
+      setError("Nominal top-up minimum Rp 10.000.");
       return;
     }
 
@@ -146,8 +146,8 @@ export function TopUpModal({ isOpen, onClose, onSubmit }: TopUpModalProps) {
               </label>
               <input
                 type="number"
-                min={50000}
-                step={10000}
+                min={10000}
+                step={5000}
                 value={customAmount}
                 onChange={(e) => {
                   setCustomAmount(e.target.value);

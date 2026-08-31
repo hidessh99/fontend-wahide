@@ -22,7 +22,7 @@
   "topUpModalSubtitle": "Select a top-up amount to replenish your broadcast message quota balance.",
   "selectAmountLabel": "Select Top-Up Amount",
   "customAmountLabel": "Or Enter Custom Amount",
-  "customAmountPlaceholder": "Min. IDR 50,000",
+  "customAmountPlaceholder": "Min. IDR 10,000",
   "selectPaymentMethod": "Payment Method",
   "payWithQris": "Instant QRIS (GoPay, OVO, Dana, BCA)",
   "submitTopUp": "Pay Now",
