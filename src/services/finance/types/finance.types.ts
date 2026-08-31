@@ -25,3 +25,17 @@ export interface CreateTopUpInput {
   amount: number;
   paymentMethod: PaymentMethod;
 }
+
+export interface GetInvoicesParams {
+  page?: number;
+  pageSize?: number;
+  search?: string;
+  status?: string;
+}
+
+export interface InvoiceListResponse {
+  invoices: Invoice[];
+  total: number;
+  page: number;
+  pageSize: number;
+}

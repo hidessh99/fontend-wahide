@@ -14,7 +14,6 @@ interface ContactTableProps {
   pageSize?: number;
   total?: number;
   totalPages?: number;
-  onPageChange?: (page: number) => void;
   onPrevPage?: () => void;
   onNextPage?: () => void;
   onToggleSelectOne: (id: string) => void;
@@ -30,7 +29,6 @@ export function ContactTable({
   pageSize = 10,
   total = 0,
   totalPages = 1,
-  onPageChange,
   onPrevPage,
   onNextPage,
   onToggleSelectOne,

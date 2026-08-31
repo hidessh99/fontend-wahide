@@ -76,10 +76,10 @@
 
 - [x] **5.1 Virtual Scrolling 60 FPS Skala Masif** — `/contacts` — Buka daftar ribuan kontak → Tabel menggunakan `@tanstack/react-virtual`, scrolling sangat mulus pada 60 FPS, hanya ~15 elemen DOM yang dirender secara aktif.
 - [x] **5.2 Tambah Kontak Manual Baru** — `/contacts` — Klik *Tambah Kontak* → Modal `ContactModal` terbuka dinamis, masukkan Nama, Nomor WhatsApp (`628xxx`), Tag/Grup, dan Atribut Kustom → Kontak tersimpan dan tampil di tabel.
-- [ ] **5.3 Import Kontak Massal via CSV (Import Wizard)** — `/contacts` — Klik *Import CSV* → Modal `ImportCsvModal` terbuka, upload file `.csv`, lakukan mapping kolom (Nama, Telepon, Tag) → Progress bar impor berjalan, validasi nomor duplikat/invalid terdeteksi.
-- [ ] **5.4 Pencarian & Filter Kontak Instan** — `/contacts` — Ketik nama/nomor di kolom pencarian atau filter berdasarkan Tag → Tabel melakukan filter reaktif tanpa reload halaman.
-- [ ] **5.5 Edit & Hapus Kontak** — `/contacts` — Klik ikon Edit pada baris kontak → Form terisi data lama, ubah data dan simpan; klik Hapus → Kontak terhapus dari daftar.
-- [ ] **5.6 Export Kontak ke CSV / Excel** — `/contacts` — Klik *Export Kontak* → File CSV terunduh secara instan berisi seluruh daftar kontak yang difilter.
+- [x] **5.3 Import Kontak Massal via CSV (Import Wizard)** — `/contacts` — Klik *Import CSV* → Modal `ImportCsvModal` terbuka, upload file `.csv`, lakukan mapping kolom (Nama, Telepon, Tag) → Progress bar impor berjalan, validasi nomor duplikat/invalid terdeteksi.
+- [x] **5.4 Pencarian & Filter Kontak Instan** — `/contacts` — Ketik nama/nomor di kolom pencarian atau filter berdasarkan Tag → Tabel melakukan filter reaktif tanpa reload halaman.
+- [x] **5.5 Edit & Hapus Kontak** — `/contacts` — Klik ikon Edit pada baris kontak → Form terisi data lama, ubah data dan simpan; klik Hapus → Kontak terhapus dari daftar.
+- [x] **5.6 Export Kontak ke CSV / Excel** — `/contacts` — Klik *Export Kontak* → File CSV terunduh secara instan berisi seluruh daftar kontak yang difilter.
 
 ---
 

@@ -9,12 +9,19 @@ import { Users } from "lucide-react";
 export function AdminUsersView() {
   const { t } = useI18n();
   const {
-    filteredUsers,
+    paginatedUsers,
     isLoading,
-    searchQuery,
-    setSearchQuery,
+    activeSearch,
     planFilter,
+    page,
+    pageSize,
+    total,
+    totalPages,
+    executeSearch,
+    clearSearch,
     setPlanFilter,
+    nextPage,
+    prevPage,
     fetchAdminData,
     adjustBalance,
   } = useAdmin();
@@ -40,12 +47,19 @@ export function AdminUsersView() {
 
       {/* Users Table */}
       <UsersTable
-        users={filteredUsers}
+        users={paginatedUsers}
         isLoading={isLoading}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
+        activeSearch={activeSearch}
+        onSearch={executeSearch}
+        onClearSearch={clearSearch}
         planFilter={planFilter}
         onPlanFilterChange={setPlanFilter}
+        page={page}
+        pageSize={pageSize}
+        total={total}
+        totalPages={totalPages}
+        onPrevPage={prevPage}
+        onNextPage={nextPage}
         onRefresh={fetchAdminData}
         onAdjustBalance={adjustBalance}
       />

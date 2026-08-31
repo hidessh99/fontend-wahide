@@ -30,3 +30,17 @@ export interface CreateTicketInput {
   priority: TicketPriority;
   message: string;
 }
+
+export interface GetTicketsParams {
+  page?: number;
+  pageSize?: number;
+  search?: string;
+  status?: string;
+}
+
+export interface TicketListResponse {
+  tickets: Ticket[];
+  total: number;
+  page: number;
+  pageSize: number;
+}

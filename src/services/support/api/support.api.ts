@@ -1,6 +1,6 @@
 import { httpClient } from "@/lib/api/http-client";
 import { env } from "@/lib/config/env";
-import { Ticket, CreateTicketInput, TicketMessage } from "../types/support.types";
+import { Ticket, CreateTicketInput, TicketMessage, GetTicketsParams, TicketListResponse } from "../types/support.types";
 
 const SUPPORT_BASE = env.NEXT_PUBLIC_WHATSAPP_API_URL;
 
@@ -34,12 +34,42 @@ export const DEFAULT_TICKETS: Ticket[] = [
 ];
 
 export const supportApi = {
-  getTickets: async (): Promise<Ticket[]> => {
+  getTickets: async (params?: GetTicketsParams): Promise<TicketListResponse> => {
     try {
-      const res = await httpClient.get<Ticket[]>(`${SUPPORT_BASE}/support/tickets`);
-      return res.payload || DEFAULT_TICKETS;
+      const page = params?.page ?? 1;
+      const pageSize = params?.pageSize ?? 10;
+      const query = new URLSearchParams();
+      query.set("page", String(page));
+      query.set("page_size", String(pageSize));
+      if (params?.search && params.search.trim()) {
+        query.set("search", params.search.trim());
+      }
+      if (params?.status && params.status !== "ALL") {
+        query.set("status", params.status);
+      }
+      const queryString = `?${query.toString()}`;
+      const res = await httpClient.get<Ticket[]>(`${SUPPORT_BASE}/support/tickets${queryString}`);
+      const rawList = res.payload || (Array.isArray(res) ? res : []);
+      const tickets = Array.isArray(rawList) && rawList.length > 0 ? (rawList as Ticket[]) : [];
+
+      const addInfo = res.additional_info as { total?: number; page?: number; size?: number } | undefined;
+      const total = typeof addInfo?.total === "number" ? addInfo.total : tickets.length;
+      const resPage = typeof addInfo?.page === "number" ? addInfo.page : page;
+      const resSize = typeof addInfo?.size === "number" ? addInfo.size : pageSize;
+
+      return {
+        tickets: tickets.length > 0 ? tickets : DEFAULT_TICKETS,
+        total: total > 0 ? total : DEFAULT_TICKETS.length,
+        page: resPage,
+        pageSize: resSize,
+      };
     } catch {
-      return DEFAULT_TICKETS;
+      return {
+        tickets: DEFAULT_TICKETS,
+        total: DEFAULT_TICKETS.length,
+        page: params?.page ?? 1,
+        pageSize: params?.pageSize ?? 10,
+      };
     }
   },
 

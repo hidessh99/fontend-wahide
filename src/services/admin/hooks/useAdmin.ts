@@ -11,8 +11,10 @@ export function useAdmin() {
   const [metrics, setMetrics] = useState<AdminMetrics | null>(null);
   const [users, setUsers] = useState<UserItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [activeSearch, setActiveSearch] = useState("");
   const [planFilter, setPlanFilter] = useState("ALL");
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
 
   const fetchAdminData = useCallback(async () => {
     setIsLoading(true);
@@ -78,26 +80,65 @@ export function useAdmin() {
   const filteredUsers = useMemo(() => {
     return users.filter((u) => {
       const matchesSearch =
-        searchQuery === "" ||
-        u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        u.email.toLowerCase().includes(searchQuery.toLowerCase());
+        activeSearch === "" ||
+        u.name.toLowerCase().includes(activeSearch.toLowerCase()) ||
+        u.email.toLowerCase().includes(activeSearch.toLowerCase());
 
       const matchesPlan =
         planFilter === "ALL" || u.planName === planFilter;
 
       return matchesSearch && matchesPlan;
     });
-  }, [users, searchQuery, planFilter]);
+  }, [users, activeSearch, planFilter]);
+
+  const total = filteredUsers.length;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+  const paginatedUsers = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return filteredUsers.slice(start, start + pageSize);
+  }, [filteredUsers, page, pageSize]);
+
+  const executeSearch = (query: string) => {
+    setActiveSearch(query.trim());
+    setPage(1);
+  };
+
+  const clearSearch = () => {
+    setActiveSearch("");
+    setPage(1);
+  };
+
+  const changePlanFilter = (plan: string) => {
+    setPlanFilter(plan);
+    setPage(1);
+  };
+
+  const nextPage = () => {
+    if (page < totalPages) setPage((p) => p + 1);
+  };
+
+  const prevPage = () => {
+    if (page > 1) setPage((p) => p - 1);
+  };
 
   return {
     metrics,
     users,
     filteredUsers,
+    paginatedUsers,
     isLoading,
-    searchQuery,
-    setSearchQuery,
+    activeSearch,
     planFilter,
-    setPlanFilter,
+    page,
+    pageSize,
+    total,
+    totalPages,
+    executeSearch,
+    clearSearch,
+    setPlanFilter: changePlanFilter,
+    nextPage,
+    prevPage,
     fetchAdminData,
     adjustBalance,
   };

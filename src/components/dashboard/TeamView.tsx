@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useTeam } from "@/services/team/hooks/useTeam";
-import { AgentRole } from "@/services/team/types/team.types";
+import { Agent, AgentRole } from "@/services/team/types/team.types";
+import { DeleteTeamMemberModal } from "@/services/team/components/DeleteTeamMemberModal";
 import { Button } from "@/components/ui/button";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { useI18n } from "@/lib/i18n/context";
@@ -15,20 +16,68 @@ import {
   ShieldCheck,
   Smartphone,
   CheckCircle2,
+  Search,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 export function TeamView() {
   const { t } = useI18n();
   const { agents, createAgent, deleteAgent } = useTeam();
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Form state
+  // Search & Pagination State
+  const [searchInput, setSearchInput] = useState("");
+  const [activeSearch, setActiveSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+
+  // Add Member Modal State
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [role, setRole] = useState<AgentRole>("AGENT");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Delete Member Modal State
+  const [deletingMember, setDeletingMember] = useState<Agent | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const filteredAgents = useMemo(() => {
+    if (!activeSearch.trim()) return agents;
+    const term = activeSearch.toLowerCase().trim();
+    return agents.filter(
+      (agt) =>
+        agt.name.toLowerCase().includes(term) ||
+        agt.email.toLowerCase().includes(term) ||
+        agt.phone.includes(term) ||
+        agt.role.toLowerCase().includes(term)
+    );
+  }, [agents, activeSearch]);
+
+  const total = filteredAgents.length;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+  const paginatedAgents = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return filteredAgents.slice(start, start + pageSize);
+  }, [filteredAgents, page, pageSize]);
+
+  const startItem = total > 0 ? (page - 1) * pageSize + 1 : 0;
+  const endItem = total > 0 ? Math.min(page * pageSize, total) : 0;
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setActiveSearch(searchInput.trim());
+    setPage(1);
+  };
+
+  const handleClearSearch = () => {
+    setSearchInput("");
+    setActiveSearch("");
+    setPage(1);
+  };
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,9 +102,14 @@ export function TeamView() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (confirm(t("team.deleteAgentConfirm"))) {
-      await deleteAgent(id);
+  const handleConfirmDelete = async () => {
+    if (!deletingMember) return;
+    setIsDeleting(true);
+    try {
+      await deleteAgent(deletingMember.id);
+      setDeletingMember(null);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -80,17 +134,54 @@ export function TeamView() {
         <Button
           variant="primaryPill"
           onClick={() => setIsModalOpen(true)}
-          className="gap-2 text-xs font-bold shadow-sm"
+          className="gap-2 text-xs font-bold shadow-sm cursor-pointer"
         >
           <Plus className="size-4" />
           <span>{t("team.addAgent")}</span>
         </Button>
       </div>
 
+      {/* Filter Toolbar (Search Submit Form) */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-md border border-border bg-surface dark:bg-[#161715]">
+        <form onSubmit={handleSearchSubmit} className="flex-1 max-w-md flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted" />
+            <input
+              type="text"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="Cari nama, email, atau nomor staf..."
+              className="w-full h-10 pl-10 pr-9 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs"
+            />
+            {(searchInput || activeSearch) && (
+              <button
+                type="button"
+                onClick={handleClearSearch}
+                className="absolute right-3 top-1/2 -translate-y-1/2 size-5 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
+                title="Hapus Pencarian"
+                aria-label="Hapus Pencarian"
+              >
+                <X className="size-3.5" />
+              </button>
+            )}
+          </div>
+          <Button
+            type="submit"
+            variant="primaryPill"
+            size="sm"
+            className="h-10 px-4 text-xs font-bold shadow-xs shrink-0 cursor-pointer"
+          >
+            <Search className="size-3.5 mr-1" />
+            <span>Cari</span>
+          </Button>
+        </form>
+      </div>
+
       {/* Agents Table with Error Boundary */}
       <ErrorBoundary fallbackTitle="Gagal Memuat Daftar Tim Staf Agen">
-        <div className="rounded-md border border-border bg-surface dark:bg-[#161715] overflow-hidden shadow-sm">
-          <div className="grid grid-cols-12 gap-3 px-5 py-3.5 bg-muted/60 border-b border-border text-xs font-bold uppercase tracking-wider text-foreground-muted select-none">
+        <div className="rounded-md border border-border bg-surface dark:bg-[#161715] overflow-hidden shadow-xs">
+          {/* Table Header */}
+          <div className="grid grid-cols-12 gap-3 px-5 py-4 bg-muted/60 border-b border-border text-xs font-extrabold uppercase tracking-wider text-foreground-muted select-none">
             <div className="col-span-4 sm:col-span-3">{t("team.tableHeaderName")}</div>
             <div className="col-span-3 sm:col-span-3">{t("team.tableHeaderPhone")}</div>
             <div className="hidden sm:block sm:col-span-2">{t("team.tableHeaderRole")}</div>
@@ -99,29 +190,34 @@ export function TeamView() {
             <div className="col-span-2 sm:col-span-1 text-right">{t("team.tableHeaderAction")}</div>
           </div>
 
-          {agents.length === 0 ? (
+          {/* Table Body */}
+          {paginatedAgents.length === 0 ? (
             <div className="p-12 text-center space-y-2">
               <Users className="size-10 text-foreground-muted mx-auto" />
               <h3 className="font-bold text-sm text-foreground">{t("team.noAgents")}</h3>
-              <p className="text-xs text-foreground-secondary">{t("team.noAgentsDesc")}</p>
+              <p className="text-xs text-foreground-secondary">
+                {activeSearch
+                  ? `Tidak ditemukan staf dengan kata kunci "${activeSearch}".`
+                  : t("team.noAgentsDesc")}
+              </p>
             </div>
           ) : (
             <div className="divide-y divide-border/50 text-xs font-semibold">
-              {agents.map((agt) => (
+              {paginatedAgents.map((agt) => (
                 <div
                   key={agt.id}
-                  className="grid grid-cols-12 gap-3 px-5 py-4 items-center hover:bg-muted/40 transition-colors"
+                  className="grid grid-cols-12 gap-3 px-5 py-3.5 items-center hover:bg-muted/40 transition-colors min-h-14.5"
                 >
-                  {/* Name & Email */}
+                  {/* Name & Email (Enlarged Typography) */}
                   <div className="col-span-4 sm:col-span-3 space-y-0.5">
-                    <span className="font-bold text-foreground block truncate">{agt.name}</span>
-                    <span className="text-[11px] text-foreground-muted block truncate font-mono">
+                    <span className="font-bold text-sm sm:text-base text-foreground block truncate">{agt.name}</span>
+                    <span className="text-xs text-foreground-muted block truncate font-mono">
                       {agt.email}
                     </span>
                   </div>
 
                   {/* Phone */}
-                  <div className="col-span-3 sm:col-span-3 font-mono text-foreground-secondary text-[11px] truncate">
+                  <div className="col-span-3 sm:col-span-3 font-mono text-foreground-secondary text-xs sm:text-sm truncate">
                     +{agt.phone}
                   </div>
 
@@ -130,7 +226,7 @@ export function TeamView() {
                     <span
                       className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
                         agt.role === "SUPERVISOR"
-                          ? "bg-wise-green/15 text-wise-green border border-wise-green/30"
+                          ? "bg-wise-green/15 text-dark-green dark:text-wise-green border border-wise-green/30"
                           : "bg-muted text-foreground-secondary border border-border"
                       }`}
                     >
@@ -140,15 +236,15 @@ export function TeamView() {
                   </div>
 
                   {/* Devices */}
-                  <div className="hidden sm:flex sm:col-span-2 items-center justify-center gap-1 font-mono text-[11px] text-foreground-secondary">
+                  <div className="hidden sm:flex sm:col-span-2 items-center justify-center gap-1 font-mono text-xs sm:text-sm text-foreground-secondary">
                     <Smartphone className="size-3.5 text-foreground-muted" />
                     <span>{agt.assignedDevicesCount} Slot</span>
                   </div>
 
                   {/* Status */}
                   <div className="col-span-3 sm:col-span-1 flex justify-center">
-                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-                      <CheckCircle2 className="size-3" />
+                    <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                      <CheckCircle2 className="size-3.5" />
                       <span className="hidden sm:inline">{t("team.statusActive")}</span>
                     </span>
                   </div>
@@ -157,15 +253,57 @@ export function TeamView() {
                   <div className="col-span-2 sm:col-span-1 flex justify-end">
                     <button
                       type="button"
-                      onClick={() => handleDelete(agt.id)}
-                      className="size-7 rounded-full flex items-center justify-center text-foreground-muted hover:text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"
+                      onClick={() => setDeletingMember(agt)}
+                      className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"
                       aria-label={`${t("actions.delete")} ${agt.name}`}
+                      title="Hapus Anggota Tim"
                     >
-                      <Trash2 className="size-3.5" />
+                      <Trash2 className="size-4" />
                     </button>
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* Pagination Footer */}
+          {total > 0 && (
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-5 py-3.5 border-t border-border bg-muted/30">
+              {/* Item count summary */}
+              <div className="text-xs sm:text-sm font-semibold text-foreground-secondary">
+                Menampilkan {startItem} - {endItem} dari {total} anggota tim
+              </div>
+
+              {/* Page navigation: Previous, Page Indicator, Next */}
+              {totalPages > 1 && (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-foreground-muted px-1.5 select-none">
+                    Halaman {page} dari {totalPages}
+                  </span>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+                    disabled={page <= 1}
+                    className="h-8.5 px-3.5 rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted cursor-pointer disabled:opacity-40"
+                  >
+                    <ChevronLeft className="size-3.5" />
+                    <span>Sebelumnya</span>
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+                    disabled={page >= totalPages}
+                    className="h-8.5 px-3.5 rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted cursor-pointer disabled:opacity-40"
+                  >
+                    <span>Berikutnya</span>
+                    <ChevronRight className="size-3.5" />
+                  </Button>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -297,6 +435,15 @@ export function TeamView() {
           </div>
         </div>
       )}
+
+      {/* Modal Dialog Delete Confirmation */}
+      <DeleteTeamMemberModal
+        isOpen={!!deletingMember}
+        onClose={() => setDeletingMember(null)}
+        onConfirm={handleConfirmDelete}
+        targetMember={deletingMember}
+        isDeleting={isDeleting}
+      />
     </div>
   );
 }

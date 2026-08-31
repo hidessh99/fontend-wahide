@@ -44,7 +44,6 @@ export function ContactsView() {
     pageSize,
     total,
     totalPages,
-    setPage,
     nextPage,
     prevPage,
     selectedIds,
@@ -310,7 +309,6 @@ export function ContactsView() {
             pageSize={pageSize}
             total={total}
             totalPages={totalPages}
-            onPageChange={setPage}
             onPrevPage={prevPage}
             onNextPage={nextPage}
             onToggleSelectOne={toggleSelectOne}

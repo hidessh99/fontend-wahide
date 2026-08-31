@@ -12,6 +12,9 @@ export interface TeamAgent {
   createdAt: string;
 }
 
+export type Agent = TeamAgent;
+export type TeamMember = TeamAgent;
+
 export interface CreateAgentInput {
   name: string;
   email: string;

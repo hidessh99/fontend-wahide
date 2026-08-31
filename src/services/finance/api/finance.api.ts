@@ -1,6 +1,6 @@
 import { httpClient } from "@/lib/api/http-client";
 import { env } from "@/lib/config/env";
-import { Invoice, TenantBalance, CreateTopUpInput, InvoiceStatus, PaymentMethod } from "../types/finance.types";
+import { Invoice, TenantBalance, CreateTopUpInput, InvoiceStatus, PaymentMethod, GetInvoicesParams, InvoiceListResponse } from "../types/finance.types";
 
 const BILLING_BASE = env.NEXT_PUBLIC_FINANCE_API_URL || env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -102,15 +102,45 @@ export const financeApi = {
     }
   },
 
-  getInvoices: async (): Promise<Invoice[]> => {
+  getInvoices: async (params?: GetInvoicesParams): Promise<InvoiceListResponse> => {
     try {
-      const res = await httpClient.get<Record<string, unknown>[]>(`${BILLING_BASE}/billing/invoices`);
-      if (Array.isArray(res.payload) && res.payload.length > 0) {
-        return res.payload.map(normalizeInvoice);
+      const page = params?.page ?? 1;
+      const pageSize = params?.pageSize ?? 10;
+      const query = new URLSearchParams();
+      query.set("page", String(page));
+      query.set("page_size", String(pageSize));
+      if (params?.search && params.search.trim()) {
+        query.set("search", params.search.trim());
       }
-      return DEFAULT_INVOICES;
+      if (params?.status && params.status !== "ALL") {
+        query.set("status", params.status);
+      }
+      const queryString = `?${query.toString()}`;
+      const res = await httpClient.get<Record<string, unknown>[]>(`${BILLING_BASE}/billing/invoices${queryString}`);
+
+      const rawList = res.payload || (Array.isArray(res) ? res : []);
+      const invoices = Array.isArray(rawList) && rawList.length > 0
+        ? rawList.map((item) => normalizeInvoice(item as Record<string, unknown>))
+        : [];
+
+      const addInfo = res.additional_info as { total?: number; page?: number; size?: number } | undefined;
+      const total = typeof addInfo?.total === "number" ? addInfo.total : invoices.length;
+      const resPage = typeof addInfo?.page === "number" ? addInfo.page : page;
+      const resSize = typeof addInfo?.size === "number" ? addInfo.size : pageSize;
+
+      return {
+        invoices: invoices.length > 0 ? invoices : DEFAULT_INVOICES,
+        total: total > 0 ? total : DEFAULT_INVOICES.length,
+        page: resPage,
+        pageSize: resSize,
+      };
     } catch {
-      return DEFAULT_INVOICES;
+      return {
+        invoices: DEFAULT_INVOICES,
+        total: DEFAULT_INVOICES.length,
+        page: params?.page ?? 1,
+        pageSize: params?.pageSize ?? 10,
+      };
     }
   },
 

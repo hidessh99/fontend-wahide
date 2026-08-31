@@ -10,28 +10,81 @@ export function useSupport() {
   const { t } = useI18n();
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [activeSearch, setActiveSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<TicketStatus | "ALL">("ALL");
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(10);
+  const [total, setTotal] = useState(0);
 
-  const fetchTickets = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const data = await supportApi.getTickets();
-      setTickets(data);
-    } catch {
-      // Fallback in API client
-    } finally {
-      setIsLoading(false);
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+  const fetchTickets = useCallback(
+    async (overrideSearch?: string, overrideStatus?: TicketStatus | "ALL", targetPage?: number) => {
+      setIsLoading(true);
+      try {
+        const search = overrideSearch !== undefined ? overrideSearch.trim() : activeSearch.trim();
+        const status = overrideStatus !== undefined ? overrideStatus : statusFilter;
+        const p = targetPage !== undefined ? targetPage : page;
+
+        const res = await supportApi.getTickets({
+          search,
+          status,
+          page: p,
+          pageSize,
+        });
+
+        setTickets(res.tickets);
+        setTotal(res.total);
+        setPage(res.page);
+
+        if (overrideSearch !== undefined) {
+          setActiveSearch(overrideSearch.trim());
+        }
+        if (overrideStatus !== undefined) {
+          setStatusFilter(overrideStatus);
+        }
+      } catch {
+        // Fallback in API client
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [activeSearch, statusFilter, page, pageSize]
+  );
+
+  const executeSearch = async (query: string) => {
+    await fetchTickets(query, statusFilter, 1);
+  };
+
+  const clearSearch = async () => {
+    await fetchTickets("", statusFilter, 1);
+  };
+
+  const changeStatusFilter = async (status: TicketStatus | "ALL") => {
+    await fetchTickets(activeSearch, status, 1);
+  };
+
+  const nextPage = async () => {
+    if (page < totalPages) {
+      await fetchTickets(activeSearch, statusFilter, page + 1);
     }
-  }, []);
+  };
+
+  const prevPage = async () => {
+    if (page > 1) {
+      await fetchTickets(activeSearch, statusFilter, page - 1);
+    }
+  };
 
   useEffect(() => {
     let isMounted = true;
     const init = async () => {
       try {
-        const data = await supportApi.getTickets();
+        const res = await supportApi.getTickets({ page: 1, pageSize: 10 });
         if (isMounted) {
-          setTickets(data);
+          setTickets(res.tickets);
+          setTotal(res.total);
+          setPage(res.page);
           setIsLoading(false);
         }
       } catch {
@@ -48,6 +101,7 @@ export function useSupport() {
     try {
       const newTicket = await supportApi.createTicket(payload);
       setTickets((prev) => [newTicket, ...prev]);
+      setTotal((prev) => prev + 1);
       toast.success(t("support.toastCreated"));
       return newTicket;
     } catch (err: unknown) {
@@ -80,27 +134,36 @@ export function useSupport() {
   };
 
   const filteredTickets = useMemo(() => {
-    return tickets.filter((t) => {
-      const matchesSearch =
-        searchQuery === "" ||
-        t.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        t.ticketNumber.toLowerCase().includes(searchQuery.toLowerCase());
-
-      const matchesStatus =
-        statusFilter === "ALL" || t.status === statusFilter;
-
-      return matchesSearch && matchesStatus;
-    });
-  }, [tickets, searchQuery, statusFilter]);
+    let list = tickets;
+    if (statusFilter !== "ALL") {
+      list = list.filter((t) => t.status === statusFilter);
+    }
+    if (activeSearch.trim()) {
+      const term = activeSearch.toLowerCase().trim();
+      list = list.filter(
+        (t) =>
+          t.subject.toLowerCase().includes(term) ||
+          t.ticketNumber.toLowerCase().includes(term)
+      );
+    }
+    return list;
+  }, [tickets, activeSearch, statusFilter]);
 
   return {
     tickets,
     filteredTickets,
     isLoading,
-    searchQuery,
-    setSearchQuery,
+    activeSearch,
     statusFilter,
-    setStatusFilter,
+    page,
+    pageSize,
+    total,
+    totalPages,
+    executeSearch,
+    clearSearch,
+    setStatusFilter: changeStatusFilter,
+    nextPage,
+    prevPage,
     fetchTickets,
     createTicket,
     replyTicket,

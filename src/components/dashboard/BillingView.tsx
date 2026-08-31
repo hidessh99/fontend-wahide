@@ -6,10 +6,11 @@ import { useBilling } from "@/services/finance/hooks/useBilling";
 import { BalanceCard } from "@/services/finance/components/BalanceCard";
 import { InvoiceTable } from "@/services/finance/components/InvoiceTable";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
+import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/context";
 import { toast } from "sonner";
 import { Invoice } from "@/services/finance/types/finance.types";
-import { Receipt } from "lucide-react";
+import { Receipt, Search, X } from "lucide-react";
 
 const TopUpModal = dynamic(
   () => import("@/services/finance/components/TopUpModal").then((m) => m.TopUpModal),
@@ -23,9 +24,33 @@ const InvoiceReceiptModal = dynamic(
 
 export function BillingView() {
   const { t } = useI18n();
-  const { balance, invoices, createTopUp } = useBilling();
+  const {
+    balance,
+    filteredInvoices,
+    activeSearch,
+    statusFilter,
+    page,
+    pageSize,
+    total,
+    totalPages,
+    executeSearch,
+    clearSearch,
+    setStatusFilter,
+    nextPage,
+    prevPage,
+    createTopUp,
+  } = useBilling();
+
+  const [searchInput, setSearchInput] = useState("");
   const [isTopUpOpen, setIsTopUpOpen] = useState(false);
   const [selectedReceipt, setSelectedReceipt] = useState<Invoice | null>(null);
+
+  const statusOptions = [
+    { value: "ALL", label: "Semua" },
+    { value: "PAID", label: "Lunas" },
+    { value: "PENDING", label: "Menunggu" },
+    { value: "EXPIRED", label: "Kadaluarsa" },
+  ];
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
@@ -54,10 +79,80 @@ export function BillingView() {
         />
       </ErrorBoundary>
 
+      {/* Filter Toolbar (Search Submit & Status Filters) */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-md border border-border bg-surface dark:bg-[#161715]">
+        {/* Search Form with Submit Button */}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            executeSearch(searchInput);
+          }}
+          className="flex-1 max-w-lg flex items-center gap-2"
+        >
+          <div className="relative flex-1">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted" />
+            <input
+              type="text"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="Cari nomor faktur atau deskripsi..."
+              className="w-full h-10 pl-10 pr-9 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs"
+            />
+            {(searchInput || activeSearch) && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchInput("");
+                  clearSearch();
+                }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 size-5 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
+                title="Hapus Pencarian"
+                aria-label="Hapus Pencarian"
+              >
+                <X className="size-3.5" />
+              </button>
+            )}
+          </div>
+          <Button
+            type="submit"
+            variant="primaryPill"
+            size="sm"
+            className="h-10 px-4 text-xs font-bold shadow-xs shrink-0 cursor-pointer"
+          >
+            <Search className="size-3.5 mr-1" />
+            <span>Cari</span>
+          </Button>
+        </form>
+
+        {/* Status Filter Pills */}
+        <div className="flex items-center gap-1.5 flex-wrap">
+          {statusOptions.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => setStatusFilter(opt.value)}
+              className={`px-3 py-1.5 rounded-full text-xs font-bold transition cursor-pointer ${
+                statusFilter === opt.value
+                  ? "bg-wise-green text-dark-green shadow-xs"
+                  : "text-foreground-secondary hover:text-foreground hover:bg-muted border border-border"
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Invoice Table with Error Boundary */}
       <ErrorBoundary fallbackTitle="Gagal Memuat Riwayat Faktur">
         <InvoiceTable
-          invoices={invoices}
+          invoices={filteredInvoices}
+          page={page}
+          pageSize={pageSize}
+          total={total}
+          totalPages={totalPages}
+          onPrevPage={prevPage}
+          onNextPage={nextPage}
           onViewReceipt={(inv) => setSelectedReceipt(inv)}
           onPay={(inv) => {
             const targetUrl = inv.paymentUrl || inv.invoiceUrl;
