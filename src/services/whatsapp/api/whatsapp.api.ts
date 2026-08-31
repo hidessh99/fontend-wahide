@@ -4,11 +4,41 @@ import { Device, CreateDeviceInput, PairDeviceResponse, PairPhoneResponse } from
 
 const WHATSAPP_BASE = env.NEXT_PUBLIC_WHATSAPP_API_URL;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const mapBackendDevice = (d: any): Device => {
+  let mappedStatus = d.status;
+  if (mappedStatus === "ONLINE") {
+    mappedStatus = "CONNECTED";
+  } else if (mappedStatus === "OFFLINE" || mappedStatus === "QR_PENDING" || mappedStatus === "BANNED") {
+    mappedStatus = "DISCONNECTED";
+  }
+  
+  // Extract clean phone number from JID (e.g., "6282151743688:80@s.whatsapp.net" -> "6282151743688")
+  let phone = d.phone || null;
+  const rawJid = d.jid || d.j_id || "";
+  if (!phone && rawJid) {
+    phone = rawJid.split(":")[0].split("@")[0] || null;
+  }
+
+  const pushName = d.push_name || d.pushName || d.name || "WhatsApp Device";
+  
+  return {
+    ...d,
+    push_name: pushName,
+    pushName: pushName,
+    name: pushName,
+    phone: phone,
+    status: mappedStatus,
+  };
+};
+
 export const whatsappApi = {
   getDevices: async (): Promise<Device[]> => {
     try {
-      const res = await httpClient.get<Device[]>(`${WHATSAPP_BASE}/whatsapp/devices`);
-      return res.payload || (Array.isArray(res) ? res : []);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const res = await httpClient.get<any>(`${WHATSAPP_BASE}/whatsapp/devices`);
+      const data = res.payload || (Array.isArray(res) ? res : []);
+      return data.map(mapBackendDevice);
     } catch {
       // Fallback empty array on initial connection failure
       return [];
@@ -16,10 +46,12 @@ export const whatsappApi = {
   },
 
   createDevice: async (payload: CreateDeviceInput): Promise<Device> => {
-    const res = await httpClient.post<Device>(`${WHATSAPP_BASE}/whatsapp/devices`, {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const res = await httpClient.post<any>(`${WHATSAPP_BASE}/whatsapp/devices`, {
       push_name: payload.push_name,
     });
-    return res.payload || (res as unknown as Device);
+    const data = res.payload || res;
+    return mapBackendDevice(data);
   },
 
   pairDevice: async (id: string): Promise<PairDeviceResponse> => {
@@ -53,6 +85,18 @@ export const whatsappApi = {
   wakeDevice: async (id: string): Promise<{ success: boolean; message: string }> => {
     const res = await httpClient.post(`${WHATSAPP_BASE}/whatsapp/devices/${id}/wake`);
     return { success: res.success, message: res.message || "Sesi berhasil dibangunkan" };
+  },
+
+  sendMessage: async (payload: {
+    device_id: string;
+    phone: string;
+    message: string;
+  }): Promise<{ message_id: string; status: string; sent_at: string }> => {
+    const res = await httpClient.post<{ message_id: string; status: string; sent_at: string }>(
+      `${WHATSAPP_BASE}/whatsapp/messages/send`,
+      payload
+    );
+    return res.payload || (res as unknown as { message_id: string; status: string; sent_at: string });
   },
 };
 

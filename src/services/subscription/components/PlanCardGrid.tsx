@@ -29,6 +29,8 @@ export function PlanCardGrid({
     }
   };
 
+  const safePlans = Array.isArray(plans) && plans.length > 0 ? plans : [];
+
   return (
     <div className="space-y-6">
       <div className="space-y-1">
@@ -41,9 +43,11 @@ export function PlanCardGrid({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {plans.map((plan) => {
+        {safePlans.map((plan) => {
           const isCurrent = currentSubscription?.planId === plan.id;
-          const isPopular = plan.isPopular;
+          const isPopular = Boolean(plan.isPopular);
+          const priceMonthly = Number(plan.priceMonthly ?? 0);
+          const features = Array.isArray(plan.features) ? plan.features : [];
 
           return (
             <div
@@ -65,7 +69,7 @@ export function PlanCardGrid({
                 {/* Plan Title & Badge */}
                 <div className="flex items-center justify-between">
                   <h3 className="font-extrabold text-lg sm:text-xl text-foreground">
-                    {plan.name}
+                    {plan.name || "Paket Langganan"}
                   </h3>
                   {isCurrent && (
                     <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green border border-wise-green/30">
@@ -77,7 +81,7 @@ export function PlanCardGrid({
                 {/* Price */}
                 <div className="flex items-baseline gap-1">
                   <span className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
-                    Rp {plan.priceMonthly.toLocaleString("id-ID")}
+                    Rp {priceMonthly.toLocaleString("id-ID")}
                   </span>
                   <span className="text-xs font-semibold text-foreground-muted">
                     {t("subscription.perMonth")}
@@ -86,7 +90,7 @@ export function PlanCardGrid({
 
                 {/* Features List */}
                 <div className="space-y-2.5 pt-4 border-t border-border/80">
-                  {plan.features.map((feature, idx) => (
+                  {features.map((feature, idx) => (
                     <div key={idx} className="flex items-start gap-2.5 text-xs font-semibold text-foreground-secondary">
                       <div className="size-4 rounded-full bg-wise-green/20 text-wise-green flex items-center justify-center shrink-0 mt-0.5">
                         <Check className="size-2.5 stroke-3" />

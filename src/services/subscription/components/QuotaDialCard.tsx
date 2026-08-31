@@ -25,13 +25,15 @@ export function QuotaDialCard({ subscription }: QuotaDialCardProps) {
     );
   }
 
-  const quotaRemaining = Math.max(
-    0,
-    subscription.quotaTotal - subscription.quotaUsed
-  );
+  const quotaTotal = Number(subscription.quotaTotal ?? 0);
+  const quotaUsed = Number(subscription.quotaUsed ?? 0);
+  const deviceSlotsUsed = Number(subscription.deviceSlotsUsed ?? 0);
+  const deviceSlotsMax = Math.max(1, Number(subscription.deviceSlotsMax ?? 1));
+
+  const quotaRemaining = Math.max(0, quotaTotal - quotaUsed);
   const percentRemaining =
-    subscription.quotaTotal > 0
-      ? Math.round((quotaRemaining / subscription.quotaTotal) * 100)
+    quotaTotal > 0
+      ? Math.round((quotaRemaining / quotaTotal) * 100)
       : 0;
 
   // SVG Gauge calculations
@@ -40,6 +42,14 @@ export function QuotaDialCard({ subscription }: QuotaDialCardProps) {
   const strokeDashoffset =
     circumference - (percentRemaining / 100) * circumference;
 
+  const expiresDateStr = subscription.expiresAt
+    ? new Date(subscription.expiresAt).toLocaleDateString([], {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
+    : "-";
+
   return (
     <div className="rounded-md border border-border bg-surface dark:bg-[#161715] p-6 sm:p-8 space-y-6 shadow-sm">
       {/* Header Row */}
@@ -47,7 +57,7 @@ export function QuotaDialCard({ subscription }: QuotaDialCardProps) {
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-wise-green/15 text-wise-green mb-1">
             <Zap className="size-3.5" />
-            <span>Paket Aktif: {subscription.planName}</span>
+            <span>Paket Aktif: {subscription.planName || "Free Trial"}</span>
           </div>
           <h2 className="text-xl sm:text-2xl font-black text-foreground tracking-tight">
             {t("subscription.quotaRemaining")}
@@ -58,11 +68,7 @@ export function QuotaDialCard({ subscription }: QuotaDialCardProps) {
           <Calendar className="size-4 text-foreground-muted" />
           <span>
             {t("subscription.planExpires", {
-              date: new Date(subscription.expiresAt).toLocaleDateString([], {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              }),
+              date: expiresDateStr,
             })}
           </span>
         </div>
@@ -114,7 +120,7 @@ export function QuotaDialCard({ subscription }: QuotaDialCardProps) {
             </span>
             <p className="text-[11px] font-semibold text-foreground-muted">
               {t("subscription.quotaDesc", {
-                total: subscription.quotaTotal.toLocaleString("id-ID"),
+                total: quotaTotal.toLocaleString("id-ID"),
               })}
             </p>
           </div>
@@ -132,7 +138,7 @@ export function QuotaDialCard({ subscription }: QuotaDialCardProps) {
                 </span>
               </div>
               <span className="text-xs font-black text-foreground">
-                {subscription.deviceSlotsUsed} / {subscription.deviceSlotsMax} Slot
+                {deviceSlotsUsed} / {deviceSlotsMax} Slot
               </span>
             </div>
             {/* Progress Bar */}
@@ -142,15 +148,15 @@ export function QuotaDialCard({ subscription }: QuotaDialCardProps) {
                 style={{
                   width: `${Math.min(
                     100,
-                    (subscription.deviceSlotsUsed / subscription.deviceSlotsMax) * 100
+                    (deviceSlotsUsed / deviceSlotsMax) * 100
                   )}%`,
                 }}
               />
             </div>
             <p className="text-[11px] font-semibold text-foreground-muted">
               {t("subscription.deviceSlotsDesc", {
-                used: subscription.deviceSlotsUsed.toString(),
-                max: subscription.deviceSlotsMax.toString(),
+                used: deviceSlotsUsed.toString(),
+                max: deviceSlotsMax.toString(),
               })}
             </p>
           </div>

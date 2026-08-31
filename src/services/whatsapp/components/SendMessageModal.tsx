@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Device } from "../types/whatsapp.types";
+import { whatsappApi } from "../api/whatsapp.api";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { X, Send, Loader2 } from "lucide-react";
@@ -20,12 +21,16 @@ export function SendMessageModal({
 }: SendMessageModalProps) {
   const { t } = useI18n();
   const connectedDevices = devices.filter((d) => d.status === "CONNECTED");
-  const [selectedDeviceId, setSelectedDeviceId] = useState<string>(
-    connectedDevices[0]?.id || ""
-  );
+  const [userSelectedDeviceId, setUserSelectedDeviceId] = useState<string>("");
   const [recipient, setRecipient] = useState("");
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
+
+  // Derive the active selected device ID cleanly without cascading effects
+  const activeDeviceId =
+    userSelectedDeviceId && connectedDevices.some((d) => d.id === userSelectedDeviceId)
+      ? userSelectedDeviceId
+      : connectedDevices[0]?.id || "";
 
   // Escape key to dismiss
   useEffect(() => {
@@ -46,16 +51,25 @@ export function SendMessageModal({
       return;
     }
 
+    if (!activeDeviceId) {
+      toast.error(t("whatsapp.noConnectedDevices"));
+      return;
+    }
+
     setIsSending(true);
     try {
-      // Simulate API call to POST /api/v1/wa/messages/send
-      await new Promise((res) => setTimeout(res, 600));
+      await whatsappApi.sendMessage({
+        device_id: activeDeviceId,
+        phone: recipient.trim(),
+        message: message.trim(),
+      });
       toast.success(t("whatsapp.sendSuccess"));
       setRecipient("");
       setMessage("");
       onClose();
-    } catch {
-      toast.error(t("whatsapp.qrError"));
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : t("whatsapp.qrError");
+      toast.error(msg);
     } finally {
       setIsSending(false);
     }
@@ -103,8 +117,8 @@ export function SendMessageModal({
               {t("whatsapp.selectSenderDevice")}
             </label>
             <select
-              value={selectedDeviceId}
-              onChange={(e) => setSelectedDeviceId(e.target.value)}
+              value={activeDeviceId}
+              onChange={(e) => setUserSelectedDeviceId(e.target.value)}
               className="w-full h-10 px-3 rounded-md bg-surface dark:bg-[#10110e] text-foreground text-xs font-semibold border border-border outline-none focus:border-wise-green"
             >
               {connectedDevices.length === 0 ? (
@@ -112,7 +126,7 @@ export function SendMessageModal({
               ) : (
                 connectedDevices.map((d) => (
                   <option key={d.id} value={d.id}>
-                    {d.name} (+{d.phone || "Unknown"})
+                    {d.push_name || d.name} ({d.phone ? `+${d.phone}` : "Tanpa Nomor"})
                   </option>
                 ))
               )}
@@ -140,13 +154,13 @@ export function SendMessageModal({
           {/* Message Content */}
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
-              {t("whatsapp.messageContentLabel")}
+              {t("whatsapp.messageTextLabel")}
             </label>
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               rows={4}
-              placeholder={t("whatsapp.messageContentPlaceholder")}
+              placeholder={t("whatsapp.messageTextPlaceholder")}
               className="w-full p-3 rounded-md bg-surface dark:bg-[#10110e] text-foreground text-xs font-semibold border border-border outline-none focus:border-wise-green resize-none"
               required
             />
@@ -161,7 +175,7 @@ export function SendMessageModal({
               disabled={isSending}
               className="rounded-full text-xs font-bold px-5 border-border hover:border-foreground-muted cursor-pointer"
             >
-              {t("whatsapp.addCancel")}
+              {t("whatsapp.cancel")}
             </Button>
             <Button
               type="submit"
@@ -173,12 +187,12 @@ export function SendMessageModal({
               {isSending ? (
                 <>
                   <Loader2 className="size-3.5 animate-spin" />
-                  <span>{t("whatsapp.sendingMessage")}</span>
+                  <span>{t("whatsapp.submittingSend")}</span>
                 </>
               ) : (
                 <>
                   <Send className="size-3.5" />
-                  <span>{t("whatsapp.sendSubmit")}</span>
+                  <span>{t("whatsapp.submitSend")}</span>
                 </>
               )}
             </Button>
