@@ -63,7 +63,6 @@ export class ApiError extends Error {
 interface RequestOptions extends RequestInit {
   params?: Record<string, string | number | boolean | undefined>;
   token?: string;
-  tenantId?: string;
   timeoutMs?: number;
   retries?: number;
 }
@@ -88,25 +87,6 @@ class HttpClient {
     return null;
   }
 
-  private getActiveTenantId(): string | null {
-    if (typeof window === "undefined") return null;
-    // 1. Try Cookie First
-    const cookieTenantId = getCookie("wahide_tenant_id");
-    if (cookieTenantId) return cookieTenantId;
-
-    // 2. Fallback to localStorage
-    try {
-      const authStorage = localStorage.getItem("wahide_auth_storage");
-      if (authStorage) {
-        const parsed = JSON.parse(authStorage);
-        return parsed?.state?.tenantId || null;
-      }
-    } catch {
-      return null;
-    }
-    return null;
-  }
-
   private buildUrl(url: string, params?: Record<string, string | number | boolean | undefined>): string {
     if (!params) return url;
     const searchParams = new URLSearchParams();
@@ -123,7 +103,6 @@ class HttpClient {
     const {
       params,
       token,
-      tenantId,
       headers,
       timeoutMs = 15000,
       retries = 0,
@@ -131,7 +110,6 @@ class HttpClient {
     } = options;
 
     const authToken = token || this.getAuthToken();
-    const activeTenant = tenantId || this.getActiveTenantId();
 
     const defaultHeaders: Record<string, string> = {
       "Content-Type": "application/json",
@@ -140,10 +118,6 @@ class HttpClient {
 
     if (authToken) {
       defaultHeaders["Authorization"] = `Bearer ${authToken}`;
-    }
-
-    if (activeTenant) {
-      defaultHeaders["X-Tenant-ID"] = activeTenant;
     }
 
     const fullUrl = this.buildUrl(endpoint, params);

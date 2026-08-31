@@ -67,9 +67,6 @@ export const useAuth = create<AuthState>()(
           // Synchronize cookies for 0ms Edge Middleware route protection
           setCookie("wahide_session_token", res.token, 2592000);
           setCookie("wahide_user_role", user.role, 2592000);
-          if (res.tenant_id) {
-            setCookie("wahide_tenant_id", res.tenant_id, 2592000);
-          }
 
           set({
             user,
@@ -114,7 +111,6 @@ export const useAuth = create<AuthState>()(
           // Clear cookies for Edge Middleware
           deleteCookie("wahide_session_token");
           deleteCookie("wahide_user_role");
-          deleteCookie("wahide_tenant_id");
 
           set({
             user: null,
