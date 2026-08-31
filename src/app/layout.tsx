@@ -1,14 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { env } from "@/lib/config/env";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-  display: "swap",
-});
 
 const siteUrl = env.NEXT_PUBLIC_APP_URL || "https://wahide.id";
 
@@ -132,8 +125,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id" className={`${inter.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang="id" className="h-full antialiased font-sans" suppressHydrationWarning>
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {siteUrl && !siteUrl.includes("localhost") && (
           <>
             <link rel="preconnect" href={siteUrl} crossOrigin="anonymous" />
