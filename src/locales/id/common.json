@@ -137,5 +137,30 @@
     "keyCopied": "API Key berhasil disalin ke clipboard!",
     "regenerateKey": "Regenerasi Token Baru",
     "keyRegenerated": "Token API baru berhasil dibuat."
+  },
+  "errors": {
+    "notFound": {
+      "badge": "404 — Halaman Tidak Ditemukan",
+      "title": "Sepertinya Anda Tersesat di Luar Jaringan Wahide",
+      "subtitle": "Halaman yang Anda tuju mungkin telah dipindahkan, dihapus, atau tautan yang Anda masukkan salah.",
+      "backHome": "Kembali ke Beranda",
+      "contactSupport": "Hubungi Bantuan",
+      "dashboardBtn": "Buka Dashboard",
+      "popularLinks": "Tautan Cepat Populer:"
+    },
+    "serverError": {
+      "badge": "500 — Kendala Server Internal",
+      "title": "Sistem Mengalami Hambatan Tak Terduga",
+      "subtitle": "Terjadi kendala pada runtime aplikasi atau respons server. Data dan sesi Anda tetap aman.",
+      "digestLabel": "Kode Referensi Insiden:",
+      "retry": "Coba Muat Ulang",
+      "backHome": "Kembali ke Beranda",
+      "reportWhatsApp": "Laporkan ke CS WhatsApp"
+    },
+    "globalError": {
+      "title": "Terjadi Hambatan Fatal pada Aplikasi",
+      "subtitle": "Aplikasi memerlukan penyegaran ulang sistem secara menyeluruh.",
+      "reload": "Segarkan Ulang Aplikasi"
+    }
   }
 }

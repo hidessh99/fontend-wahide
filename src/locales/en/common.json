@@ -137,5 +137,30 @@
     "keyCopied": "API Key copied to clipboard!",
     "regenerateKey": "Regenerate New Token",
     "keyRegenerated": "New API Key token generated successfully."
+  },
+  "errors": {
+    "notFound": {
+      "badge": "404 — Page Not Found",
+      "title": "Looks Like You've Wandered Off The Grid",
+      "subtitle": "The page you are looking for might have been moved, deleted, or the URL entered is incorrect.",
+      "backHome": "Back to Home",
+      "contactSupport": "Contact Support",
+      "dashboardBtn": "Open Dashboard",
+      "popularLinks": "Quick Popular Links:"
+    },
+    "serverError": {
+      "badge": "500 — Internal Server Error",
+      "title": "The System Encountered an Unexpected Issue",
+      "subtitle": "An error occurred in the application runtime or server response. Your data and sessions remain safe.",
+      "digestLabel": "Incident Reference Code:",
+      "retry": "Try Again",
+      "backHome": "Back to Home",
+      "reportWhatsApp": "Report to WhatsApp Support"
+    },
+    "globalError": {
+      "title": "A Fatal Application Error Occurred",
+      "subtitle": "The application requires a full system refresh to recover.",
+      "reload": "Refresh Application"
+    }
   }
 }

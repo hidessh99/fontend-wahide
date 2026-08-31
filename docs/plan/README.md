@@ -39,3 +39,9 @@ Dokumen perencanaan arsitektur dan kesiapan produksi untuk frontend **Wahide (`f
 7. **[Public Legal & Company Pages Architecture Plan](./public_legal_and_company_pages_plan.md)**
    - **Halaman Profil & Legalitas Resmi Hide Group**: Pembuatan halaman Tentang Kami (`/about`), Hubungi Kami (`/contact`), Kebijakan Privasi (`/privacy` berstandar UU PDP & GDPR), dan Syarat & Ketentuan Layanan (`/terms` & `/tos`).
    - **Integrasi Data Perusahaan Terverifikasi**: Alamat kantor Semarang, email `admin@hidessh.com`, dan hotline WhatsApp `0877111301818` dengan penyesuaian navigasi Header & Footer.
+
+8. **[Public Layout (Header & Footer) Unification Plan](./public_layout_header_footer_plan.md)**
+   - **Penyatuan Shell Navigasi Publik `(public)/layout.tsx`**: Memastikan seluruh halaman publik (`/`, `/about`, `/contact`, `/privacy`, `/terms`, `/tos`, `/blog`) secara otomatis dan konsisten dibungkus oleh `PublicHeader` dan `PublicFooter` kanonikal.
+
+9. **[Comprehensive Error Pages & Resilience Plan](./comprehensive_error_pages_and_resilience_plan.md)**
+   - **Penanganan Error HTTP & Runtime Multi-Tier**: Pembuatan halaman kustom `not-found.tsx` (404), `error.tsx` (500 & Runtime Exception Handler), `global-error.tsx` (Root Layout Recovery), dan Segment Error Boundaries untuk dashboard & portal admin.

@@ -3,8 +3,6 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { PublicHeader } from "@/components/layout/public/PublicHeader";
-import { PublicFooter } from "@/components/layout/public/PublicFooter";
 import { parseSpintax } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n/context";
 import {
@@ -32,12 +30,9 @@ export function HomeView() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-200">
-      <PublicHeader />
-
-      <main className="flex-1">
-        {/* Hero Section */}
-        <section className="py-20 md:py-28 px-6 max-w-7xl mx-auto">
+    <div className="space-y-0">
+      {/* Hero Section */}
+      <section className="py-20 md:py-28 px-6 max-w-7xl mx-auto">
           <div className="space-y-8 max-w-4xl">
             <div className="inline-flex items-center gap-2.5 rounded-full bg-surface dark:bg-[#161715] px-4 py-2 border border-border text-xs font-bold shadow-sm">
               <span className="h-2.5 w-2.5 rounded-full bg-wise-green" />
@@ -196,9 +191,6 @@ export function HomeView() {
             </div>
           </div>
         </section>
-      </main>
-
-      <PublicFooter />
     </div>
   );
 }
