@@ -30,6 +30,10 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
+  compress: true,
+  experimental: {
+    optimizePackageImports: ["lucide-react", "sonner", "date-fns", "zod"],
+  },
   async headers() {
     return [
       {

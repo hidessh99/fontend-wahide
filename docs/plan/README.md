@@ -72,3 +72,6 @@ Dokumen perencanaan arsitektur dan kesiapan produksi untuk frontend **Wahide (`f
 
 18. **[Hero Headline Wise Copywriting Plan](./hero_headline_wise_copywriting_plan.md)**
     - **Penyelarasan Judul Hero Gaya Wise**: Mengganti judul kaku bernuansa AI slop menjadi judul berorientasi aksi dan manfaat nyata: *"Kirim Pesan WhatsApp Massal Lebih Cepat, Aman, dan Tanpa Blokir."*
+
+19. **[Frontend Performance & Speed Optimization Plan](./frontend_performance_and_speed_optimization_plan.md)**
+    - **Audit Kinerja & Optimasi Kecepatan Frontend**: Dekomposisi Server vs Client Components, isolasi SpintaxSandbox, tree-shaking `optimizePackageImports`, serta kompresi HTTP untuk mencapai sub-second load time.
