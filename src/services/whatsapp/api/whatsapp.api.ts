@@ -6,10 +6,14 @@ const WHATSAPP_BASE = env.NEXT_PUBLIC_WHATSAPP_API_URL;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mapBackendDevice = (d: any): Device => {
-  let mappedStatus = d.status;
-  if (mappedStatus === "ONLINE") {
+  let mappedStatus = d.status?.toUpperCase?.() || d.status;
+  if (mappedStatus === "ONLINE" || mappedStatus === "CONNECTED") {
     mappedStatus = "CONNECTED";
-  } else if (mappedStatus === "OFFLINE" || mappedStatus === "QR_PENDING" || mappedStatus === "BANNED") {
+  } else if (mappedStatus === "HIBERNATED") {
+    mappedStatus = "HIBERNATED";
+  } else if (mappedStatus === "PAIRING" || mappedStatus === "QR_PENDING") {
+    mappedStatus = d.jid ? "HIBERNATED" : "PAIRING";
+  } else {
     mappedStatus = "DISCONNECTED";
   }
   

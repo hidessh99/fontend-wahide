@@ -75,3 +75,15 @@ Daftar dokumen perencanaan arsitektur, optimasi performa, dan standarisasi tekni
 
 24. **[Comprehensive Table Components Audit & Standardization Plan](./comprehensive_table_components_audit_and_standardization_plan.md)**
     - **Audit Menyeluruh & Rencana Standarisasi Seluruh Komponen Tabel**: Penyelarasan Search Form Submit Button, Paginasi Prev/Next, Tipografi Desktop, dan Dialog Konfirmasi Hapus pada seluruh tabel (Finance, Campaign Logs, Admin Users, Audit Logs, Support Tickets, dan Team).
+
+25. **[WhatsApp Device Hibernate and Wake Endpoint Plan](./whatsapp_device_hibernate_and_wake_endpoint_plan.md)**
+    - **Rencana Perbaikan Endpoint Hibernasi & Bangunkan Perangkat WhatsApp (Fix 404 Not Found)**: Implementasi route registration `POST /whatsapp/devices/:id/hibernate` dan `POST /whatsapp/devices/:id/wake`, handler, usecase, serta manajemen sesi whatsmeow di backend Go.
+
+26. **[WhatsApp Device Realtime Connection State Reconciliation Plan](./whatsapp_device_realtime_connection_state_reconciliation_plan.md)**
+    - **Rencana Rekonsiliasi Real-Time Status Koneksi Perangkat WhatsApp (Fix Stale "Connected" Status)**: Menghubungkan status perangkat langsung ke kondisi real-time WebSocket memory (`SessionManager.GetClient`) sehingga saat server Go direstart/mati, status perangkat otomatis terhibernasi (`HIBERNATED`) dan bukan statis `Connected`.
+
+27. **[Subscription Page Streamlining Plans Only Plan](./subscription_page_streamlining_plans_only_plan.md)**
+    - **Rencana Perampingan Halaman Subscription (Murni Fokus Pilihan Paket / Plans)**: Menghapus section Remaining Message Quota dan Webhook URL Configuration, serta menyelaraskan judul & menu navigasi menjadi "Plans" / "Paket Langganan".
+
+28. **[WhatsApp Device Offline on Restart Plan](./whatsapp_device_offline_on_restart_plan.md)**
+    - **Rencana Status Perangkat Menjadi OFFLINE Saat Server Go Direstart / Dimatikan**: Menyesuaikan status perangkat saat server mati atau boot ulang menjadi `OFFLINE` (Disconnected), dan hanya `HIBERNATED` jika tombol Hibernasi diklik secara sengaja.

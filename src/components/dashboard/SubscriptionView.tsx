@@ -2,27 +2,17 @@
 
 import React from "react";
 import { useSubscription } from "@/services/subscription/hooks/useSubscription";
-import { QuotaDialCard } from "@/services/subscription/components/QuotaDialCard";
 import { PlanCardGrid } from "@/services/subscription/components/PlanCardGrid";
-import { WebhookConfigCard } from "@/services/subscription/components/WebhookConfigCard";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { useI18n } from "@/lib/i18n/context";
 import { CreditCard } from "lucide-react";
 
 export function SubscriptionView() {
   const { t } = useI18n();
-  const {
-    subscription,
-    plans,
-    webhookConfig,
-    upgradePlan,
-    saveWebhook,
-    regenerateSecret,
-    copySecret,
-  } = useSubscription();
+  const { subscription, plans, upgradePlan } = useSubscription();
 
   return (
-    <div className="space-y-10 max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+    <div className="space-y-8 max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
         <div className="space-y-1">
@@ -40,27 +30,12 @@ export function SubscriptionView() {
         </div>
       </div>
 
-      {/* Quota Dial Gauge Card with Error Boundary */}
-      <ErrorBoundary fallbackTitle="Gagal Memuat Meteran Kuota Pesan">
-        <QuotaDialCard subscription={subscription} />
-      </ErrorBoundary>
-
       {/* Subscription Plans Grid with Error Boundary */}
       <ErrorBoundary fallbackTitle="Gagal Memuat Daftar Paket Langganan">
         <PlanCardGrid
           plans={plans}
           currentSubscription={subscription}
           onUpgradePlan={upgradePlan}
-        />
-      </ErrorBoundary>
-
-      {/* Webhook Configuration Card with Error Boundary */}
-      <ErrorBoundary fallbackTitle="Gagal Memuat Pengaturan Webhook">
-        <WebhookConfigCard
-          config={webhookConfig}
-          onSave={saveWebhook}
-          onRegenerateSecret={regenerateSecret}
-          onCopySecret={copySecret}
         />
       </ErrorBoundary>
     </div>

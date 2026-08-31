@@ -1,6 +1,6 @@
 {
-  "title": "Plans & Message Quotas",
-  "subtitle": "Monitor monthly WhatsApp broadcast quotas, device slot limits, and webhook integration settings.",
+  "title": "Plans",
+  "subtitle": "Choose and upgrade subscription plans tailored to your business messaging requirements.",
   "activePlanTitle": "Active Subscription Plan",
   "planExpires": "Valid until {date}",
   "upgradePlan": "Upgrade Plan",
