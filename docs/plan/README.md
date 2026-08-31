@@ -57,3 +57,18 @@ Daftar dokumen perencanaan arsitektur, optimasi performa, dan standarisasi tekni
 
 18. **[Pure Server-Side Contact Search Plan](./pure_server_side_contact_search_plan.md)**
     - **Pencarian Kontak Pure Server-Side (Submit-Only Trigger)**: Memisahkan state input draft dari query aktif sehingga pengetikan tidak menyaring tabel lokal, melainkan murni memanggil backend saat klik Cari atau tekan Enter.
+
+19. **[Contacts Search Root Cause Audit & Fix Plan](./contacts_search_root_cause_audit_and_fix_plan.md)**
+    - **Audit Mendalam & Perbaikan Akar Masalah Pencarian Kontak**: Penambahan parsing query parameter `search` pada backend Go (`contact_handler.go` & `contact_repository.go`) dan penyempurnaan filtering submit di frontend.
+
+20. **[Backend Contact Search Finance Reference Plan](./backend_contact_search_finance_reference_plan.md)**
+    - **Penyelarasan Backend Go Modul Kontak Berdasarkan Referensi Billing Module (FindAll)**: Mengadopsi pola Clean Architecture dari Billing Module (`billing_handler.go#L155`, `ListContactRequest`, `xval.SanitizeFields`, `PreparePagination`, dan `database.FullTextSearch`) untuk endpoint `GET /contacts`.
+
+21. **[Contact Table Pagination & Desktop Typography Plan](./contact_table_pagination_and_desktop_typography_plan.md)**
+    - **Paginasi Server-Side (10 Data/Halaman) & Peningkatan Tipografi Desktop**: Penerapan bilah paginasi numerik dengan ukuran font yang proporsional, tegas, dan mudah dibaca pada mode desktop.
+
+22. **[Contact Delete Confirmation Dialog Plan](./contact_delete_confirmation_dialog_plan.md)**
+    - **Dialog Konfirmasi Penghapusan Kontak (Single & Bulk Delete)**: Mencegah aksi penghapusan permanen tidak sengaja dengan menyajikan modal alert konfirmasi kontekstual yang aman dan profesional.
+
+23. **[Contact Pagination Prev/Next Only Plan](./contact_pagination_prev_next_only_plan.md)**
+    - **Penyederhanaan Paginasi Kontak Murni Tombol Sebelumnya & Berikutnya**: Mengeliminasi deretan angka nomor halaman agar bilah navigasi lebih ringkas, bersih, dan hemat ruang.

@@ -24,3 +24,16 @@ export interface ContactFilter {
   search?: string;
   tag?: string;
 }
+
+export interface GetContactsParams {
+  page?: number;
+  pageSize?: number;
+  search?: string;
+}
+
+export interface ContactListResponse {
+  contacts: Contact[];
+  total: number;
+  page: number;
+  pageSize: number;
+}

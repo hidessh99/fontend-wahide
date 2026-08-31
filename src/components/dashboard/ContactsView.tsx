@@ -17,6 +17,11 @@ const ImportCsvModal = dynamic(
   () => import("@/services/contact/components/ImportCsvModal").then((m) => m.ImportCsvModal),
   { ssr: false }
 );
+const DeleteContactModal = dynamic(
+  () => import("@/services/contact/components/DeleteContactModal").then((m) => m.DeleteContactModal),
+  { ssr: false }
+);
+
 import {
   Users,
   UserPlus,
@@ -34,8 +39,14 @@ export function ContactsView() {
     contacts,
     filteredContacts,
     isLoading,
-    searchQuery,
-    setSearchQuery,
+    activeSearch,
+    page,
+    pageSize,
+    total,
+    totalPages,
+    setPage,
+    nextPage,
+    prevPage,
     selectedIds,
     toggleSelectOne,
     toggleSelectAll,
@@ -49,9 +60,15 @@ export function ContactsView() {
     importCsv,
   } = useContacts();
 
+  const [searchInput, setSearchInput] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [editingContact, setEditingContact] = useState<Contact | null>(null);
+
+  // Delete Confirmation States
+  const [deletingContact, setDeletingContact] = useState<Contact | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false);
 
   const handleEdit = (contact: Contact) => {
     setEditingContact(contact);
@@ -69,6 +86,27 @@ export function ContactsView() {
     } else {
       await createContact(data);
     }
+  };
+
+  const handleRequestDelete = (contact: Contact) => {
+    setDeletingContact(contact);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDeleteSingle = async () => {
+    if (!deletingContact) return;
+    await deleteContact(deletingContact.id);
+    setDeletingContact(null);
+  };
+
+  const handleRequestBulkDelete = () => {
+    if (selectedIds.size === 0) return;
+    setIsBulkDeleteModalOpen(true);
+  };
+
+  const handleConfirmBulkDelete = async () => {
+    await bulkDelete();
+    setIsBulkDeleteModalOpen(false);
   };
 
   const handleExportCsv = () => {
@@ -91,27 +129,30 @@ export function ContactsView() {
     <div className="space-y-8 max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2.5">
-            <div className="size-9 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center">
-              <Users className="size-5" />
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
+        <div>
+          <div className="flex items-center gap-3 mb-1">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
               {t("contact.title")}
             </h1>
+            {total > 0 && (
+              <span className="px-2.5 py-0.5 text-xs font-bold rounded-full bg-wise-green/15 text-dark-green dark:text-wise-green border border-wise-green/30">
+                {total}
+              </span>
+            )}
           </div>
-          <p className="text-sm font-semibold text-foreground-secondary max-w-2xl">
+          <p className="text-xs sm:text-sm font-semibold text-foreground-secondary">
             {t("contact.subtitle")}
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        {/* Top Action Buttons */}
+        <div className="flex items-center gap-2 flex-wrap">
           <Button
             variant="outline"
             size="sm"
             onClick={handleExportCsv}
             disabled={contacts.length === 0}
-            className="rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted"
+            className="rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted cursor-pointer"
           >
             <Download className="size-3.5" />
             <span>{t("contact.exportCsv")}</span>
@@ -121,9 +162,9 @@ export function ContactsView() {
             variant="outline"
             size="sm"
             onClick={() => setIsImportModalOpen(true)}
-            className="rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted"
+            className="rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted cursor-pointer"
           >
-            <FileSpreadsheet className="size-3.5 text-wise-green" />
+            <FileSpreadsheet className="size-3.5 text-dark-green dark:text-wise-green" />
             <span>{t("contact.importCsv")}</span>
           </Button>
 
@@ -134,7 +175,7 @@ export function ContactsView() {
               setEditingContact(null);
               setIsAddModalOpen(true);
             }}
-            className="gap-1.5 text-xs font-bold shadow-sm"
+            className="gap-1.5 text-xs font-bold shadow-sm cursor-pointer"
           >
             <UserPlus className="size-4" />
             <span>{t("contact.addContact")}</span>
@@ -148,7 +189,7 @@ export function ContactsView() {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            executeSearch();
+            executeSearch(searchInput);
           }}
           className="flex-1 max-w-lg flex items-center gap-2"
         >
@@ -156,44 +197,45 @@ export function ContactsView() {
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted" />
             <input
               type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
               placeholder={t("contact.searchPlaceholder")}
               className="w-full h-10 pl-10 pr-9 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs"
             />
-            {searchQuery && (
+            {(searchInput || activeSearch) && (
               <button
                 type="button"
-                onClick={clearSearch}
+                onClick={() => {
+                  setSearchInput("");
+                  clearSearch();
+                }}
                 className="absolute right-3 top-1/2 -translate-y-1/2 size-5 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
                 title="Hapus Pencarian"
                 aria-label="Hapus Pencarian"
               >
-                <X className="size-3" />
+                <X className="size-3.5" />
               </button>
             )}
           </div>
-
           <Button
             type="submit"
             variant="primaryPill"
             size="sm"
-            disabled={isLoading}
-            className="h-10 px-4.5 rounded-full text-xs font-bold gap-1.5 shrink-0 shadow-xs cursor-pointer"
+            className="h-10 px-4 text-xs font-bold shadow-xs shrink-0 cursor-pointer"
           >
-            <Search className="size-3.5" />
-            <span>{t("contact.searchBtn") || "Cari"}</span>
+            <Search className="size-3.5 mr-1" />
+            <span>{t("contact.searchBtn")}</span>
           </Button>
         </form>
 
-        {/* Bulk Delete & Refresh Actions */}
+        {/* Bulk Action & Refresh */}
         <div className="flex items-center gap-2">
           {selectedIds.size > 0 && (
             <Button
               variant="outline"
               size="sm"
-              onClick={bulkDelete}
-              className="rounded-full text-xs font-bold gap-1.5 text-rose-600 dark:text-rose-400 border-rose-500/20 hover:bg-rose-500/10"
+              onClick={handleRequestBulkDelete}
+              className="rounded-full text-xs font-bold gap-1.5 text-rose-600 dark:text-rose-400 border-rose-500/20 hover:bg-rose-500/10 cursor-pointer"
             >
               <Trash2 className="size-3.5" />
               <span>{t("contact.selectedCount", { count: selectedIds.size.toString() })}</span>
@@ -205,7 +247,7 @@ export function ContactsView() {
             size="sm"
             onClick={() => fetchContacts()}
             disabled={isLoading}
-            className="rounded-full size-9 p-0 border-border hover:border-foreground-muted"
+            className="rounded-full size-9 p-0 border-border hover:border-foreground-muted cursor-pointer"
             aria-label="Refresh Kontak"
           >
             <RefreshCw className={`size-4 ${isLoading ? "animate-spin" : ""}`} />
@@ -218,30 +260,30 @@ export function ContactsView() {
         <div className="h-64 rounded-md border border-border bg-surface dark:bg-[#161715] animate-pulse p-6" />
       ) : filteredContacts.length === 0 ? (
         <div className="flex flex-col items-center justify-center p-12 text-center rounded-md border border-dashed border-border bg-surface dark:bg-[#161715]/50 space-y-4">
-          <div className="size-14 rounded-full bg-wise-green/10 text-wise-green flex items-center justify-center">
+          <div className="size-14 rounded-full bg-wise-green/10 text-dark-green dark:text-wise-green flex items-center justify-center">
             <Users className="size-7" />
           </div>
           <div className="space-y-1 max-w-sm">
             <h3 className="font-extrabold text-base sm:text-lg text-foreground">
-              {searchQuery
+              {activeSearch
                 ? t("contact.noSearchResults")
                 : t("contact.noContacts")}
             </h3>
             <p className="text-xs font-semibold text-foreground-secondary">
-              {searchQuery
-                ? "Coba sesuaikan kata kunci pencarian nama atau nomor WhatsApp."
+              {activeSearch
+                ? `Tidak ditemukan kontak dengan kata kunci "${activeSearch}". Silakan periksa kembali ejaan atau hapus filter.`
                 : t("contact.noContactsDesc")}
             </p>
           </div>
-          {!searchQuery && (
+          {!activeSearch && (
             <div className="flex items-center gap-2 pt-2">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setIsImportModalOpen(true)}
-                className="gap-2 rounded-full text-xs font-bold border-border"
+                className="gap-2 rounded-full text-xs font-bold border-border cursor-pointer"
               >
-                <FileSpreadsheet className="size-4 text-wise-green" />
+                <FileSpreadsheet className="size-4 text-dark-green dark:text-wise-green" />
                 <span>{t("contact.importCsv")}</span>
               </Button>
               <Button
@@ -251,7 +293,7 @@ export function ContactsView() {
                   setEditingContact(null);
                   setIsAddModalOpen(true);
                 }}
-                className="gap-2 text-xs font-bold shadow-sm"
+                className="gap-2 text-xs font-bold shadow-sm cursor-pointer"
               >
                 <UserPlus className="size-4" />
                 <span>{t("contact.addContact")}</span>
@@ -264,10 +306,17 @@ export function ContactsView() {
           <ContactTable
             contacts={filteredContacts}
             selectedIds={selectedIds}
+            page={page}
+            pageSize={pageSize}
+            total={total}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            onPrevPage={prevPage}
+            onNextPage={nextPage}
             onToggleSelectOne={toggleSelectOne}
             onToggleSelectAll={toggleSelectAll}
             onEdit={handleEdit}
-            onDelete={deleteContact}
+            onDelete={handleRequestDelete}
           />
         </ErrorBoundary>
       )}
@@ -285,6 +334,26 @@ export function ContactsView() {
         isOpen={isImportModalOpen}
         onClose={() => setIsImportModalOpen(false)}
         onImport={importCsv}
+      />
+
+      {/* Single Contact Delete Confirmation Modal */}
+      <DeleteContactModal
+        isOpen={isDeleteModalOpen}
+        contact={deletingContact}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setDeletingContact(null);
+        }}
+        onConfirm={handleConfirmDeleteSingle}
+      />
+
+      {/* Bulk Delete Contacts Confirmation Modal */}
+      <DeleteContactModal
+        isOpen={isBulkDeleteModalOpen}
+        isBulk
+        bulkCount={selectedIds.size}
+        onClose={() => setIsBulkDeleteModalOpen(false)}
+        onConfirm={handleConfirmBulkDelete}
       />
     </div>
   );

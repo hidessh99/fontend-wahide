@@ -1,24 +1,43 @@
 import { httpClient } from "@/lib/api/http-client";
 import { env } from "@/lib/config/env";
-import { Contact, CreateContactInput } from "../types/contact.types";
+import { Contact, CreateContactInput, GetContactsParams, ContactListResponse } from "../types/contact.types";
 
 const CONTACT_BASE = env.NEXT_PUBLIC_WHATSAPP_API_URL;
 
 export const contactApi = {
-  getContacts: async (params?: { search?: string; tag?: string }): Promise<Contact[]> => {
+  getContacts: async (params?: GetContactsParams): Promise<ContactListResponse> => {
     try {
+      const page = params?.page ?? 1;
+      const pageSize = params?.pageSize ?? 10;
       const query = new URLSearchParams();
+      query.set("page", String(page));
+      query.set("page_size", String(pageSize));
       if (params?.search && params.search.trim()) {
         query.set("search", params.search.trim());
       }
-      if (params?.tag && params.tag !== "ALL") {
-        query.set("tag", params.tag);
-      }
-      const queryString = query.toString() ? `?${query.toString()}` : "";
+      const queryString = `?${query.toString()}`;
       const res = await httpClient.get<Contact[]>(`${CONTACT_BASE}/contacts${queryString}`);
-      return res.payload || (Array.isArray(res) ? res : []);
+      const rawList = res.payload || (Array.isArray(res) ? res : []);
+      const contacts = Array.isArray(rawList) ? rawList : [];
+
+      const addInfo = res.additional_info as { total?: number; page?: number; size?: number } | undefined;
+      const total = typeof addInfo?.total === "number" ? addInfo.total : contacts.length;
+      const resPage = typeof addInfo?.page === "number" ? addInfo.page : page;
+      const resSize = typeof addInfo?.size === "number" ? addInfo.size : pageSize;
+
+      return {
+        contacts,
+        total,
+        page: resPage,
+        pageSize: resSize,
+      };
     } catch {
-      return [];
+      return {
+        contacts: [],
+        total: 0,
+        page: params?.page ?? 1,
+        pageSize: params?.pageSize ?? 10,
+      };
     }
   },
 

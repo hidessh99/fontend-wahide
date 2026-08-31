@@ -4,20 +4,35 @@ import React, { useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Contact } from "../types/contact.types";
 import { useI18n } from "@/lib/i18n/context";
-import { Edit2, Trash2, Check } from "lucide-react";
+import { Edit2, Trash2, Check, ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface ContactTableProps {
   contacts: Contact[];
   selectedIds: Set<string>;
+  page?: number;
+  pageSize?: number;
+  total?: number;
+  totalPages?: number;
+  onPageChange?: (page: number) => void;
+  onPrevPage?: () => void;
+  onNextPage?: () => void;
   onToggleSelectOne: (id: string) => void;
   onToggleSelectAll: (ids: string[]) => void;
   onEdit: (contact: Contact) => void;
-  onDelete: (id: string) => void;
+  onDelete: (contact: Contact) => void;
 }
 
 export function ContactTable({
   contacts,
   selectedIds,
+  page = 1,
+  pageSize = 10,
+  total = 0,
+  totalPages = 1,
+  onPageChange,
+  onPrevPage,
+  onNextPage,
   onToggleSelectOne,
   onToggleSelectAll,
   onEdit,
@@ -30,29 +45,32 @@ export function ContactTable({
   const rowVirtualizer = useVirtualizer({
     count: contacts.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 56,
-    overscan: 10,
+    estimateSize: () => 64,
+    overscan: 5,
   });
 
   const isAllSelected =
     contacts.length > 0 && selectedIds.size === contacts.length;
 
+  const startItem = total > 0 ? (page - 1) * pageSize + 1 : 0;
+  const endItem = total > 0 ? Math.min(page * pageSize, total) : 0;
+
   return (
-    <div className="rounded-md border border-border bg-surface dark:bg-[#161715] overflow-hidden">
+    <div className="rounded-md border border-border bg-surface dark:bg-[#161715] overflow-hidden shadow-xs">
       {/* Table Header */}
-      <div className="grid grid-cols-12 gap-3 px-4 py-3.5 bg-muted/60 border-b border-border text-xs font-bold uppercase tracking-wider text-foreground-muted select-none">
+      <div className="grid grid-cols-12 gap-3 px-5 py-4 bg-muted/60 border-b border-border text-xs sm:text-xs font-extrabold uppercase tracking-wider text-foreground-muted select-none">
         <div className="col-span-1 flex items-center justify-center">
           <button
             type="button"
             onClick={() => onToggleSelectAll(contacts.map((c) => c.id))}
-            className={`size-4 rounded border flex items-center justify-center transition cursor-pointer ${
+            className={`size-4.5 rounded border flex items-center justify-center transition cursor-pointer ${
               isAllSelected
                 ? "bg-wise-green border-wise-green text-dark-green"
                 : "border-foreground-muted/50 hover:border-foreground"
             }`}
             aria-label="Pilih Semua Kontak"
           >
-            {isAllSelected && <Check className="size-3 stroke-3" />}
+            {isAllSelected && <Check className="size-3.5 stroke-3" />}
           </button>
         </div>
         <div className="col-span-6 sm:col-span-5">{t("contact.tableHeaderName")}</div>
@@ -63,7 +81,7 @@ export function ContactTable({
       {/* Virtualized Table Body */}
       <div
         ref={parentRef}
-        className="overflow-auto max-h-125 relative scrollbar-thin divide-y divide-border/40"
+        className="overflow-auto max-h-135 relative scrollbar-thin divide-y divide-border/40"
       >
         <div
           style={{
@@ -89,7 +107,7 @@ export function ContactTable({
                   width: "100%",
                   transform: `translateY(${virtualRow.start}px)`,
                 }}
-                className={`grid grid-cols-12 gap-3 px-4 py-3 items-center text-xs font-semibold transition-colors ${
+                className={`grid grid-cols-12 gap-3 px-5 py-3.5 items-center transition-colors min-h-14.5 ${
                   isSelected
                     ? "bg-wise-green/10 dark:bg-wise-green/5"
                     : "hover:bg-muted/40"
@@ -100,24 +118,24 @@ export function ContactTable({
                   <button
                     type="button"
                     onClick={() => onToggleSelectOne(contact.id)}
-                    className={`size-4 rounded border flex items-center justify-center transition cursor-pointer ${
+                    className={`size-4.5 rounded border flex items-center justify-center transition cursor-pointer ${
                       isSelected
                         ? "bg-wise-green border-wise-green text-dark-green"
                         : "border-foreground-muted/50 hover:border-foreground"
                     }`}
                     aria-label={`Pilih ${contact.name}`}
                   >
-                    {isSelected && <Check className="size-3 stroke-3" />}
+                    {isSelected && <Check className="size-3.5 stroke-3" />}
                   </button>
                 </div>
 
-                {/* Name Column */}
-                <div className="col-span-6 sm:col-span-5 font-bold text-foreground truncate">
+                {/* Name Column (Enlarged & Bold Desktop Typography) */}
+                <div className="col-span-6 sm:col-span-5 font-bold text-sm sm:text-base text-foreground truncate tracking-tight">
                   {contact.name}
                 </div>
 
-                {/* Phone Column */}
-                <div className="col-span-4 sm:col-span-5 text-foreground-secondary font-mono text-[11px] truncate">
+                {/* Phone Column (Enlarged & Clear Mono Desktop Typography) */}
+                <div className="col-span-4 sm:col-span-5 text-foreground-secondary font-mono font-medium text-xs sm:text-sm tracking-wide truncate">
                   +{contact.phone}
                 </div>
 
@@ -126,18 +144,18 @@ export function ContactTable({
                   <button
                     type="button"
                     onClick={() => onEdit(contact)}
-                    className="size-7 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
+                    className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
                     aria-label={`Ubah ${contact.name}`}
                   >
-                    <Edit2 className="size-3.5" />
+                    <Edit2 className="size-4" />
                   </button>
                   <button
                     type="button"
-                    onClick={() => onDelete(contact.id)}
-                    className="size-7 rounded-full flex items-center justify-center text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"
+                    onClick={() => onDelete(contact)}
+                    className="size-8 rounded-full flex items-center justify-center text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"
                     aria-label={`Hapus ${contact.name}`}
                   >
-                    <Trash2 className="size-3.5" />
+                    <Trash2 className="size-4" />
                   </button>
                 </div>
               </div>
@@ -145,6 +163,54 @@ export function ContactTable({
           })}
         </div>
       </div>
+
+      {/* Pagination Footer */}
+      {total > 0 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-5 py-3.5 border-t border-border bg-muted/30">
+          {/* Item count summary */}
+          <div className="text-xs sm:text-sm font-semibold text-foreground-secondary">
+            {t("contact.showingPagination", {
+              start: String(startItem),
+              end: String(endItem),
+              total: String(total),
+            })}
+          </div>
+
+          {/* Page buttons: Previous, Page Indicator, Next */}
+          {totalPages > 1 && (
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-foreground-muted px-1.5 select-none">
+                {t("contact.pageIndicator", {
+                  page: String(page),
+                  total: String(totalPages),
+                })}
+              </span>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onPrevPage}
+                disabled={page <= 1}
+                className="h-8.5 px-3.5 rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted cursor-pointer disabled:opacity-40"
+              >
+                <ChevronLeft className="size-3.5" />
+                <span>{t("contact.prevPage")}</span>
+              </Button>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onNextPage}
+                disabled={page >= totalPages}
+                className="h-8.5 px-3.5 rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted cursor-pointer disabled:opacity-40"
+              >
+                <span>{t("contact.nextPage")}</span>
+                <ChevronRight className="size-3.5" />
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
