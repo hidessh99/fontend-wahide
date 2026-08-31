@@ -26,15 +26,21 @@ export function PublicHeader() {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-foreground-secondary">
+        <nav className="hidden md:flex items-center gap-7 text-sm font-semibold text-foreground-secondary">
+          <Link href="/about" className="hover:text-foreground transition">
+            Tentang Kami
+          </Link>
           <Link href="/#features" className="hover:text-foreground transition">
             {t("common.nav.antiBan")}
           </Link>
           <Link href="/#architecture" className="hover:text-foreground transition">
             {t("common.nav.architecture")}
           </Link>
-          <Link href="/#spintax" className="hover:text-foreground transition">
-            {t("common.nav.spintax")}
+          <Link href="/blog" className="hover:text-foreground transition">
+            Blog
+          </Link>
+          <Link href="/contact" className="hover:text-foreground transition">
+            Hubungi Kami
           </Link>
           <Link href="/pricing" className="hover:text-foreground transition">
             {t("common.nav.pricing")}
@@ -88,6 +94,13 @@ export function PublicHeader() {
         <div className="sm:hidden border-b border-border bg-surface dark:bg-[#161715] px-6 py-6 space-y-4">
           <nav className="flex flex-col gap-3 text-sm font-semibold text-foreground">
             <Link
+              href="/about"
+              onClick={() => setMobileMenuOpen(false)}
+              className="py-2 border-b border-border/50"
+            >
+              Tentang Kami
+            </Link>
+            <Link
               href="/#features"
               onClick={() => setMobileMenuOpen(false)}
               className="py-2 border-b border-border/50"
@@ -102,11 +115,18 @@ export function PublicHeader() {
               {t("common.nav.architecture")}
             </Link>
             <Link
-              href="/#spintax"
+              href="/blog"
               onClick={() => setMobileMenuOpen(false)}
               className="py-2 border-b border-border/50"
             >
-              {t("common.nav.spintax")}
+              Blog
+            </Link>
+            <Link
+              href="/contact"
+              onClick={() => setMobileMenuOpen(false)}
+              className="py-2 border-b border-border/50"
+            >
+              Hubungi Kami
             </Link>
           </nav>
           <div className="pt-2 flex flex-col gap-2">

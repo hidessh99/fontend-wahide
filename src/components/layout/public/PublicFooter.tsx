@@ -25,9 +25,10 @@ export function PublicFooter() {
         <div className="space-y-3">
           <p className="text-xs font-bold uppercase tracking-wider text-foreground-muted">{t("footer.product")}</p>
           <ul className="space-y-2 text-xs font-semibold text-foreground-secondary">
+            <li><Link href="/about" className="hover:text-foreground">Tentang Kami</Link></li>
+            <li><Link href="/blog" className="hover:text-foreground">Blog &amp; Panduan</Link></li>
             <li><Link href="/#features" className="hover:text-foreground">Multi-Device Gateway</Link></li>
             <li><Link href="/#spintax" className="hover:text-foreground">Anti-Ban Spintax</Link></li>
-            <li><Link href="/#architecture" className="hover:text-foreground">Session Hibernation</Link></li>
             <li><Link href="/pricing" className="hover:text-foreground">{t("nav.pricing")}</Link></li>
           </ul>
         </div>
@@ -36,23 +37,24 @@ export function PublicFooter() {
           <p className="text-xs font-bold uppercase tracking-wider text-foreground-muted">{t("footer.developer")}</p>
           <ul className="space-y-2 text-xs font-semibold text-foreground-secondary">
             <li><a href="https://github.com/hidessh99/fontend-wahide" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">GitHub Repo</a></li>
-            <li><Link href="/docs/api" className="hover:text-foreground">Katalog REST API</Link></li>
-            <li><Link href="/docs/webhooks" className="hover:text-foreground">Webhook Events</Link></li>
+            <li><Link href="/contact" className="hover:text-foreground">Kemitraan &amp; API</Link></li>
+            <li><Link href="/#architecture" className="hover:text-foreground">Arsitektur whatsmeow</Link></li>
           </ul>
         </div>
 
         <div className="space-y-3">
           <p className="text-xs font-bold uppercase tracking-wider text-foreground-muted">{t("footer.legal")}</p>
           <ul className="space-y-2 text-xs font-semibold text-foreground-secondary">
-            <li><Link href="/support" className="hover:text-foreground">Helpdesk Support</Link></li>
-            <li><Link href="/terms" className="hover:text-foreground">Syarat & Ketentuan</Link></li>
+            <li><Link href="/contact" className="hover:text-foreground">Hubungi Kami</Link></li>
+            <li><Link href="/terms" className="hover:text-foreground">Syarat &amp; Ketentuan</Link></li>
             <li><Link href="/privacy" className="hover:text-foreground">Kebijakan Privasi</Link></li>
+            <li><Link href="/support" className="hover:text-foreground">Helpdesk Support</Link></li>
           </ul>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto pt-8 border-t border-border/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-semibold text-foreground-muted">
-        <span>&copy; {new Date().getFullYear()} Wahide SaaS Platform. {t("footer.rights")}</span>
+        <span>&copy; {new Date().getFullYear()} Hide Group. {t("footer.rights")}</span>
         <div className="flex items-center gap-4">
           <span>{t("footer.sla")}</span>
           <span>•</span>
