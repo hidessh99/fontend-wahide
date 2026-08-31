@@ -45,3 +45,15 @@ Dokumen perencanaan arsitektur dan kesiapan produksi untuk frontend **Wahide (`f
 
 9. **[Comprehensive Error Pages & Resilience Plan](./comprehensive_error_pages_and_resilience_plan.md)**
    - **Penanganan Error HTTP & Runtime Multi-Tier**: Pembuatan halaman kustom `not-found.tsx` (404), `error.tsx` (500 & Runtime Exception Handler), `global-error.tsx` (Root Layout Recovery), dan Segment Error Boundaries untuk dashboard & portal admin.
+
+10. **[Landing Page Unofficial WhatsApp Benchmark Plan](./landing_page_unofficial_whatsapp_benchmark_plan.md)**
+    - **Kurasi Konten B2B Enterprise (Benchmark Fonnte, Wablas, RuangWA, WhaCenter)**: Pengembangan 9 bagian komprehensif pada landing page meliputi Simulator Chat Interaktif (Teks, Media, OTP, Tombol, List), Code Sandbox REST API Multi-Language (cURL, Node.js, Go, PHP, Python), 9 Pilar Fitur Enterprise, Tabel Komparasi Arsitektur Go vs Chromium, Paket Harga Transparan, dan FAQ Interaktif berstandar Wise Aesthetic tanpa AI-slop.
+
+11. **[Light Mode Color Contrast & Accessibility Plan](./light_mode_color_contrast_and_accessibility_plan.md)**
+    - **Audit & Perbaikan Keterbacaan Teks Mode Terang**: Mengganti aksen warna teks `text-wise-green` dengan pola dual-tone `text-dark-green dark:text-wise-green` (rasio kontras 12:1 di Mode Terang dan 11.5:1 di Mode Gelap) pada tabel komparasi, kartu metrik, pill badges, dan halaman publik.
+
+12. **[Public Header Navigation & Anchors Plan](./public_header_navigation_and_anchors_plan.md)**
+    - **Penataan Ulang Menu Header Publik**: Menyusun menu navigasi utama menjadi tautan kanonikal (**Fitur**, **Harga**, **FAQ**, **Tentang Kami**, dan **Hubungi Kami**) dengan integrasi anchor scroll mulus pada landing page.
+
+13. **[Public Footer Overhaul & Postman API Plan](./public_footer_overhaul_and_postman_api_plan.md)**
+    - **Pembaruan Footer & Tautan Postman API**: Memperbarui identitas operasional *Hide Digital Security*, email, jam operasional fast-response, menautkan dokumentasi Postman API resmi, serta merapikan link Developer dan Legal.

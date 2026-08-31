@@ -25,7 +25,7 @@ export function AboutView() {
     <div className="space-y-16 max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
       {/* Hero Section */}
       <div className="text-center space-y-4 max-w-3xl mx-auto pt-6">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-wise-green/15 text-wise-green">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green">
           <Building2 className="size-3.5" />
           <span>{t("about.badge")}</span>
         </div>
@@ -51,7 +51,7 @@ export function AboutView() {
               key={idx}
               className="p-5 sm:p-6 rounded-md border border-border bg-surface dark:bg-[#161715] text-center space-y-2 shadow-sm"
             >
-              <Icon className="size-5 text-wise-green mx-auto" />
+              <Icon className="size-5 text-dark-green dark:text-wise-green mx-auto" />
               <div className="text-2xl sm:text-3xl font-black text-foreground font-mono">
                 {s.value}
               </div>
@@ -66,7 +66,7 @@ export function AboutView() {
       {/* Vision & Mission */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="p-6 sm:p-8 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-4 shadow-sm">
-          <div className="inline-flex items-center gap-2 text-wise-green font-bold text-xs uppercase tracking-wider">
+          <div className="inline-flex items-center gap-2 text-dark-green dark:text-wise-green font-bold text-xs uppercase tracking-wider">
             <Sparkles className="size-4" />
             <span>{t("about.visionTitle")}</span>
           </div>
@@ -79,7 +79,7 @@ export function AboutView() {
         </div>
 
         <div className="p-6 sm:p-8 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-4 shadow-sm">
-          <div className="inline-flex items-center gap-2 text-wise-green font-bold text-xs uppercase tracking-wider">
+          <div className="inline-flex items-center gap-2 text-dark-green dark:text-wise-green font-bold text-xs uppercase tracking-wider">
             <CheckCircle2 className="size-4" />
             <span>{t("about.missionTitle")}</span>
           </div>
@@ -113,7 +113,7 @@ export function AboutView() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="p-6 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-3">
-            <div className="size-10 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center">
+            <div className="size-10 rounded-full bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center">
               <Cpu className="size-5" />
             </div>
             <h3 className="text-base font-black text-foreground">
@@ -125,7 +125,7 @@ export function AboutView() {
           </div>
 
           <div className="p-6 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-3">
-            <div className="size-10 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center">
+            <div className="size-10 rounded-full bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center">
               <Zap className="size-5" />
             </div>
             <h3 className="text-base font-black text-foreground">
@@ -137,7 +137,7 @@ export function AboutView() {
           </div>
 
           <div className="p-6 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-3">
-            <div className="size-10 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center">
+            <div className="size-10 rounded-full bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center">
               <ShieldCheck className="size-5" />
             </div>
             <h3 className="text-base font-black text-foreground">
@@ -164,7 +164,7 @@ export function AboutView() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
           <div className="p-4 rounded-md border border-border bg-muted/20 space-y-2">
             <div className="flex items-center gap-2 text-foreground font-bold text-xs">
-              <MapPin className="size-4 text-wise-green" />
+              <MapPin className="size-4 text-dark-green dark:text-wise-green" />
               <span>Alamat Kantor</span>
             </div>
             <p className="text-xs font-semibold text-foreground-secondary leading-relaxed">
@@ -174,12 +174,12 @@ export function AboutView() {
 
           <div className="p-4 rounded-md border border-border bg-muted/20 space-y-2">
             <div className="flex items-center gap-2 text-foreground font-bold text-xs">
-              <Mail className="size-4 text-wise-green" />
+              <Mail className="size-4 text-dark-green dark:text-wise-green" />
               <span>Email Resmi</span>
             </div>
             <a
               href={`mailto:${t("about.officeEmail")}`}
-              className="text-xs font-mono font-bold text-wise-green hover:underline block"
+              className="text-xs font-mono font-bold text-dark-green dark:text-wise-green hover:underline block"
             >
               {t("about.officeEmail")}
             </a>
@@ -187,14 +187,14 @@ export function AboutView() {
 
           <div className="p-4 rounded-md border border-border bg-muted/20 space-y-2">
             <div className="flex items-center gap-2 text-foreground font-bold text-xs">
-              <Phone className="size-4 text-wise-green" />
+              <Phone className="size-4 text-dark-green dark:text-wise-green" />
               <span>WhatsApp / Hotline</span>
             </div>
             <a
               href={`https://wa.me/62877111301818`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs font-mono font-bold text-wise-green hover:underline block"
+              className="text-xs font-mono font-bold text-dark-green dark:text-wise-green hover:underline block"
             >
               {t("about.officePhone")}
             </a>

@@ -50,7 +50,7 @@ export function ContactUsView() {
     <div className="space-y-12 max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
       {/* Header */}
       <div className="text-center space-y-3 max-w-2xl mx-auto pt-4">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-wise-green/15 text-wise-green">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green">
           <MessageSquare className="size-3.5" />
           <span>{t("contactUs.badge")}</span>
         </div>
@@ -67,7 +67,7 @@ export function ContactUsView() {
         {/* WhatsApp Direct */}
         <div className="p-6 rounded-md border border-wise-green/30 bg-wise-green/5 space-y-4 shadow-sm flex flex-col justify-between">
           <div className="space-y-2">
-            <div className="size-10 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center">
+            <div className="size-10 rounded-full bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center">
               <Phone className="size-5" />
             </div>
             <h2 className="text-lg font-black text-foreground">
@@ -76,7 +76,7 @@ export function ContactUsView() {
             <p className="text-xs font-semibold text-foreground-secondary">
               {t("contactUs.cardDirectWhatsAppDesc")}
             </p>
-            <div className="text-sm font-black font-mono text-wise-green pt-1">
+            <div className="text-sm font-black font-mono text-dark-green dark:text-wise-green pt-1">
               0877111301818
             </div>
           </div>
@@ -133,7 +133,7 @@ export function ContactUsView() {
           </div>
 
           <div className="flex items-center gap-1.5 text-[11px] font-semibold text-foreground-muted pt-2 border-t border-border">
-            <Clock className="size-3.5 text-wise-green shrink-0" />
+            <Clock className="size-3.5 text-dark-green dark:text-wise-green shrink-0" />
             <span>Senin – Sabtu (08:00 – 21:00 WIB)</span>
           </div>
         </div>

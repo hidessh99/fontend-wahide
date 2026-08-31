@@ -11,7 +11,7 @@ export function TermsView() {
     <div className="space-y-12 max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
       {/* Header */}
       <div className="space-y-3 border-b border-border pb-6 pt-4">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-wise-green/15 text-wise-green">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green">
           <Scale className="size-3.5" />
           <span>{t("legal.termsBadge")}</span>
         </div>
@@ -34,30 +34,30 @@ export function TermsView() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-semibold text-foreground-secondary">
           <div className="space-y-1">
             <div className="text-foreground font-bold flex items-center gap-1.5">
-              <FileText className="size-3.5 text-wise-green" />
+              <FileText className="size-3.5 text-dark-green dark:text-wise-green" />
               <span>Penyedia Platform</span>
             </div>
             <div>Hide Group</div>
           </div>
           <div className="space-y-1">
             <div className="text-foreground font-bold flex items-center gap-1.5">
-              <Mail className="size-3.5 text-wise-green" />
+              <Mail className="size-3.5 text-dark-green dark:text-wise-green" />
               <span>Email Resmi</span>
             </div>
-            <a href="mailto:admin@hidessh.com" className="text-wise-green hover:underline">
+            <a href="mailto:admin@hidessh.com" className="text-dark-green dark:text-wise-green font-bold hover:underline">
               admin@hidessh.com
             </a>
           </div>
           <div className="space-y-1">
             <div className="text-foreground font-bold flex items-center gap-1.5">
-              <Phone className="size-3.5 text-wise-green" />
+              <Phone className="size-3.5 text-dark-green dark:text-wise-green" />
               <span>WhatsApp / Hotline</span>
             </div>
             <div>0877111301818</div>
           </div>
         </div>
         <div className="pt-2 border-t border-border/80 text-xs text-foreground-muted flex items-start gap-1.5">
-          <MapPin className="size-3.5 text-wise-green shrink-0 mt-0.5" />
+          <MapPin className="size-3.5 text-dark-green dark:text-wise-green shrink-0 mt-0.5" />
           <span>Jl. Kampung Baris No.391, Karangturi, Kec. Semarang Tim., Kota Semarang, Jawa Tengah 50124</span>
         </div>
       </div>
@@ -67,7 +67,7 @@ export function TermsView() {
         {/* Pasal 1 */}
         <section className="space-y-3 p-6 rounded-md border border-border bg-surface dark:bg-[#161715]">
           <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
-            <span className="size-6 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center text-xs font-mono">1</span>
+            <span className="size-6 rounded-full bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center text-xs font-mono font-bold">1</span>
             <span>Ketentuan Umum &amp; Penerimaan Perjanjian</span>
           </h2>
           <p>
@@ -78,7 +78,7 @@ export function TermsView() {
         {/* Pasal 2 */}
         <section className="space-y-3 p-6 rounded-md border border-border bg-surface dark:bg-[#161715]">
           <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
-            <span className="size-6 rounded-full bg-rose-500/15 text-rose-500 flex items-center justify-center text-xs font-mono">2</span>
+            <span className="size-6 rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xs font-mono font-bold">2</span>
             <span>Kebijakan Penggunaan Wajar (AUP) &amp; Larangan Keras</span>
           </h2>
           <p>
@@ -104,7 +104,7 @@ export function TermsView() {
         {/* Pasal 3 */}
         <section className="space-y-3 p-6 rounded-md border border-border bg-surface dark:bg-[#161715]">
           <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
-            <span className="size-6 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center text-xs font-mono">3</span>
+            <span className="size-6 rounded-full bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center text-xs font-mono font-bold">3</span>
             <span>Kepatuhan terhadap Kebijakan WhatsApp / Meta</span>
           </h2>
           <p>
@@ -115,7 +115,7 @@ export function TermsView() {
         {/* Pasal 4 */}
         <section className="space-y-3 p-6 rounded-md border border-border bg-surface dark:bg-[#161715]">
           <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
-            <span className="size-6 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center text-xs font-mono">4</span>
+            <span className="size-6 rounded-full bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center text-xs font-mono font-bold">4</span>
             <span>Komitmen SLA Ketersediaan Sistem (99.9% Uptime)</span>
           </h2>
           <p>
@@ -126,7 +126,7 @@ export function TermsView() {
         {/* Pasal 5 */}
         <section className="space-y-3 p-6 rounded-md border border-border bg-surface dark:bg-[#161715]">
           <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
-            <span className="size-6 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center text-xs font-mono">5</span>
+            <span className="size-6 rounded-full bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center text-xs font-mono font-bold">5</span>
             <span>Paket Langganan, Deposit Saldo, &amp; Kebijakan Kuota</span>
           </h2>
           <p>
@@ -137,7 +137,7 @@ export function TermsView() {
         {/* Pasal 6 */}
         <section className="space-y-3 p-6 rounded-md border border-border bg-surface dark:bg-[#161715]">
           <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
-            <span className="size-6 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center text-xs font-mono">6</span>
+            <span className="size-6 rounded-full bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center text-xs font-mono font-bold">6</span>
             <span>Batasan Tanggung Jawab (*Limitation of Liability*)</span>
           </h2>
           <p>
@@ -148,7 +148,7 @@ export function TermsView() {
         {/* Pasal 7 */}
         <section className="space-y-3 p-6 rounded-md border border-border bg-surface dark:bg-[#161715]">
           <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
-            <span className="size-6 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center text-xs font-mono">7</span>
+            <span className="size-6 rounded-full bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center text-xs font-mono font-bold">7</span>
             <span>Hukum yang Berlaku &amp; Penyelesaian Sengketa</span>
           </h2>
           <p>
