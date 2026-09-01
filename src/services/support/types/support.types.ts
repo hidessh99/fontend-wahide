@@ -13,6 +13,12 @@ export interface TicketMessage {
   createdAt: string;
 }
 
+export interface TicketUser {
+  id: string;
+  name: string;
+  email: string;
+}
+
 export interface Ticket {
   id: string;
   ticketNumber: string;
@@ -25,6 +31,7 @@ export interface Ticket {
   messages: TicketMessage[];
   createdAt: string;
   updatedAt: string;
+  user?: TicketUser;
 }
 
 export interface CreateTicketInput {

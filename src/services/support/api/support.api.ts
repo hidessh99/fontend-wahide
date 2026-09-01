@@ -51,6 +51,15 @@ export function normalizeTicket(raw: Record<string, unknown>): Ticket {
     status = "OPEN";
   }
 
+  const rawUser = raw.user as Record<string, unknown> | undefined;
+  const user = rawUser
+    ? {
+        id: String(rawUser.id || ""),
+        name: String(rawUser.name || ""),
+        email: String(rawUser.email || ""),
+      }
+    : undefined;
+
   return {
     id: String(raw.id || ""),
     ticketNumber: String(raw.ticketNumber || raw.ref_number || raw.ticket_number || "TKT"),
@@ -63,6 +72,7 @@ export function normalizeTicket(raw: Record<string, unknown>): Ticket {
     messages,
     createdAt: String(raw.createdAt || raw.created_at || new Date().toISOString()),
     updatedAt: String(raw.updatedAt || raw.updated_at || new Date().toISOString()),
+    user,
   };
 }
 
@@ -172,5 +182,12 @@ export const supportApi = {
 
   closeTicket: async (id: string): Promise<void> => {
     await httpClient.patch<Record<string, unknown>>(`${SUPPORT_BASE}/support/tickets/${id}/close`, {});
+  },
+
+  updateTicketStatus: async (id: string, status: TicketStatus): Promise<void> => {
+    await httpClient.patch<Record<string, unknown>>(`${SUPPORT_BASE}/admin/support/tickets/status`, {
+      id,
+      status,
+    });
   },
 };

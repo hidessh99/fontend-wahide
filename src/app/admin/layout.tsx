@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { ShieldAlert, ArrowLeft, LayoutDashboard, Users } from "lucide-react";
+import { ShieldAlert, ArrowLeft, LayoutDashboard, Users, LifeBuoy } from "lucide-react";
 import { ThemeToggle } from "@/components/layout/shared/ThemeToggle";
 import { LocaleSwitcher } from "@/components/layout/shared/LocaleSwitcher";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
@@ -57,6 +57,13 @@ export default function AdminLayout({
               className="px-3 py-1.5 rounded-full text-foreground-secondary hover:text-foreground hover:bg-surface dark:hover:bg-[#161715] transition flex items-center gap-1.5"
             >
               <span>Logs</span>
+            </Link>
+            <Link
+              href="/admin/support"
+              className="px-3 py-1.5 rounded-full text-foreground-secondary hover:text-foreground hover:bg-surface dark:hover:bg-[#161715] transition flex items-center gap-1.5"
+            >
+              <LifeBuoy className="size-3.5" />
+              <span>Support</span>
             </Link>
             <Link
               href="/admin/notifications"
