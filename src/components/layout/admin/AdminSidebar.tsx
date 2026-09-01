@@ -1,95 +1,247 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/modules/iam/hooks/useAuth";
 import {
   ShieldAlert,
+  LayoutDashboard,
   Users,
   CreditCard,
-  Radio,
+  LifeBuoy,
   FileText,
+  Radio,
   ArrowLeft,
+  ShieldCheck,
+  Activity,
+  UserCheck,
 } from "lucide-react";
 
-export const ADMIN_NAV_ITEMS = [
+export interface AdminNavSubItem {
+  title: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+}
+
+export interface AdminNavItem {
+  title: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  subItems?: AdminNavSubItem[];
+}
+
+export interface AdminNavGroup {
+  groupTitle: string;
+  items: AdminNavItem[];
+}
+
+export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
   {
-    title: "Global Overview",
-    href: "/admin/overview",
-    icon: ShieldAlert,
+    groupTitle: "Kontrol Platform",
+    items: [
+      {
+        title: "Overview Global",
+        href: "/admin/overview",
+        icon: LayoutDashboard,
+      },
+      {
+        title: "Pengguna & Member",
+        href: "/admin/users",
+        icon: Users,
+        subItems: [
+          {
+            title: "Daftar Member",
+            href: "/admin/users",
+            icon: UserCheck,
+          },
+          {
+            title: "Log Aktivitas",
+            href: "/admin/activities",
+            icon: Activity,
+          },
+        ],
+      },
+      {
+        title: "Paket & Harga SaaS",
+        href: "/admin/plans",
+        icon: CreditCard,
+      },
+    ],
   },
   {
-    title: "Kelola User & Tenant",
-    href: "/admin/users",
-    icon: Users,
-  },
-  {
-    title: "Paket & Harga SaaS",
-    href: "/admin/plans",
-    icon: CreditCard,
-  },
-  {
-    title: "Monitor Queue & Redis",
-    href: "/admin/queues",
-    icon: Radio,
-  },
-  {
-    title: "Audit Keamanan",
-    href: "/admin/audit-logs",
-    icon: FileText,
+    groupTitle: "Operasional & Monitoring",
+    items: [
+      {
+        title: "Pusat Bantuan",
+        href: "/admin/support",
+        icon: LifeBuoy,
+      },
+      {
+        title: "Log Audit & Keamanan",
+        href: "/admin/logs",
+        icon: FileText,
+      },
+      {
+        title: "Siaran & Notifikasi",
+        href: "/admin/notifications",
+        icon: Radio,
+      },
+    ],
   },
 ];
 
-export function AdminSidebar() {
+interface AdminSidebarProps {
+  onItemClick?: () => void;
+  className?: string;
+}
+
+export function AdminSidebar({ onItemClick, className }: AdminSidebarProps) {
   const pathname = usePathname();
+  const user = useAuth((s) => s.user);
 
   return (
-    <aside className="w-64 flex flex-col bg-[#14080a] text-white border-r border-rose-950/60 h-full select-none">
-      <div className="h-18 px-6 flex items-center justify-between border-b border-rose-950/60">
-        <Link href="/admin/overview" className="flex items-center gap-2.5">
-          <span className="h-3.5 w-3.5 rounded-full bg-rose-500 animate-pulse" />
-          <span className="font-black text-xl tracking-tight text-white">
-            Wahide<span className="text-rose-500"> Admin</span>
-          </span>
+    <aside
+      className={cn(
+        "w-64 flex flex-col bg-surface dark:bg-[#121310] text-foreground border-r border-border h-full select-none",
+        className
+      )}
+    >
+      {/* Brand Header */}
+      <div className="h-16 px-5 flex items-center justify-between border-b border-border bg-muted/20">
+        <Link
+          href="/admin/overview"
+          onClick={onItemClick}
+          className="flex items-center gap-2.5"
+        >
+          <div className="size-8 rounded-full bg-rose-600 text-white flex items-center justify-center font-bold shadow-xs shrink-0">
+            <ShieldAlert className="size-4" />
+          </div>
+          <div>
+            <div className="font-black text-base tracking-tight text-foreground leading-tight">
+              Wahide<span className="text-rose-600">.Admin</span>
+            </div>
+            <span className="inline-block text-[9px] font-black uppercase tracking-wider text-rose-600 dark:text-rose-400 font-mono">
+              Protected Shell
+            </span>
+          </div>
         </Link>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-3 py-6 space-y-1">
-        <p className="px-3 text-[11px] font-bold uppercase tracking-wider text-rose-300/60 mb-2">
-          Platform Controls
-        </p>
+      {/* Navigation Groups */}
+      <div className="flex-1 overflow-y-auto px-3.5 py-5 space-y-6">
+        {ADMIN_NAV_GROUPS.map((group) => (
+          <div key={group.groupTitle} className="space-y-1">
+            <p className="px-3 text-[10px] font-extrabold uppercase tracking-wider text-foreground-muted mb-2">
+              {group.groupTitle}
+            </p>
 
-        {ADMIN_NAV_ITEMS.map((item) => {
-          const isActive = pathname.startsWith(item.href);
-          const Icon = item.icon;
+            {group.items.map((item) => {
+              const hasSubItems = Boolean(item.subItems && item.subItems.length > 0);
+              const isParentActive = hasSubItems
+                ? item.subItems?.some((sub) => pathname === sub.href || pathname.startsWith(sub.href + "/"))
+                : pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href + "/"));
+              const Icon = item.icon;
 
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 px-3.5 py-2.5 rounded-full text-xs font-semibold transition-all duration-150",
-                isActive
-                  ? "bg-rose-600 text-white font-bold shadow-sm"
-                  : "text-rose-100/70 hover:text-white hover:bg-rose-950/40"
-              )}
-            >
-              <Icon className="size-4" />
-              <span>{item.title}</span>
-            </Link>
-          );
-        })}
+              return (
+                <div key={item.href} className="space-y-1">
+                  <Link
+                    href={item.href}
+                    onClick={onItemClick}
+                    className={cn(
+                      "flex items-center gap-3 px-3.5 py-2 rounded-full text-xs transition-all duration-150 relative",
+                      isParentActive && !hasSubItems
+                        ? "bg-rose-500/10 text-rose-600 dark:text-rose-400 font-bold border border-rose-500/20 shadow-xs"
+                        : isParentActive && hasSubItems
+                        ? "text-rose-600 dark:text-rose-400 font-bold"
+                        : "text-foreground-secondary hover:text-foreground hover:bg-muted font-semibold"
+                    )}
+                  >
+                    <Icon
+                      className={cn(
+                        "size-4 shrink-0",
+                        isParentActive ? "text-rose-600 dark:text-rose-400" : "text-foreground-muted"
+                      )}
+                    />
+                    <span className="truncate">{item.title}</span>
+                    {isParentActive && !hasSubItems && (
+                      <span className="absolute right-3 size-1.5 rounded-full bg-rose-600 dark:bg-rose-400" />
+                    )}
+                  </Link>
 
-        <div className="pt-6 mt-6 border-t border-rose-950/60">
-          <Link
-            href="/dashboard"
-            className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-full text-xs font-bold text-rose-200 hover:text-white hover:bg-rose-950/40 transition"
-          >
-            <ArrowLeft className="size-4" />
-            <span>Kembali ke Tenant App</span>
-          </Link>
-        </div>
+                  {/* Sub-menu Items */}
+                  {hasSubItems && item.subItems && (
+                    <div className="pl-4 pr-1 space-y-1 py-0.5 border-l-2 border-border/60 ml-4.5 my-1">
+                      {item.subItems.map((sub) => {
+                        const isSubActive =
+                          pathname === sub.href ||
+                          (sub.href !== "/admin/users" && pathname.startsWith(sub.href + "/"));
+                        const SubIcon = sub.icon;
+
+                        return (
+                          <Link
+                            key={sub.href}
+                            href={sub.href}
+                            onClick={onItemClick}
+                            className={cn(
+                              "flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] transition-all duration-150 relative",
+                              isSubActive
+                                ? "bg-rose-500/10 text-rose-600 dark:text-rose-400 font-bold border border-rose-500/20 shadow-2xs"
+                                : "text-foreground-secondary hover:text-foreground hover:bg-muted font-semibold"
+                            )}
+                          >
+                            <SubIcon
+                              className={cn(
+                                "size-3.5 shrink-0",
+                                isSubActive ? "text-rose-600 dark:text-rose-400" : "text-foreground-muted"
+                              )}
+                            />
+                            <span className="truncate">{sub.title}</span>
+                            {isSubActive && (
+                              <span className="absolute right-2.5 size-1.5 rounded-full bg-rose-600 dark:bg-rose-400" />
+                            )}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+
+      {/* Footer Profile & Tenant App Navigation */}
+      <div className="p-3.5 border-t border-border bg-muted/20 space-y-2.5">
+        {/* User Identity Chip */}
+        {user && (
+          <div className="p-2.5 rounded-lg border border-border bg-surface dark:bg-[#161715] flex items-center gap-2.5">
+            <div className="size-7 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs font-bold shrink-0">
+              {user.name ? user.name.charAt(0).toUpperCase() : "A"}
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="text-xs font-bold text-foreground truncate leading-tight">
+                {user.name || "Administrator"}
+              </div>
+              <div className="flex items-center gap-1 text-[10px] text-rose-600 dark:text-rose-400 font-mono font-bold">
+                <ShieldCheck className="size-3 shrink-0" />
+                <span className="truncate">{user.role.toUpperCase()}</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Quick Link to Tenant Dashboard */}
+        <Link
+          href="/dashboard"
+          onClick={onItemClick}
+          className="flex items-center justify-center gap-2 w-full py-2 px-3 rounded-full text-xs font-bold bg-wise-green text-dark-green hover:scale-[1.02] active:scale-[0.98] transition shadow-xs cursor-pointer"
+        >
+          <ArrowLeft className="size-3.5" />
+          <span>Kembali ke Tenant App</span>
+        </Link>
       </div>
     </aside>
   );

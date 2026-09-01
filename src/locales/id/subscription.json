@@ -1,6 +1,6 @@
 {
-  "title": "Paket & Kuota Pesan",
-  "subtitle": "Pantau kuota broadcast WhatsApp bulanan, batasan slot perangkat, dan konfigurasi integrasi webhook.",
+  "title": "Paket Langganan",
+  "subtitle": "Pilih dan tingkatkan paket langganan bisnis yang sesuai dengan kebutuhan pengiriman pesan Anda.",
   "activePlanTitle": "Paket Langganan Aktif",
   "planExpires": "Berlaku hingga {date}",
   "upgradePlan": "Tingkatkan Paket",

@@ -1,28 +1,83 @@
 "use client";
 
 import React from "react";
-import { ThemeToggle } from "@/components/layout/ThemeToggle";
-import { DashboardUserNav } from "@/components/layout/dashboard/DashboardUserNav";
-import { ShieldAlert, Activity } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { ThemeToggle } from "@/components/layout/shared/ThemeToggle";
+import { LocaleSwitcher } from "@/components/layout/shared/LocaleSwitcher";
+import { Menu, ArrowLeft, ShieldAlert } from "lucide-react";
 
-export function AdminHeader() {
+interface AdminHeaderProps {
+  onOpenMobileNav?: () => void;
+}
+
+const ROUTE_TITLES: Record<string, { title: string; section: string }> = {
+  "/admin/overview": { title: "Overview Global", section: "Platform" },
+  "/admin/users": { title: "Kelola Pengguna", section: "Platform" },
+  "/admin/activities": { title: "Log Aktivitas Pengguna", section: "Platform" },
+  "/admin/plans": { title: "Paket & Harga SaaS", section: "Platform" },
+  "/admin/support": { title: "Pusat Bantuan", section: "Operasional" },
+  "/admin/logs": { title: "Log Audit & Keamanan", section: "Operasional" },
+  "/admin/notifications": { title: "Siaran & Notifikasi", section: "Operasional" },
+};
+
+export function AdminHeader({ onOpenMobileNav }: AdminHeaderProps) {
+  const pathname = usePathname();
+  const currentRoute = ROUTE_TITLES[pathname] || {
+    title: "Portal Superadmin",
+    section: "Admin",
+  };
+
   return (
-    <header className="sticky top-0 z-40 h-18 border-b border-rose-200 dark:border-rose-950/60 bg-background/80 backdrop-blur-md px-4 sm:px-8 flex items-center justify-between">
+    <header className="sticky top-0 z-20 h-16 border-b border-border bg-background/80 backdrop-blur-md px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+      {/* Left: Mobile Menu Toggle & Dynamic Breadcrumb */}
       <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-rose-100 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 text-xs font-black">
-          <ShieldAlert className="size-3.5" />
-          <span>SUPERADMIN CONTROL PLANE</span>
+        {onOpenMobileNav && (
+          <button
+            onClick={onOpenMobileNav}
+            className="lg:hidden p-2 rounded-full hover:bg-muted text-foreground-secondary hover:text-foreground cursor-pointer transition"
+            aria-label="Buka Menu Admin"
+          >
+            <Menu className="size-5" />
+          </button>
+        )}
+
+        <div className="flex items-center gap-2 text-xs font-semibold text-foreground-secondary">
+          <div className="flex items-center gap-1.5">
+            <ShieldAlert className="size-3.5 text-rose-600" />
+            <span className="font-bold text-foreground">Admin</span>
+          </div>
+          <span>/</span>
+          <span className="text-foreground-muted hidden sm:inline">
+            {currentRoute.section}
+          </span>
+          <span className="hidden sm:inline">/</span>
+          <span className="font-bold text-foreground truncate max-w-[160px] sm:max-w-none">
+            {currentRoute.title}
+          </span>
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
-        <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 text-xs font-bold">
-          <Activity className="size-3.5" />
-          <span>Cluster: All Green (99.99%)</span>
+      {/* Right: Cluster Status, Theme, Locale, and Tenant Link */}
+      <div className="flex items-center gap-2.5">
+        {/* Cluster Health Pill */}
+        <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-bold text-emerald-600 dark:text-emerald-400">
+          <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span>Cluster 99.9% Uptime</span>
         </div>
+
+        <LocaleSwitcher />
         <ThemeToggle />
-        <div className="h-6 w-px bg-border" />
-        <DashboardUserNav />
+
+        <div className="h-5 w-px bg-border hidden sm:block mx-0.5" />
+
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-wise-green text-dark-green hover:scale-105 active:scale-95 transition shadow-xs"
+        >
+          <ArrowLeft className="size-3.5" />
+          <span className="hidden sm:inline">Tenant Dashboard</span>
+        </Link>
       </div>
     </header>
   );

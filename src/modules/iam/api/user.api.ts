@@ -1,0 +1,53 @@
+import { httpClient } from "@/lib/api/http-client";
+import { env } from "@/lib/config/env";
+import { User, BackendUserPayload } from "../types/auth.types";
+import { UserDashboardStats } from "../types/dashboard.types";
+import { ChangePasswordInput } from "../schemas/auth.schema";
+
+const IAM_BASE = env.NEXT_PUBLIC_IAM_API_URL;
+
+export const userApi = {
+  getProfile: async (): Promise<User> => {
+    const res = await httpClient.get<BackendUserPayload>(`${IAM_BASE}/users/profile`);
+    const p = res.payload || (res as unknown as BackendUserPayload);
+    return {
+      id: p.id || "",
+      name: p.name || "",
+      email: p.email || "",
+      role: (p.role_name?.toUpperCase() || "SELLER"),
+      phone: p.phone_number,
+      balance: p.balance,
+      incomePending: p.income,
+      isVerified: p.is_active,
+      createdAt: p.created_at || new Date().toISOString(),
+    };
+  },
+
+  changePassword: async (payload: ChangePasswordInput): Promise<{ success: boolean; message: string }> => {
+    const res = await httpClient.put(`${IAM_BASE}/users/change-password`, payload);
+    return { success: res.success, message: res.message };
+  },
+
+  getDashboardStats: async (): Promise<UserDashboardStats> => {
+    const res = await httpClient.get<UserDashboardStats>(`${IAM_BASE}/users/dashboard/stats`);
+    return (
+      res.payload || {
+        balance: 0,
+        income: 0,
+        total_devices: 0,
+        connected_devices: 0,
+        total_contacts: 0,
+        total_campaigns: 0,
+        total_messages_sent: 0,
+        plan_name: "FREE",
+        plan_status: "ACTIVE",
+        device_limit: 1,
+        monthly_message_limit: 1200,
+        open_tickets: 0,
+        recent_activities: [],
+        recent_invoices: [],
+      }
+    );
+  },
+};
+

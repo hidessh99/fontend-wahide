@@ -8,6 +8,7 @@ const PROTECTED_PREFIXES = [
   "/campaigns",
   "/contacts",
   "/billing",
+  "/activities",
   "/settings",
   "/team",
   "/support",
@@ -46,7 +47,12 @@ export function proxy(request: NextRequest) {
       return NextResponse.redirect(loginUrl);
     }
 
-    if (userRole !== "SUPERADMIN") {
+    const isSuperAdmin =
+      userRole === "SUPERADMIN" ||
+      userRole === "SUPER_ADMIN" ||
+      userRole === "ADMIN";
+
+    if (!isSuperAdmin) {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
   }

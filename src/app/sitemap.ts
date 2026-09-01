@@ -1,6 +1,6 @@
-import { MetadataRoute } from "next";
+﻿import { MetadataRoute } from "next";
 import { env } from "@/lib/config/env";
-import { DEFAULT_POSTS } from "@/services/content/api/content.api";
+import { DEFAULT_POSTS } from "@/modules/content/api/content.api";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = env.NEXT_PUBLIC_APP_URL || "https://wahide.id";

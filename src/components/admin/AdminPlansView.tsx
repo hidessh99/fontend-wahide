@@ -1,7 +1,7 @@
-"use client";
+﻿"use client";
 
 import React from "react";
-import { PlansManagementTable } from "@/services/admin/components/PlansManagementTable";
+import { PlansManagementTable } from "@/modules/admin/components/plans/PlansManagementTable";
 import { useI18n } from "@/lib/i18n/context";
 import { CreditCard } from "lucide-react";
 

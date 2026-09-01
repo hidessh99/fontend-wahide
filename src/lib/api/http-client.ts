@@ -3,7 +3,8 @@
 // Matches Go Backend: github.com/hidessh99/wahide/internal/shared/response
 // ==============================================================================
 
-import { getCookie } from "@/lib/storage/cookies";
+import { getCookie,  clearAllAuthStorage } from "@/lib/storage/cookies";
+
 
 export interface GlobalResponse<T = unknown> {
   success: boolean;
@@ -63,10 +64,11 @@ export class ApiError extends Error {
 interface RequestOptions extends RequestInit {
   params?: Record<string, string | number | boolean | undefined>;
   token?: string;
-  tenantId?: string;
   timeoutMs?: number;
   retries?: number;
 }
+
+let isRedirectingToLogin = false;
 
 class HttpClient {
   private getAuthToken(): string | null {
@@ -81,25 +83,6 @@ class HttpClient {
       if (authStorage) {
         const parsed = JSON.parse(authStorage);
         return parsed?.state?.token || null;
-      }
-    } catch {
-      return null;
-    }
-    return null;
-  }
-
-  private getActiveTenantId(): string | null {
-    if (typeof window === "undefined") return null;
-    // 1. Try Cookie First
-    const cookieTenantId = getCookie("wahide_tenant_id");
-    if (cookieTenantId) return cookieTenantId;
-
-    // 2. Fallback to localStorage
-    try {
-      const authStorage = localStorage.getItem("wahide_auth_storage");
-      if (authStorage) {
-        const parsed = JSON.parse(authStorage);
-        return parsed?.state?.tenantId || null;
       }
     } catch {
       return null;
@@ -123,7 +106,6 @@ class HttpClient {
     const {
       params,
       token,
-      tenantId,
       headers,
       timeoutMs = 15000,
       retries = 0,
@@ -131,19 +113,18 @@ class HttpClient {
     } = options;
 
     const authToken = token || this.getAuthToken();
-    const activeTenant = tenantId || this.getActiveTenantId();
+    const isFormData = typeof FormData !== "undefined" && customConfig.body instanceof FormData;
 
     const defaultHeaders: Record<string, string> = {
-      "Content-Type": "application/json",
       Accept: "application/json",
     };
 
-    if (authToken) {
-      defaultHeaders["Authorization"] = `Bearer ${authToken}`;
+    if (!isFormData) {
+      defaultHeaders["Content-Type"] = "application/json";
     }
 
-    if (activeTenant) {
-      defaultHeaders["X-Tenant-ID"] = activeTenant;
+    if (authToken) {
+      defaultHeaders["Authorization"] = `Bearer ${authToken}`;
     }
 
     const fullUrl = this.buildUrl(endpoint, params);
@@ -176,12 +157,40 @@ class HttpClient {
           return this.request<T>(endpoint, { ...options, retries: retries - 1 });
         }
 
-        const errorMessage =
-          data?.message ||
-          data?.error ||
-          `HTTP Error ${response.status}: ${response.statusText}`;
+        // Auto-Logout & Session Cleanup on HTTP 401 (Session Revoked / Expired Token)
+        if (
+          response.status === 401 &&
+          typeof window !== "undefined" &&
+          !endpoint.includes("/auth/login") &&
+          !endpoint.includes("/auth/register") &&
+          !endpoint.includes("/auth/forgot-password") &&
+          !endpoint.includes("/auth/reset-password")
+        ) {
+          clearAllAuthStorage();
+
+          const currentPath = window.location.pathname;
+          if (currentPath !== "/login" && currentPath !== "/register" && !isRedirectingToLogin) {
+            isRedirectingToLogin = true;
+            setTimeout(() => {
+              isRedirectingToLogin = false;
+            }, 3000);
+            // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+            window.location.href = "/login?session_expired=1";
+          }
+        }
+
+
+        let errorMessage = `HTTP Error ${response.status}: ${response.statusText}`;
+        if (typeof data?.message === "string" && data.message) {
+          errorMessage = data.message;
+        } else if (typeof data?.error === "string" && data.error) {
+          errorMessage = data.error;
+        } else if (data?.error && typeof data.error === "object" && "message" in data.error) {
+          errorMessage = String((data.error as Record<string, unknown>).message);
+        }
         throw new ApiError(errorMessage, response.status, data);
       }
+
 
       return data as ApiResponse<T>;
     } catch (err: unknown) {
@@ -205,26 +214,29 @@ class HttpClient {
   }
 
   public post<T = unknown>(endpoint: string, body?: unknown, options?: RequestOptions): Promise<ApiResponse<T>> {
+    const isFormData = typeof FormData !== "undefined" && body instanceof FormData;
     return this.request<T>(endpoint, {
       ...options,
       method: "POST",
-      body: body ? JSON.stringify(body) : undefined,
+      body: isFormData ? (body as FormData) : body ? JSON.stringify(body) : undefined,
     });
   }
 
   public put<T = unknown>(endpoint: string, body?: unknown, options?: RequestOptions): Promise<ApiResponse<T>> {
+    const isFormData = typeof FormData !== "undefined" && body instanceof FormData;
     return this.request<T>(endpoint, {
       ...options,
       method: "PUT",
-      body: body ? JSON.stringify(body) : undefined,
+      body: isFormData ? (body as FormData) : body ? JSON.stringify(body) : undefined,
     });
   }
 
   public patch<T = unknown>(endpoint: string, body?: unknown, options?: RequestOptions): Promise<ApiResponse<T>> {
+    const isFormData = typeof FormData !== "undefined" && body instanceof FormData;
     return this.request<T>(endpoint, {
       ...options,
       method: "PATCH",
-      body: body ? JSON.stringify(body) : undefined,
+      body: isFormData ? (body as FormData) : body ? JSON.stringify(body) : undefined,
     });
   }
 

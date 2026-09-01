@@ -1,0 +1,155 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { useI18n } from "@/lib/i18n/context";
+import { X, Smartphone, Loader2, Plus } from "lucide-react";
+
+interface AddDeviceModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (name: string) => Promise<unknown>;
+}
+
+export function AddDeviceModal({
+  isOpen,
+  onClose,
+  onSubmit,
+}: AddDeviceModalProps) {
+  const { t } = useI18n();
+  const [name, setName] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Escape key to dismiss
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim()) {
+      setError("Nama perangkat wajib diisi");
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+    try {
+      await onSubmit(name.trim());
+      setName("");
+      onClose();
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Gagal menambahkan perangkat";
+      setError(msg);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+      className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-sm p-3 sm:p-6 flex min-h-full items-center justify-center animate-in fade-in"
+    >
+      <div className="relative w-full max-w-md max-h-[90vh] flex flex-col rounded-md border border-border bg-surface dark:bg-[#161715] shadow-2xl overflow-hidden animate-in zoom-in-95">
+        {/* Sticky Header */}
+        <div className="flex items-start justify-between p-5 sm:p-6 pb-4 border-b border-border shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="size-10 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center shrink-0">
+              <Smartphone className="size-5" />
+            </div>
+            <div>
+              <h2 className="text-lg sm:text-xl font-black text-foreground tracking-tight">
+                {t("whatsapp.addModalTitle")}
+              </h2>
+              <p className="text-xs font-semibold text-foreground-secondary">
+                {t("whatsapp.addModalSubtitle")}
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer shrink-0"
+            aria-label="Tutup"
+          >
+            <X className="size-4" />
+          </button>
+        </div>
+
+        {/* Scrollable Form Body */}
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto flex flex-col min-h-0">
+          <div className="p-5 sm:p-6 space-y-4 flex-1">
+            {error && (
+              <div className="p-3 rounded-md bg-rose-500/10 border border-rose-500/20 text-xs font-semibold text-rose-600 dark:text-rose-400">
+                {error}
+              </div>
+            )}
+
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+                {t("whatsapp.deviceNameLabel")}
+              </label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  setError(null);
+                }}
+                placeholder={t("whatsapp.deviceNamePlaceholder")}
+                disabled={isLoading}
+                className="w-full h-12 px-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-sm"
+                autoFocus
+              />
+            </div>
+          </div>
+
+          {/* Sticky Footer */}
+          <div className="p-4 sm:p-6 pt-3 border-t border-border/80 bg-surface/90 dark:bg-[#161715]/90 backdrop-blur-sm flex items-center justify-end gap-2.5 shrink-0">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={onClose}
+              disabled={isLoading}
+              className="rounded-full text-xs font-bold px-5 border-border hover:border-foreground-muted cursor-pointer"
+            >
+              {t("whatsapp.addCancel")}
+            </Button>
+            <Button
+              type="submit"
+              variant="primaryPill"
+              size="sm"
+              disabled={isLoading}
+              className="rounded-full text-xs font-bold gap-2 px-6 shadow-sm cursor-pointer"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="size-3.5 animate-spin" />
+                  <span>{t("whatsapp.addSaving")}</span>
+                </>
+              ) : (
+                <>
+                  <Plus className="size-3.5" />
+                  <span>{t("whatsapp.addSubmit")}</span>
+                </>
+              )}
+            </Button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}

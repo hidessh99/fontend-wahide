@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { SubscriptionView } from "@/components/dashboard/SubscriptionView";
 
 export const metadata: Metadata = {
-  title: "Paket Langganan & Kuota Pesan",
+  title: "Paket Langganan | Wahide",
   description:
-    "Pantau sisa kuota broadcast pesan WhatsApp, upgrade paket langganan bisnis, dan konfigurasi webhook signature HMAC SHA256.",
+    "Pilih dan tingkatkan paket langganan WhatsApp gateway bisnis yang sesuai dengan kebutuhan volume pesan Anda.",
   alternates: {
     canonical: "/subscription",
   },

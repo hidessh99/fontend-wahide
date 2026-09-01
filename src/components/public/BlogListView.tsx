@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { BlogPost } from "@/services/content/types/content.types";
-import { contentApi } from "@/services/content/api/content.api";
+import { BlogPost } from "@/modules/content/types/content.types";
+import { contentApi } from "@/modules/content/api/content.api";
 import { useI18n } from "@/lib/i18n/context";
 import { Newspaper, ArrowRight, Tag, Calendar, User } from "lucide-react";
 
