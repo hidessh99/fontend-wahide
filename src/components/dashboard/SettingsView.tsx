@@ -1,8 +1,8 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
-import { useAuth } from "@/services/iam/hooks/useAuth";
-import { authApi } from "@/services/iam/api/auth.api";
+import { useAuth } from "@/modules/iam/hooks/useAuth";
+import { authApi } from "@/modules/iam/api/auth.api";
 import { generateSecureRandomString } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/context";

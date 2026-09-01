@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
-import { RegisterForm } from "@/services/iam/components/auth/RegisterForm";
+﻿import type { Metadata } from "next";
+import { RegisterForm } from "@/modules/iam/components/auth/RegisterForm";
 import { AuthLayout } from "@/components/layout/auth/AuthLayout";
 
 export const metadata: Metadata = {

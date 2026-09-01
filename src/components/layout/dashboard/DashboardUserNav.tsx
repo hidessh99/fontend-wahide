@@ -1,12 +1,12 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/services/iam/hooks/useAuth";
+import { useAuth } from "@/modules/iam/hooks/useAuth";
 import { useI18n } from "@/lib/i18n/context";
 import { Button } from "@/components/ui/button";
-import { isAdmin } from "@/services/iam/types/auth.types";
+import { isAdmin } from "@/modules/iam/types/auth.types";
 import { User, LogOut, Shield, Key, ChevronDown } from "lucide-react";
 
 export function DashboardUserNav() {

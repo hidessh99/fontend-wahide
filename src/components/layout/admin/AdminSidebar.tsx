@@ -1,10 +1,10 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/services/iam/hooks/useAuth";
+import { useAuth } from "@/modules/iam/hooks/useAuth";
 import {
   ShieldAlert,
   LayoutDashboard,

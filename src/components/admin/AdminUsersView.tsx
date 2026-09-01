@@ -1,8 +1,8 @@
-"use client";
+﻿"use client";
 
 import React from "react";
-import { useAdmin } from "@/services/admin/hooks/useAdmin";
-import { UsersTable } from "@/services/admin/components/users/UsersTable";
+import { useAdmin } from "@/modules/admin/hooks/useAdmin";
+import { UsersTable } from "@/modules/admin/components/users/UsersTable";
 import { useI18n } from "@/lib/i18n/context";
 import { Users } from "lucide-react";
 

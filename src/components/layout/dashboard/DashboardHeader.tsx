@@ -1,11 +1,11 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import { DashboardBreadcrumb } from "./DashboardBreadcrumb";
 import { DashboardUserNav } from "./DashboardUserNav";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { LocaleSwitcher } from "@/components/layout/shared/LocaleSwitcher";
-import { useAuth } from "@/services/iam/hooks/useAuth";
+import { useAuth } from "@/modules/iam/hooks/useAuth";
 import { Menu, Zap } from "lucide-react";
 
 interface DashboardHeaderProps {

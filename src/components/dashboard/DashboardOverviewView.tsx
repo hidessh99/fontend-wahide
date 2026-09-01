@@ -1,10 +1,10 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import Link from "next/link";
-import { useDashboardStats } from "@/services/iam/hooks/useDashboardStats";
-import { useDevices } from "@/services/whatsapp/hooks/useDevices";
-import { useCampaigns } from "@/services/campaign/hooks/useCampaigns";
+import { useDashboardStats } from "@/modules/iam/hooks/useDashboardStats";
+import { useDevices } from "@/modules/whatsapp/hooks/useDevices";
+import { useCampaigns } from "@/modules/campaign/hooks/useCampaigns";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { Button } from "@/components/ui/button";
 import {

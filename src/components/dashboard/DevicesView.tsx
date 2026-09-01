@@ -1,7 +1,7 @@
-"use client";
+﻿"use client";
 
 import React from "react";
-import { DeviceList } from "@/services/whatsapp/components/devices/DeviceList";
+import { DeviceList } from "@/modules/whatsapp/components/devices/DeviceList";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { useI18n } from "@/lib/i18n/context";
 import { Smartphone } from "lucide-react";

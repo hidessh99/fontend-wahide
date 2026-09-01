@@ -1,8 +1,8 @@
-"use client";
+﻿"use client";
 
 import React from "react";
-import { useSubscription } from "@/services/subscription/hooks/useSubscription";
-import { PlanCardGrid } from "@/services/subscription/components/plans/PlanCardGrid";
+import { useSubscription } from "@/modules/subscription/hooks/useSubscription";
+import { PlanCardGrid } from "@/modules/subscription/components/plans/PlanCardGrid";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { useI18n } from "@/lib/i18n/context";
 import { CreditCard } from "lucide-react";

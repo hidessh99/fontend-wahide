@@ -1,8 +1,8 @@
-"use client";
+﻿"use client";
 
 import React from "react";
-import { useAuth } from "@/services/iam/hooks/useAuth";
-import { UserRole } from "@/services/iam/types/auth.types";
+import { useAuth } from "@/modules/iam/hooks/useAuth";
+import { UserRole } from "@/modules/iam/types/auth.types";
 
 interface RBACGuardProps {
   children: React.ReactNode;

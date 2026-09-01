@@ -1,8 +1,8 @@
-"use client";
+﻿"use client";
 
 import React from "react";
-import { useAdmin } from "@/services/admin/hooks/useAdmin";
-import { GlobalMetricsGrid } from "@/services/admin/components/overview/GlobalMetricsGrid";
+import { useAdmin } from "@/modules/admin/hooks/useAdmin";
+import { GlobalMetricsGrid } from "@/modules/admin/components/overview/GlobalMetricsGrid";
 import { useI18n } from "@/lib/i18n/context";
 import { ShieldAlert } from "lucide-react";
 

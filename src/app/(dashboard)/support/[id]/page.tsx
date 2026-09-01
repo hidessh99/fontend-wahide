@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
-import { TicketDetailView } from "@/services/support/components/detail/TicketDetailView";
+﻿import type { Metadata } from "next";
+import { TicketDetailView } from "@/modules/support/components/detail/TicketDetailView";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 
 export const metadata: Metadata = {

@@ -1,8 +1,8 @@
-"use client";
+﻿"use client";
 
 import React from "react";
-import { useUserActivities } from "@/services/iam/hooks/useUserActivities";
-import { UserActivityForm } from "@/services/iam/components/activity/UserActivityForm";
+import { useUserActivities } from "@/modules/iam/hooks/useUserActivities";
+import { UserActivityForm } from "@/modules/iam/components/activity/UserActivityForm";
 import { Activity, ShieldCheck } from "lucide-react";
 
 export function UserActivitiesView() {

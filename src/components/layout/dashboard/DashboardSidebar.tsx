@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import Link from "next/link";
@@ -17,9 +17,9 @@ import {
   Settings,
   ShieldAlert,
 } from "lucide-react";
-import { useAuth } from "@/services/iam/hooks/useAuth";
+import { useAuth } from "@/modules/iam/hooks/useAuth";
 import { useI18n } from "@/lib/i18n/context";
-import { UserRole, isAdmin } from "@/services/iam/types/auth.types";
+import { UserRole, isAdmin } from "@/modules/iam/types/auth.types";
 
 export interface DashboardNavItem {
   key: string;

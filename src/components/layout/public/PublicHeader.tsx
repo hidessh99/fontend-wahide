@@ -1,11 +1,11 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { LocaleSwitcher } from "@/components/layout/shared/LocaleSwitcher";
-import { useAuth } from "@/services/iam/hooks/useAuth";
+import { useAuth } from "@/modules/iam/hooks/useAuth";
 import { useI18n } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 import { User, Menu, X, ArrowRight } from "lucide-react";

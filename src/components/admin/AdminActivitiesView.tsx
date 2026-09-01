@@ -1,8 +1,8 @@
-"use client";
+﻿"use client";
 
 import React from "react";
-import { useUserActivities } from "@/services/admin/hooks/useUserActivities";
-import { UserActivitiesTable } from "@/services/admin/components/activity/UserActivitiesTable";
+import { useUserActivities } from "@/modules/admin/hooks/useUserActivities";
+import { UserActivitiesTable } from "@/modules/admin/components/activity/UserActivitiesTable";
 import { Activity, ShieldCheck } from "lucide-react";
 
 export function AdminActivitiesView() {

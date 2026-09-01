@@ -1,7 +1,7 @@
-"use client";
+﻿"use client";
 
 import React from "react";
-import { TicketList } from "@/services/support/components/tickets/TicketList";
+import { TicketList } from "@/modules/support/components/tickets/TicketList";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { useI18n } from "@/lib/i18n/context";
 import { LifeBuoy } from "lucide-react";

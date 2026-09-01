@@ -1,24 +1,24 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
-import { useContacts } from "@/services/contact/hooks/useContacts";
-import { ContactTable } from "@/services/contact/components/list/ContactTable";
+import { useContacts } from "@/modules/contact/hooks/useContacts";
+import { ContactTable } from "@/modules/contact/components/list/ContactTable";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
-import { Contact, CreateContactInput } from "@/services/contact/types/contact.types";
+import { Contact, CreateContactInput } from "@/modules/contact/types/contact.types";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/context";
 
 const ContactModal = dynamic(
-  () => import("@/services/contact/components/modals/ContactModal").then((m) => m.ContactModal),
+  () => import("@/modules/contact/components/modals/ContactModal").then((m) => m.ContactModal),
   { ssr: false }
 );
 const ImportCsvModal = dynamic(
-  () => import("@/services/contact/components/modals/ImportCsvModal").then((m) => m.ImportCsvModal),
+  () => import("@/modules/contact/components/modals/ImportCsvModal").then((m) => m.ImportCsvModal),
   { ssr: false }
 );
 const DeleteContactModal = dynamic(
-  () => import("@/services/contact/components/modals/DeleteContactModal").then((m) => m.DeleteContactModal),
+  () => import("@/modules/contact/components/modals/DeleteContactModal").then((m) => m.DeleteContactModal),
   { ssr: false }
 );
 
