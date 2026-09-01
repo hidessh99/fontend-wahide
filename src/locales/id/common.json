@@ -272,6 +272,28 @@
     "regenerateKey": "Regenerasi Token Baru",
     "keyRegenerated": "Token API baru berhasil dibuat."
   },
+  "address": {
+    "title": "Alamat Bisnis & Penagihan",
+    "subtitle": "Kelola data lokasi fisik dan alamat resmi perusahaan Anda untuk pencetakan faktur penagihan dan verifikasi akun.",
+    "statusRegistered": "Terdaftar",
+    "statusNotSet": "Belum Diatur",
+    "countryLabel": "Negara",
+    "provinceLabel": "Provinsi",
+    "provincePlaceholder": "Pilih Provinsi...",
+    "cityLabel": "Kota / Kabupaten",
+    "cityPlaceholder": "Pilih Kota / Kabupaten...",
+    "districtLabel": "Kecamatan",
+    "districtPlaceholder": "Pilih Kecamatan (Opsional)...",
+    "postalCodeLabel": "Kode Pos",
+    "postalCodePlaceholder": "Contoh: 12190",
+    "streetAddressLabel": "Alamat Lengkap / Nama Jalan & Nomor",
+    "streetAddressPlaceholder": "Contoh: Gedung Artha Graha Lt. 15, Jl. Jenderal Sudirman Kav. 52-53, RT.05/RW.03",
+    "streetAddressHelp": "Tuliskan nama jalan, nomor bangunan, RT/RW, dan patokan alamat secara lengkap.",
+    "saveBtn": "Simpan Alamat Bisnis",
+    "saving": "Menyimpan...",
+    "saveSuccess": "Alamat berhasil disimpan!",
+    "securityNote": "Data alamat terenkripsi & tersimpan aman pada database IAM."
+  },
   "errors": {
     "notFound": {
       "badge": "404 — Halaman Tidak Ditemukan",

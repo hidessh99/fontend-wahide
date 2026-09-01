@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
@@ -7,7 +7,7 @@ import { useAuth } from "@/modules/iam/hooks/useAuth";
 import { useI18n } from "@/lib/i18n/context";
 import { Button } from "@/components/ui/button";
 import { isAdmin } from "@/modules/iam/types/auth.types";
-import { User, LogOut, Shield, Key, ChevronDown } from "lucide-react";
+import { User, LogOut, Shield, Key, ChevronDown, MapPin } from "lucide-react";
 
 export function DashboardUserNav() {
   const router = useRouter();
@@ -70,6 +70,14 @@ export function DashboardUserNav() {
             >
               <User className="size-3.5" />
               <span>{t("dashboardMenu.profile")}</span>
+            </Link>
+            <Link
+              href="/address"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2 px-3 py-2 rounded-full hover:bg-muted hover:text-foreground transition"
+            >
+              <MapPin className="size-3.5" />
+              <span>{t("address.title")}</span>
             </Link>
             <Link
               href="/settings/api-key"
