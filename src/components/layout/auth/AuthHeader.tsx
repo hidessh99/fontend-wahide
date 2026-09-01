@@ -9,7 +9,7 @@ export function AuthHeader() {
       <Link href="/" className="flex items-center gap-2">
         <span className="h-3.5 w-3.5 rounded-full bg-wise-green" />
         <span className="font-black text-xl tracking-tight text-foreground">
-          Wahide<span className="text-wise-green">.</span>
+          Wahide<span className="text-dark-green dark:text-wise-green">.</span>
         </span>
       </Link>
       <div className="flex items-center gap-2">

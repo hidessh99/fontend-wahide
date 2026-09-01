@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect } from "react";
 import { PaymentMethod } from "@/modules/finance/types/finance.types";
@@ -77,7 +77,7 @@ export function TopUpModal({ isOpen, onClose, onSubmit }: TopUpModalProps) {
         {/* Sticky Header */}
         <div className="flex items-start justify-between p-5 sm:p-6 pb-4 border-b border-border shrink-0">
           <div className="flex items-center gap-3">
-            <div className="size-10 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center shrink-0">
+            <div className="size-10 rounded-full bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green flex items-center justify-center shrink-0">
               <Wallet className="size-5" />
             </div>
             <div>
@@ -188,7 +188,7 @@ export function TopUpModal({ isOpen, onClose, onSubmit }: TopUpModalProps) {
               </label>
               <div className="p-3.5 rounded-md border border-wise-green/30 bg-wise-green/10 dark:bg-wise-green/5 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="size-9 rounded-full bg-wise-green/20 text-wise-green flex items-center justify-center shrink-0">
+                  <div className="size-9 rounded-full bg-emerald-500/15 dark:bg-wise-green/20 text-emerald-700 dark:text-wise-green flex items-center justify-center shrink-0">
                     <QrCode className="size-5" />
                   </div>
                   <div>
@@ -206,7 +206,7 @@ export function TopUpModal({ isOpen, onClose, onSubmit }: TopUpModalProps) {
                     </span>
                   </div>
                 </div>
-                <CheckCircle2 className="size-5 text-wise-green shrink-0" />
+                <CheckCircle2 className="size-5 text-emerald-700 dark:text-wise-green shrink-0" />
               </div>
             </div>
           </div>

@@ -35,7 +35,7 @@ export default function DashboardSegmentError({
 
       {error?.digest && (
         <div className="text-[11px] font-mono text-foreground-muted">
-          Digest: <code className="text-wise-green">{error.digest}</code>
+          Digest: <code className="text-emerald-700 dark:text-wise-green font-bold">{error.digest}</code>
         </div>
       )}
 

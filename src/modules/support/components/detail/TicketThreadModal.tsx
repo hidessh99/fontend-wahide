@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useRef } from "react";
 import { Ticket, TicketMessage } from "@/modules/support/types/support.types";
@@ -250,7 +250,7 @@ export function TicketThreadModal({
                 href={ticket.attachment}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-xs font-bold text-wise-green hover:underline px-3 py-1.5 rounded-full bg-wise-green/10 border border-wise-green/20 shrink-0"
+                className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 dark:text-wise-green hover:underline px-3 py-1.5 rounded-full bg-emerald-500/10 dark:bg-wise-green/10 border border-emerald-500/20 dark:border-wise-green/20 shrink-0"
               >
                 <span>{t("support.viewAttachment")}</span>
                 <ExternalLink className="size-3" />
@@ -261,7 +261,7 @@ export function TicketThreadModal({
           {/* Loading Indicator for replies */}
           {isFetchingReplies && replies.length === 0 && (
             <div className="flex items-center justify-center py-3 text-foreground-muted gap-2 text-xs font-semibold">
-              <Loader2 className="size-3.5 animate-spin text-wise-green" />
+              <Loader2 className="size-3.5 animate-spin text-emerald-700 dark:text-wise-green" />
               <span>Memuat riwayat balasan...</span>
             </div>
           )}
@@ -366,7 +366,7 @@ export function TicketThreadModal({
                     </div>
                   </div>
                   {isUploading ? (
-                    <Loader2 className="size-4 animate-spin text-wise-green shrink-0" />
+                    <Loader2 className="size-4 animate-spin text-emerald-700 dark:text-wise-green shrink-0" />
                   ) : (
                     <button
                       type="button"
@@ -409,7 +409,7 @@ export function TicketThreadModal({
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-foreground-secondary hover:text-foreground hover:bg-muted border border-border transition cursor-pointer disabled:opacity-50"
                 title="Unggah Gambar / Screenshot"
               >
-                <Paperclip className="size-3.5 text-wise-green" />
+                <Paperclip className="size-3.5 text-emerald-700 dark:text-wise-green" />
                 <span>Lampirkan Gambar</span>
               </button>
 

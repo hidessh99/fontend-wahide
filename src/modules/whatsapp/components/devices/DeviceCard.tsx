@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
 import { Device } from "@/modules/whatsapp/types/whatsapp.types";
@@ -168,7 +168,7 @@ export function DeviceCard({
                     <button
                       type="button"
                       onClick={() => handleAction(onWake)}
-                      className="w-full text-left px-3.5 py-2 hover:bg-muted flex items-center gap-2 text-wise-green"
+                      className="w-full text-left px-3.5 py-2 hover:bg-muted flex items-center gap-2 text-emerald-700 dark:text-wise-green font-bold"
                     >
                       <Sun className="size-3.5" />
                       <span>{t("whatsapp.wake")}</span>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SettingsView } from "@/components/dashboard/SettingsView";
+import { SettingsView } from "@/modules/iam/views/SettingsView";
 
 export const metadata: Metadata = {
   title: "Pengaturan Profil & API Key",

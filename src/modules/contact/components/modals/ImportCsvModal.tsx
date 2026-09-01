@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
 import { CreateContactInput } from "@/modules/contact/types/contact.types";
@@ -133,7 +133,7 @@ export function ImportCsvModal({
         {/* Sticky Modal Header */}
         <div className="p-5 sm:p-6 pb-4 border-b border-border/80 flex items-start justify-between shrink-0">
           <div className="flex items-center gap-3">
-            <div className="size-10 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center shrink-0">
+            <div className="size-10 rounded-full bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green flex items-center justify-center shrink-0">
               <FileSpreadsheet className="size-5" />
             </div>
             <div>
@@ -175,7 +175,7 @@ export function ImportCsvModal({
               disabled={isLoading}
               className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
             />
-            <div className="size-12 rounded-full bg-wise-green/10 text-wise-green flex items-center justify-center mb-3">
+            <div className="size-12 rounded-full bg-emerald-500/10 dark:bg-wise-green/10 text-emerald-700 dark:text-wise-green flex items-center justify-center mb-3">
               <UploadCloud className="size-6" />
             </div>
             <p className="text-xs font-bold text-foreground mb-1">

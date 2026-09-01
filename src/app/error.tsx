@@ -51,7 +51,7 @@ export default function GlobalAppError({
             <span className="font-sans font-bold text-foreground mr-1.5">
               {t("common.errors.serverError.digestLabel")}
             </span>
-            <code className="text-wise-green font-bold">{error.digest}</code>
+            <code className="text-emerald-700 dark:text-wise-green font-bold">{error.digest}</code>
           </div>
         )}
 
@@ -84,7 +84,7 @@ export default function GlobalAppError({
             )}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-wise-green font-bold hover:underline inline-flex items-center gap-1"
+            className="text-emerald-700 dark:text-wise-green font-bold hover:underline inline-flex items-center gap-1"
           >
             <MessageSquare className="size-3" />
             <span>{t("common.errors.serverError.reportWhatsApp")}</span>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { TeamView } from "@/components/dashboard/TeamView";
+import { TeamView } from "@/modules/team/views/TeamView";
 
 export const metadata: Metadata = {
   title: "Manajemen Tim & Agen CS",

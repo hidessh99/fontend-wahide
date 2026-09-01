@@ -117,7 +117,7 @@ export function BillingView() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2">
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
-            <div className="size-7 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center shrink-0">
+            <div className="size-7 rounded-full bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green flex items-center justify-center shrink-0">
               <Receipt className="size-3.5" />
             </div>
             <h2 className="text-lg sm:text-xl font-black text-foreground tracking-tight">

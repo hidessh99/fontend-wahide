@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect } from "react";
 import { CreateCampaignInput } from "@/modules/campaign/types/campaign.types";
@@ -252,7 +252,7 @@ export function CampaignWizardModal({
                         }`}
                       >
                         <div className="flex items-center gap-2.5">
-                          <Smartphone className="size-4 text-wise-green" />
+                          <Smartphone className="size-4 text-emerald-700 dark:text-wise-green" />
                           <div>
                             <span className="font-bold text-xs text-foreground block truncate max-w-36">
                               {d.name}
@@ -263,7 +263,7 @@ export function CampaignWizardModal({
                           </div>
                         </div>
                         {selectedDeviceId === d.id && (
-                          <CheckCircle2 className="size-4 text-wise-green" />
+                          <CheckCircle2 className="size-4 text-emerald-700 dark:text-wise-green" />
                         )}
                       </div>
                     ))}
@@ -290,7 +290,7 @@ export function CampaignWizardModal({
                       : "border-border bg-surface dark:bg-[#10110e] text-foreground-secondary"
                   }`}
                 >
-                  <Users className="size-4 text-wise-green mb-1" />
+                  <Users className="size-4 text-emerald-700 dark:text-wise-green mb-1" />
                   <span className="text-xs block text-foreground">Semua Kontak</span>
                   <span className="text-[10px] text-foreground-muted block">{contacts.length} nomor</span>
                 </button>

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
@@ -44,7 +44,7 @@ export function BlogPostView({ slug }: BlogPostViewProps) {
       <div className="max-w-3xl mx-auto p-12 text-center space-y-4">
         <h1 className="text-2xl font-black text-foreground">{t("content.notFoundTitle")}</h1>
         <p className="text-xs font-semibold text-foreground-secondary">{t("content.notFoundDesc")}</p>
-        <Link href="/blog" className="text-xs font-bold text-wise-green hover:underline">
+        <Link href="/blog" className="text-xs font-bold text-emerald-700 dark:text-wise-green hover:underline">
           &larr; {t("content.backToBlog")}
         </Link>
       </div>
@@ -94,7 +94,7 @@ export function BlogPostView({ slug }: BlogPostViewProps) {
 
         <div className="flex items-center gap-4 text-xs font-semibold text-foreground-muted pt-1">
           <span className="flex items-center gap-1.5">
-            <User className="size-3.5 text-wise-green" />
+            <User className="size-3.5 text-emerald-700 dark:text-wise-green" />
             <span className="text-foreground font-bold">{post.author}</span>
           </span>
           <span>•</span>

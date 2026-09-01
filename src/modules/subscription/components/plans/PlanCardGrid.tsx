@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
 import { SubscriptionPlan, TenantSubscription } from "@/modules/subscription/types/subscription.types";
@@ -92,7 +92,7 @@ export function PlanCardGrid({
                 <div className="space-y-2.5 pt-4 border-t border-border/80">
                   {features.map((feature, idx) => (
                     <div key={idx} className="flex items-start gap-2.5 text-xs font-semibold text-foreground-secondary">
-                      <div className="size-4 rounded-full bg-wise-green/20 text-wise-green flex items-center justify-center shrink-0 mt-0.5">
+                      <div className="size-4 rounded-full bg-emerald-500/15 dark:bg-wise-green/20 text-emerald-700 dark:text-wise-green flex items-center justify-center shrink-0 mt-0.5">
                         <Check className="size-2.5 stroke-3" />
                       </div>
                       <span>{feature}</span>

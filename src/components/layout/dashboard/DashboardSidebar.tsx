@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import Link from "next/link";
@@ -132,7 +132,7 @@ export function DashboardSidebar({ onItemClick, className }: DashboardSidebarPro
         <Link href="/" className="flex items-center gap-2.5">
           <span className="h-3.5 w-3.5 rounded-full bg-wise-green animate-pulse" />
           <span className="font-black text-xl tracking-tight text-foreground">
-            Wahide<span className="text-wise-green">.</span>
+            Wahide<span className="text-dark-green dark:text-wise-green">.</span>
           </span>
         </Link>
       </div>

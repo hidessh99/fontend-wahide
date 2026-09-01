@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
@@ -75,7 +75,7 @@ export function ContactTable({
             <span>Pilih Semua ({contacts.length})</span>
           </div>
           {selectedIds.size > 0 && (
-            <span className="text-wise-green">{selectedIds.size} terpilih</span>
+            <span className="text-emerald-700 dark:text-wise-green font-bold">{selectedIds.size} terpilih</span>
           )}
         </div>
 

@@ -254,7 +254,7 @@ export function ContactUsView() {
         <div className="lg:col-span-5 p-6 sm:p-8 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-6 shadow-sm flex flex-col justify-between">
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <MapPin className="size-5 text-wise-green" />
+              <MapPin className="size-5 text-emerald-700 dark:text-wise-green" />
               <h2 className="text-lg font-black text-foreground">
                 {t("contactUs.mapTitle")}
               </h2>
@@ -266,13 +266,13 @@ export function ContactUsView() {
             {/* Visual Location Card */}
             <div className="p-6 rounded-md bg-muted/40 border border-border space-y-3">
               <div className="flex items-center gap-2 text-foreground font-bold text-xs">
-                <Building2 className="size-4 text-wise-green" />
+                <Building2 className="size-4 text-emerald-700 dark:text-wise-green" />
                 <span>Hide Group Operations Center</span>
               </div>
               <p className="text-xs font-semibold text-foreground-secondary">
                 Jl. Kampung Baris No.391, Karangturi, Kec. Semarang Tim., Kota Semarang, Jawa Tengah 50124
               </p>
-              <div className="pt-2 text-[11px] font-mono font-bold text-wise-green flex items-center gap-1.5">
+              <div className="pt-2 text-[11px] font-mono font-bold text-emerald-700 dark:text-wise-green flex items-center gap-1.5">
                 <CheckCircle2 className="size-3.5" />
                 <span>Koordinat Terverifikasi • Jawa Tengah, ID</span>
               </div>

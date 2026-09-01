@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { BillingView } from "@/components/dashboard/BillingView";
+import { BillingView } from "@/modules/finance/views/BillingView";
 
 export const metadata: Metadata = {
   title: "Faktur & Tagihan Pembayaran",

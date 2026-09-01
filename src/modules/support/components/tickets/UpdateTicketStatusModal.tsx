@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect } from "react";
 import { Ticket, TicketStatus } from "@/modules/support/types/support.types";
@@ -122,7 +122,7 @@ export function UpdateTicketStatusModal({
         {/* Header Section */}
         <div className="flex items-center justify-between p-5 border-b border-border bg-muted/30">
           <div className="flex items-center gap-3">
-            <div className="size-9 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center shrink-0">
+            <div className="size-9 rounded-full bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green flex items-center justify-center shrink-0">
               <SlidersHorizontal className="size-4.5" />
             </div>
             <div>
@@ -161,7 +161,7 @@ export function UpdateTicketStatusModal({
             {ticket.user && (
               <div className="flex items-center gap-3 text-[11px] text-foreground-secondary pt-1 border-t border-border/50">
                 <div className="flex items-center gap-1">
-                  <User className="size-3 text-wise-green" />
+                  <User className="size-3 text-emerald-700 dark:text-wise-green" />
                   <span className="font-bold text-foreground">{ticket.user.name}</span>
                 </div>
                 <div className="flex items-center gap-1 font-mono">
@@ -223,7 +223,7 @@ export function UpdateTicketStatusModal({
                 type="checkbox"
                 checked={confirmChange}
                 onChange={(e) => setConfirmChange(e.target.checked)}
-                className="mt-0.5 size-4 rounded border-border text-wise-green focus:ring-wise-green cursor-pointer"
+                className="mt-0.5 size-4 rounded border-border text-emerald-600 dark:text-wise-green focus:ring-emerald-500 dark:focus:ring-wise-green cursor-pointer"
               />
               <span className="text-xs text-foreground-secondary group-hover:text-foreground transition leading-tight font-bold">
                 {t("support.confirmChangeLabel")}

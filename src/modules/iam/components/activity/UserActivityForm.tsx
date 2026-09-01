@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
 import { UserActivityItem } from "@/modules/iam/types/activity.types";
@@ -265,7 +265,7 @@ export function UserActivityForm({
             className="h-9.5 px-3.5 text-xs font-bold rounded-full border-border hover:border-foreground-muted self-start sm:self-auto shrink-0 gap-1.5 cursor-pointer"
             title="Muat Ulang Data"
           >
-            <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin text-wise-green" : ""}`} />
+            <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin text-emerald-700 dark:text-wise-green" : ""}`} />
             <span className="hidden sm:inline">Refresh</span>
           </Button>
         </div>
@@ -300,7 +300,7 @@ export function UserActivityForm({
       <div className="rounded-xl border border-border bg-surface dark:bg-[#161715] overflow-hidden shadow-xs">
         {isLoading ? (
           <div className="p-12 text-center space-y-3">
-            <div className="size-9 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center mx-auto animate-spin">
+            <div className="size-9 rounded-full bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green flex items-center justify-center mx-auto animate-spin">
               <RefreshCw className="size-4.5" />
             </div>
             <p className="text-xs font-bold text-foreground">Memuat rekaman log aktivitas akun...</p>

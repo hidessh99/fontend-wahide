@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
@@ -239,7 +239,7 @@ export function TicketList() {
         <div className="h-64 rounded-md border border-border bg-surface dark:bg-[#161715] animate-pulse p-6" />
       ) : filteredTickets.length === 0 ? (
         <div className="flex flex-col items-center justify-center p-6 sm:p-10 text-center rounded-md border border-dashed border-border bg-surface dark:bg-[#161715]/50 space-y-3">
-          <div className="size-12 rounded-full bg-wise-green/10 text-wise-green flex items-center justify-center">
+          <div className="size-12 rounded-full bg-emerald-500/10 dark:bg-wise-green/10 text-emerald-700 dark:text-wise-green flex items-center justify-center">
             <LifeBuoy className="size-6" />
           </div>
           <div className="space-y-1 max-w-sm">
@@ -280,7 +280,7 @@ export function TicketList() {
                 {/* Customer Identity Row (Only for Superadmin) */}
                 {isSuperAdmin && (
                   <div className="flex items-center gap-2 px-2.5 py-1.5 rounded bg-muted/50 border border-border/60 text-xs">
-                    <UserIcon className="size-3.5 text-wise-green shrink-0" />
+                    <UserIcon className="size-3.5 text-emerald-700 dark:text-wise-green shrink-0" />
                     <div className="truncate min-w-0">
                       <span className="font-bold text-foreground">
                         {tkt.user?.name || t("support.customerUnknown")}
@@ -297,7 +297,7 @@ export function TicketList() {
                 {/* Subject Title (Clickable) */}
                 <Link
                   href={`/support/${tkt.id}`}
-                  className="font-bold text-foreground text-sm line-clamp-2 hover:underline hover:text-wise-green transition block"
+                  className="font-bold text-foreground text-sm line-clamp-2 hover:underline hover:text-emerald-700 dark:hover:text-wise-green transition block"
                 >
                   {tkt.subject}
                 </Link>
@@ -320,7 +320,7 @@ export function TicketList() {
                         onClick={() => setStatusModalTicket(tkt)}
                         className="h-7 px-2.5 rounded-full text-[11px] font-bold gap-1 border-border hover:border-foreground-muted transition cursor-pointer text-foreground"
                       >
-                        <SlidersHorizontal className="size-3 text-wise-green" />
+                        <SlidersHorizontal className="size-3 text-emerald-700 dark:text-wise-green" />
                         <span>{t("support.editStatus")}</span>
                       </Button>
                     )}
@@ -330,7 +330,7 @@ export function TicketList() {
                       className="inline-flex items-center h-7 px-3 rounded-full text-xs font-bold gap-1 border border-border bg-muted/50 hover:bg-muted transition text-foreground shrink-0"
                     >
                       <span>{t("support.viewThread")}</span>
-                      <ChevronRight className="size-3 text-wise-green" />
+                      <ChevronRight className="size-3 text-emerald-700 dark:text-wise-green" />
                     </Link>
                   </div>
                 </div>
@@ -381,7 +381,7 @@ export function TicketList() {
                           </div>
                           <Link
                             href={`/support/${tkt.id}`}
-                            className="font-bold text-foreground text-sm line-clamp-1 hover:underline hover:text-wise-green transition block"
+                            className="font-bold text-foreground text-sm line-clamp-1 hover:underline hover:text-emerald-700 dark:hover:text-wise-green transition block"
                           >
                             {tkt.subject}
                           </Link>
@@ -390,7 +390,7 @@ export function TicketList() {
                         {/* Col 2: Customer (Name & Email) */}
                         <div className="col-span-2 space-y-0.5 min-w-0 pr-1">
                           <div className="flex items-center gap-1.5 font-bold text-foreground text-xs truncate">
-                            <UserIcon className="size-3 text-wise-green shrink-0" />
+                            <UserIcon className="size-3 text-emerald-700 dark:text-wise-green shrink-0" />
                             <span className="truncate">{tkt.user?.name || t("support.customerUnknown")}</span>
                           </div>
                           {tkt.user?.email && (
@@ -425,7 +425,7 @@ export function TicketList() {
                             className="inline-flex items-center h-8 px-2.5 rounded-full text-xs font-bold gap-1.5 border border-border bg-surface hover:bg-muted hover:border-foreground-muted transition cursor-pointer text-foreground shadow-2xs shrink-0"
                             title={t("support.editStatus")}
                           >
-                            <SlidersHorizontal className="size-3.5 text-wise-green" />
+                            <SlidersHorizontal className="size-3.5 text-emerald-700 dark:text-wise-green" />
                             <span>{t("support.editStatus")}</span>
                           </Button>
 
@@ -434,7 +434,7 @@ export function TicketList() {
                             className="inline-flex items-center h-8 px-3 rounded-full text-xs font-bold gap-1.5 border border-border bg-muted/60 hover:bg-muted hover:border-foreground-muted transition cursor-pointer text-foreground shadow-2xs shrink-0"
                             title={t("support.viewThread")}
                           >
-                            <MessageSquare className="size-3.5 text-wise-green" />
+                            <MessageSquare className="size-3.5 text-emerald-700 dark:text-wise-green" />
                             <span>{t("support.viewThread")}</span>
                           </Link>
                         </div>
@@ -450,7 +450,7 @@ export function TicketList() {
                         </div>
                         <Link
                           href={`/support/${tkt.id}`}
-                          className="font-bold text-foreground text-sm sm:text-base line-clamp-1 hover:underline hover:text-wise-green transition block"
+                          className="font-bold text-foreground text-sm sm:text-base line-clamp-1 hover:underline hover:text-emerald-700 dark:hover:text-wise-green transition block"
                         >
                           {tkt.subject}
                         </Link>
@@ -473,7 +473,7 @@ export function TicketList() {
                           href={`/support/${tkt.id}`}
                           className="inline-flex items-center h-8 px-3 rounded-full text-xs font-bold gap-1.5 border border-border bg-surface hover:bg-muted hover:border-foreground-muted transition cursor-pointer text-foreground shadow-2xs"
                         >
-                          <MessageSquare className="size-3.5 text-wise-green" />
+                          <MessageSquare className="size-3.5 text-emerald-700 dark:text-wise-green" />
                           <span className="hidden sm:inline">{t("support.viewThread")}</span>
                         </Link>
                       </div>

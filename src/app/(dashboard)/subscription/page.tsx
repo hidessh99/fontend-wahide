@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SubscriptionView } from "@/components/dashboard/SubscriptionView";
+import { SubscriptionView } from "@/modules/subscription/views/SubscriptionView";
 
 export const metadata: Metadata = {
   title: "Paket Langganan | Wahide",

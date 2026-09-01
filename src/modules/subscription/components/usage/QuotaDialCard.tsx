@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import { TenantSubscription } from "@/modules/subscription/types/subscription.types";
@@ -132,7 +132,7 @@ export function QuotaDialCard({ subscription }: QuotaDialCardProps) {
           <div className="p-4 rounded-md border border-border bg-surface dark:bg-[#1b1d1a] space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Smartphone className="size-4 text-wise-green" />
+                <Smartphone className="size-4 text-emerald-700 dark:text-wise-green" />
                 <span className="text-xs font-bold text-foreground">
                   {t("subscription.deviceSlots")}
                 </span>

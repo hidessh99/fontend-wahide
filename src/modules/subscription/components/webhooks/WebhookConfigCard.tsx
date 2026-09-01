@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
 import { WebhookConfig } from "@/modules/subscription/types/subscription.types";
@@ -62,7 +62,7 @@ export function WebhookConfigCard({
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-4">
         <div className="flex items-center gap-3">
-          <div className="size-10 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center">
+          <div className="size-10 rounded-full bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green flex items-center justify-center">
             <Webhook className="size-5" />
           </div>
           <div>
@@ -118,7 +118,7 @@ export function WebhookConfigCard({
         <div className="p-4 rounded-md border border-border bg-muted/30 space-y-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Key className="size-4 text-wise-green" />
+              <Key className="size-4 text-emerald-700 dark:text-wise-green" />
               <span className="text-xs font-bold text-foreground">
                 {t("subscription.signingSecretLabel")}
               </span>
@@ -168,7 +168,7 @@ export function WebhookConfigCard({
           </div>
 
           <div className="flex items-center gap-1.5 text-[11px] font-semibold text-foreground-muted pt-1">
-            <ShieldCheck className="size-3.5 text-wise-green shrink-0" />
+            <ShieldCheck className="size-3.5 text-emerald-600 dark:text-wise-green shrink-0" />
             <span>Gunakan kunci ini untuk memverifikasi signature header `X-Wahide-Signature-256`.</span>
           </div>
         </div>

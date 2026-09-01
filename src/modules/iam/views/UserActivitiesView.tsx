@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import { useUserActivities } from "@/modules/iam/hooks/useUserActivities";
@@ -29,7 +29,7 @@ export function UserActivitiesView() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
-            <div className="size-9 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center shrink-0">
+            <div className="size-9 rounded-full bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green flex items-center justify-center shrink-0">
               <Activity className="size-5" />
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">

@@ -62,7 +62,7 @@ export function UserAddressForm() {
   if (isLoadingInitial) {
     return (
       <div className="rounded-xl border border-border bg-surface dark:bg-[#161715] p-10 text-center space-y-4 shadow-xs">
-        <div className="size-10 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center mx-auto animate-spin">
+        <div className="size-10 rounded-full bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green flex items-center justify-center mx-auto animate-spin">
           <Loader2 className="size-5" />
         </div>
         <div className="space-y-1">
@@ -100,7 +100,7 @@ export function UserAddressForm() {
       <div className="rounded-xl border border-border bg-surface dark:bg-[#161715] p-5 sm:p-6 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-start gap-3.5">
-            <div className="size-10 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center shrink-0 mt-0.5">
+            <div className="size-10 rounded-full bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green flex items-center justify-center shrink-0 mt-0.5">
               <MapPin className="size-5" />
             </div>
             <div className="space-y-1">
@@ -184,7 +184,7 @@ export function UserAddressForm() {
                 {t("address.cityLabel")} <span className="text-rose-500">*</span>
               </label>
               {isLoadingCities && (
-                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-wise-green">
+                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 dark:text-wise-green">
                   <Loader2 className="size-3 animate-spin" />
                   <span>Memuat...</span>
                 </span>
@@ -225,7 +225,7 @@ export function UserAddressForm() {
                 {t("address.districtLabel")}
               </label>
               {isLoadingDistricts && (
-                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-wise-green">
+                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 dark:text-wise-green">
                   <Loader2 className="size-3 animate-spin" />
                   <span>Memuat...</span>
                 </span>

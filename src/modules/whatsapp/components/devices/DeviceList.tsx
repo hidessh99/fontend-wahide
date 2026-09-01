@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
@@ -170,7 +170,7 @@ export function DeviceList() {
               onClick={() => setIsSendModalOpen(true)}
               className="rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted h-10 px-3.5 sm:px-4 cursor-pointer flex-1 sm:flex-initial justify-center"
             >
-              <Send className="size-3.5 text-wise-green" />
+              <Send className="size-3.5 text-emerald-700 dark:text-wise-green" />
               <span className="hidden sm:inline">Kirim Pesan Instan</span>
               <span className="sm:hidden">Pesan Cepat</span>
             </Button>
@@ -256,7 +256,7 @@ export function DeviceList() {
         </div>
       ) : filteredDevices.length === 0 ? (
         <div className="flex flex-col items-center justify-center p-6 sm:p-10 text-center rounded-md border border-dashed border-border bg-surface dark:bg-[#161715]/50 space-y-3">
-          <div className="size-12 rounded-full bg-wise-green/10 text-wise-green flex items-center justify-center">
+          <div className="size-12 rounded-full bg-emerald-500/10 dark:bg-wise-green/10 text-emerald-700 dark:text-wise-green flex items-center justify-center">
             <Smartphone className="size-6" />
           </div>
           <div className="space-y-1 max-w-sm">

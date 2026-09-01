@@ -20,7 +20,7 @@ export function SpintaxVisualizer({
     <div className="space-y-3 p-4 rounded-md bg-zinc-100 dark:bg-[#10110e] border border-border">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-xs font-bold text-foreground">
-          <Sparkles className="size-4 text-wise-green" />
+          <Sparkles className="size-4 text-emerald-700 dark:text-wise-green" />
           <span>{t("campaign.spintaxPreviewTitle")}</span>
         </div>
 
@@ -31,7 +31,7 @@ export function SpintaxVisualizer({
           onClick={onRandomize}
           className="rounded-full text-xs font-bold gap-1.5 h-7 px-3 border-border hover:border-foreground-muted"
         >
-          <RefreshCw className="size-3 text-wise-green" />
+          <RefreshCw className="size-3 text-emerald-700 dark:text-wise-green" />
           <span>{t("campaign.randomizeVariation")}</span>
         </Button>
       </div>

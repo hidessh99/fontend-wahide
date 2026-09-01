@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
@@ -228,7 +228,7 @@ export function LiveQRModal({
                   {/* Countdown Indicator or Expired Refresh */}
                   {countdown > 0 ? (
                     <div className="flex items-center gap-2 text-xs font-semibold text-foreground-secondary">
-                      <RefreshCw className="size-3.5 animate-spin text-wise-green" />
+                      <RefreshCw className="size-3.5 animate-spin text-emerald-700 dark:text-wise-green" />
                       <span>
                         {t("whatsapp.qrExpiresIn", { seconds: countdown.toString() })}
                       </span>
@@ -240,14 +240,14 @@ export function LiveQRModal({
                       onClick={retry}
                       className="rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted cursor-pointer"
                     >
-                      <RefreshCw className="size-3.5 text-wise-green" />
+                      <RefreshCw className="size-3.5 text-emerald-700 dark:text-wise-green" />
                       <span>QR Kedaluwarsa - Muat Ulang</span>
                     </Button>
                   )}
                 </div>
               ) : (
                 <div className="text-center space-y-3 py-8">
-                  <Loader2 className="size-9 animate-spin text-wise-green mx-auto" />
+                  <Loader2 className="size-9 animate-spin text-emerald-700 dark:text-wise-green mx-auto" />
                   <p className="text-xs font-semibold text-foreground-secondary">
                     {t("whatsapp.qrWaiting")}
                   </p>
@@ -349,7 +349,7 @@ export function LiveQRModal({
           {/* Step-by-Step Instructions */}
           <div className="space-y-2 rounded-md bg-surface dark:bg-[#1b1d1a] p-4 border border-border text-xs font-semibold">
             <div className="flex items-center gap-2 font-bold text-foreground mb-1">
-              <Smartphone className="size-4 text-wise-green" />
+              <Smartphone className="size-4 text-emerald-700 dark:text-wise-green" />
               <span>
                 {pairMode === "QR"
                   ? "Petunjuk Pemindaian QR di Ponsel:"

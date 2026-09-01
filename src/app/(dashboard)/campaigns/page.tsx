@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { CampaignsView } from "@/components/dashboard/CampaignsView";
+import { CampaignsView } from "@/modules/campaign/views/CampaignsView";
 
 export const metadata: Metadata = {
   title: "Kampanye Broadcast & Spintax",

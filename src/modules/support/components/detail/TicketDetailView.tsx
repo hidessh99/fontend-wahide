@@ -357,7 +357,7 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
           <div className="rounded-md border border-border bg-surface dark:bg-[#161715] shadow-xs overflow-hidden">
             <div className="p-4 sm:p-5 border-b border-border/60 bg-muted/30 flex items-center justify-between gap-3 text-xs">
               <div className="flex items-center gap-2">
-                <div className="size-7 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center font-bold">
+                <div className="size-7 rounded-full bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green flex items-center justify-center font-bold">
                   <User className="size-3.5" />
                 </div>
                 <div>
@@ -403,7 +403,7 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
                     href={ticket.attachment}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs font-bold text-wise-green hover:underline px-3 py-1.5 rounded-full bg-wise-green/10 border border-wise-green/20 shrink-0"
+                    className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 dark:text-wise-green hover:underline px-3 py-1.5 rounded-full bg-emerald-500/10 dark:bg-wise-green/10 border border-emerald-500/20 dark:border-wise-green/20 shrink-0"
                   >
                     <span>{t("support.viewImage")}</span>
                     <ExternalLink className="size-3" />
@@ -549,7 +549,7 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
                           </div>
                         </div>
                         {isUploading ? (
-                          <Loader2 className="size-4 animate-spin text-wise-green shrink-0" />
+                          <Loader2 className="size-4 animate-spin text-emerald-700 dark:text-wise-green shrink-0" />
                         ) : (
                           <button
                             type="button"
@@ -582,7 +582,7 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
                       disabled={isSending || isUploading}
                       className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold text-foreground-secondary hover:text-foreground hover:bg-muted border border-border transition cursor-pointer disabled:opacity-50"
                     >
-                      <Paperclip className="size-3.5 text-wise-green" />
+                      <Paperclip className="size-3.5 text-emerald-700 dark:text-wise-green" />
                       <span>{t("support.attachImage")}</span>
                     </button>
                     <p className="text-[11px] text-foreground-muted pl-1">

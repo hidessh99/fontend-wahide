@@ -65,7 +65,7 @@ export function AddDeviceModal({
         {/* Sticky Header */}
         <div className="flex items-start justify-between p-5 sm:p-6 pb-4 border-b border-border shrink-0">
           <div className="flex items-center gap-3">
-            <div className="size-10 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center shrink-0">
+            <div className="size-10 rounded-full bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green flex items-center justify-center shrink-0">
               <Smartphone className="size-5" />
             </div>
             <div>

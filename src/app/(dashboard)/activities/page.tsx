@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { UserActivitiesView } from "@/components/dashboard/UserActivitiesView";
+import { UserActivitiesView } from "@/modules/iam/views/UserActivitiesView";
 
 export const metadata: Metadata = {
   title: "Log Aktivitas Akun",

@@ -64,7 +64,7 @@ export class ErrorBoundary extends Component<
               onClick={this.handleReset}
               className="rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted shadow-sm"
             >
-              <RefreshCw className="size-3.5 text-wise-green" />
+              <RefreshCw className="size-3.5 text-emerald-700 dark:text-wise-green" />
               <span>Coba Pulihkan Modul</span>
             </Button>
           </div>

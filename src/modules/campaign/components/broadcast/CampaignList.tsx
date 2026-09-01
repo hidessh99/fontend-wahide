@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
@@ -58,7 +58,7 @@ export function CampaignList() {
         );
       case "COMPLETED":
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-wise-green/15 text-wise-green border border-wise-green/20">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green border border-emerald-500/20 dark:border-wise-green/20">
             <CheckCircle2 className="size-3" />
             {t("campaign.statusCompleted")}
           </span>
@@ -92,7 +92,7 @@ export function CampaignList() {
       {/* Top Action Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 sm:p-4 rounded-md border border-border bg-surface dark:bg-[#161715]">
         <div className="flex items-center gap-3">
-          <div className="size-8 sm:size-10 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center shrink-0">
+          <div className="size-8 sm:size-10 rounded-full bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green flex items-center justify-center shrink-0">
             <Zap className="size-4 sm:size-5" />
           </div>
           <div>
@@ -141,7 +141,7 @@ export function CampaignList() {
         </div>
       ) : campaigns.length === 0 ? (
         <div className="flex flex-col items-center justify-center p-6 sm:p-10 text-center rounded-md border border-dashed border-border bg-surface dark:bg-[#161715]/50 space-y-3">
-          <div className="size-12 rounded-full bg-wise-green/10 text-wise-green flex items-center justify-center">
+          <div className="size-12 rounded-full bg-emerald-500/10 dark:bg-wise-green/10 text-emerald-700 dark:text-wise-green flex items-center justify-center">
             <Send className="size-6" />
           </div>
           <div className="space-y-1 max-w-sm">
@@ -185,7 +185,7 @@ export function CampaignList() {
                       <Smartphone className="size-3.5" />
                       <span>{campaign.deviceName || "Perangkat Utama"}</span>
                       <span>•</span>
-                      <ShieldCheck className="size-3.5 text-wise-green" />
+                      <ShieldCheck className="size-3.5 text-emerald-700 dark:text-wise-green" />
                       <span>Jitter {campaign.jitterDelaySeconds}s</span>
                     </div>
                   </div>

@@ -130,7 +130,7 @@ export function AdminNotificationsView() {
         {/* Right: Worker Queue Monitor Table */}
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center gap-2">
-            <Layers className="size-4 text-wise-green" />
+            <Layers className="size-4 text-emerald-700 dark:text-wise-green" />
             <h2 className="text-base font-extrabold text-foreground">{t("admin.queueTitle")}</h2>
           </div>
 

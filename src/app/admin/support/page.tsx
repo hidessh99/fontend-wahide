@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SupportView } from "@/components/dashboard/SupportView";
+import { SupportView } from "@/modules/support/views/SupportView";
 
 export const metadata: Metadata = {
   title: "Pusat Bantuan & Helpdesk Platform",

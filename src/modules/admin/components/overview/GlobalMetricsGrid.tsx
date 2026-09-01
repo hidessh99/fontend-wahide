@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import { AdminMetrics } from "@/modules/admin/types/admin.types";
@@ -61,14 +61,14 @@ export function GlobalMetricsGrid({ metrics }: GlobalMetricsGridProps) {
             <span className="text-xs font-bold text-foreground-muted uppercase tracking-wider">
               {t("admin.metricsMrr")}
             </span>
-            <div className="size-8 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center">
+            <div className="size-8 rounded-full bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green flex items-center justify-center">
               <DollarSign className="size-4" />
             </div>
           </div>
           <div className="text-2xl font-black text-foreground tracking-tight">
             Rp {metrics.mrr.toLocaleString("id-ID")}
           </div>
-          <span className="text-[11px] font-semibold text-wise-green block">
+          <span className="text-[11px] font-semibold text-emerald-700 dark:text-wise-green block">
             +18.4% dari bulan lalu
           </span>
         </div>

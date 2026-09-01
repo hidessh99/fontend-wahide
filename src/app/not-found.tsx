@@ -19,7 +19,7 @@ export default function NotFound() {
           </div>
 
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold bg-muted text-foreground-secondary border border-border">
-            <Compass className="size-3.5 text-wise-green" />
+            <Compass className="size-3.5 text-emerald-700 dark:text-wise-green" />
             <span>{t("common.errors.notFound.badge")}</span>
           </div>
         </div>
@@ -55,19 +55,19 @@ export default function NotFound() {
         <div className="pt-6 border-t border-border/80 space-y-3 text-xs font-semibold text-foreground-muted">
           <span>{t("common.errors.notFound.popularLinks")}</span>
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <Link href="/dashboard" className="text-wise-green hover:underline">
+            <Link href="/dashboard" className="text-emerald-700 dark:text-wise-green hover:underline">
               {t("common.errors.notFound.dashboardBtn")}
             </Link>
             <span>•</span>
-            <Link href="/pricing" className="text-wise-green hover:underline">
+            <Link href="/pricing" className="text-emerald-700 dark:text-wise-green hover:underline">
               {t("common.nav.pricing")}
             </Link>
             <span>•</span>
-            <Link href="/blog" className="text-wise-green hover:underline">
+            <Link href="/blog" className="text-emerald-700 dark:text-wise-green hover:underline">
               Blog &amp; Panduan
             </Link>
             <span>•</span>
-            <Link href="/about" className="text-wise-green hover:underline">
+            <Link href="/about" className="text-emerald-700 dark:text-wise-green hover:underline">
               Tentang Kami
             </Link>
           </div>

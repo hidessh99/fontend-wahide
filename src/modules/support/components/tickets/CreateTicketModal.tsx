@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useRef } from "react";
 import { CreateTicketInput, TicketCategory, TicketPriority } from "@/modules/support/types/support.types";
@@ -132,7 +132,7 @@ export function CreateTicketModal({
         {/* Sticky Header */}
         <div className="p-5 sm:p-6 pb-4 border-b border-border/80 flex items-start justify-between shrink-0">
           <div className="flex items-center gap-3">
-            <div className="size-10 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center">
+            <div className="size-10 rounded-full bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green flex items-center justify-center">
               <LifeBuoy className="size-5" />
             </div>
             <div>
@@ -255,14 +255,14 @@ export function CreateTicketModal({
                   disabled={isLoading}
                   className="w-full py-2.5 px-4 rounded-md border border-dashed border-border hover:border-wise-green bg-surface/50 dark:bg-[#10110e]/50 hover:bg-wise-green/5 text-foreground-secondary hover:text-foreground flex items-center justify-center gap-2 text-xs font-semibold transition cursor-pointer"
                 >
-                  <Paperclip className="size-3.5 text-wise-green" />
+                  <Paperclip className="size-3.5 text-emerald-700 dark:text-wise-green" />
                   <span>{t("support.selectScreenshot")}</span>
                 </button>
               )}
 
               {isUploading && (
                 <div className="w-full py-3 px-4 rounded-md border border-border bg-surface dark:bg-[#10110e] flex items-center justify-center gap-2 text-xs font-semibold text-foreground-secondary">
-                  <Loader2 className="size-4 animate-spin text-wise-green" />
+                  <Loader2 className="size-4 animate-spin text-emerald-700 dark:text-wise-green" />
                   <span>{t("support.uploadingImage")}</span>
                 </div>
               )}
@@ -280,7 +280,7 @@ export function CreateTicketModal({
                     </div>
                     <div className="overflow-hidden">
                       <div className="flex items-center gap-1.5">
-                        <CheckCircle2 className="size-3 text-wise-green shrink-0" />
+                        <CheckCircle2 className="size-3 text-emerald-700 dark:text-wise-green shrink-0" />
                         <p className="text-xs font-bold text-foreground truncate">
                           {attachmentFileName || t("support.screenshotUploaded")}
                         </p>
@@ -290,7 +290,7 @@ export function CreateTicketModal({
                           href={attachmentUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[11px] font-semibold text-wise-green hover:underline inline-flex items-center gap-1 mt-0.5"
+                          className="text-[11px] font-semibold text-emerald-700 dark:text-wise-green hover:underline inline-flex items-center gap-1 mt-0.5"
                         >
                           <ImageIcon className="size-3" />
                           <span>{t("support.viewAttachment")} ↗</span>

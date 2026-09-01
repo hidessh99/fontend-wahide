@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { AddressView } from "@/components/dashboard/AddressView";
+import { AddressView } from "@/modules/iam/views/AddressView";
 
 export const metadata: Metadata = {
   title: "Alamat Bisnis & Penagihan",
