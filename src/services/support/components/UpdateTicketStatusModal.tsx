@@ -203,7 +203,7 @@ export function UpdateTicketStatusModal({
                       </div>
                       {isSelected && (
                         <span className="size-4 rounded-full bg-wise-green text-dark-green flex items-center justify-center">
-                          <Check className="size-2.5 stroke-[3]" />
+                          <Check className="size-2.5 stroke-3" />
                         </span>
                       )}
                     </div>
