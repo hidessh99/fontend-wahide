@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import { useBilling } from "@/services/finance/hooks/useBilling";
-import { BalanceCard } from "@/services/finance/components/BalanceCard";
-import { InvoiceTable } from "@/services/finance/components/InvoiceTable";
+import { BalanceCard } from "@/services/finance/components/balance/BalanceCard";
+import { InvoiceTable } from "@/services/finance/components/invoices/InvoiceTable";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/context";
@@ -13,12 +13,12 @@ import { Invoice } from "@/services/finance/types/finance.types";
 import { Receipt, Search, X } from "lucide-react";
 
 const TopUpModal = dynamic(
-  () => import("@/services/finance/components/TopUpModal").then((m) => m.TopUpModal),
+  () => import("@/services/finance/components/balance/TopUpModal").then((m) => m.TopUpModal),
   { ssr: false }
 );
 
 const InvoiceReceiptModal = dynamic(
-  () => import("@/services/finance/components/InvoiceReceiptModal").then((m) => m.InvoiceReceiptModal),
+  () => import("@/services/finance/components/invoices/InvoiceReceiptModal").then((m) => m.InvoiceReceiptModal),
   { ssr: false }
 );
 

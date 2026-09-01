@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useAdmin } from "@/services/admin/hooks/useAdmin";
-import { GlobalMetricsGrid } from "@/services/admin/components/GlobalMetricsGrid";
+import { GlobalMetricsGrid } from "@/services/admin/components/overview/GlobalMetricsGrid";
 import { useI18n } from "@/lib/i18n/context";
 import { ShieldAlert } from "lucide-react";
 

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useUserActivities } from "@/services/admin/hooks/useUserActivities";
-import { UserActivitiesTable } from "@/services/admin/components/UserActivitiesTable";
+import { UserActivitiesTable } from "@/services/admin/components/activity/UserActivitiesTable";
 import { Activity, ShieldCheck } from "lucide-react";
 
 export function AdminActivitiesView() {

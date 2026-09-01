@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { AuditLogsTable } from "@/services/admin/components/AuditLogsTable";
+import { AuditLogsTable } from "@/services/admin/components/logs/AuditLogsTable";
 import { useI18n } from "@/lib/i18n/context";
 import { ShieldCheck } from "lucide-react";
 

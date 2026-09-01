@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useAdmin } from "@/services/admin/hooks/useAdmin";
-import { UsersTable } from "@/services/admin/components/UsersTable";
+import { UsersTable } from "@/services/admin/components/users/UsersTable";
 import { useI18n } from "@/lib/i18n/context";
 import { Users } from "lucide-react";
 

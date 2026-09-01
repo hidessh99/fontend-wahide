@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from "react";
 import { useTeam } from "@/services/team/hooks/useTeam";
 import { Agent, AgentRole } from "@/services/team/types/team.types";
-import { DeleteTeamMemberModal } from "@/services/team/components/DeleteTeamMemberModal";
+import { DeleteTeamMemberModal } from "@/services/team/components/modals/DeleteTeamMemberModal";
 import { Button } from "@/components/ui/button";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { useI18n } from "@/lib/i18n/context";

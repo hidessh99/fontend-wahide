@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { CampaignList } from "@/services/campaign/components/CampaignList";
-import { MessageLogsTable } from "@/services/campaign/components/MessageLogsTable";
+import { CampaignList } from "@/services/campaign/components/broadcast/CampaignList";
+import { MessageLogsTable } from "@/services/campaign/components/logs/MessageLogsTable";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { useI18n } from "@/lib/i18n/context";
 import { Send, Layers, ListChecks } from "lucide-react";

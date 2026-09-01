@@ -3,22 +3,22 @@
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import { useContacts } from "@/services/contact/hooks/useContacts";
-import { ContactTable } from "@/services/contact/components/ContactTable";
+import { ContactTable } from "@/services/contact/components/list/ContactTable";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { Contact, CreateContactInput } from "@/services/contact/types/contact.types";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/context";
 
 const ContactModal = dynamic(
-  () => import("@/services/contact/components/ContactModal").then((m) => m.ContactModal),
+  () => import("@/services/contact/components/modals/ContactModal").then((m) => m.ContactModal),
   { ssr: false }
 );
 const ImportCsvModal = dynamic(
-  () => import("@/services/contact/components/ImportCsvModal").then((m) => m.ImportCsvModal),
+  () => import("@/services/contact/components/modals/ImportCsvModal").then((m) => m.ImportCsvModal),
   { ssr: false }
 );
 const DeleteContactModal = dynamic(
-  () => import("@/services/contact/components/DeleteContactModal").then((m) => m.DeleteContactModal),
+  () => import("@/services/contact/components/modals/DeleteContactModal").then((m) => m.DeleteContactModal),
   { ssr: false }
 );
 
