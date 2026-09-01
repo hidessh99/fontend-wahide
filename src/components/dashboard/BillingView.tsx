@@ -79,6 +79,26 @@ export function BillingView() {
         />
       </ErrorBoundary>
 
+      {/* Invoice Section Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2.5">
+            <div className="size-7 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center shrink-0">
+              <Receipt className="size-3.5" />
+            </div>
+            <h2 className="text-lg sm:text-xl font-black text-foreground tracking-tight">
+              {t("billing.invoicesTitle")}
+            </h2>
+            <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-muted border border-border text-foreground-muted">
+              {total} {t("billing.invoicesCountLabel")}
+            </span>
+          </div>
+          <p className="text-xs font-semibold text-foreground-secondary">
+            {t("billing.invoicesSubtitle")}
+          </p>
+        </div>
+      </div>
+
       {/* Filter Toolbar (Search Submit & Horizontal Scrollable Status Filters) */}
       <div className="space-y-3 sm:space-y-4 p-3 sm:p-4 rounded-md border border-border bg-surface dark:bg-[#161715]">
         {/* Search Form with Submit Button */}

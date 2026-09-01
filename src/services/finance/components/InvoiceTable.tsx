@@ -63,15 +63,6 @@ export function InvoiceTable({
 
   return (
     <div className="rounded-md border border-border bg-surface dark:bg-[#161715] overflow-hidden shadow-xs">
-      {/* Table Header */}
-      <div className="grid grid-cols-12 gap-3 px-5 py-4 bg-muted/60 border-b border-border text-xs font-extrabold uppercase tracking-wider text-foreground-muted select-none">
-        <div className="col-span-4 sm:col-span-3">{t("billing.tableHeaderInvoice")}</div>
-        <div className="hidden sm:block sm:col-span-4">{t("billing.tableHeaderDesc")}</div>
-        <div className="col-span-3 sm:col-span-2">{t("billing.tableHeaderAmount")}</div>
-        <div className="col-span-3 sm:col-span-2 text-center">{t("billing.tableHeaderStatus")}</div>
-        <div className="col-span-2 sm:col-span-1 text-right">{t("billing.tableHeaderAction")}</div>
-      </div>
-
       {/* Invoices List */}
       {invoices.length === 0 ? (
         <div className="p-6 sm:p-10 text-center space-y-2">

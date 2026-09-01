@@ -4,28 +4,7 @@ import { Invoice, TenantBalance, CreateTopUpInput, InvoiceStatus, PaymentMethod,
 
 const BILLING_BASE = env.NEXT_PUBLIC_FINANCE_API_URL || env.NEXT_PUBLIC_API_BASE_URL;
 
-export const DEFAULT_INVOICES: Invoice[] = [
-  {
-    id: "inv_001",
-    invoiceNumber: "INV/2026/08/WAH-9841",
-    description: "Paket Professional 1 Bulan (25.000 Pesan Broadcast)",
-    amount: 399000,
-    status: "PAID",
-    paymentMethod: "QRIS",
-    paidAt: "2026-08-01T10:15:00Z",
-    createdAt: "2026-08-01T10:12:00Z",
-  },
-  {
-    id: "inv_002",
-    invoiceNumber: "INV/2026/08/WAH-9920",
-    description: "Top-Up Saldo Kuota Ekstra (+5.000 Pesan)",
-    amount: 150000,
-    status: "PAID",
-    paymentMethod: "QRIS",
-    paidAt: "2026-08-15T14:30:00Z",
-    createdAt: "2026-08-15T14:28:00Z",
-  },
-];
+export const DEFAULT_INVOICES: Invoice[] = [];
 
 export function normalizeInvoice(raw: Record<string, unknown>): Invoice {
   const statusStr = String(raw.status || "PENDING").toUpperCase();
@@ -80,9 +59,9 @@ export function normalizeInvoice(raw: Record<string, unknown>): Invoice {
 export function normalizeBalance(raw: Record<string, unknown> | null | undefined): TenantBalance {
   if (!raw) {
     return {
-      amount: 250000,
+      amount: 0,
       currency: "IDR",
-      lastTopUpAt: "2026-08-15T14:30:00Z",
+      lastTopUpAt: undefined,
     };
   }
   return {
@@ -129,15 +108,15 @@ export const financeApi = {
       const resSize = typeof addInfo?.size === "number" ? addInfo.size : pageSize;
 
       return {
-        invoices: invoices.length > 0 ? invoices : DEFAULT_INVOICES,
-        total: total > 0 ? total : DEFAULT_INVOICES.length,
+        invoices,
+        total,
         page: resPage,
         pageSize: resSize,
       };
     } catch {
       return {
-        invoices: DEFAULT_INVOICES,
-        total: DEFAULT_INVOICES.length,
+        invoices: [],
+        total: 0,
         page: params?.page ?? 1,
         pageSize: params?.pageSize ?? 10,
       };

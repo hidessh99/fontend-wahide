@@ -6,6 +6,7 @@
   "topUpBalance": "Top-Up Balance",
   "invoicesTitle": "Invoice Payment History",
   "invoicesSubtitle": "Complete history of subscription payments and balance top-ups for your business account.",
+  "invoicesCountLabel": "Invoices",
   "tableHeaderInvoice": "Invoice No.",
   "tableHeaderDesc": "Service Description",
   "tableHeaderDate": "Date",

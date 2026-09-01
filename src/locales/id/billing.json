@@ -6,6 +6,7 @@
   "topUpBalance": "Top-Up Saldo",
   "invoicesTitle": "Riwayat Faktur Pembayaran",
   "invoicesSubtitle": "Seluruh riwayat pembayaran langganan dan top-up saldo akun bisnis Anda.",
+  "invoicesCountLabel": "Faktur",
   "tableHeaderInvoice": "No. Faktur",
   "tableHeaderDesc": "Deskripsi Layanan",
   "tableHeaderDate": "Tanggal",
