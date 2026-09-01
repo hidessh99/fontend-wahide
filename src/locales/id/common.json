@@ -292,7 +292,21 @@
     "saveBtn": "Simpan Alamat Bisnis",
     "saving": "Menyimpan...",
     "saveSuccess": "Alamat berhasil disimpan!",
-    "securityNote": "Data alamat terenkripsi & tersimpan aman pada database IAM."
+    "securityNote": "Data alamat terenkripsi & tersimpan aman pada database IAM.",
+    "billingRequiredBannerTitle": "Kelengkapan Alamat Diperlukan untuk Top-Up",
+    "billingRequiredBannerDesc": "Untuk melanjutkan transaksi Top-Up saldo dan penerbitan faktur tagihan resmi, silakan lengkapi alamat bisnis Anda terlebih dahulu.",
+    "saveAndReturnToast": "Alamat berhasil disimpan! Mengalihkan ke transaksi Top-Up..."
+  },
+  "billing": {
+    "title": "Faktur & Tagihan Pembayaran",
+    "subtitle": "Kelola saldo deposit broadcast, riwayat faktur pembayaran langganan, dan unduh bukti transaksi resmi bisnis Anda.",
+    "depositBalanceTitle": "Saldo Deposit Transaksi",
+    "depositBalanceDesc": "Digunakan untuk pengiriman broadcast WhatsApp dan penambahan kuota.",
+    "topUpBalance": "Top Up Saldo",
+    "invoicesTitle": "Riwayat Faktur & Kwitansi",
+    "invoicesSubtitle": "Daftar seluruh riwayat pembayaran dan faktur resmi penagihan.",
+    "invoicesCountLabel": "Total Faktur",
+    "addressRequiredForTopUp": "Silakan lengkapi alamat bisnis Anda terlebih dahulu untuk melanjutkan Top-Up saldo."
   },
   "errors": {
     "notFound": {

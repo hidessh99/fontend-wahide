@@ -1,9 +1,11 @@
 "use client";
 
 import React from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useUserAddress } from "../../hooks/useUserAddress";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/context";
+import { toast } from "sonner";
 import {
   MapPin,
   Building,
@@ -15,10 +17,17 @@ import {
   CheckCircle2,
   ShieldCheck,
   Info,
+  ArrowLeft,
 } from "lucide-react";
 
 export function UserAddressForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const { t } = useI18n();
+
+  const from = searchParams.get("from");
+  const action = searchParams.get("action");
+
   const {
     provinces,
     cities,
@@ -35,6 +44,20 @@ export function UserAddressForm() {
     handleFieldChange,
     handleSubmit,
   } = useUserAddress();
+
+  const onFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const success = await handleSubmit(e);
+    if (success && from === "billing") {
+      toast.success(
+        t("address.saveAndReturnToast") ||
+          "Alamat berhasil disimpan! Mengalihkan ke transaksi Top-Up..."
+      );
+      setTimeout(() => {
+        router.push(`/billing${action ? `?action=${action}` : ""}`);
+      }, 500);
+    }
+  };
 
   if (isLoadingInitial) {
     return (
@@ -56,6 +79,23 @@ export function UserAddressForm() {
 
   return (
     <div className="space-y-6">
+      {/* Contextual Notice when redirected from Billing / TopUp */}
+      {from === "billing" && (
+        <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 dark:bg-amber-500/5 p-4 sm:p-5 flex items-start gap-3.5 shadow-xs animate-in fade-in duration-200">
+          <div className="size-8 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 mt-0.5">
+            <Info className="size-4" />
+          </div>
+          <div className="space-y-1">
+            <h3 className="font-bold text-xs sm:text-sm text-foreground">
+              {t("address.billingRequiredBannerTitle")}
+            </h3>
+            <p className="text-xs text-foreground-secondary leading-relaxed">
+              {t("address.billingRequiredBannerDesc")}
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Header Info Status Card */}
       <div className="rounded-xl border border-border bg-surface dark:bg-[#161715] p-5 sm:p-6 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -90,7 +130,7 @@ export function UserAddressForm() {
 
       {/* Main Address Form Container */}
       <form
-        onSubmit={handleSubmit}
+        onSubmit={onFormSubmit}
         className="rounded-xl border border-border bg-surface dark:bg-[#161715] p-5 sm:p-8 shadow-xs space-y-6"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
@@ -265,25 +305,39 @@ export function UserAddressForm() {
             <span>{t("address.securityNote")}</span>
           </div>
 
-          <Button
-            type="submit"
-            variant="primaryPill"
-            size="lg"
-            disabled={isSaving}
-            className="w-full sm:w-auto min-w-44 gap-2 font-bold shadow-sm cursor-pointer"
-          >
-            {isSaving ? (
-              <>
-                <Loader2 className="size-4 animate-spin" />
-                <span>{t("address.saving")}</span>
-              </>
-            ) : (
-              <>
-                <Save className="size-4" />
-                <span>{t("address.saveBtn")}</span>
-              </>
+          <div className="flex items-center gap-3">
+            {from === "billing" && (
+              <Button
+                type="button"
+                variant="outlinePill"
+                size="lg"
+                onClick={() => router.push("/billing")}
+                className="gap-1.5 text-xs font-bold cursor-pointer"
+              >
+                <ArrowLeft className="size-4" />
+                <span>Batal & Kembali ke Tagihan</span>
+              </Button>
             )}
-          </Button>
+            <Button
+              type="submit"
+              variant="primaryPill"
+              size="lg"
+              disabled={isSaving}
+              className="w-full sm:w-auto min-w-44 gap-2 font-bold shadow-sm cursor-pointer"
+            >
+              {isSaving ? (
+                <>
+                  <Loader2 className="size-4 animate-spin" />
+                  <span>{t("address.saving")}</span>
+                </>
+              ) : (
+                <>
+                  <Save className="size-4" />
+                  <span>{t("address.saveBtn")}</span>
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </form>
     </div>

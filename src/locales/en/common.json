@@ -292,7 +292,21 @@
     "saveBtn": "Save Business Address",
     "saving": "Saving...",
     "saveSuccess": "Address saved successfully!",
-    "securityNote": "Address data is encrypted & stored securely in the IAM database."
+    "securityNote": "Address data is encrypted & stored securely in the IAM database.",
+    "billingRequiredBannerTitle": "Address Details Required for Top-Up",
+    "billingRequiredBannerDesc": "To proceed with balance Top-Up transactions and generate official invoices, please complete your business address first.",
+    "saveAndReturnToast": "Address saved! Redirecting to Top-Up payment..."
+  },
+  "billing": {
+    "title": "Invoices & Payment Billing",
+    "subtitle": "Manage broadcast deposit balance, view subscription invoice history, and download official receipts.",
+    "depositBalanceTitle": "Transaction Deposit Balance",
+    "depositBalanceDesc": "Used for sending WhatsApp broadcasts and purchasing extra quotas.",
+    "topUpBalance": "Top Up Balance",
+    "invoicesTitle": "Invoice History & Receipts",
+    "invoicesSubtitle": "List of all payment history and official billing invoices.",
+    "invoicesCountLabel": "Total Invoices",
+    "addressRequiredForTopUp": "Please configure your business address first to proceed with balance Top-Up."
   },
   "errors": {
     "notFound": {

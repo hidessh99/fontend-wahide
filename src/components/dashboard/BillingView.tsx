@@ -1,8 +1,10 @@
-﻿"use client";
+"use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useBilling } from "@/modules/finance/hooks/useBilling";
+import { addressApi } from "@/modules/iam/api/address.api";
 import { BalanceCard } from "@/modules/finance/components/balance/BalanceCard";
 import { InvoiceTable } from "@/modules/finance/components/invoices/InvoiceTable";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
@@ -23,6 +25,8 @@ const InvoiceReceiptModal = dynamic(
 );
 
 export function BillingView() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const { t } = useI18n();
   const {
     balance,
@@ -44,6 +48,36 @@ export function BillingView() {
   const [searchInput, setSearchInput] = useState("");
   const [isTopUpOpen, setIsTopUpOpen] = useState(false);
   const [selectedReceipt, setSelectedReceipt] = useState<Invoice | null>(null);
+
+  // Check and open TopUp if URL param action=topup is passed
+  useEffect(() => {
+    if (searchParams.get("action") === "topup") {
+      addressApi.getUserAddress().then((addr) => {
+        if (addr && addr.address?.trim()) {
+          setIsTopUpOpen(true);
+        }
+      });
+    }
+  }, [searchParams]);
+
+  // Just-in-Time Address Check when clicking Top-Up
+  const handleOpenTopUp = async () => {
+    try {
+      const userAddress = await addressApi.getUserAddress();
+      if (!userAddress || !userAddress.address?.trim() || !userAddress.city?.trim()) {
+        toast.info(
+          t("billing.addressRequiredForTopUp") ||
+            "Silakan lengkapi alamat bisnis Anda terlebih dahulu untuk melanjutkan Top-Up saldo."
+        );
+        router.push("/settings/address?from=billing&action=topup");
+        return;
+      }
+      setIsTopUpOpen(true);
+    } catch {
+      // Fallback: If address check fails, allow opening modal
+      setIsTopUpOpen(true);
+    }
+  };
 
   const statusOptions = [
     { value: "ALL", label: "Semua" },
@@ -71,11 +105,11 @@ export function BillingView() {
         </div>
       </div>
 
-      {/* Balance Card with Error Boundary */}
+      {/* Balance Card with Error Boundary & JIT Address Guard */}
       <ErrorBoundary fallbackTitle="Gagal Memuat Saldo Deposit">
         <BalanceCard
           balance={balance}
-          onOpenTopUp={() => setIsTopUpOpen(true)}
+          onOpenTopUp={handleOpenTopUp}
         />
       </ErrorBoundary>
 

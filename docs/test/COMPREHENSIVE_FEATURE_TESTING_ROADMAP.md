@@ -55,7 +55,7 @@
 - [x] **3.1 Kartu Metrik KPI Ringkasan Bisnis** — `/dashboard` — Periksa 4 kartu ringkasan (Total Kontak, Kampanye Aktif, Sisa Kuota Pesan, Perangkat Terhubung) → Angka statistik sinkron dengan session tenant di Zustand.
 - [x] **3.2 Tabel Sesi Node WhatsApp Terkini** — `/dashboard` — Periksa tabel perangkat aktif di bawah widget ringkasan → Status badge (*CONNECTED / PAIRING / DISCONNECTED*) tampil dengan warna indikator yang tepat.
 - [x] **3.3 Widget Riwayat Kampanye Broadcast Terkini** — `/dashboard` — Periksa log pesan siaran terbaru → Tanggal, nama kampanye, persentase progress blast tampil realtime.
-- [ ] **3.4 Tombol Navigasi Cepat (Quick Action Pills)** — `/dashboard` — Klik tombol *Tambah Perangkat*, *Buat Kampanye*, *Top-Up Saldo* → Modal wizard terkait langsung terbuka seketika via dynamic code-splitting.
+- [x] **3.4 Tombol Navigasi Cepat (Quick Action Pills)** — `/dashboard` — Klik tombol *Tambah Perangkat*, *Buat Kampanye*, *Top-Up Saldo* → Modal wizard terkait langsung terbuka seketika via dynamic code-splitting.
 - [ ] **3.5 Eliminasi Unnecessary Re-renders** — Buka React DevTools Profiler saat navigasi antar tab dasbor → Header dan Sidebar tidak mengalami re-render ulang berkat atomic Zustand selectors.
 
 ---
@@ -126,10 +126,10 @@
 
 ## 🎫 10. Modul Pusat Bantuan & Sistem Tiket Support (`/support`)
 
-- [ ] **10.1 Daftar Tiket Bantuan & Filter Status** — `/support` — Buka daftar tiket → Filter tiket berdasarkan status (*OPEN, IN_PROGRESS, RESOLVED, CLOSED*), nomor tiket format `TKT-xxxx` tampil rapi.
-- [ ] **10.2 Buat Tiket Bantuan Baru (Create Ticket Modal)** — `/support` — Klik *Buat Tiket* → Modal `CreateTicketModal` terbuka dinamis, isi Judul Kendala, Kategori (Teknis/Billing), Prioritas, dan Pesan Pengaduan → Tiket baru terbuat dengan status *OPEN*.
-- [ ] **10.3 Percakapan Live Thread Tiket (Thread Modal)** — `/support` — Klik pada salah satu tiket → Modal `TicketThreadModal` terbuka dinamis, riwayat percakapan antara pengguna dan tim support tampil kronologis.
-- [ ] **10.4 Balas Pesan Tiket & Penyelesaian Kendala** — `/support` — Ketik balasan pesan di thread modal, klik Kirim → Balasan langsung muncul di gelembung chat; klik *Tandai Selesai* → Status tiket berubah menjadi *RESOLVED*.
+- [x] **10.1 Daftar Tiket Bantuan & Filter Status** — `/support` — Buka daftar tiket → Filter tiket berdasarkan status (*OPEN, IN_PROGRESS, RESOLVED, CLOSED*), nomor tiket format `TKT-xxxx` tampil rapi.
+- [x] **10.2 Buat Tiket Bantuan Baru (Create Ticket Modal)** — `/support` — Klik *Buat Tiket* → Modal `CreateTicketModal` terbuka dinamis, isi Judul Kendala, Kategori (Teknis/Billing), Prioritas, dan Pesan Pengaduan → Tiket baru terbuat dengan status *OPEN*.
+- [x] **10.3 Percakapan Live Thread Tiket (Thread Modal)** — `/support` — Klik pada salah satu tiket → Modal `TicketThreadModal` terbuka dinamis, riwayat percakapan antara pengguna dan tim support tampil kronologis.
+- [x] **10.4 Balas Pesan Tiket & Penyelesaian Kendala** — `/support` — Ketik balasan pesan di thread modal, klik Kirim → Balasan langsung muncul di gelembung chat; klik *Tandai Selesai* → Status tiket berubah menjadi *RESOLVED*.
 
 ---
 
