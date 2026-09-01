@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description:
     "Kelola data lokasi fisik dan alamat penagihan resmi untuk faktur serta verifikasi akun bisnis Anda.",
   alternates: {
-    canonical: "/address",
+    canonical: "/settings/address",
   },
   robots: {
     index: false,
@@ -14,6 +14,6 @@ export const metadata: Metadata = {
   },
 };
 
-export default function AddressPage() {
+export default function SettingsAddressPage() {
   return <AddressView />;
 }

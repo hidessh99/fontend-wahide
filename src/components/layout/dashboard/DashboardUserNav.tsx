@@ -72,7 +72,7 @@ export function DashboardUserNav() {
               <span>{t("dashboardMenu.profile")}</span>
             </Link>
             <Link
-              href="/address"
+              href="/settings/address"
               onClick={() => setOpen(false)}
               className="flex items-center gap-2 px-3 py-2 rounded-full hover:bg-muted hover:text-foreground transition"
             >
