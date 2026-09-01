@@ -173,10 +173,10 @@ export function MessageLogsTable() {
   return (
     <div className="space-y-4">
       {/* Search Form with Submit Button & Status Filter */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-md border border-border bg-surface dark:bg-[#161715]">
-        <form onSubmit={handleSearchSubmit} className="flex-1 max-w-md flex items-center gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 sm:p-4 rounded-md border border-border bg-surface dark:bg-[#161715]">
+        <form onSubmit={handleSearchSubmit} className="flex-1 flex items-center gap-2">
           <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted pointer-events-none" />
             <input
               type="text"
               value={searchInput}
@@ -207,11 +207,11 @@ export function MessageLogsTable() {
           </Button>
         </form>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <select
             value={statusFilter}
             onChange={(e) => handleStatusChange(e.target.value)}
-            className="h-10 px-3.5 rounded-full bg-surface dark:bg-[#10110e] text-foreground text-xs font-semibold border border-border outline-none focus:border-wise-green cursor-pointer"
+            className="w-full sm:w-auto h-10 px-3.5 rounded-full bg-surface dark:bg-[#10110e] text-foreground text-xs font-semibold border border-border outline-none focus:border-wise-green cursor-pointer"
           >
             <option value="ALL">{t("campaign.filterAllStatus")}</option>
             <option value="READ">{t("campaign.statusRead")}</option>
@@ -221,19 +221,10 @@ export function MessageLogsTable() {
         </div>
       </div>
 
-      {/* Logs Virtualized Table */}
+      {/* Logs Table */}
       <div className="rounded-md border border-border bg-surface dark:bg-[#161715] overflow-hidden shadow-xs">
-        {/* Table Header */}
-        <div className="grid grid-cols-12 gap-3 px-5 py-4 bg-muted/60 border-b border-border text-xs font-extrabold uppercase tracking-wider text-foreground-muted select-none">
-          <div className="col-span-4 sm:col-span-3">{t("campaign.tableHeaderRecipient")}</div>
-          <div className="hidden sm:block sm:col-span-3">{t("campaign.tableHeaderCampaign")}</div>
-          <div className="col-span-5 sm:col-span-4">{t("campaign.tableHeaderMessage")}</div>
-          <div className="col-span-3 sm:col-span-2 text-right">{t("campaign.tableHeaderStatusTime")}</div>
-        </div>
-
-        {/* Table Body */}
         {paginatedLogs.length === 0 ? (
-          <div className="p-12 text-center space-y-2">
+          <div className="p-6 sm:p-10 text-center space-y-2">
             <AlertCircle className="size-10 text-foreground-muted mx-auto" />
             <h3 className="font-bold text-sm text-foreground">Tidak ada log pesan ditemukan</h3>
             <p className="text-xs text-foreground-secondary">
@@ -243,63 +234,24 @@ export function MessageLogsTable() {
             </p>
           </div>
         ) : (
-          <div
-            ref={parentRef}
-            className="max-h-135 overflow-auto divide-y divide-border/50 text-xs font-semibold"
-          >
-            <div
-              style={{
-                height: `${rowVirtualizer.getTotalSize()}px`,
-                width: "100%",
-                position: "relative",
-              }}
-            >
-              {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-                const log = paginatedLogs[virtualRow.index];
-                if (!log) return null;
-
-                return (
-                  <div
-                    key={log.id}
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      width: "100%",
-                      height: `${virtualRow.size}px`,
-                      transform: `translateY(${virtualRow.start}px)`,
-                    }}
-                    className="grid grid-cols-12 gap-3 px-5 py-3.5 items-center hover:bg-muted/40 transition-colors min-h-14.5"
-                  >
-                    {/* Recipient (Enlarged Typography) */}
-                    <div className="col-span-4 sm:col-span-3 space-y-0.5">
-                      <span className="font-bold text-sm sm:text-base text-foreground block truncate">
+          <div>
+            {/* Mobile View: Card-based Message Logs (Visible on < 768px) */}
+            <div className="md:hidden divide-y divide-border/50">
+              {paginatedLogs.map((log) => (
+                <div key={log.id} className="p-3.5 sm:p-4 space-y-2 bg-surface dark:bg-[#161715]">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="min-w-0">
+                      <span className="font-bold text-sm text-foreground block truncate">
                         {log.recipientName || t("campaign.unnamedRecipient")}
                       </span>
-                      <span className="text-xs sm:text-sm text-foreground-secondary font-mono block">
+                      <span className="text-xs text-foreground-secondary font-mono block">
                         +{log.recipientPhone}
                       </span>
                     </div>
 
-                    {/* Campaign */}
-                    <div className="hidden sm:block sm:col-span-3 text-sm font-semibold text-foreground-secondary truncate">
-                      {log.campaignName}
-                    </div>
-
-                    {/* Message Snippet */}
-                    <div className="col-span-5 sm:col-span-4 text-xs sm:text-sm text-foreground-secondary truncate">
-                      <span className="block truncate">{log.messageSnippet}</span>
-                      {log.errorMessage && (
-                        <span className="text-xs text-rose-500 block truncate font-mono mt-0.5">
-                          {log.errorMessage}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Status & Time */}
-                    <div className="col-span-3 sm:col-span-2 flex flex-col items-end justify-center space-y-0.5">
+                    <div className="flex flex-col items-end shrink-0">
                       {renderStatusBadge(log.status)}
-                      <span className="text-xs text-foreground-muted font-mono">
+                      <span className="text-[11px] text-foreground-muted font-mono mt-0.5">
                         {new Date(log.sentAt).toLocaleTimeString([], {
                           hour: "2-digit",
                           minute: "2-digit",
@@ -307,17 +259,114 @@ export function MessageLogsTable() {
                       </span>
                     </div>
                   </div>
-                );
-              })}
+
+                  <div className="p-2 rounded bg-muted/40 text-xs text-foreground-secondary">
+                    <p className="line-clamp-2">{log.messageSnippet}</p>
+                    {log.errorMessage && (
+                      <span className="text-xs text-rose-500 block truncate font-mono mt-1">
+                        {log.errorMessage}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-between text-[11px] text-foreground-muted">
+                    <span className="truncate">{log.campaignName}</span>
+                    <span className="font-mono">
+                      {new Date(log.sentAt).toLocaleDateString("id-ID")}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop View: Tabular Virtualized Grid (Visible on >= 768px) */}
+            <div className="hidden md:block">
+              {/* Table Header */}
+              <div className="grid grid-cols-12 gap-3 px-5 py-4 bg-muted/60 border-b border-border text-xs font-extrabold uppercase tracking-wider text-foreground-muted select-none">
+                <div className="col-span-3">{t("campaign.tableHeaderRecipient")}</div>
+                <div className="col-span-3">{t("campaign.tableHeaderCampaign")}</div>
+                <div className="col-span-4">{t("campaign.tableHeaderMessage")}</div>
+                <div className="col-span-2 text-right">{t("campaign.tableHeaderStatusTime")}</div>
+              </div>
+
+              {/* Table Body */}
+              <div
+                ref={parentRef}
+                className="max-h-135 overflow-auto divide-y divide-border/50 text-xs font-semibold"
+              >
+                <div
+                  style={{
+                    height: `${rowVirtualizer.getTotalSize()}px`,
+                    width: "100%",
+                    position: "relative",
+                  }}
+                >
+                  {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+                    const log = paginatedLogs[virtualRow.index];
+                    if (!log) return null;
+
+                    return (
+                      <div
+                        key={log.id}
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          width: "100%",
+                          height: `${virtualRow.size}px`,
+                          transform: `translateY(${virtualRow.start}px)`,
+                        }}
+                        className="grid grid-cols-12 gap-3 px-5 py-3.5 items-center hover:bg-muted/40 transition-colors min-h-14.5"
+                      >
+                        {/* Recipient */}
+                        <div className="col-span-3 space-y-0.5">
+                          <span className="font-bold text-sm sm:text-base text-foreground block truncate">
+                            {log.recipientName || t("campaign.unnamedRecipient")}
+                          </span>
+                          <span className="text-xs sm:text-sm text-foreground-secondary font-mono block">
+                            +{log.recipientPhone}
+                          </span>
+                        </div>
+
+                        {/* Campaign */}
+                        <div className="col-span-3 text-sm font-semibold text-foreground-secondary truncate">
+                          {log.campaignName}
+                        </div>
+
+                        {/* Message Snippet */}
+                        <div className="col-span-4 text-xs sm:text-sm text-foreground-secondary truncate">
+                          <span className="block truncate">{log.messageSnippet}</span>
+                          {log.errorMessage && (
+                            <span className="text-xs text-rose-500 block truncate font-mono mt-0.5">
+                              {log.errorMessage}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Status & Time */}
+                        <div className="col-span-2 flex flex-col items-end justify-center space-y-0.5">
+                          {renderStatusBadge(log.status)}
+                          <span className="text-xs text-foreground-muted font-mono">
+                            {new Date(log.sentAt).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </div>
         )}
 
         {/* Pagination Footer */}
         {total > 0 && (
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-5 py-3.5 border-t border-border bg-muted/30">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 sm:px-5 sm:py-3.5 border-t border-border bg-muted/30">
             {/* Item count summary */}
-            <div className="text-xs sm:text-sm font-semibold text-foreground-secondary">
+            <div className="text-xs font-semibold text-foreground-secondary">
               Menampilkan {startItem} - {endItem} dari {total} log pesan
             </div>
 

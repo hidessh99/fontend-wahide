@@ -55,68 +55,48 @@ export function ContactTable({
 
   return (
     <div className="rounded-md border border-border bg-surface dark:bg-[#161715] overflow-hidden shadow-xs">
-      {/* Table Header */}
-      <div className="grid grid-cols-12 gap-3 px-5 py-4 bg-muted/60 border-b border-border text-xs sm:text-xs font-extrabold uppercase tracking-wider text-foreground-muted select-none">
-        <div className="col-span-1 flex items-center justify-center">
-          <button
-            type="button"
-            onClick={() => onToggleSelectAll(contacts.map((c) => c.id))}
-            className={`size-4.5 rounded border flex items-center justify-center transition cursor-pointer ${
-              isAllSelected
-                ? "bg-wise-green border-wise-green text-dark-green"
-                : "border-foreground-muted/50 hover:border-foreground"
-            }`}
-            aria-label="Pilih Semua Kontak"
-          >
-            {isAllSelected && <Check className="size-3.5 stroke-3" />}
-          </button>
+      {/* Mobile View: Card-based Contact List (Visible on < 768px) */}
+      <div className="md:hidden divide-y divide-border/40">
+        {/* Select All Bar on Mobile */}
+        <div className="p-3 bg-muted/50 border-b border-border flex items-center justify-between text-xs font-bold text-foreground-muted">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => onToggleSelectAll(contacts.map((c) => c.id))}
+              className={`size-4.5 rounded border flex items-center justify-center transition cursor-pointer ${
+                isAllSelected
+                  ? "bg-wise-green border-wise-green text-dark-green"
+                  : "border-foreground-muted/50 hover:border-foreground"
+              }`}
+              aria-label="Pilih Semua Kontak"
+            >
+              {isAllSelected && <Check className="size-3.5 stroke-3" />}
+            </button>
+            <span>Pilih Semua ({contacts.length})</span>
+          </div>
+          {selectedIds.size > 0 && (
+            <span className="text-wise-green">{selectedIds.size} terpilih</span>
+          )}
         </div>
-        <div className="col-span-6 sm:col-span-5">{t("contact.tableHeaderName")}</div>
-        <div className="col-span-4 sm:col-span-5">{t("contact.tableHeaderPhone")}</div>
-        <div className="col-span-1 text-right">{t("contact.tableHeaderActions")}</div>
-      </div>
 
-      {/* Virtualized Table Body */}
-      <div
-        ref={parentRef}
-        className="overflow-auto max-h-135 relative scrollbar-thin divide-y divide-border/40"
-      >
-        <div
-          style={{
-            height: `${rowVirtualizer.getTotalSize()}px`,
-            width: "100%",
-            position: "relative",
-          }}
-        >
-          {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-            const contact = contacts[virtualRow.index];
-            if (!contact) return null;
-            const isSelected = selectedIds.has(contact.id);
-
-            return (
-              <div
-                key={contact.id}
-                data-index={virtualRow.index}
-                ref={rowVirtualizer.measureElement}
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  transform: `translateY(${virtualRow.start}px)`,
-                }}
-                className={`grid grid-cols-12 gap-3 px-5 py-3.5 items-center transition-colors min-h-14.5 ${
-                  isSelected
-                    ? "bg-wise-green/10 dark:bg-wise-green/5"
-                    : "hover:bg-muted/40"
-                }`}
-              >
-                {/* Select Checkbox */}
-                <div className="col-span-1 flex items-center justify-center">
+        {/* Contact Cards */}
+        {contacts.map((contact) => {
+          const isSelected = selectedIds.has(contact.id);
+          return (
+            <div
+              key={contact.id}
+              className={`p-3.5 space-y-2 transition-colors ${
+                isSelected
+                  ? "bg-wise-green/10 dark:bg-wise-green/5"
+                  : "bg-surface dark:bg-[#161715]"
+              }`}
+            >
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2.5 min-w-0">
                   <button
                     type="button"
                     onClick={() => onToggleSelectOne(contact.id)}
-                    className={`size-4.5 rounded border flex items-center justify-center transition cursor-pointer ${
+                    className={`size-5 rounded border flex items-center justify-center transition cursor-pointer shrink-0 ${
                       isSelected
                         ? "bg-wise-green border-wise-green text-dark-green"
                         : "border-foreground-muted/50 hover:border-foreground"
@@ -125,27 +105,19 @@ export function ContactTable({
                   >
                     {isSelected && <Check className="size-3.5 stroke-3" />}
                   </button>
+                  <span className="font-bold text-sm text-foreground truncate">
+                    {contact.name}
+                  </span>
                 </div>
 
-                {/* Name Column (Enlarged & Bold Desktop Typography) */}
-                <div className="col-span-6 sm:col-span-5 font-bold text-sm sm:text-base text-foreground truncate tracking-tight">
-                  {contact.name}
-                </div>
-
-                {/* Phone Column (Enlarged & Clear Mono Desktop Typography) */}
-                <div className="col-span-4 sm:col-span-5 text-foreground-secondary font-mono font-medium text-xs sm:text-sm tracking-wide truncate">
-                  +{contact.phone}
-                </div>
-
-                {/* Action Buttons */}
-                <div className="col-span-1 flex items-center justify-end gap-1.5">
+                <div className="flex items-center gap-1 shrink-0">
                   <button
                     type="button"
                     onClick={() => onEdit(contact)}
                     className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
                     aria-label={`Ubah ${contact.name}`}
                   >
-                    <Edit2 className="size-4" />
+                    <Edit2 className="size-3.5" />
                   </button>
                   <button
                     type="button"
@@ -153,18 +125,132 @@ export function ContactTable({
                     className="size-8 rounded-full flex items-center justify-center text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"
                     aria-label={`Hapus ${contact.name}`}
                   >
-                    <Trash2 className="size-4" />
+                    <Trash2 className="size-3.5" />
                   </button>
                 </div>
               </div>
-            );
-          })}
+
+              <div className="pl-7 text-xs font-mono text-foreground-secondary">
+                +{contact.phone}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Desktop View: Tabular Virtualized Grid (Visible on >= 768px) */}
+      <div className="hidden md:block">
+        {/* Table Header */}
+        <div className="grid grid-cols-12 gap-3 px-5 py-4 bg-muted/60 border-b border-border text-xs font-extrabold uppercase tracking-wider text-foreground-muted select-none">
+          <div className="col-span-1 flex items-center justify-center">
+            <button
+              type="button"
+              onClick={() => onToggleSelectAll(contacts.map((c) => c.id))}
+              className={`size-4.5 rounded border flex items-center justify-center transition cursor-pointer ${
+                isAllSelected
+                  ? "bg-wise-green border-wise-green text-dark-green"
+                  : "border-foreground-muted/50 hover:border-foreground"
+              }`}
+              aria-label="Pilih Semua Kontak"
+            >
+              {isAllSelected && <Check className="size-3.5 stroke-3" />}
+            </button>
+          </div>
+          <div className="col-span-5">{t("contact.tableHeaderName")}</div>
+          <div className="col-span-4">{t("contact.tableHeaderPhone")}</div>
+          <div className="col-span-2 text-right">{t("contact.tableHeaderActions")}</div>
+        </div>
+
+        {/* Virtualized Table Body */}
+        <div
+          ref={parentRef}
+          className="overflow-auto max-h-135 relative scrollbar-thin divide-y divide-border/40"
+        >
+          <div
+            style={{
+              height: `${rowVirtualizer.getTotalSize()}px`,
+              width: "100%",
+              position: "relative",
+            }}
+          >
+            {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+              const contact = contacts[virtualRow.index];
+              if (!contact) return null;
+              const isSelected = selectedIds.has(contact.id);
+
+              return (
+                <div
+                  key={contact.id}
+                  data-index={virtualRow.index}
+                  ref={rowVirtualizer.measureElement}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    transform: `translateY(${virtualRow.start}px)`,
+                  }}
+                  className={`grid grid-cols-12 gap-3 px-5 py-3.5 items-center transition-colors min-h-14.5 ${
+                    isSelected
+                      ? "bg-wise-green/10 dark:bg-wise-green/5"
+                      : "hover:bg-muted/40"
+                  }`}
+                >
+                  {/* Select Checkbox */}
+                  <div className="col-span-1 flex items-center justify-center">
+                    <button
+                      type="button"
+                      onClick={() => onToggleSelectOne(contact.id)}
+                      className={`size-4.5 rounded border flex items-center justify-center transition cursor-pointer ${
+                        isSelected
+                          ? "bg-wise-green border-wise-green text-dark-green"
+                          : "border-foreground-muted/50 hover:border-foreground"
+                      }`}
+                      aria-label={`Pilih ${contact.name}`}
+                    >
+                      {isSelected && <Check className="size-3.5 stroke-3" />}
+                    </button>
+                  </div>
+
+                  {/* Name Column */}
+                  <div className="col-span-5 font-bold text-sm sm:text-base text-foreground truncate tracking-tight">
+                    {contact.name}
+                  </div>
+
+                  {/* Phone Column */}
+                  <div className="col-span-4 text-foreground-secondary font-mono font-medium text-xs sm:text-sm tracking-wide truncate">
+                    +{contact.phone}
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="col-span-2 flex items-center justify-end gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => onEdit(contact)}
+                      className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
+                      aria-label={`Ubah ${contact.name}`}
+                    >
+                      <Edit2 className="size-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onDelete(contact)}
+                      className="size-8 rounded-full flex items-center justify-center text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"
+                      aria-label={`Hapus ${contact.name}`}
+                    >
+                      <Trash2 className="size-4" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
       {/* Pagination Footer */}
       {total > 0 && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-5 py-3.5 border-t border-border bg-muted/30">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 sm:px-5 sm:py-3.5 border-t border-border bg-muted/30">
           {/* Item count summary */}
           <div className="text-xs sm:text-sm font-semibold text-foreground-secondary">
             {t("contact.showingPagination", {

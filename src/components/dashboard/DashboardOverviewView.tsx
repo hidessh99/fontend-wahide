@@ -36,7 +36,7 @@ export function DashboardOverviewView() {
 
   if (error) {
     return (
-      <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+      <div className="max-w-7xl mx-auto p-3 sm:p-6 lg:p-8">
         <div className="p-6 rounded-md border border-red-500/20 bg-red-500/10 text-center space-y-3">
           <p className="text-sm font-bold text-red-600 dark:text-red-400">{error}</p>
           <Button
@@ -131,9 +131,9 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
   }
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto p-3 sm:p-6 lg:p-8">
       {/* Welcome & Quick Action Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5 sm:pb-6">
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2">
             <span
@@ -158,16 +158,16 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
               <ArrowUpRight className="size-3 stroke-2.5" />
             </Link>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-foreground tracking-tight">
             Dasbor Bisnis &amp; Ringkasan
           </h1>
-          <p className="text-sm font-semibold text-foreground-secondary max-w-2xl">
+          <p className="text-xs sm:text-sm font-semibold text-foreground-secondary max-w-2xl">
             Pantau status operasional gateway WhatsApp, sisa kuota bulanan, dan antrean kampanye broadcast pesan.
           </p>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
           <Link href="/devices">
             <Button
               variant="outline"
@@ -192,9 +192,9 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
       </div>
 
       {/* 4 Stat Overview Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {/* Device Status */}
-        <div className="p-5 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-2">
+        <div className="p-4 sm:p-5 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-foreground-muted">
               WhatsApp Terhubung
@@ -273,13 +273,11 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
             {stats.total_messages_sent.toLocaleString("id-ID")} Pesan Terkirim
           </span>
         </div>
-      </div>
-
-      {/* Main 2-Column Split: Active Devices & Broadcast Campaigns / Recent Invoices */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      </div>      {/* Main 2-Column Split: Active Devices & Broadcast Campaigns / Recent Invoices */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Active WhatsApp Devices */}
         <ErrorBoundary fallbackTitle="Gagal Memuat Ringkasan Sesi WhatsApp">
-          <div className="rounded-md border border-border bg-surface dark:bg-[#161715] p-6 space-y-4">
+          <div className="rounded-md border border-border bg-surface dark:bg-[#161715] p-4 sm:p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <div className="flex items-center gap-2">
                 <Radio className="size-4 text-dark-green dark:text-wise-green" />
@@ -297,7 +295,7 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
             </div>
 
             {devices.length === 0 ? (
-              <div className="p-8 text-center text-xs text-foreground-secondary">
+              <div className="p-6 sm:p-8 text-center text-xs text-foreground-secondary">
                 Belum ada perangkat yang terhubung.
               </div>
             ) : (
@@ -319,7 +317,6 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
                           +{d.phone || "Menunggu Pairing"}
                         </span>
                       </div>
-
                     </div>
 
                     <span
@@ -341,7 +338,7 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
 
         {/* Broadcast Campaigns & Invoices Activity */}
         <ErrorBoundary fallbackTitle="Gagal Memuat Ringkasan Kampanye">
-          <div className="rounded-md border border-border bg-surface dark:bg-[#161715] p-6 space-y-4">
+          <div className="rounded-md border border-border bg-surface dark:bg-[#161715] p-4 sm:p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <div className="flex items-center gap-2">
                 <Layers className="size-4 text-dark-green dark:text-wise-green" />
@@ -401,9 +398,9 @@ interface AdminDashboardOverviewProps {
 
 function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
   return (
-    <div className="space-y-8 max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto p-3 sm:p-6 lg:p-8">
       {/* Welcome & Quick Action Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5 sm:pb-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/15 text-amber-500 border border-amber-500/20">
@@ -411,16 +408,16 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
               <span>Super Administrator Portal</span>
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-foreground tracking-tight">
             Dasbor Platform &amp; Analitik Global
           </h1>
-          <p className="text-sm font-semibold text-foreground-secondary max-w-2xl">
+          <p className="text-xs sm:text-sm font-semibold text-foreground-secondary max-w-2xl">
             Pantau kesehatan kluster server, total pengguna &amp; organisasi bisnis, serta volume pesan gateway WhatsApp di seluruh sistem.
           </p>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
           <Link href="/admin/users">
             <Button
               variant="outline"
@@ -445,9 +442,9 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
       </div>
 
       {/* 4 Stat Overview Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {/* Total Users & Tenants */}
-        <div className="p-5 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-2">
+        <div className="p-4 sm:p-5 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-foreground-muted">
               Pengguna Platform
@@ -465,7 +462,7 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
         </div>
 
         {/* WhatsApp Nodes Platform-wide */}
-        <div className="p-5 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-2">
+        <div className="p-4 sm:p-5 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-foreground-muted">
               Node WhatsApp Global
@@ -483,7 +480,7 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
         </div>
 
         {/* Messages Platform-wide */}
-        <div className="p-5 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-2">
+        <div className="p-4 sm:p-5 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-foreground-muted">
               Volume Pesan Gateway
@@ -501,7 +498,7 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
         </div>
 
         {/* Total Omset & Tickets */}
-        <div className="p-5 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-2">
+        <div className="p-4 sm:p-5 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-foreground-muted">
               Omset &amp; Tiket Bantuan
@@ -520,10 +517,10 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
       </div>
 
       {/* Main 2-Column Split for Admin */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Recent Registered Users */}
         <ErrorBoundary fallbackTitle="Gagal Memuat Pengguna Terbaru">
-          <div className="rounded-md border border-border bg-surface dark:bg-[#161715] p-6 space-y-4">
+          <div className="rounded-md border border-border bg-surface dark:bg-[#161715] p-4 sm:p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <div className="flex items-center gap-2">
                 <Users className="size-4 text-dark-green dark:text-wise-green" />
@@ -541,7 +538,7 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
             </div>
 
             {stats.recent_users.length === 0 ? (
-              <div className="p-8 text-center text-xs text-foreground-secondary">
+              <div className="p-6 sm:p-8 text-center text-xs text-foreground-secondary">
                 Belum ada pendaftaran pengguna baru.
               </div>
             ) : (
@@ -570,7 +567,7 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
 
         {/* Recent Transactions & Financial Overview */}
         <ErrorBoundary fallbackTitle="Gagal Memuat Transaksi Terbaru">
-          <div className="rounded-md border border-border bg-surface dark:bg-[#161715] p-6 space-y-4">
+          <div className="rounded-md border border-border bg-surface dark:bg-[#161715] p-4 sm:p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <div className="flex items-center gap-2">
                 <CreditCard className="size-4 text-dark-green dark:text-wise-green" />
@@ -588,7 +585,7 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
             </div>
 
             {stats.recent_transactions.length === 0 ? (
-              <div className="p-8 text-center text-xs text-foreground-secondary">
+              <div className="p-6 sm:p-8 text-center text-xs text-foreground-secondary">
                 Belum ada riwayat transaksi keuangan.
               </div>
             ) : (
@@ -630,9 +627,9 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
 
 function DashboardSkeleton() {
   return (
-    <div className="space-y-8 max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 animate-pulse">
+    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto p-3 sm:p-6 lg:p-8 animate-pulse">
       {/* Header Skeleton */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5 sm:pb-6">
         <div className="space-y-2">
           <div className="h-5 w-40 bg-foreground/10 rounded-full" />
           <div className="h-8 w-64 bg-foreground/10 rounded" />
@@ -645,9 +642,9 @@ function DashboardSkeleton() {
       </div>
 
       {/* 4 Cards Skeleton */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="p-5 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-3">
+          <div key={i} className="p-4 sm:p-5 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-3">
             <div className="flex justify-between items-center">
               <div className="h-3 w-24 bg-foreground/10 rounded" />
               <div className="size-8 rounded-full bg-foreground/10" />
@@ -659,9 +656,9 @@ function DashboardSkeleton() {
       </div>
 
       {/* 2 Columns Skeleton */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {[1, 2].map((i) => (
-          <div key={i} className="rounded-md border border-border bg-surface dark:bg-[#161715] p-6 space-y-4">
+          <div key={i} className="rounded-md border border-border bg-surface dark:bg-[#161715] p-4 sm:p-6 space-y-4">
             <div className="h-5 w-40 bg-foreground/10 rounded" />
             <div className="space-y-2.5">
               {[1, 2, 3].map((j) => (

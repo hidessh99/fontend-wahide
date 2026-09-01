@@ -50,12 +50,12 @@ export function CreateTicketModal({
 
     const validTypes = ["image/png", "image/jpeg", "image/jpg"];
     if (!validTypes.includes(file.type)) {
-      setError("Format file tidak valid. Hanya PNG, JPG, dan JPEG yang diperbolehkan.");
+      setError(t("support.errInvalidFormat"));
       return;
     }
 
     if (file.size > 1 * 1024 * 1024) {
-      setError("Ukuran file terlalu besar. Maksimal 1 MB.");
+      setError(t("support.errFileSize"));
       return;
     }
 
@@ -68,7 +68,7 @@ export function CreateTicketModal({
       const url = await supportApi.uploadImage(file);
       setAttachmentUrl(url);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal mengunggah gambar ke cloud";
+      const msg = err instanceof Error ? err.message : t("support.errUploadFailed");
       setError(msg);
       setAttachmentUrl("");
       setAttachmentFileName("");
@@ -93,7 +93,7 @@ export function CreateTicketModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!subject.trim() || !message.trim()) {
-      setError("Subjek dan rincian pesan kendala wajib diisi.");
+      setError(t("support.errRequiredFields"));
       return;
     }
 
@@ -114,7 +114,7 @@ export function CreateTicketModal({
       setPreviewUrl("");
       onClose();
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal membuat tiket";
+      const msg = err instanceof Error ? err.message : t("support.errCreateFailed");
       setError(msg);
     } finally {
       setIsLoading(false);
@@ -256,7 +256,7 @@ export function CreateTicketModal({
                   className="w-full py-2.5 px-4 rounded-md border border-dashed border-border hover:border-wise-green bg-surface/50 dark:bg-[#10110e]/50 hover:bg-wise-green/5 text-foreground-secondary hover:text-foreground flex items-center justify-center gap-2 text-xs font-semibold transition cursor-pointer"
                 >
                   <Paperclip className="size-3.5 text-wise-green" />
-                  <span>Pilih Gambar Screenshot</span>
+                  <span>{t("support.selectScreenshot")}</span>
                 </button>
               )}
 
@@ -282,7 +282,7 @@ export function CreateTicketModal({
                       <div className="flex items-center gap-1.5">
                         <CheckCircle2 className="size-3 text-wise-green shrink-0" />
                         <p className="text-xs font-bold text-foreground truncate">
-                          {attachmentFileName || "Screenshot terunggah"}
+                          {attachmentFileName || t("support.screenshotUploaded")}
                         </p>
                       </div>
                       {attachmentUrl && (

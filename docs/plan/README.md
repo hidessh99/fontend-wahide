@@ -135,3 +135,12 @@ Daftar dokumen perencanaan arsitektur, optimasi performa, dan standarisasi tekni
 
 44. **[Support Dedicated Page UX Refactor Plan](./support_dedicated_page_ux_refactor_plan.md)**
     - **Perencanaan Arsitektur UX/UI: Transformasi Modal Support Menjadi Halaman Dedicated (`/support/[id]`)**: Evaluasi mendalam UX/UI engineer perbandingan modal vs dedicated page, adopsi 2-column master-detail layout standar B2B SaaS, deep linking, sticky metadata sidebar, dan breadcrumb navigasi.
+
+45. **[Support i18n Localization Audit Plan](./support_i18n_localization_audit_plan.md)**
+    - **Audit & Rencana Perbaikan i18n: Lokalisasi Komprehensif Seluruh Modul Dukungan (`/support` & `/support/[id]`)**: Audit hardcoded strings, perluasan kamus bahasa id/en untuk pagination, sidebar detail tiket, komposer balasan, pesan validasi upload, dan status penutupan tiket.
+
+46. **[Support Mobile Responsive UX Redesign Plan](./support_mobile_responsive_ux_redesign_plan.md)**
+    - **Audit & Rencana Redesain UX/UI Mobile: Optimasi Responsivitas Modul Dukungan (`/support`)**: Evaluasi tampilan mobile viewport 360px-430px, horizontal scrollable filter chips (mencegah teks patah dua baris), form pencarian adaptif, dual-mode mobile cards vs desktop table, dan optimasi ruang padding.
+
+47. **[Mobile Responsive Systemwide UX Audit Plan](./mobile_responsive_systemwide_ux_audit_plan.md)**
+    - **Master Audit & Rencana Redesain UX/UI Responsif Seluruh Platform Wahide**: Analisis menyeluruh 4 antipattern responsivitas mobile di modul WhatsApp Devices, Billing/Invoice, Kontak, Tim/Staf, dan Portal Admin. Standardisasi horizontal scrollable filter chips, dual-mode mobile cards vs desktop tables, form pencarian adaptif, dan optimasi touch target.

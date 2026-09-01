@@ -125,12 +125,12 @@ export function ContactsView() {
   };
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto p-3 sm:p-6 lg:p-8">
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5 sm:pb-6">
         <div>
           <div className="flex items-center gap-3 mb-1">
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-foreground">
               {t("contact.title")}
             </h1>
             {total > 0 && (
@@ -145,26 +145,28 @@ export function ContactsView() {
         </div>
 
         {/* Top Action Buttons */}
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
           <Button
             variant="outline"
             size="sm"
             onClick={handleExportCsv}
             disabled={contacts.length === 0}
-            className="rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted cursor-pointer"
+            className="rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted cursor-pointer h-9 px-3.5"
           >
             <Download className="size-3.5" />
-            <span>{t("contact.exportCsv")}</span>
+            <span className="hidden sm:inline">{t("contact.exportCsv")}</span>
+            <span className="sm:hidden">Ekspor</span>
           </Button>
 
           <Button
             variant="outline"
             size="sm"
             onClick={() => setIsImportModalOpen(true)}
-            className="rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted cursor-pointer"
+            className="rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted cursor-pointer h-9 px-3.5"
           >
             <FileSpreadsheet className="size-3.5 text-dark-green dark:text-wise-green" />
-            <span>{t("contact.importCsv")}</span>
+            <span className="hidden sm:inline">{t("contact.importCsv")}</span>
+            <span className="sm:hidden">Impor</span>
           </Button>
 
           <Button
@@ -174,7 +176,7 @@ export function ContactsView() {
               setEditingContact(null);
               setIsAddModalOpen(true);
             }}
-            className="gap-1.5 text-xs font-bold shadow-sm cursor-pointer"
+            className="gap-1.5 text-xs font-bold shadow-sm cursor-pointer h-9 px-4 ml-auto sm:ml-0"
           >
             <UserPlus className="size-4" />
             <span>{t("contact.addContact")}</span>
@@ -183,17 +185,17 @@ export function ContactsView() {
       </div>
 
       {/* Filter Toolbar & Actions */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-md border border-border bg-surface dark:bg-[#161715]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 sm:p-4 rounded-md border border-border bg-surface dark:bg-[#161715]">
         {/* Search Form with Submit Button */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
             executeSearch(searchInput);
           }}
-          className="flex-1 max-w-lg flex items-center gap-2"
+          className="flex-1 flex items-center gap-2"
         >
           <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted pointer-events-none" />
             <input
               type="text"
               value={searchInput}
@@ -228,13 +230,13 @@ export function ContactsView() {
         </form>
 
         {/* Bulk Action & Refresh */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between sm:justify-end gap-2 pt-1 sm:pt-0 border-t sm:border-t-0 border-border/50">
           {selectedIds.size > 0 && (
             <Button
               variant="outline"
               size="sm"
               onClick={handleRequestBulkDelete}
-              className="rounded-full text-xs font-bold gap-1.5 text-rose-600 dark:text-rose-400 border-rose-500/20 hover:bg-rose-500/10 cursor-pointer"
+              className="rounded-full text-xs font-bold gap-1.5 text-rose-600 dark:text-rose-400 border-rose-500/20 hover:bg-rose-500/10 cursor-pointer h-9 px-3.5"
             >
               <Trash2 className="size-3.5" />
               <span>{t("contact.selectedCount", { count: selectedIds.size.toString() })}</span>
@@ -246,10 +248,10 @@ export function ContactsView() {
             size="sm"
             onClick={() => fetchContacts()}
             disabled={isLoading}
-            className="rounded-full size-9 p-0 border-border hover:border-foreground-muted cursor-pointer"
+            className="rounded-full size-8.5 p-0 border-border hover:border-foreground-muted cursor-pointer shrink-0 ml-auto sm:ml-0"
             aria-label="Refresh Kontak"
           >
-            <RefreshCw className={`size-4 ${isLoading ? "animate-spin" : ""}`} />
+            <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin" : ""}`} />
           </Button>
         </div>
       </div>
@@ -258,9 +260,9 @@ export function ContactsView() {
       {isLoading && contacts.length === 0 ? (
         <div className="h-64 rounded-md border border-border bg-surface dark:bg-[#161715] animate-pulse p-6" />
       ) : filteredContacts.length === 0 ? (
-        <div className="flex flex-col items-center justify-center p-12 text-center rounded-md border border-dashed border-border bg-surface dark:bg-[#161715]/50 space-y-4">
-          <div className="size-14 rounded-full bg-wise-green/10 text-dark-green dark:text-wise-green flex items-center justify-center">
-            <Users className="size-7" />
+        <div className="flex flex-col items-center justify-center p-6 sm:p-10 text-center rounded-md border border-dashed border-border bg-surface dark:bg-[#161715]/50 space-y-3">
+          <div className="size-12 rounded-full bg-wise-green/10 text-dark-green dark:text-wise-green flex items-center justify-center">
+            <Users className="size-6" />
           </div>
           <div className="space-y-1 max-w-sm">
             <h3 className="font-extrabold text-base sm:text-lg text-foreground">

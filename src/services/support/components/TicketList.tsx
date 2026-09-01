@@ -1,18 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import dynamic from "next/dynamic";
-import { Ticket, TicketStatus } from "../types/support.types";
+import { TicketStatus } from "../types/support.types";
 import { useSupport } from "../hooks/useSupport";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/context";
 
 const CreateTicketModal = dynamic(
   () => import("./CreateTicketModal").then((m) => m.CreateTicketModal),
-  { ssr: false }
-);
-const TicketThreadModal = dynamic(
-  () => import("./TicketThreadModal").then((m) => m.TicketThreadModal),
   { ssr: false }
 );
 import {
@@ -49,23 +46,10 @@ export function TicketList() {
     prevPage,
     fetchTickets,
     createTicket,
-    replyTicket,
   } = useSupport();
 
   const [searchInput, setSearchInput] = useState("");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
-  const [isThreadOpen, setIsThreadOpen] = useState(false);
-
-  const handleOpenThread = (ticket: Ticket) => {
-    setSelectedTicket(ticket);
-    setIsThreadOpen(true);
-  };
-
-  const handleCloseThread = () => {
-    setIsThreadOpen(false);
-    setSelectedTicket(null);
-  };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -112,58 +96,73 @@ export function TicketList() {
       return (
         <span className="inline-flex items-center gap-1 text-xs font-extrabold text-rose-600 dark:text-rose-400 uppercase">
           <ShieldAlert className="size-3.5" />
-          <span>Tinggi</span>
+          <span>{t("support.priorityHigh")}</span>
         </span>
       );
     }
     return (
       <span className="text-xs font-bold text-foreground-muted uppercase">
-        {priority === "LOW" ? "Rendah" : "Sedang"}
+        {priority === "LOW" ? t("support.priorityLow") : t("support.priorityMedium")}
       </span>
     );
   };
 
   return (
     <div className="space-y-6">
-      {/* Action Toolbar (Search Submit & Filter Pills) */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-md border border-border bg-surface dark:bg-[#161715]">
-        {/* Search Form with Submit Button */}
-        <form onSubmit={handleSearchSubmit} className="flex-1 max-w-md flex items-center gap-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted" />
-            <input
-              type="text"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              placeholder={t("support.searchPlaceholder")}
-              className="w-full h-10 pl-10 pr-9 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs"
-            />
-            {(searchInput || activeSearch) && (
-              <button
-                type="button"
-                onClick={handleClearSearch}
-                className="absolute right-3 top-1/2 -translate-y-1/2 size-5 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
-                title="Hapus Pencarian"
-                aria-label="Hapus Pencarian"
-              >
-                <X className="size-3.5" />
-              </button>
-            )}
-          </div>
+      {/* Action Toolbar (Search Form, Create Ticket CTA & Scrollable Filter Chips) */}
+      <div className="space-y-3 sm:space-y-4 p-3 sm:p-4 rounded-md border border-border bg-surface dark:bg-[#161715]">
+        {/* Top Row: Search Form + Primary CTA */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          {/* Search Form */}
+          <form onSubmit={handleSearchSubmit} className="flex-1 flex items-center gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted pointer-events-none" />
+              <input
+                type="text"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                placeholder={t("support.searchPlaceholder")}
+                className="w-full h-10 pl-10 pr-9 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs"
+              />
+              {(searchInput || activeSearch) && (
+                <button
+                  type="button"
+                  onClick={handleClearSearch}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 size-5 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
+                  title="Hapus Pencarian"
+                  aria-label="Hapus Pencarian"
+                >
+                  <X className="size-3.5" />
+                </button>
+              )}
+            </div>
+            <Button
+              type="submit"
+              variant="primaryPill"
+              size="sm"
+              className="h-10 px-4 text-xs font-bold shadow-xs shrink-0 cursor-pointer"
+            >
+              <Search className="size-3.5 mr-1" />
+              <span>{t("support.search")}</span>
+            </Button>
+          </form>
+
+          {/* Primary CTA Button */}
           <Button
-            type="submit"
             variant="primaryPill"
             size="sm"
-            className="h-10 px-4 text-xs font-bold shadow-xs shrink-0 cursor-pointer"
+            onClick={() => setIsCreateOpen(true)}
+            className="gap-2 text-xs font-bold shadow-sm h-10 px-4 cursor-pointer shrink-0"
           >
-            <Search className="size-3.5 mr-1" />
-            <span>Cari</span>
+            <Plus className="size-4" />
+            <span>{t("support.createTicket")}</span>
           </Button>
-        </form>
+        </div>
 
-        {/* Filter Pills & Buttons */}
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="flex items-center p-1 rounded-full bg-muted border border-border text-xs font-bold">
+        {/* Bottom Row: Horizontal Scrollable Filter Chips + Refresh Button */}
+        <div className="flex items-center justify-between gap-2 pt-1 border-t border-border/50">
+          {/* Scrollable Filter Chips (No awkward multi-line text wrapping on mobile!) */}
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 scroll-smooth flex-1 min-w-0">
             {(["ALL", "OPEN", "IN_PROGRESS", "RESOLVED"] as (TicketStatus | "ALL")[]).map(
               (st) => {
                 const label =
@@ -182,10 +181,10 @@ export function TicketList() {
                     key={st}
                     type="button"
                     onClick={() => setStatusFilter(st)}
-                    className={`px-3 py-1.5 rounded-full transition cursor-pointer ${
+                    className={`px-3 py-1.5 rounded-full text-xs transition cursor-pointer whitespace-nowrap shrink-0 ${
                       isActive
-                        ? "bg-surface dark:bg-[#161715] text-foreground shadow-sm font-extrabold"
-                        : "text-foreground-secondary hover:text-foreground"
+                        ? "bg-dark-green dark:bg-wise-green text-white dark:text-black font-extrabold shadow-xs"
+                        : "bg-muted/70 hover:bg-muted text-foreground-secondary hover:text-foreground font-semibold border border-border/60"
                     }`}
                   >
                     {label}
@@ -195,36 +194,27 @@ export function TicketList() {
             )}
           </div>
 
+          {/* Refresh Action */}
           <Button
             variant="outline"
             size="sm"
             onClick={() => fetchTickets()}
             disabled={isLoading}
-            className="rounded-full size-9 p-0 border-border hover:border-foreground-muted cursor-pointer"
-            aria-label="Refresh Tiket"
+            className="rounded-full size-8.5 p-0 border-border hover:border-foreground-muted cursor-pointer shrink-0"
+            aria-label={t("support.refreshAria")}
           >
-            <RefreshCw className={`size-4 ${isLoading ? "animate-spin" : ""}`} />
-          </Button>
-
-          <Button
-            variant="primaryPill"
-            size="sm"
-            onClick={() => setIsCreateOpen(true)}
-            className="gap-2 text-xs font-bold shadow-sm cursor-pointer"
-          >
-            <Plus className="size-4" />
-            <span>{t("support.createTicket")}</span>
+            <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin" : ""}`} />
           </Button>
         </div>
       </div>
 
-      {/* Ticket List Table */}
+      {/* Ticket List Content */}
       {isLoading && tickets.length === 0 ? (
         <div className="h-64 rounded-md border border-border bg-surface dark:bg-[#161715] animate-pulse p-6" />
       ) : filteredTickets.length === 0 ? (
-        <div className="flex flex-col items-center justify-center p-12 text-center rounded-md border border-dashed border-border bg-surface dark:bg-[#161715]/50 space-y-4">
-          <div className="size-14 rounded-full bg-wise-green/10 text-wise-green flex items-center justify-center">
-            <LifeBuoy className="size-7" />
+        <div className="flex flex-col items-center justify-center p-6 sm:p-10 text-center rounded-md border border-dashed border-border bg-surface dark:bg-[#161715]/50 space-y-3">
+          <div className="size-12 rounded-full bg-wise-green/10 text-wise-green flex items-center justify-center">
+            <LifeBuoy className="size-6" />
           </div>
           <div className="space-y-1 max-w-sm">
             <h3 className="font-extrabold text-base sm:text-lg text-foreground">
@@ -245,82 +235,126 @@ export function TicketList() {
           </Button>
         </div>
       ) : (
-        <div className="rounded-md border border-border bg-surface dark:bg-[#161715] overflow-hidden shadow-xs">
-          {/* Table Header */}
-          <div className="grid grid-cols-12 gap-3 px-5 py-4 bg-muted/60 border-b border-border text-xs font-extrabold uppercase tracking-wider text-foreground-muted select-none">
-            <div className="col-span-6 sm:col-span-5">{t("support.tableHeaderTicket")}</div>
-            <div className="hidden sm:block sm:col-span-2">{t("support.tableHeaderCategory")}</div>
-            <div className="hidden sm:block sm:col-span-2">{t("support.tableHeaderPriority")}</div>
-            <div className="col-span-3 sm:col-span-2 text-center">{t("support.tableHeaderStatus")}</div>
-            <div className="col-span-3 sm:col-span-1 text-right">{t("support.tableHeaderAction")}</div>
-          </div>
-
-          {/* Table Body */}
-          <div className="divide-y divide-border/50 text-xs font-semibold">
+        <div className="space-y-3">
+          {/* Mobile View: Card-based Ticket List (Visible on < 768px) */}
+          <div className="md:hidden space-y-3">
             {filteredTickets.map((tkt) => (
               <div
                 key={tkt.id}
-                className="grid grid-cols-12 gap-3 px-5 py-3.5 items-center hover:bg-muted/40 transition-colors min-h-14.5"
+                className="p-3.5 sm:p-4 rounded-md border border-border bg-surface dark:bg-[#161715] shadow-xs space-y-2.5"
               >
-                {/* Subject & Number (Enlarged Typography) */}
-                <div className="col-span-6 sm:col-span-5 space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs font-bold text-dark-green dark:text-wise-green bg-light-mint dark:bg-wise-green/15 px-2.5 py-0.5 rounded-full border border-wise-green/30">
-                      {tkt.ticketNumber}
-                    </span>
-                    <span className="text-xs text-foreground-muted sm:hidden">
-                      {tkt.category}
-                    </span>
+                {/* Header: Ticket Number & Status Badge */}
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-mono text-xs font-bold text-dark-green dark:text-wise-green bg-light-mint dark:bg-wise-green/15 px-2.5 py-0.5 rounded-full border border-wise-green/30">
+                    {tkt.ticketNumber}
+                  </span>
+                  <div>{renderStatusBadge(tkt.status)}</div>
+                </div>
+
+                {/* Subject Title (Clickable) */}
+                <Link
+                  href={`/support/${tkt.id}`}
+                  className="font-bold text-foreground text-sm line-clamp-2 hover:underline hover:text-wise-green transition block"
+                >
+                  {tkt.subject}
+                </Link>
+
+                {/* Metadata & Open Action */}
+                <div className="flex items-center justify-between gap-2 pt-2 border-t border-border/50 text-xs font-semibold text-foreground-secondary">
+                  <div className="flex items-center gap-2 text-[11px] truncate">
+                    <span>{tkt.category}</span>
+                    <span>•</span>
+                    <div>{renderPriorityBadge(tkt.priority)}</div>
                   </div>
-                  <h4 className="font-bold text-foreground text-sm sm:text-base line-clamp-1">
-                    {tkt.subject}
-                  </h4>
-                </div>
 
-                {/* Category */}
-                <div className="hidden sm:block sm:col-span-2 text-sm font-semibold text-foreground-secondary">
-                  {tkt.category}
-                </div>
-
-                {/* Priority */}
-                <div className="hidden sm:block sm:col-span-2">
-                  {renderPriorityBadge(tkt.priority)}
-                </div>
-
-                {/* Status */}
-                <div className="col-span-3 sm:col-span-2 flex justify-center">
-                  {renderStatusBadge(tkt.status)}
-                </div>
-
-                {/* Action */}
-                <div className="col-span-3 sm:col-span-1 flex justify-end">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleOpenThread(tkt)}
-                    className="h-8 px-3 rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted cursor-pointer"
+                  <Link
+                    href={`/support/${tkt.id}`}
+                    className="inline-flex items-center h-7 px-3 rounded-full text-xs font-bold gap-1 border border-border bg-muted/50 hover:bg-muted transition text-foreground shrink-0"
                   >
-                    <MessageSquare className="size-3.5 text-wise-green" />
-                    <span className="hidden sm:inline">Buka</span>
-                  </Button>
+                    <span>{t("support.viewThread")}</span>
+                    <ChevronRight className="size-3 text-wise-green" />
+                  </Link>
                 </div>
               </div>
             ))}
           </div>
 
+          {/* Desktop View: Tabular Grid (Visible on >= 768px) */}
+          <div className="hidden md:block rounded-md border border-border bg-surface dark:bg-[#161715] overflow-hidden shadow-xs">
+            {/* Table Header */}
+            <div className="grid grid-cols-12 gap-3 px-5 py-4 bg-muted/60 border-b border-border text-xs font-extrabold uppercase tracking-wider text-foreground-muted select-none">
+              <div className="col-span-5">{t("support.tableHeaderTicket")}</div>
+              <div className="col-span-2">{t("support.tableHeaderCategory")}</div>
+              <div className="col-span-2">{t("support.tableHeaderPriority")}</div>
+              <div className="col-span-2 text-center">{t("support.tableHeaderStatus")}</div>
+              <div className="col-span-1 text-right">{t("support.tableHeaderAction")}</div>
+            </div>
+
+            {/* Table Body */}
+            <div className="divide-y divide-border/50 text-xs font-semibold">
+              {filteredTickets.map((tkt) => (
+                <div
+                  key={tkt.id}
+                  className="grid grid-cols-12 gap-3 px-5 py-3.5 items-center hover:bg-muted/40 transition-colors min-h-14.5"
+                >
+                  <div className="col-span-5 space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-xs font-bold text-dark-green dark:text-wise-green bg-light-mint dark:bg-wise-green/15 px-2.5 py-0.5 rounded-full border border-wise-green/30">
+                        {tkt.ticketNumber}
+                      </span>
+                    </div>
+                    <Link
+                      href={`/support/${tkt.id}`}
+                      className="font-bold text-foreground text-sm sm:text-base line-clamp-1 hover:underline hover:text-wise-green transition block"
+                    >
+                      {tkt.subject}
+                    </Link>
+                  </div>
+
+                  <div className="col-span-2 text-sm font-semibold text-foreground-secondary">
+                    {tkt.category}
+                  </div>
+
+                  <div className="col-span-2">
+                    {renderPriorityBadge(tkt.priority)}
+                  </div>
+
+                  <div className="col-span-2 flex justify-center">
+                    {renderStatusBadge(tkt.status)}
+                  </div>
+
+                  <div className="col-span-1 flex justify-end">
+                    <Link
+                      href={`/support/${tkt.id}`}
+                      className="inline-flex items-center h-8 px-3 rounded-full text-xs font-bold gap-1.5 border border-border bg-surface hover:bg-muted hover:border-foreground-muted transition cursor-pointer text-foreground shadow-2xs"
+                    >
+                      <MessageSquare className="size-3.5 text-wise-green" />
+                      <span className="hidden sm:inline">{t("support.viewThread")}</span>
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Pagination Footer */}
           {total > 0 && (
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-5 py-3.5 border-t border-border bg-muted/30">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 sm:px-5 sm:py-3.5 rounded-md border border-border bg-surface dark:bg-[#161715] shadow-xs">
               {/* Item count summary */}
-              <div className="text-xs sm:text-sm font-semibold text-foreground-secondary">
-                Menampilkan {startItem} - {endItem} dari {total} tiket
+              <div className="text-xs font-semibold text-foreground-secondary">
+                {t("support.paginationShowing")
+                  .replace("{start}", String(startItem))
+                  .replace("{end}", String(endItem))
+                  .replace("{total}", String(total))}
               </div>
 
               {/* Page navigation: Previous, Page Indicator, Next */}
               {totalPages > 1 && (
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold text-foreground-muted px-1.5 select-none">
-                    Halaman {page} dari {totalPages}
+                    {t("support.paginationPage")
+                      .replace("{page}", String(page))
+                      .replace("{total}", String(totalPages))}
                   </span>
 
                   <Button
@@ -331,7 +365,7 @@ export function TicketList() {
                     className="h-8.5 px-3.5 rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted cursor-pointer disabled:opacity-40"
                   >
                     <ChevronLeft className="size-3.5" />
-                    <span>Sebelumnya</span>
+                    <span>{t("support.paginationPrev")}</span>
                   </Button>
 
                   <Button
@@ -341,7 +375,7 @@ export function TicketList() {
                     disabled={page >= totalPages}
                     className="h-8.5 px-3.5 rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted cursor-pointer disabled:opacity-40"
                   >
-                    <span>Berikutnya</span>
+                    <span>{t("support.paginationNext")}</span>
                     <ChevronRight className="size-3.5" />
                   </Button>
                 </div>
@@ -357,29 +391,6 @@ export function TicketList() {
         onClose={() => setIsCreateOpen(false)}
         onSubmit={createTicket}
       />
-
-      {/* Ticket Thread Conversation Modal */}
-      {isThreadOpen && (
-        <TicketThreadModal
-          key={
-            selectedTicket
-              ? selectedTicket.id || selectedTicket.ticketNumber
-              : "thread_modal"
-          }
-          ticket={
-            selectedTicket
-              ? tickets.find(
-                  (t) =>
-                    (selectedTicket.id && t.id === selectedTicket.id) ||
-                    t.ticketNumber === selectedTicket.ticketNumber
-                ) || selectedTicket
-              : null
-          }
-          isOpen={isThreadOpen}
-          onClose={handleCloseThread}
-          onSendReply={replyTicket}
-        />
-      )}
     </div>
   );
 }

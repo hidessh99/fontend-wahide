@@ -53,19 +53,19 @@ export function BillingView() {
   ];
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto p-3 sm:p-6 lg:p-8">
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5 sm:pb-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
-            <div className="size-9 rounded-full bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center">
-              <Receipt className="size-5" />
+            <div className="size-8 sm:size-9 rounded-full bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center shrink-0">
+              <Receipt className="size-4 sm:size-5" />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-foreground tracking-tight">
               {t("billing.title")}
             </h1>
           </div>
-          <p className="text-sm font-semibold text-foreground-secondary max-w-2xl">
+          <p className="text-xs sm:text-sm font-semibold text-foreground-secondary max-w-2xl">
             {t("billing.subtitle")}
           </p>
         </div>
@@ -79,18 +79,18 @@ export function BillingView() {
         />
       </ErrorBoundary>
 
-      {/* Filter Toolbar (Search Submit & Status Filters) */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-md border border-border bg-surface dark:bg-[#161715]">
+      {/* Filter Toolbar (Search Submit & Horizontal Scrollable Status Filters) */}
+      <div className="space-y-3 sm:space-y-4 p-3 sm:p-4 rounded-md border border-border bg-surface dark:bg-[#161715]">
         {/* Search Form with Submit Button */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
             executeSearch(searchInput);
           }}
-          className="flex-1 max-w-lg flex items-center gap-2"
+          className="flex items-center gap-2"
         >
           <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted pointer-events-none" />
             <input
               type="text"
               value={searchInput}
@@ -124,22 +124,25 @@ export function BillingView() {
           </Button>
         </form>
 
-        {/* Status Filter Pills */}
-        <div className="flex items-center gap-1.5 flex-wrap">
-          {statusOptions.map((opt) => (
-            <button
-              key={opt.value}
-              type="button"
-              onClick={() => setStatusFilter(opt.value)}
-              className={`px-3 py-1.5 rounded-full text-xs font-bold transition cursor-pointer ${
-                statusFilter === opt.value
-                  ? "bg-wise-green text-dark-green shadow-xs"
-                  : "text-foreground-secondary hover:text-foreground hover:bg-muted border border-border"
-              }`}
-            >
-              {opt.label}
-            </button>
-          ))}
+        {/* Status Filter Chips (Horizontal Scrollable) */}
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 scroll-smooth">
+          {statusOptions.map((opt) => {
+            const isActive = statusFilter === opt.value;
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => setStatusFilter(opt.value)}
+                className={`px-3.5 py-1.5 rounded-full text-xs transition cursor-pointer whitespace-nowrap shrink-0 ${
+                  isActive
+                    ? "bg-dark-green dark:bg-wise-green text-white dark:text-black font-extrabold shadow-xs"
+                    : "bg-muted/70 hover:bg-muted text-foreground-secondary hover:text-foreground font-semibold border border-border/60"
+                }`}
+              >
+                {opt.label}
+              </button>
+            );
+          })}
         </div>
       </div>
 

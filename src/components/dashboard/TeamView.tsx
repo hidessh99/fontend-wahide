@@ -114,19 +114,19 @@ export function TeamView() {
   };
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
+    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto p-3 sm:p-6 lg:p-8">
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5 sm:pb-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
-            <div className="size-9 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center">
-              <Users className="size-5" />
+            <div className="size-8 sm:size-9 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center shrink-0">
+              <Users className="size-4 sm:size-5" />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-foreground tracking-tight">
               {t("team.title")}
             </h1>
           </div>
-          <p className="text-sm font-semibold text-foreground-secondary max-w-2xl">
+          <p className="text-xs sm:text-sm font-semibold text-foreground-secondary max-w-2xl">
             {t("team.subtitle")}
           </p>
         </div>
@@ -134,7 +134,7 @@ export function TeamView() {
         <Button
           variant="primaryPill"
           onClick={() => setIsModalOpen(true)}
-          className="gap-2 text-xs font-bold shadow-sm cursor-pointer"
+          className="gap-2 text-xs font-bold shadow-sm cursor-pointer h-10 px-4 shrink-0"
         >
           <Plus className="size-4" />
           <span>{t("team.addAgent")}</span>
@@ -142,10 +142,10 @@ export function TeamView() {
       </div>
 
       {/* Filter Toolbar (Search Submit Form) */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-md border border-border bg-surface dark:bg-[#161715]">
-        <form onSubmit={handleSearchSubmit} className="flex-1 max-w-md flex items-center gap-2">
+      <div className="p-3 sm:p-4 rounded-md border border-border bg-surface dark:bg-[#161715]">
+        <form onSubmit={handleSearchSubmit} className="flex items-center gap-2">
           <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted pointer-events-none" />
             <input
               type="text"
               value={searchInput}
@@ -180,19 +180,8 @@ export function TeamView() {
       {/* Agents Table with Error Boundary */}
       <ErrorBoundary fallbackTitle="Gagal Memuat Daftar Tim Staf Agen">
         <div className="rounded-md border border-border bg-surface dark:bg-[#161715] overflow-hidden shadow-xs">
-          {/* Table Header */}
-          <div className="grid grid-cols-12 gap-3 px-5 py-4 bg-muted/60 border-b border-border text-xs font-extrabold uppercase tracking-wider text-foreground-muted select-none">
-            <div className="col-span-4 sm:col-span-3">{t("team.tableHeaderName")}</div>
-            <div className="col-span-3 sm:col-span-3">{t("team.tableHeaderPhone")}</div>
-            <div className="hidden sm:block sm:col-span-2">{t("team.tableHeaderRole")}</div>
-            <div className="hidden sm:block sm:col-span-2 text-center">{t("team.tableHeaderDevices")}</div>
-            <div className="col-span-3 sm:col-span-1 text-center">{t("team.tableHeaderStatus")}</div>
-            <div className="col-span-2 sm:col-span-1 text-right">{t("team.tableHeaderAction")}</div>
-          </div>
-
-          {/* Table Body */}
           {paginatedAgents.length === 0 ? (
-            <div className="p-12 text-center space-y-2">
+            <div className="p-6 sm:p-10 text-center space-y-2">
               <Users className="size-10 text-foreground-muted mx-auto" />
               <h3 className="font-bold text-sm text-foreground">{t("team.noAgents")}</h3>
               <p className="text-xs text-foreground-secondary">
@@ -202,75 +191,141 @@ export function TeamView() {
               </p>
             </div>
           ) : (
-            <div className="divide-y divide-border/50 text-xs font-semibold">
-              {paginatedAgents.map((agt) => (
-                <div
-                  key={agt.id}
-                  className="grid grid-cols-12 gap-3 px-5 py-3.5 items-center hover:bg-muted/40 transition-colors min-h-14.5"
-                >
-                  {/* Name & Email (Enlarged Typography) */}
-                  <div className="col-span-4 sm:col-span-3 space-y-0.5">
-                    <span className="font-bold text-sm sm:text-base text-foreground block truncate">{agt.name}</span>
-                    <span className="text-xs text-foreground-muted block truncate font-mono">
-                      {agt.email}
-                    </span>
-                  </div>
+            <div>
+              {/* Mobile View: Card-based Agent List (Visible on < 768px) */}
+              <div className="md:hidden divide-y divide-border/50">
+                {paginatedAgents.map((agt) => (
+                  <div key={agt.id} className="p-3.5 sm:p-4 space-y-2.5 bg-surface dark:bg-[#161715]">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="font-bold text-sm text-foreground truncate">{agt.name}</span>
+                        <span
+                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold shrink-0 ${
+                            agt.role === "SUPERVISOR"
+                              ? "bg-wise-green/15 text-dark-green dark:text-wise-green border border-wise-green/30"
+                              : "bg-muted text-foreground-secondary border border-border"
+                          }`}
+                        >
+                          <ShieldCheck className="size-2.5" />
+                          <span>{agt.role === "SUPERVISOR" ? "Supervisor" : "CS"}</span>
+                        </span>
+                      </div>
 
-                  {/* Phone */}
-                  <div className="col-span-3 sm:col-span-3 font-mono text-foreground-secondary text-xs sm:text-sm truncate">
-                    +{agt.phone}
-                  </div>
+                      <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 shrink-0">
+                        <CheckCircle2 className="size-3" />
+                        <span>{t("team.statusActive")}</span>
+                      </span>
+                    </div>
 
-                  {/* Role */}
-                  <div className="hidden sm:block sm:col-span-2">
-                    <span
-                      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                        agt.role === "SUPERVISOR"
-                          ? "bg-wise-green/15 text-dark-green dark:text-wise-green border border-wise-green/30"
-                          : "bg-muted text-foreground-secondary border border-border"
-                      }`}
-                    >
-                      <ShieldCheck className="size-3" />
-                      <span>{agt.role === "SUPERVISOR" ? "Supervisor" : "CS Agent"}</span>
-                    </span>
-                  </div>
+                    <div className="space-y-0.5 text-xs text-foreground-secondary">
+                      <span className="block font-mono text-foreground-muted text-[11px] truncate">{agt.email}</span>
+                      <span className="block font-mono font-medium">+{agt.phone}</span>
+                    </div>
 
-                  {/* Devices */}
-                  <div className="hidden sm:flex sm:col-span-2 items-center justify-center gap-1 font-mono text-xs sm:text-sm text-foreground-secondary">
-                    <Smartphone className="size-3.5 text-foreground-muted" />
-                    <span>{agt.assignedDevicesCount} Slot</span>
-                  </div>
+                    <div className="flex items-center justify-between gap-2 pt-2 border-t border-border/50 text-xs">
+                      <div className="flex items-center gap-1 font-mono text-xs text-foreground-secondary">
+                        <Smartphone className="size-3.5 text-foreground-muted" />
+                        <span>{agt.assignedDevicesCount} Slot Device</span>
+                      </div>
 
-                  {/* Status */}
-                  <div className="col-span-3 sm:col-span-1 flex justify-center">
-                    <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                      <CheckCircle2 className="size-3.5" />
-                      <span className="hidden sm:inline">{t("team.statusActive")}</span>
-                    </span>
+                      <button
+                        type="button"
+                        onClick={() => setDeletingMember(agt)}
+                        className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"
+                        aria-label={`${t("actions.delete")} ${agt.name}`}
+                        title="Hapus Anggota Tim"
+                      >
+                        <Trash2 className="size-4" />
+                      </button>
+                    </div>
                   </div>
+                ))}
+              </div>
 
-                  {/* Action */}
-                  <div className="col-span-2 sm:col-span-1 flex justify-end">
-                    <button
-                      type="button"
-                      onClick={() => setDeletingMember(agt)}
-                      className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"
-                      aria-label={`${t("actions.delete")} ${agt.name}`}
-                      title="Hapus Anggota Tim"
-                    >
-                      <Trash2 className="size-4" />
-                    </button>
-                  </div>
+              {/* Desktop View: Tabular Grid (Visible on >= 768px) */}
+              <div className="hidden md:block">
+                {/* Table Header */}
+                <div className="grid grid-cols-12 gap-3 px-5 py-4 bg-muted/60 border-b border-border text-xs font-extrabold uppercase tracking-wider text-foreground-muted select-none">
+                  <div className="col-span-3">{t("team.tableHeaderName")}</div>
+                  <div className="col-span-3">{t("team.tableHeaderPhone")}</div>
+                  <div className="col-span-2">{t("team.tableHeaderRole")}</div>
+                  <div className="col-span-2 text-center">{t("team.tableHeaderDevices")}</div>
+                  <div className="col-span-1 text-center">{t("team.tableHeaderStatus")}</div>
+                  <div className="col-span-1 text-right">{t("team.tableHeaderAction")}</div>
                 </div>
-              ))}
+
+                {/* Table Body */}
+                <div className="divide-y divide-border/50 text-xs font-semibold">
+                  {paginatedAgents.map((agt) => (
+                    <div
+                      key={agt.id}
+                      className="grid grid-cols-12 gap-3 px-5 py-3.5 items-center hover:bg-muted/40 transition-colors min-h-14.5"
+                    >
+                      {/* Name & Email */}
+                      <div className="col-span-3 space-y-0.5">
+                        <span className="font-bold text-sm sm:text-base text-foreground block truncate">{agt.name}</span>
+                        <span className="text-xs text-foreground-muted block truncate font-mono">
+                          {agt.email}
+                        </span>
+                      </div>
+
+                      {/* Phone */}
+                      <div className="col-span-3 font-mono text-foreground-secondary text-xs sm:text-sm truncate">
+                        +{agt.phone}
+                      </div>
+
+                      {/* Role */}
+                      <div className="col-span-2">
+                        <span
+                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                            agt.role === "SUPERVISOR"
+                              ? "bg-wise-green/15 text-dark-green dark:text-wise-green border border-wise-green/30"
+                              : "bg-muted text-foreground-secondary border border-border"
+                          }`}
+                        >
+                          <ShieldCheck className="size-3" />
+                          <span>{agt.role === "SUPERVISOR" ? "Supervisor" : "CS Agent"}</span>
+                        </span>
+                      </div>
+
+                      {/* Devices */}
+                      <div className="col-span-2 flex items-center justify-center gap-1 font-mono text-xs sm:text-sm text-foreground-secondary">
+                        <Smartphone className="size-3.5 text-foreground-muted" />
+                        <span>{agt.assignedDevicesCount} Slot</span>
+                      </div>
+
+                      {/* Status */}
+                      <div className="col-span-1 flex justify-center">
+                        <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                          <CheckCircle2 className="size-3.5" />
+                          <span>{t("team.statusActive")}</span>
+                        </span>
+                      </div>
+
+                      {/* Action */}
+                      <div className="col-span-1 flex justify-end">
+                        <button
+                          type="button"
+                          onClick={() => setDeletingMember(agt)}
+                          className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"
+                          aria-label={`${t("actions.delete")} ${agt.name}`}
+                          title="Hapus Anggota Tim"
+                        >
+                          <Trash2 className="size-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
 
           {/* Pagination Footer */}
           {total > 0 && (
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-5 py-3.5 border-t border-border bg-muted/30">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 sm:px-5 sm:py-3.5 border-t border-border bg-muted/30">
               {/* Item count summary */}
-              <div className="text-xs sm:text-sm font-semibold text-foreground-secondary">
+              <div className="text-xs font-semibold text-foreground-secondary">
                 Menampilkan {startItem} - {endItem} dari {total} anggota tim
               </div>
 
