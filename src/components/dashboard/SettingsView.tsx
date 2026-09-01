@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
 import { useAuth } from "@/modules/iam/hooks/useAuth";
@@ -115,7 +115,7 @@ export function SettingsView() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5 sm:pb-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
-            <div className="size-8 sm:size-9 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center shrink-0">
+            <div className="size-8 sm:size-9 rounded-full bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green flex items-center justify-center shrink-0">
               <Settings className="size-4 sm:size-5" />
             </div>
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-foreground tracking-tight">
@@ -132,7 +132,7 @@ export function SettingsView() {
       <div className="rounded-md border border-border bg-surface dark:bg-[#161715] p-6 sm:p-8 space-y-6 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-4">
           <div className="flex items-center gap-3">
-            <div className="size-10 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center">
+            <div className="size-10 rounded-full bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green flex items-center justify-center">
               <Key className="size-5" />
             </div>
             <div>
@@ -175,7 +175,11 @@ export function SettingsView() {
           <div className="p-4 rounded-md border border-border bg-muted/30 space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-foreground">
-                Token Aktif (Header: <code className="text-wise-green">X-Wahide-API-Key</code>)
+                Token Aktif (Header:{" "}
+                <code className="px-1.5 py-0.5 rounded font-mono font-bold text-xs bg-emerald-500/10 dark:bg-wise-green/10 text-emerald-700 dark:text-wise-green border border-emerald-500/25 dark:border-wise-green/20">
+                  X-Wahide-API-Key
+                </code>
+                )
               </span>
               <div className="flex items-center gap-1.5">
                 <Button
@@ -204,7 +208,7 @@ export function SettingsView() {
             </div>
 
             <div className="flex items-center gap-1.5 text-[11px] font-semibold text-foreground-muted">
-              <ShieldCheck className="size-3.5 text-wise-green shrink-0" />
+              <ShieldCheck className="size-3.5 text-emerald-600 dark:text-wise-green shrink-0" />
               <span>Jangan pernah membagikan API Key Anda di repositori publik atau aplikasi client-side.</span>
             </div>
           </div>
@@ -404,7 +408,7 @@ export function SettingsView() {
       <div className="rounded-md border border-border bg-surface dark:bg-[#161715] p-6 sm:p-8 space-y-5 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-4">
           <div className="flex items-center gap-3">
-            <div className="size-9 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center">
+            <div className="size-9 rounded-full bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green flex items-center justify-center">
               <ShieldCheck className="size-4" />
             </div>
             <div>
@@ -453,7 +457,7 @@ export function SettingsView() {
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-xs text-foreground">{s.device}</span>
                   {s.isCurrent && (
-                    <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-wise-green/15 text-wise-green">
+                    <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green border border-emerald-500/25 dark:border-wise-green/20">
                       Sesi Saat Ini
                     </span>
                   )}
