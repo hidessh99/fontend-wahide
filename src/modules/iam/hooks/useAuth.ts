@@ -42,18 +42,19 @@ export const useAuth = create<AuthState>()(
         set({ isLoading: true, error: null });
         try {
           const res = await authApi.login(credentials);
+          const tenantId = res.tenant_id || "";
 
           const user: User = {
-            id: res.tenant_id || "",
+            id: ("id" in res && typeof res.id === "string" && res.id) ? res.id : "",
             name: res.name || "",
             email: res.email || "",
             role: res.role ? res.role.toUpperCase() : "SELLER",
-            tenantId: res.tenant_id || "",
+            tenantId: tenantId,
             createdAt: new Date().toISOString(),
           };
 
           const tenant: Tenant = {
-            id: res.tenant_id || "",
+            id: tenantId,
             name: `${res.name}'s Workspace`,
             planId: "free",
             planName: "Free Trial",
@@ -73,10 +74,13 @@ export const useAuth = create<AuthState>()(
             user,
             tenant,
             token: res.token,
-            tenantId: res.tenant_id || null,
+            tenantId: tenantId || null,
             isAuthenticated: true,
             isLoading: false,
           });
+
+          // Auto-sync full genuine user profile from backend (ensuring accurate User ID)
+          get().fetchProfile().catch(() => null);
         } catch (err: unknown) {
           const errorMessage = err instanceof Error ? err.message : "Email atau password yang Anda masukkan salah.";
           set({
@@ -127,8 +131,15 @@ export const useAuth = create<AuthState>()(
       fetchProfile: async () => {
         if (!get().token) return;
         try {
-          const user = await userApi.getProfile();
-          set({ user, isAuthenticated: true });
+          const profileUser = await userApi.getProfile();
+          const existingTenantId = get().tenantId || profileUser.tenantId || "";
+          set({
+            user: {
+              ...profileUser,
+              tenantId: existingTenantId,
+            },
+            isAuthenticated: true,
+          });
         } catch {
           // Jika token invalid/expired, lakukan logout
           get().logout();
@@ -136,8 +147,26 @@ export const useAuth = create<AuthState>()(
       },
 
       updateProfileName: async (name: string) => {
-        const currentUser = get().user;
-        if (!currentUser || !currentUser.id) {
+        let currentUser = get().user;
+        const tenantId = get().tenantId;
+
+        // ID Resolution: If user id is missing or mistakenly matches tenantId, resolve actual user ID from GET /profile
+        if (!currentUser?.id || (tenantId && currentUser.id === tenantId)) {
+          try {
+            const freshProfile = await userApi.getProfile();
+            currentUser = freshProfile;
+            set((state) => ({
+              user: {
+                ...freshProfile,
+                tenantId: state.tenantId || freshProfile.tenantId,
+              },
+            }));
+          } catch (err) {
+            console.warn("Failed to auto-resolve genuine user ID:", err);
+          }
+        }
+
+        if (!currentUser?.id) {
           throw new Error("Sesi pengguna tidak ditemukan. Silakan login ulang.");
         }
 

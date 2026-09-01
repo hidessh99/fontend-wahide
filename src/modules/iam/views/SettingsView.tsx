@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "@/modules/iam/hooks/useAuth";
 import { authApi } from "@/modules/iam/api/auth.api";
 import { userApi } from "@/modules/iam/api/user.api";
@@ -29,7 +29,7 @@ import {
 
 export function SettingsView() {
   const { t } = useI18n();
-  const { user, tenant, updateProfileName } = useAuth();
+  const { user, tenant, updateProfileName, fetchProfile } = useAuth();
   const [apiKey, setApiKey] = useState<string>("hide_live_984f8812a3b04c89b27658df2026");
   const [showKey, setShowKey] = useState(false);
   const [isKeyLoading, setIsKeyLoading] = useState(false);
@@ -46,6 +46,11 @@ export function SettingsView() {
   const email = user?.email || "business@wahide.com";
   const phone = user?.phone || "6281234567890";
   const [isSavingProfile, setIsSavingProfile] = useState(false);
+
+  // Auto-sync fresh profile on page load
+  useEffect(() => {
+    fetchProfile().catch(() => null);
+  }, [fetchProfile]);
 
   // Password Form state
   const [currentPassword, setCurrentPassword] = useState("");
@@ -275,7 +280,10 @@ export function SettingsView() {
       {/* Profile & Business Details */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Profile Information Form */}
-        <div className="rounded-md border border-border bg-surface dark:bg-[#161715] p-6 sm:p-8 space-y-5 shadow-sm">
+        <div
+          key={user?.id ? `${user.id}-${user.name}` : "profile-form"}
+          className="rounded-md border border-border bg-surface dark:bg-[#161715] p-6 sm:p-8 space-y-5 shadow-sm"
+        >
           <div className="flex items-center gap-3 border-b border-border pb-4">
             <div className="size-9 rounded-full bg-muted flex items-center justify-center text-foreground-secondary">
               <User className="size-4" />
