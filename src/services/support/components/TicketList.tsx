@@ -339,106 +339,107 @@ export function TicketList() {
           </div>
 
           {/* Desktop View: Tabular Grid (Visible on >= 768px) */}
-          <div className="hidden md:block rounded-md border border-border bg-surface dark:bg-[#161715] overflow-hidden shadow-xs">
-            {/* Table Header */}
-            <div className="grid grid-cols-12 gap-3 px-5 py-4 bg-muted/60 border-b border-border text-xs font-extrabold uppercase tracking-wider text-foreground-muted select-none">
-              {isSuperAdmin ? (
-                <>
-                  <div className="col-span-4">{t("support.tableHeaderTicket")}</div>
-                  <div className="col-span-3">{t("support.tableHeaderCustomer")}</div>
-                  <div className="col-span-1">{t("support.tableHeaderCategory")}</div>
-                  <div className="col-span-1">{t("support.tableHeaderPriority")}</div>
-                  <div className="col-span-1 text-center">{t("support.tableHeaderStatus")}</div>
-                  <div className="col-span-2 text-right">{t("support.tableHeaderAction")}</div>
-                </>
-              ) : (
-                <>
-                  <div className="col-span-5">{t("support.tableHeaderTicket")}</div>
-                  <div className="col-span-2">{t("support.tableHeaderCategory")}</div>
-                  <div className="col-span-2">{t("support.tableHeaderPriority")}</div>
-                  <div className="col-span-2 text-center">{t("support.tableHeaderStatus")}</div>
-                  <div className="col-span-1 text-right">{t("support.tableHeaderAction")}</div>
-                </>
-              )}
-            </div>
+          <div className="hidden md:block rounded-md border border-border bg-surface dark:bg-[#161715] overflow-x-auto shadow-xs">
+            <div className="min-w-[760px]">
+              {/* Table Header */}
+              <div className="grid grid-cols-12 gap-3 px-5 py-4 bg-muted/60 border-b border-border text-xs font-extrabold uppercase tracking-wider text-foreground-muted select-none">
+                {isSuperAdmin ? (
+                  <>
+                    <div className="col-span-3">{t("support.tableHeaderTicket")}</div>
+                    <div className="col-span-2">{t("support.tableHeaderCustomer")}</div>
+                    <div className="col-span-1">{t("support.tableHeaderCategory")}</div>
+                    <div className="col-span-1">{t("support.tableHeaderPriority")}</div>
+                    <div className="col-span-2 text-center">{t("support.tableHeaderStatus")}</div>
+                    <div className="col-span-3 text-right">{t("support.tableHeaderAction")}</div>
+                  </>
+                ) : (
+                  <>
+                    <div className="col-span-5">{t("support.tableHeaderTicket")}</div>
+                    <div className="col-span-2">{t("support.tableHeaderCategory")}</div>
+                    <div className="col-span-2">{t("support.tableHeaderPriority")}</div>
+                    <div className="col-span-2 text-center">{t("support.tableHeaderStatus")}</div>
+                    <div className="col-span-1 text-right">{t("support.tableHeaderAction")}</div>
+                  </>
+                )}
+              </div>
 
-            {/* Table Body */}
-            <div className="divide-y divide-border/50 text-xs font-semibold">
-              {filteredTickets.map((tkt) => (
-                <div
-                  key={tkt.id}
-                  className="grid grid-cols-12 gap-3 px-5 py-3.5 items-center hover:bg-muted/40 transition-colors min-h-14.5"
-                >
-                  {isSuperAdmin ? (
-                    <>
-                      {/* Col 4: Ticket No & Subject */}
-                      <div className="col-span-4 space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono text-xs font-bold text-dark-green dark:text-wise-green bg-light-mint dark:bg-wise-green/15 px-2.5 py-0.5 rounded-full border border-wise-green/30">
-                            {tkt.ticketNumber}
-                          </span>
+              {/* Table Body */}
+              <div className="divide-y divide-border/50 text-xs font-semibold">
+                {filteredTickets.map((tkt) => (
+                  <div
+                    key={tkt.id}
+                    className="grid grid-cols-12 gap-3 px-5 py-3.5 items-center hover:bg-muted/40 transition-colors min-h-14.5"
+                  >
+                    {isSuperAdmin ? (
+                      <>
+                        {/* Col 3: Ticket No & Subject */}
+                        <div className="col-span-3 space-y-1 pr-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-xs font-bold text-dark-green dark:text-wise-green bg-light-mint dark:bg-wise-green/15 px-2.5 py-0.5 rounded-full border border-wise-green/30">
+                              {tkt.ticketNumber}
+                            </span>
+                          </div>
+                          <Link
+                            href={`/support/${tkt.id}`}
+                            className="font-bold text-foreground text-sm line-clamp-1 hover:underline hover:text-wise-green transition block"
+                          >
+                            {tkt.subject}
+                          </Link>
                         </div>
-                        <Link
-                          href={`/support/${tkt.id}`}
-                          className="font-bold text-foreground text-sm line-clamp-1 hover:underline hover:text-wise-green transition block"
-                        >
-                          {tkt.subject}
-                        </Link>
-                      </div>
 
-                      {/* Col 3: Customer (Name & Email) */}
-                      <div className="col-span-3 space-y-0.5">
-                        <div className="flex items-center gap-1.5 font-bold text-foreground text-xs line-clamp-1">
-                          <UserIcon className="size-3 text-wise-green shrink-0" />
-                          <span>{tkt.user?.name || t("support.customerUnknown")}</span>
+                        {/* Col 2: Customer (Name & Email) */}
+                        <div className="col-span-2 space-y-0.5 min-w-0 pr-1">
+                          <div className="flex items-center gap-1.5 font-bold text-foreground text-xs truncate">
+                            <UserIcon className="size-3 text-wise-green shrink-0" />
+                            <span className="truncate">{tkt.user?.name || t("support.customerUnknown")}</span>
+                          </div>
+                          {tkt.user?.email && (
+                            <p className="text-[11px] font-mono text-foreground-secondary truncate pl-4.5">
+                              {tkt.user.email}
+                            </p>
+                          )}
                         </div>
-                        {tkt.user?.email && (
-                          <p className="text-[11px] font-mono text-foreground-secondary line-clamp-1 pl-4.5">
-                            {tkt.user.email}
-                          </p>
-                        )}
-                      </div>
 
-                      {/* Col 1: Category */}
-                      <div className="col-span-1 text-xs font-semibold text-foreground-secondary truncate">
-                        {tkt.category}
-                      </div>
+                        {/* Col 1: Category */}
+                        <div className="col-span-1 text-xs font-semibold text-foreground-secondary truncate">
+                          {tkt.category}
+                        </div>
 
-                      {/* Col 1: Priority */}
-                      <div className="col-span-1">
-                        {renderPriorityBadge(tkt.priority)}
-                      </div>
+                        {/* Col 1: Priority */}
+                        <div className="col-span-1">
+                          {renderPriorityBadge(tkt.priority)}
+                        </div>
 
-                      {/* Col 1: Status */}
-                      <div className="col-span-1 flex justify-center">
-                        {renderStatusBadge(tkt.status)}
-                      </div>
+                        {/* Col 2: Status */}
+                        <div className="col-span-2 flex justify-center">
+                          {renderStatusBadge(tkt.status)}
+                        </div>
 
-                      {/* Col 2: Actions (Edit Status & Open) */}
-                      <div className="col-span-2 flex items-center justify-end gap-2">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setStatusModalTicket(tkt)}
-                          className="inline-flex items-center h-8 px-2.5 rounded-full text-xs font-bold gap-1.5 border border-border bg-surface hover:bg-muted hover:border-foreground-muted transition cursor-pointer text-foreground shadow-2xs shrink-0"
-                          title={t("support.editStatus")}
-                        >
-                          <SlidersHorizontal className="size-3.5 text-wise-green" />
-                          <span>{t("support.editStatus")}</span>
-                        </Button>
+                        {/* Col 3: Actions (Edit Status & Open) */}
+                        <div className="col-span-3 flex items-center justify-end gap-2">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setStatusModalTicket(tkt)}
+                            className="inline-flex items-center h-8 px-2.5 rounded-full text-xs font-bold gap-1.5 border border-border bg-surface hover:bg-muted hover:border-foreground-muted transition cursor-pointer text-foreground shadow-2xs shrink-0"
+                            title={t("support.editStatus")}
+                          >
+                            <SlidersHorizontal className="size-3.5 text-wise-green" />
+                            <span>{t("support.editStatus")}</span>
+                          </Button>
 
-                        <Link
-                          href={`/support/${tkt.id}`}
-                          className="inline-flex items-center h-8 px-2.5 rounded-full text-xs font-bold gap-1 border border-border bg-surface hover:bg-muted hover:border-foreground-muted transition cursor-pointer text-foreground shadow-2xs shrink-0"
-                          title={t("support.viewThread")}
-                        >
-                          <MessageSquare className="size-3.5 text-wise-green" />
-                          <span className="hidden xl:inline">{t("support.viewThread")}</span>
-                        </Link>
-                      </div>
-                    </>
-                  ) : (
+                          <Link
+                            href={`/support/${tkt.id}`}
+                            className="inline-flex items-center h-8 px-3 rounded-full text-xs font-bold gap-1.5 border border-border bg-muted/60 hover:bg-muted hover:border-foreground-muted transition cursor-pointer text-foreground shadow-2xs shrink-0"
+                            title={t("support.viewThread")}
+                          >
+                            <MessageSquare className="size-3.5 text-wise-green" />
+                            <span>{t("support.viewThread")}</span>
+                          </Link>
+                        </div>
+                      </>
+                    ) : (
                     <>
                       {/* Standard Non-Admin Row */}
                       <div className="col-span-5 space-y-1">
@@ -480,6 +481,7 @@ export function TicketList() {
                   )}
                 </div>
               ))}
+              </div>
             </div>
           </div>
 

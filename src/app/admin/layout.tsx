@@ -1,8 +1,9 @@
-import React from "react";
-import Link from "next/link";
-import { ShieldAlert, ArrowLeft, LayoutDashboard, Users, LifeBuoy } from "lucide-react";
-import { ThemeToggle } from "@/components/layout/shared/ThemeToggle";
-import { LocaleSwitcher } from "@/components/layout/shared/LocaleSwitcher";
+"use client";
+
+import React, { useState } from "react";
+import { AdminSidebar } from "@/components/layout/admin/AdminSidebar";
+import { AdminHeader } from "@/components/layout/admin/AdminHeader";
+import { AdminMobileNav } from "@/components/layout/admin/AdminMobileNav";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 
 export default function AdminLayout({
@@ -10,88 +11,30 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
-      {/* Superadmin Top Banner */}
-      <header className="h-16 px-4 sm:px-8 border-b border-border bg-surface dark:bg-[#131412] flex items-center justify-between sticky top-0 z-40 shadow-sm">
-        <div className="flex items-center gap-3">
-          <Link href="/admin/overview" className="flex items-center gap-2.5">
-            <div className="size-8 rounded-full bg-rose-600 text-white flex items-center justify-center font-bold">
-              <ShieldAlert className="size-4" />
-            </div>
-            <span className="font-black text-lg text-foreground tracking-tight">
-              Wahide<span className="text-rose-600">.Admin</span>
-            </span>
-          </Link>
+    <div className="min-h-screen flex bg-background text-foreground font-sans">
+      {/* Desktop Persistent Left Sidebar */}
+      <div className="hidden lg:block fixed inset-y-0 left-0 w-64 z-30">
+        <AdminSidebar />
+      </div>
 
-          <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
-            Protected Shell
-          </span>
-        </div>
+      {/* Mobile Drawer Navigation */}
+      <AdminMobileNav
+        open={mobileNavOpen}
+        onClose={() => setMobileNavOpen(false)}
+      />
 
-        {/* Navigation Tabs & Right Switchers */}
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1 bg-muted p-1 rounded-full text-xs font-bold">
-            <Link
-              href="/admin/overview"
-              className="px-3 py-1.5 rounded-full text-foreground-secondary hover:text-foreground hover:bg-surface dark:hover:bg-[#161715] transition flex items-center gap-1.5"
-            >
-              <LayoutDashboard className="size-3.5" />
-              <span>Overview</span>
-            </Link>
-            <Link
-              href="/admin/users"
-              className="px-3 py-1.5 rounded-full text-foreground-secondary hover:text-foreground hover:bg-surface dark:hover:bg-[#161715] transition flex items-center gap-1.5"
-            >
-              <Users className="size-3.5" />
-              <span>Users</span>
-            </Link>
-            <Link
-              href="/admin/plans"
-              className="px-3 py-1.5 rounded-full text-foreground-secondary hover:text-foreground hover:bg-surface dark:hover:bg-[#161715] transition flex items-center gap-1.5"
-            >
-              <span>Plans</span>
-            </Link>
-            <Link
-              href="/admin/logs"
-              className="px-3 py-1.5 rounded-full text-foreground-secondary hover:text-foreground hover:bg-surface dark:hover:bg-[#161715] transition flex items-center gap-1.5"
-            >
-              <span>Logs</span>
-            </Link>
-            <Link
-              href="/admin/support"
-              className="px-3 py-1.5 rounded-full text-foreground-secondary hover:text-foreground hover:bg-surface dark:hover:bg-[#161715] transition flex items-center gap-1.5"
-            >
-              <LifeBuoy className="size-3.5" />
-              <span>Support</span>
-            </Link>
-            <Link
-              href="/admin/notifications"
-              className="px-3 py-1.5 rounded-full text-foreground-secondary hover:text-foreground hover:bg-surface dark:hover:bg-[#161715] transition flex items-center gap-1.5"
-            >
-              <span>Broadcast</span>
-            </Link>
-          </div>
-
-          <ThemeToggle />
-          <LocaleSwitcher />
-
-          <Link
-            href="/dashboard"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-wise-green text-dark-green hover:scale-105 transition shadow-sm"
-          >
-            <ArrowLeft className="size-3.5" />
-            <span className="hidden sm:inline">Tenant Dashboard</span>
-          </Link>
-        </div>
-      </header>
-
-      {/* Main Admin Content with Error Boundary */}
-      <main className="flex-1">
-        <ErrorBoundary fallbackTitle="Terjadi Kendala Memuat Modul Superadmin">
-          {children}
-        </ErrorBoundary>
-      </main>
+      {/* Main Admin Content Area */}
+      <div className="flex-1 lg:pl-64 flex flex-col min-w-0">
+        <AdminHeader onOpenMobileNav={() => setMobileNavOpen(true)} />
+        <main className="flex-1 min-w-0">
+          <ErrorBoundary fallbackTitle="Terjadi Kendala Memuat Modul Superadmin">
+            {children}
+          </ErrorBoundary>
+        </main>
+      </div>
     </div>
   );
 }
