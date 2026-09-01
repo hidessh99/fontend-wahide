@@ -7,6 +7,7 @@ import { userApi } from "@/modules/iam/api/user.api";
 import { generateSecureRandomString } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ApiKeyConfirmModal } from "@/modules/iam/components/settings/ApiKeyConfirmModal";
+import { ProfileInfoCard } from "@/modules/iam/components/settings/ProfileInfoCard";
 import { useI18n } from "@/lib/i18n/context";
 import { toast } from "sonner";
 import {
@@ -18,13 +19,8 @@ import {
   EyeOff,
   Trash2,
   Lock,
-  User,
   ShieldCheck,
-  Building,
-  Save,
   Loader2,
-  Mail,
-  Smartphone,
 } from "lucide-react";
 
 export function SettingsView() {
@@ -40,12 +36,6 @@ export function SettingsView() {
     isOpen: false,
     mode: "REGENERATE",
   });
-
-  // Profile Form state (Name is editable; Email & Phone are read-only primary identity)
-  const [name, setName] = useState(user?.name || "Budi Santoso");
-  const email = user?.email || "business@wahide.com";
-  const phone = user?.phone || "6281234567890";
-  const [isSavingProfile, setIsSavingProfile] = useState(false);
 
   // Auto-sync fresh profile on page load
   useEffect(() => {
@@ -98,25 +88,6 @@ export function SettingsView() {
       setConfirmModal((prev) => ({ ...prev, isOpen: false }));
     } finally {
       setIsKeyLoading(false);
-    }
-  };
-
-  const handleSaveProfile = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const trimmedName = name.trim();
-    if (!trimmedName) {
-      toast.error("Nama lengkap tidak boleh kosong.");
-      return;
-    }
-    setIsSavingProfile(true);
-    try {
-      await updateProfileName(trimmedName);
-      toast.success("Nama profil berhasil diperbarui.");
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal memperbarui nama profil.";
-      toast.error(msg);
-    } finally {
-      setIsSavingProfile(false);
     }
   };
 
@@ -280,122 +251,12 @@ export function SettingsView() {
       {/* Profile & Business Details */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Profile Information Form */}
-        <div
-          key={user?.id ? `${user.id}-${user.name}` : "profile-form"}
-          className="rounded-md border border-border bg-surface dark:bg-[#161715] p-6 sm:p-8 space-y-5 shadow-sm"
-        >
-          <div className="flex items-center gap-3 border-b border-border pb-4">
-            <div className="size-9 rounded-full bg-muted flex items-center justify-center text-foreground-secondary">
-              <User className="size-4" />
-            </div>
-            <div>
-              <h2 className="text-lg font-black text-foreground">Informasi Profil</h2>
-              <p className="text-xs font-semibold text-foreground-secondary">
-                Nama bisnis dan kontak akun admin utama.
-              </p>
-            </div>
-          </div>
-
-          <form onSubmit={handleSaveProfile} className="space-y-4">
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
-                Nama Lengkap
-              </label>
-              <div className="relative">
-                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted" />
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Nama Lengkap Anda"
-                  className="w-full h-10 pl-10 pr-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-emerald-600 dark:focus:border-wise-green focus:ring-2 focus:ring-emerald-500/20 dark:focus:ring-wise-green/20 outline-none transition text-xs"
-                />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary">
-                  Alamat Email
-                </label>
-                <span className="text-[10px] font-semibold text-foreground-muted inline-flex items-center gap-1">
-                  <Lock className="size-2.5" />
-                  Terkunci
-                </span>
-              </div>
-              <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted" />
-                <input
-                  type="email"
-                  disabled
-                  readOnly
-                  value={email}
-                  className="w-full h-10 pl-10 pr-4 rounded-full bg-muted/60 text-foreground-muted font-semibold border border-border text-xs cursor-not-allowed select-none"
-                />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary">
-                  Nomor WhatsApp Admin
-                </label>
-                <span className="text-[10px] font-semibold text-foreground-muted inline-flex items-center gap-1">
-                  <Lock className="size-2.5" />
-                  Terkunci
-                </span>
-              </div>
-              <div className="relative">
-                <Smartphone className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted" />
-                <input
-                  type="text"
-                  disabled
-                  readOnly
-                  value={phone}
-                  className="w-full h-10 pl-10 pr-4 rounded-full bg-muted/60 text-foreground-muted font-semibold border border-border text-xs font-mono cursor-not-allowed select-none"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
-                Nama Perusahaan / Tenant
-              </label>
-              <div className="relative">
-                <Building className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted" />
-                <input
-                  type="text"
-                  disabled
-                  readOnly
-                  value={tenant?.name || "PT Wahide Solusi Digital"}
-                  className="w-full h-10 pl-10 pr-4 rounded-full bg-muted/60 text-foreground-muted font-semibold border border-border text-xs cursor-not-allowed select-none"
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-end pt-2">
-              <Button
-                type="submit"
-                variant="primaryPill"
-                size="sm"
-                disabled={isSavingProfile}
-                className="text-xs font-bold gap-1.5 px-5 shadow-sm"
-              >
-                {isSavingProfile ? (
-                  <>
-                    <Loader2 className="size-3.5 animate-spin" />
-                    <span>Menyimpan...</span>
-                  </>
-                ) : (
-                  <>
-                    <Save className="size-3.5" />
-                    <span>Simpan Profil</span>
-                  </>
-                )}
-              </Button>
-            </div>
-          </form>
-        </div>
+        <ProfileInfoCard
+          key={user?.id ? `${user.id}-${user.name}` : "profile-form-unloaded"}
+          user={user}
+          tenant={tenant}
+          onSaveProfile={updateProfileName}
+        />
 
         {/* Security & Password Form */}
         <div className="rounded-md border border-border bg-surface dark:bg-[#161715] p-6 sm:p-8 space-y-5 shadow-sm">
