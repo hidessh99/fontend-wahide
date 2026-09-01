@@ -3,8 +3,10 @@
 import React, { useState } from "react";
 import { useAuth } from "@/modules/iam/hooks/useAuth";
 import { authApi } from "@/modules/iam/api/auth.api";
+import { userApi } from "@/modules/iam/api/user.api";
 import { generateSecureRandomString } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { ApiKeyConfirmModal } from "@/modules/iam/components/settings/ApiKeyConfirmModal";
 import { useI18n } from "@/lib/i18n/context";
 import { toast } from "sonner";
 import {
@@ -21,25 +23,37 @@ import {
   Building,
   Save,
   Loader2,
+  Mail,
+  Smartphone,
 } from "lucide-react";
 
 export function SettingsView() {
   const { t } = useI18n();
-  const { user, tenant } = useAuth();
+  const { user, tenant, updateProfileName } = useAuth();
   const [apiKey, setApiKey] = useState<string>("hide_live_984f8812a3b04c89b27658df2026");
   const [showKey, setShowKey] = useState(false);
   const [isKeyLoading, setIsKeyLoading] = useState(false);
+  const [confirmModal, setConfirmModal] = useState<{
+    isOpen: boolean;
+    mode: "REGENERATE" | "REVOKE";
+  }>({
+    isOpen: false,
+    mode: "REGENERATE",
+  });
 
-  // Profile Form state
+  // Profile Form state (Name is editable; Email & Phone are read-only primary identity)
   const [name, setName] = useState(user?.name || "Budi Santoso");
-  const [email, setEmail] = useState(user?.email || "business@wahide.com");
-  const [phone, setPhone] = useState(user?.phone || "6281234567890");
+  const email = user?.email || "business@wahide.com";
+  const phone = user?.phone || "6281234567890";
   const [isSavingProfile, setIsSavingProfile] = useState(false);
 
   // Password Form state
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSavingPassword, setIsSavingPassword] = useState(false);
 
   const handleCopyKey = () => {
@@ -47,66 +61,94 @@ export function SettingsView() {
     toast.success(t("settings.keyCopied"));
   };
 
-  const handleRegenerateKey = async () => {
-    if (confirm(t("settings.apiKeyDesc"))) {
-      setIsKeyLoading(true);
-      try {
+  const handleOpenRegenerateModal = () => {
+    setConfirmModal({ isOpen: true, mode: "REGENERATE" });
+  };
+
+  const handleOpenRevokeModal = () => {
+    setConfirmModal({ isOpen: true, mode: "REVOKE" });
+  };
+
+  const handleConfirmApiKeyAction = async () => {
+    setIsKeyLoading(true);
+    try {
+      if (confirmModal.mode === "REGENERATE") {
         const res = await authApi.generateApiKey();
         setApiKey(res.token || generateSecureRandomString("hide_live_", 24));
         toast.success(t("settings.keyRegenerated"));
-      } catch {
-        setApiKey(generateSecureRandomString("hide_live_", 24));
-        toast.success(t("settings.keyRegenerated"));
-      } finally {
-        setIsKeyLoading(false);
-      }
-    }
-  };
-
-  const handleRevokeKey = async () => {
-    if (confirm("Apakah Anda yakin ingin mencabut API Key ini? Integrasi eksternal akan terhenti.")) {
-      setIsKeyLoading(true);
-      try {
+      } else {
         await authApi.revokeApiKey();
         setApiKey("");
         toast.success("API Key berhasil dicabut.");
-      } catch {
+      }
+      setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+    } catch {
+      if (confirmModal.mode === "REGENERATE") {
+        setApiKey(generateSecureRandomString("hide_live_", 24));
+        toast.success(t("settings.keyRegenerated"));
+      } else {
         setApiKey("");
         toast.success("API Key berhasil dicabut.");
-      } finally {
-        setIsKeyLoading(false);
       }
+      setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+    } finally {
+      setIsKeyLoading(false);
     }
   };
 
-  const handleSaveProfile = (e: React.FormEvent) => {
+  const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
+    const trimmedName = name.trim();
+    if (!trimmedName) {
+      toast.error("Nama lengkap tidak boleh kosong.");
+      return;
+    }
     setIsSavingProfile(true);
-    setTimeout(() => {
+    try {
+      await updateProfileName(trimmedName);
+      toast.success("Nama profil berhasil diperbarui.");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Gagal memperbarui nama profil.";
+      toast.error(msg);
+    } finally {
       setIsSavingProfile(false);
-      toast.success("Informasi profil berhasil diperbarui.");
-    }, 600);
+    }
   };
 
-  const handleSavePassword = (e: React.FormEvent) => {
+  const handleSavePassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (newPassword !== confirmPassword) {
-      toast.error("Konfirmasi password baru tidak cocok.");
+    if (!currentPassword) {
+      toast.error("Kata sandi saat ini wajib diisi.");
       return;
     }
     if (newPassword.length < 8) {
-      toast.error("Password baru minimal 8 karakter.");
+      toast.error("Kata sandi baru minimal 8 karakter.");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error("Konfirmasi kata sandi baru tidak cocok.");
       return;
     }
 
     setIsSavingPassword(true);
-    setTimeout(() => {
-      setIsSavingPassword(false);
+    try {
+      await userApi.changePassword({
+        oldPassword: currentPassword,
+        newPassword: newPassword,
+      });
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
-      toast.success("Password berhasil diubah.");
-    }, 600);
+      toast.success("Kata sandi berhasil diperbarui.");
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Gagal mengubah kata sandi. Pastikan kata sandi saat ini sesuai.";
+      toast.error(msg);
+    } finally {
+      setIsSavingPassword(false);
+    }
   };
 
   return (
@@ -150,7 +192,7 @@ export function SettingsView() {
               variant="outline"
               size="sm"
               disabled={isKeyLoading || !apiKey}
-              onClick={handleRegenerateKey}
+              onClick={handleOpenRegenerateModal}
               className="rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted"
             >
               <RefreshCw className={`size-3.5 ${isKeyLoading ? "animate-spin" : ""}`} />
@@ -161,7 +203,7 @@ export function SettingsView() {
                 variant="outline"
                 size="sm"
                 disabled={isKeyLoading}
-                onClick={handleRevokeKey}
+                onClick={handleOpenRevokeModal}
                 className="rounded-full text-xs font-bold gap-1.5 text-rose-600 dark:text-rose-400 border-rose-500/20 hover:bg-rose-500/10"
               >
                 <Trash2 className="size-3.5" />
@@ -220,7 +262,7 @@ export function SettingsView() {
             <Button
               variant="primaryPill"
               size="sm"
-              onClick={handleRegenerateKey}
+              onClick={handleOpenRegenerateModal}
               className="text-xs font-bold gap-1.5 mt-2"
             >
               <Key className="size-3.5" />
@@ -251,36 +293,60 @@ export function SettingsView() {
               <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
                 Nama Lengkap
               </label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full h-10 px-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs"
-              />
+              <div className="relative">
+                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted" />
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Nama Lengkap Anda"
+                  className="w-full h-10 pl-10 pr-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-emerald-600 dark:focus:border-wise-green focus:ring-2 focus:ring-emerald-500/20 dark:focus:ring-wise-green/20 outline-none transition text-xs"
+                />
+              </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
-                Alamat Email
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full h-10 px-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs"
-              />
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary">
+                  Alamat Email
+                </label>
+                <span className="text-[10px] font-semibold text-foreground-muted inline-flex items-center gap-1">
+                  <Lock className="size-2.5" />
+                  Terkunci
+                </span>
+              </div>
+              <div className="relative">
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted" />
+                <input
+                  type="email"
+                  disabled
+                  readOnly
+                  value={email}
+                  className="w-full h-10 pl-10 pr-4 rounded-full bg-muted/60 text-foreground-muted font-semibold border border-border text-xs cursor-not-allowed select-none"
+                />
+              </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
-                Nomor WhatsApp Admin
-              </label>
-              <input
-                type="text"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="w-full h-10 px-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs font-mono"
-              />
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary">
+                  Nomor WhatsApp Admin
+                </label>
+                <span className="text-[10px] font-semibold text-foreground-muted inline-flex items-center gap-1">
+                  <Lock className="size-2.5" />
+                  Terkunci
+                </span>
+              </div>
+              <div className="relative">
+                <Smartphone className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted" />
+                <input
+                  type="text"
+                  disabled
+                  readOnly
+                  value={phone}
+                  className="w-full h-10 pl-10 pr-4 rounded-full bg-muted/60 text-foreground-muted font-semibold border border-border text-xs font-mono cursor-not-allowed select-none"
+                />
+              </div>
             </div>
 
             <div>
@@ -292,8 +358,9 @@ export function SettingsView() {
                 <input
                   type="text"
                   disabled
+                  readOnly
                   value={tenant?.name || "PT Wahide Solusi Digital"}
-                  className="w-full h-10 pl-10 pr-4 rounded-full bg-muted text-foreground-muted font-semibold border border-border text-xs cursor-not-allowed"
+                  className="w-full h-10 pl-10 pr-4 rounded-full bg-muted/60 text-foreground-muted font-semibold border border-border text-xs cursor-not-allowed select-none"
                 />
               </div>
             </div>
@@ -341,42 +408,72 @@ export function SettingsView() {
               <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
                 Kata Sandi Saat Ini
               </label>
-              <input
-                type="password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                className="w-full h-10 px-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs"
-              />
+              <div className="relative">
+                <input
+                  type={showCurrentPassword ? "text" : "password"}
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  className="w-full h-10 pl-4 pr-10 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-emerald-600 dark:focus:border-wise-green focus:ring-2 focus:ring-emerald-500/20 dark:focus:ring-wise-green/20 outline-none transition text-xs"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground transition cursor-pointer"
+                  aria-label={showCurrentPassword ? "Sembunyikan Kata Sandi" : "Lihat Kata Sandi"}
+                >
+                  {showCurrentPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                </button>
+              </div>
             </div>
 
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
                 Kata Sandi Baru
               </label>
-              <input
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="Minimal 8 karakter"
-                required
-                className="w-full h-10 px-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs"
-              />
+              <div className="relative">
+                <input
+                  type={showNewPassword ? "text" : "password"}
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Minimal 8 karakter"
+                  required
+                  className="w-full h-10 pl-4 pr-10 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-emerald-600 dark:focus:border-wise-green focus:ring-2 focus:ring-emerald-500/20 dark:focus:ring-wise-green/20 outline-none transition text-xs"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground transition cursor-pointer"
+                  aria-label={showNewPassword ? "Sembunyikan Kata Sandi" : "Lihat Kata Sandi"}
+                >
+                  {showNewPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                </button>
+              </div>
             </div>
 
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
                 Konfirmasi Kata Sandi Baru
               </label>
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Ulangi kata sandi baru"
-                required
-                className="w-full h-10 px-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs"
-              />
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Ulangi kata sandi baru"
+                  required
+                  className="w-full h-10 pl-4 pr-10 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-emerald-600 dark:focus:border-wise-green focus:ring-2 focus:ring-emerald-500/20 dark:focus:ring-wise-green/20 outline-none transition text-xs"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground transition cursor-pointer"
+                  aria-label={showConfirmPassword ? "Sembunyikan Kata Sandi" : "Lihat Kata Sandi"}
+                >
+                  {showConfirmPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                </button>
+              </div>
             </div>
 
             <div className="flex justify-end pt-2">
@@ -482,6 +579,16 @@ export function SettingsView() {
           ))}
         </div>
       </div>
+
+      {/* API Key Action Confirmation Modal (Regenerate & Revoke) */}
+      <ApiKeyConfirmModal
+        isOpen={confirmModal.isOpen}
+        mode={confirmModal.mode}
+        currentKey={apiKey}
+        isLoading={isKeyLoading}
+        onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
+        onConfirm={handleConfirmApiKeyAction}
+      />
     </div>
   );
 }

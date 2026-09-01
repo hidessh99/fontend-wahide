@@ -137,9 +137,9 @@
 
 - [ ] **11.1 Pengaturan Profil Tenant & Informasi Bisnis** — `/settings` — Ubah nama workspace bisnis dan email kontak utama, klik Simpan → Data profil tenant di Zustand store dan antarmuka ter-update instan.
 - [ ] **11.2 Ganti Kata Sandi Akun** — `/settings` — Masukkan kata sandi lama, kata sandi baru (≥ 8 karakter), dan konfirmasi kata sandi baru → Validasi sukses, toast konfirmasi penggantian password muncul.
-- [ ] **11.3 Manajemen REST API Key Developer** — `/settings` — Periksa kotak kredensial API → Tombol *Salin API Key* menyalin token ke clipboard, toggle *Show/Hide* menampilkan/menyembunyikan string token.
-- [ ] **11.4 Regenerasi API Key dengan Kriptografi Aman (CSPRNG)** — `/settings` — Klik *Regenerate Key* → API Key baru terbentuk (`hide_live_...`) menggunakan Web Crypto API `crypto.getRandomValues()`, token lama di-invalidasi.
-- [ ] **11.5 Pencabutan Kunci API (Revoke Key)** — `/settings` — Klik *Revoke Key* → Konfirmasi peringatan muncul, token API dihapus total sehingga integrasi lama terhenti seketika.
+- [x] **11.3 Manajemen REST API Key Developer** — `/settings` — Periksa kotak kredensial API → Tombol *Salin API Key* menyalin token ke clipboard, toggle *Show/Hide* menampilkan/menyembunyikan string token.
+- [x] **11.4 Regenerasi API Key dengan Kriptografi Aman (CSPRNG)** — `/settings` — Klik *Regenerate Key* → API Key baru terbentuk (`hide_live_...`) menggunakan Web Crypto API `crypto.getRandomValues()`, token lama di-invalidasi.
+- [x] **11.5 Pencabutan Kunci API (Revoke Key)** — `/settings` — Klik *Revoke Key* → Konfirmasi peringatan muncul, token API dihapus total sehingga integrasi lama terhenti seketika.
 
 ---
 

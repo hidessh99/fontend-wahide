@@ -22,6 +22,7 @@ interface AuthState {
   register: (payload: RegisterInput) => Promise<void>;
   logout: () => Promise<void>;
   fetchProfile: () => Promise<void>;
+  updateProfileName: (name: string) => Promise<void>;
   setTenant: (tenant: Tenant) => void;
   clearError: () => void;
 }
@@ -131,6 +132,27 @@ export const useAuth = create<AuthState>()(
         } catch {
           // Jika token invalid/expired, lakukan logout
           get().logout();
+        }
+      },
+
+      updateProfileName: async (name: string) => {
+        const currentUser = get().user;
+        if (!currentUser || !currentUser.id) {
+          throw new Error("Sesi pengguna tidak ditemukan. Silakan login ulang.");
+        }
+
+        set({ isLoading: true, error: null });
+        try {
+          await userApi.updateProfile(currentUser.id, { name });
+          set((state) => ({
+            isLoading: false,
+            user: state.user ? { ...state.user, name } : null,
+            tenant: state.tenant ? { ...state.tenant, name: `${name}'s Workspace` } : null,
+          }));
+        } catch (err: unknown) {
+          const errorMessage = err instanceof Error ? err.message : "Gagal memperbarui nama profil.";
+          set({ isLoading: false, error: errorMessage });
+          throw err;
         }
       },
 

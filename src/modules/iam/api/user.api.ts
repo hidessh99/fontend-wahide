@@ -23,9 +23,37 @@ export const userApi = {
     };
   },
 
-  changePassword: async (payload: ChangePasswordInput): Promise<{ success: boolean; message: string }> => {
-    const res = await httpClient.put(`${IAM_BASE}/users/change-password`, payload);
-    return { success: res.success, message: res.message };
+  updateProfile: async (
+    userId: string,
+    payload: { name: string }
+  ): Promise<{ success: boolean; message: string }> => {
+    const res = await httpClient.put<{ success: boolean; message: string }>(
+      `${IAM_BASE}/users/${userId}`,
+      payload
+    );
+    return {
+      success: res.success,
+      message: res.message || "Profil berhasil diperbarui.",
+    };
+  },
+
+  changePassword: async (
+    payload: ChangePasswordInput | { oldPassword: string; newPassword: string; old_password?: string; new_password?: string }
+  ): Promise<{ success: boolean; message: string }> => {
+    const old_password = "old_password" in payload && payload.old_password ? payload.old_password : "oldPassword" in payload ? payload.oldPassword : "";
+    const new_password = "new_password" in payload && payload.new_password ? payload.new_password : "newPassword" in payload ? payload.newPassword : "";
+
+    const res = await httpClient.put<{ success: boolean; message: string }>(
+      `${IAM_BASE}/users/change-password`,
+      {
+        old_password,
+        new_password,
+      }
+    );
+    return {
+      success: res.success,
+      message: res.message || "Kata sandi berhasil diperbarui.",
+    };
   },
 
   getDashboardStats: async (): Promise<UserDashboardStats> => {
