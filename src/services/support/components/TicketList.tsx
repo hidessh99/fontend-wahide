@@ -340,7 +340,7 @@ export function TicketList() {
 
           {/* Desktop View: Tabular Grid (Visible on >= 768px) */}
           <div className="hidden md:block rounded-md border border-border bg-surface dark:bg-[#161715] overflow-x-auto shadow-xs">
-            <div className="min-w-[760px]">
+            <div className="min-w-190">
               {/* Table Header */}
               <div className="grid grid-cols-12 gap-3 px-5 py-4 bg-muted/60 border-b border-border text-xs font-extrabold uppercase tracking-wider text-foreground-muted select-none">
                 {isSuperAdmin ? (

@@ -12,6 +12,7 @@ import {
   UserCheck,
   CreditCard,
   Receipt,
+  Activity,
   LifeBuoy,
   Settings,
   ShieldAlert,
@@ -88,6 +89,11 @@ export const DASHBOARD_NAV_GROUPS: DashboardNavGroup[] = [
         href: "/billing",
         icon: Receipt,
         roles: ["admin", "seller", "SUPER_ADMIN", "SELLER"],
+      },
+      {
+        key: "dashboardMenu.activities",
+        href: "/activities",
+        icon: Activity,
       },
       {
         key: "dashboardMenu.settings",
