@@ -21,6 +21,7 @@ export function normalizeTicket(raw: Record<string, unknown>): Ticket {
     category: (String(raw.category || "GENERAL").toUpperCase() as TicketCategory),
     priority: (String(raw.priority || "MEDIUM").toUpperCase() as TicketPriority),
     status: (String(raw.status || "OPEN").toUpperCase() as TicketStatus),
+    attachment: raw.attachment ? String(raw.attachment) : undefined,
     messages: Array.isArray(raw.messages)
       ? (raw.messages as Record<string, unknown>[]).map((m) => ({
           id: String(m.id || ""),
@@ -84,6 +85,14 @@ export const supportApi = {
     }
   },
 
+  uploadImage: async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append("file", file);
+    const res = await httpClient.post<Record<string, unknown>>(`${SUPPORT_BASE}/support/tickets/upload`, formData);
+    const raw = res.payload || (res as unknown as Record<string, unknown>);
+    return String(raw.url || raw.public_url || "");
+  },
+
   createTicket: async (payload: CreateTicketInput): Promise<Ticket> => {
     const res = await httpClient.post<Record<string, unknown>>(`${SUPPORT_BASE}/support/tickets`, payload);
     const raw = res.payload || (res as unknown as Record<string, unknown>);
@@ -91,13 +100,16 @@ export const supportApi = {
   },
 
   replyTicket: async (id: string, content: string): Promise<TicketMessage> => {
-    const res = await httpClient.post<Record<string, unknown>>(`${SUPPORT_BASE}/support/tickets/${id}/reply`, { content });
+    const res = await httpClient.post<Record<string, unknown>>(`${SUPPORT_BASE}/support/tickets/${id}/reply`, {
+      content,
+      message: content,
+    });
     const raw = res.payload || (res as unknown as Record<string, unknown>);
     return {
       id: String(raw.id || "msg_" + Date.now()),
       senderName: String(raw.senderName || raw.sender_name || "Anda"),
       isStaff: Boolean(raw.isStaff || raw.is_staff),
-      content: String(raw.content || content),
+      content: String(raw.content || raw.message || content),
       createdAt: String(raw.createdAt || raw.created_at || new Date().toISOString()),
     };
   },

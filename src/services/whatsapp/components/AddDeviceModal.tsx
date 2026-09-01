@@ -65,7 +65,7 @@ export function AddDeviceModal({
         {/* Sticky Header */}
         <div className="flex items-start justify-between p-5 sm:p-6 pb-4 border-b border-border shrink-0">
           <div className="flex items-center gap-3">
-            <div className="size-10 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center">
+            <div className="size-10 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center shrink-0">
               <Smartphone className="size-5" />
             </div>
             <div>
@@ -81,7 +81,7 @@ export function AddDeviceModal({
           <button
             type="button"
             onClick={onClose}
-            className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
+            className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer shrink-0"
             aria-label="Tutup"
           >
             <X className="size-4" />
@@ -89,32 +89,35 @@ export function AddDeviceModal({
         </div>
 
         {/* Scrollable Form Body */}
-        <form onSubmit={handleSubmit} className="p-5 sm:p-6 overflow-y-auto space-y-4 flex-1">
-          {error && (
-            <div className="p-3 rounded-md bg-rose-500/10 border border-rose-500/20 text-xs font-semibold text-rose-600 dark:text-rose-400">
-              {error}
-            </div>
-          )}
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto flex flex-col min-h-0">
+          <div className="p-5 sm:p-6 space-y-4 flex-1">
+            {error && (
+              <div className="p-3 rounded-md bg-rose-500/10 border border-rose-500/20 text-xs font-semibold text-rose-600 dark:text-rose-400">
+                {error}
+              </div>
+            )}
 
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
-              {t("whatsapp.deviceNameLabel")}
-            </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => {
-                setName(e.target.value);
-                setError(null);
-              }}
-              placeholder={t("whatsapp.deviceNamePlaceholder")}
-              disabled={isLoading}
-              className="w-full h-12 px-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-sm"
-              autoFocus
-            />
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+                {t("whatsapp.deviceNameLabel")}
+              </label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  setError(null);
+                }}
+                placeholder={t("whatsapp.deviceNamePlaceholder")}
+                disabled={isLoading}
+                className="w-full h-12 px-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-sm"
+                autoFocus
+              />
+            </div>
           </div>
 
-          <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-border/80">
+          {/* Sticky Footer */}
+          <div className="p-4 sm:p-6 pt-3 border-t border-border/80 bg-surface/90 dark:bg-[#161715]/90 backdrop-blur-sm flex items-center justify-end gap-2.5 shrink-0">
             <Button
               type="button"
               variant="outline"

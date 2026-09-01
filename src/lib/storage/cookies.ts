@@ -24,5 +24,40 @@ export function getCookie(name: string): string | null {
 
 export function deleteCookie(name: string) {
   if (typeof document === "undefined") return;
-  document.cookie = `${encodeURIComponent(name)}=; Path=/; Max-Age=0; SameSite=Strict`;
+  // Use explicit 1970 expiration date and Max-Age=0 to guarantee instant purge across all browsers & localhost
+  document.cookie = `${encodeURIComponent(name)}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Max-Age=0; SameSite=Strict`;
+}
+
+export function clearAllAuthStorage() {
+  if (typeof window === "undefined") return;
+
+  // 1. Purge all known active and legacy auth cookies
+  const authCookieNames = [
+    "wahide_session_token",
+    "wahide_user_role",
+    "wahide_token",
+    "wahide_tenant_id",
+    "token",
+    "session_token",
+  ];
+
+  for (const name of authCookieNames) {
+    deleteCookie(name);
+  }
+
+  // 2. Clear localStorage auth persistence
+  try {
+    localStorage.removeItem("wahide_auth_storage");
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("token");
+  } catch {
+    // ignore storage access error
+  }
+
+  // 3. Clear sessionStorage
+  try {
+    sessionStorage.clear();
+  } catch {
+    // ignore storage access error
+  }
 }

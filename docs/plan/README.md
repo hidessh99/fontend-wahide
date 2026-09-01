@@ -99,3 +99,30 @@ Daftar dokumen perencanaan arsitektur, optimasi performa, dan standarisasi tekni
 
 32. **[Support Tickets Route & Mapping Plan](./support_tickets_route_and_mapping_plan.md)**
     - **Rencana Implementasi: Perbaikan Route Support Tickets (Fix 404 Not Found)**: Mendaftarkan alias route `/support/tickets`, `/support/ticket`, `/tickets`, `/ticket` di backend Go dan menyempurnakan normalisasi DTO di frontend.
+
+33. **[Support Ticket Priority & Payload Audit Plan](./support_ticket_priority_and_payload_audit_plan.md)**
+    - **Rencana & Audit Mendalam: Validasi Payload Tiket Bantuan & DTO Support Module (Fix Validation oneof Priority & Attachment Cloudflare R2)**: Mengatasi penolakan field `Priority` huruf kapital pada Go validator, menyelaraskan mapping field balasan tiket (`content` vs `message`), dan integrasi attachment Cloudflare R2.
+
+34. **[Support Ticket Priority Uppercase Constants Plan](./support_ticket_priority_uppercase_constants_plan.md)**
+    - **Rencana & Standardisasi: Konstanta Huruf Kapital (UPPERCASE) Priority & Category pada Support Module Entity**: Mendefinisikan konstanta eksplisit `LOW`, `MEDIUM`, `HIGH` di `entity/ticket.go` dan standarisasi nilai database.
+
+35. **[Next.js Routing & 404 Root Cause Plan](./nextjs_routing_and_404_root_cause_plan.md)**
+    - **Analisis Mendalam & Rencana: Mengatasi Halaman 404 (Looks Like You've Wandered Off The Grid) pada Next.js**: Penjelasan desinkronisasi cache routing dev server `.next/` dan panduan pemulihan server frontend.
+
+36. **[Auth Session Expired & Cookie Cleanup Plan](./auth_session_expired_and_cookie_cleanup_plan.md)**
+    - **Analisis & Rencana: Penanganan Session Expired, Pembersihan Cookie & LocalStorage Menyeluruh**: Penjelasan pemicu `/login?session_expired=1`, fungsi `clearAllAuthStorage()`, banner notifikasi di LoginForm, dan eliminasi residu auth state.
+
+37. **[JWT & Redis Session Revocation Audit Plan](./jwt_redis_session_revocation_audit_plan.md)**
+    - **Analisis Mendalam & Audit: Mekanisme 401 "Session has been revoked" & Masa Berlaku JWT 7 Hari**: Penjelasan arsitektur dual-layer JWT + Redis session key, penyebab kunci Redis hilang saat restart, dan standarisasi siklus autentikasi.
+
+38. **[Stateful JWT Security Option A Plan](./stateful_jwt_security_option_a_plan.md)**
+    - **Rencana & Panduan: Penerapan Opsi A (Keamanan Maksimal: Hybrid Stateful JWT + Redis) Bebas Bug di Local Development & Production**: Standarisasi debounce redirect 401, sinkronisasi masa aktif 7 hari, dan pembersihan total sesi.
+
+39. **[Support Ticket Cloudflare R2 Image Upload Plan](./support_ticket_cloudflare_r2_image_upload_plan.md)**
+    - **Rencana & Integrasi: Upload Gambar Screenshot Cloudflare R2 pada Modal Buat Tiket Bantuan**: Integrasi upload multipart `FormData`, penambahan pemilih file screenshot, preview thumbnail, dan penayangan gambar pada thread diskusi tiket.
+
+40. **[Resilient Session Auto-Healing Plan](./resilient_session_auto_healing_plan.md)**
+    - **Rencana Perbaikan Mode Development: Resilient Session Auto-Healing (Bebas 401 Saat Restart Redis/Golang)**: Pola explicit revocation blacklist + session auto-rehydration di backend Go agar pengembang bebas mematikan/menghidupkan Redis dan Golang tanpa logout paksa.
+
+41. **[All Modals Viewport Scroll Audit Plan](./all_modals_viewport_scroll_audit_plan.md)**
+    - **Audit Menyeluruh Seluruh Komponen Modal & Rencana Standarisasi Viewport Responsiveness (Anti-Cutoff)**: Audit 13 komponen modal/dialog di frontend dan rencana standarisasi struktur 3-layer sticky layout agar bebas terpotong di layar laptop.

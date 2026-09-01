@@ -19,6 +19,7 @@ export interface Ticket {
   category: TicketCategory;
   priority: TicketPriority;
   status: TicketStatus;
+  attachment?: string;
   messages: TicketMessage[];
   createdAt: string;
   updatedAt: string;
@@ -29,6 +30,7 @@ export interface CreateTicketInput {
   category: TicketCategory;
   priority: TicketPriority;
   message: string;
+  attachment?: string;
 }
 
 export interface GetTicketsParams {

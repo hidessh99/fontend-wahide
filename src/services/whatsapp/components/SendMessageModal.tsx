@@ -86,7 +86,7 @@ export function SendMessageModal({
         {/* Sticky Header */}
         <div className="flex items-start justify-between p-5 sm:p-6 pb-4 border-b border-border shrink-0">
           <div className="flex items-center gap-3">
-            <div className="size-10 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center">
+            <div className="size-10 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center shrink-0">
               <Send className="size-5" />
             </div>
             <div>
@@ -102,7 +102,7 @@ export function SendMessageModal({
           <button
             type="button"
             onClick={onClose}
-            className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
+            className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer shrink-0"
             aria-label={t("whatsapp.qrClose")}
           >
             <X className="size-4" />
@@ -110,63 +110,66 @@ export function SendMessageModal({
         </div>
 
         {/* Scrollable Form Body */}
-        <form onSubmit={handleSend} className="p-5 sm:p-6 overflow-y-auto space-y-4 flex-1">
-          {/* Select Device */}
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
-              {t("whatsapp.selectSenderDevice")}
-            </label>
-            <select
-              value={activeDeviceId}
-              onChange={(e) => setUserSelectedDeviceId(e.target.value)}
-              className="w-full h-10 px-3 rounded-md bg-surface dark:bg-[#10110e] text-foreground text-xs font-semibold border border-border outline-none focus:border-wise-green"
-            >
-              {connectedDevices.length === 0 ? (
-                <option value="">{t("whatsapp.noConnectedDevices")}</option>
-              ) : (
-                connectedDevices.map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.push_name || d.name} ({d.phone ? `+${d.phone}` : "Tanpa Nomor"})
-                  </option>
-                ))
-              )}
-            </select>
+        <form onSubmit={handleSend} className="flex-1 overflow-y-auto flex flex-col min-h-0">
+          <div className="p-5 sm:p-6 space-y-4 flex-1">
+            {/* Select Device */}
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+                {t("whatsapp.selectSenderDevice")}
+              </label>
+              <select
+                value={activeDeviceId}
+                onChange={(e) => setUserSelectedDeviceId(e.target.value)}
+                className="w-full h-10 px-3 rounded-md bg-surface dark:bg-[#10110e] text-foreground text-xs font-semibold border border-border outline-none focus:border-wise-green"
+              >
+                {connectedDevices.length === 0 ? (
+                  <option value="">{t("whatsapp.noConnectedDevices")}</option>
+                ) : (
+                  connectedDevices.map((d) => (
+                    <option key={d.id} value={d.id}>
+                      {d.push_name || d.name} ({d.phone ? `+${d.phone}` : "Tanpa Nomor"})
+                    </option>
+                  ))
+                )}
+              </select>
+            </div>
+
+            {/* Recipient Phone */}
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+                {t("whatsapp.recipientPhoneLabel")}
+              </label>
+              <input
+                type="text"
+                value={recipient}
+                onChange={(e) => setRecipient(e.target.value)}
+                placeholder={t("whatsapp.recipientPhonePlaceholder")}
+                className="w-full h-10 px-3 rounded-md bg-surface dark:bg-[#10110e] text-foreground text-xs font-semibold border border-border outline-none focus:border-wise-green"
+                required
+              />
+              <p className="text-[11px] text-foreground-muted mt-1">
+                {t("whatsapp.recipientPhoneHint")}
+              </p>
+            </div>
+
+            {/* Message Content */}
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+                {t("whatsapp.messageTextLabel")}
+              </label>
+              <textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                rows={4}
+                placeholder={t("whatsapp.messageTextPlaceholder")}
+                className="w-full p-3 rounded-md bg-surface dark:bg-[#10110e] text-foreground text-xs font-semibold border border-border outline-none focus:border-wise-green resize-none"
+                required
+              />
+            </div>
           </div>
 
-          {/* Recipient Phone */}
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
-              {t("whatsapp.recipientPhoneLabel")}
-            </label>
-            <input
-              type="text"
-              value={recipient}
-              onChange={(e) => setRecipient(e.target.value)}
-              placeholder={t("whatsapp.recipientPhonePlaceholder")}
-              className="w-full h-10 px-3 rounded-md bg-surface dark:bg-[#10110e] text-foreground text-xs font-semibold border border-border outline-none focus:border-wise-green"
-              required
-            />
-            <p className="text-[11px] text-foreground-muted mt-1">
-              {t("whatsapp.recipientPhoneHint")}
-            </p>
-          </div>
-
-          {/* Message Content */}
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
-              {t("whatsapp.messageTextLabel")}
-            </label>
-            <textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              rows={4}
-              placeholder={t("whatsapp.messageTextPlaceholder")}
-              className="w-full p-3 rounded-md bg-surface dark:bg-[#10110e] text-foreground text-xs font-semibold border border-border outline-none focus:border-wise-green resize-none"
-              required
-            />
-          </div>
-
-          <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-border/80">
+          {/* Sticky Footer */}
+          <div className="p-4 sm:p-6 pt-3 border-t border-border/80 bg-surface/90 dark:bg-[#161715]/90 backdrop-blur-sm flex items-center justify-end gap-2.5 shrink-0">
             <Button
               type="button"
               variant="outline"

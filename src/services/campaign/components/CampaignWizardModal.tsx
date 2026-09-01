@@ -157,9 +157,9 @@ export function CampaignWizardModal({
       }}
       className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-sm p-3 sm:p-6 flex min-h-full items-center justify-center animate-in fade-in"
     >
-      <div className="relative w-full max-w-2xl max-h-[90vh] flex flex-col rounded-md border border-border bg-surface dark:bg-[#161715] shadow-2xl overflow-hidden animate-in zoom-in-95 p-6 sm:p-8 space-y-6">
-        {/* Header with Step Tracker */}
-        <div className="space-y-3">
+      <div className="relative w-full max-w-2xl max-h-[90vh] flex flex-col rounded-md border border-border bg-surface dark:bg-[#161715] shadow-2xl overflow-hidden animate-in zoom-in-95">
+        {/* Sticky Header with Step Tracker */}
+        <div className="p-5 sm:p-6 pb-3 border-b border-border/80 shrink-0 space-y-3">
           <div className="flex items-start justify-between">
             <div>
               <h2 className="text-xl sm:text-2xl font-black text-foreground tracking-tight">
@@ -172,7 +172,7 @@ export function CampaignWizardModal({
             <button
               type="button"
               onClick={onClose}
-              className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
+              className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer shrink-0"
               aria-label="Tutup"
             >
               <X className="size-4" />
@@ -180,7 +180,7 @@ export function CampaignWizardModal({
           </div>
 
           {/* Stepper Indicator */}
-          <div className="grid grid-cols-4 gap-2 pt-2 border-b border-border pb-3 text-xs font-bold">
+          <div className="grid grid-cols-4 gap-2 pt-1 text-xs font-bold">
             {[
               { num: 1, label: t("campaign.step1Device"), icon: Smartphone },
               { num: 2, label: t("campaign.step2Audience"), icon: Users },
@@ -205,15 +205,15 @@ export function CampaignWizardModal({
           </div>
         </div>
 
-        {/* Error Alert */}
-        {error && (
-          <div className="p-3 rounded-md bg-rose-500/10 border border-rose-500/20 text-xs font-semibold text-rose-600 dark:text-rose-400">
-            {error}
-          </div>
-        )}
+        {/* Scrollable Body Content per Step */}
+        <div className="flex-1 overflow-y-auto min-h-0 p-5 sm:p-6 space-y-4">
+          {/* Error Alert */}
+          {error && (
+            <div className="p-3 rounded-md bg-rose-500/10 border border-rose-500/20 text-xs font-semibold text-rose-600 dark:text-rose-400">
+              {error}
+            </div>
+          )}
 
-        {/* Body Content per Step */}
-        <div className="flex-1 overflow-y-auto space-y-4 pr-1 py-1">
           {/* STEP 1: Select Device */}
           {step === 1 && (
             <div className="space-y-4">
@@ -507,8 +507,8 @@ export function CampaignWizardModal({
           )}
         </div>
 
-        {/* Modal Footer Controls */}
-        <div className="flex items-center justify-between pt-3 border-t border-border/80">
+        {/* Sticky Modal Footer Controls */}
+        <div className="p-4 sm:p-6 pt-3 border-t border-border/80 bg-surface/90 dark:bg-[#161715]/90 backdrop-blur-sm flex items-center justify-between shrink-0">
           {step > 1 ? (
             <Button
               type="button"
@@ -516,7 +516,7 @@ export function CampaignWizardModal({
               size="sm"
               onClick={handlePrev}
               disabled={isLoading}
-              className="rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted"
+              className="rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted cursor-pointer"
             >
               <ArrowLeft className="size-3.5" />
               <span>{t("campaign.btnPrev")}</span>
@@ -528,7 +528,7 @@ export function CampaignWizardModal({
               size="sm"
               onClick={onClose}
               disabled={isLoading}
-              className="rounded-full text-xs font-bold border-border hover:border-foreground-muted"
+              className="rounded-full text-xs font-bold border-border hover:border-foreground-muted cursor-pointer"
             >
               Batal
             </Button>
@@ -540,7 +540,7 @@ export function CampaignWizardModal({
               variant="primaryPill"
               size="sm"
               onClick={handleNext}
-              className="text-xs font-bold gap-1.5 px-6 shadow-sm"
+              className="text-xs font-bold gap-1.5 px-6 shadow-sm cursor-pointer"
             >
               <span>{t("campaign.btnNext")}</span>
               <ArrowRight className="size-3.5" />
@@ -552,7 +552,7 @@ export function CampaignWizardModal({
               size="sm"
               disabled={isLoading}
               onClick={handleSubmit}
-              className="text-xs font-bold gap-1.5 px-6 shadow-sm"
+              className="text-xs font-bold gap-1.5 px-6 shadow-sm cursor-pointer"
             >
               {isLoading ? (
                 <>

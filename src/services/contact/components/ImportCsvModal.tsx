@@ -129,11 +129,11 @@ export function ImportCsvModal({
       }}
       className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-sm p-3 sm:p-6 flex min-h-full items-center justify-center animate-in fade-in"
     >
-      <div className="relative w-full max-w-lg max-h-[90vh] flex flex-col rounded-md border border-border bg-surface dark:bg-[#161715] shadow-2xl overflow-hidden animate-in zoom-in-95 p-6 sm:p-8 space-y-5">
-        {/* Modal Header */}
-        <div className="flex items-start justify-between">
+      <div className="relative w-full max-w-lg max-h-[90vh] flex flex-col rounded-md border border-border bg-surface dark:bg-[#161715] shadow-2xl overflow-hidden animate-in zoom-in-95">
+        {/* Sticky Modal Header */}
+        <div className="p-5 sm:p-6 pb-4 border-b border-border/80 flex items-start justify-between shrink-0">
           <div className="flex items-center gap-3">
-            <div className="size-10 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center">
+            <div className="size-10 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center shrink-0">
               <FileSpreadsheet className="size-5" />
             </div>
             <div>
@@ -149,76 +149,79 @@ export function ImportCsvModal({
           <button
             type="button"
             onClick={onClose}
-            className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
+            className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer shrink-0"
             aria-label="Tutup"
           >
             <X className="size-4" />
           </button>
         </div>
 
-        {/* Error Alert */}
-        {error && (
-          <div className="p-3 rounded-md bg-rose-500/10 border border-rose-500/20 text-xs font-semibold text-rose-600 dark:text-rose-400 flex items-center gap-2">
-            <AlertCircle className="size-4 shrink-0" />
-            <span>{error}</span>
-          </div>
-        )}
+        {/* Scrollable Body */}
+        <div className="flex-1 overflow-y-auto min-h-0 p-5 sm:p-6 space-y-4">
+          {/* Error Alert */}
+          {error && (
+            <div className="p-3 rounded-md bg-rose-500/10 border border-rose-500/20 text-xs font-semibold text-rose-600 dark:text-rose-400 flex items-center gap-2">
+              <AlertCircle className="size-4 shrink-0" />
+              <span>{error}</span>
+            </div>
+          )}
 
-        {/* Dropzone Upload */}
-        <div className="relative border-2 border-dashed border-border hover:border-wise-green/80 rounded-md p-6 flex flex-col items-center justify-center text-center transition bg-muted/20">
-          <input
-            type="file"
-            accept=".csv"
-            onChange={handleFileChange}
-            disabled={isLoading}
-            className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
-          />
-          <div className="size-12 rounded-full bg-wise-green/10 text-wise-green flex items-center justify-center mb-3">
-            <UploadCloud className="size-6" />
+          {/* Dropzone Upload */}
+          <div className="relative border-2 border-dashed border-border hover:border-wise-green/80 rounded-md p-6 flex flex-col items-center justify-center text-center transition bg-muted/20">
+            <input
+              type="file"
+              accept=".csv"
+              onChange={handleFileChange}
+              disabled={isLoading}
+              className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+            />
+            <div className="size-12 rounded-full bg-wise-green/10 text-wise-green flex items-center justify-center mb-3">
+              <UploadCloud className="size-6" />
+            </div>
+            <p className="text-xs font-bold text-foreground mb-1">
+              {fileName || t("contact.importDropzone")}
+            </p>
+            <p className="text-[11px] font-semibold text-foreground-muted">
+              {t("contact.importSupportedFormat")}
+            </p>
           </div>
-          <p className="text-xs font-bold text-foreground mb-1">
-            {fileName || t("contact.importDropzone")}
-          </p>
-          <p className="text-[11px] font-semibold text-foreground-muted">
-            {t("contact.importSupportedFormat")}
-          </p>
+
+          {/* Preview of Parsed Contacts */}
+          {parsedData.length > 0 && (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs font-bold text-foreground">
+                <span className="flex items-center gap-1.5 text-dark-green dark:text-wise-green font-semibold">
+                  <CheckCircle2 className="size-4" />
+                  <span>{t("contact.importPreviewTitle", { count: parsedData.length.toString() })}</span>
+                </span>
+              </div>
+
+              <div className="max-h-40 overflow-y-auto rounded border border-border bg-muted/40 p-2 text-xs divide-y divide-border/50 font-mono">
+                {parsedData.slice(0, 5).map((c, idx) => (
+                  <div key={idx} className="py-1.5 flex justify-between text-[11px]">
+                    <span className="font-bold text-foreground truncate max-w-45">{c.name}</span>
+                    <span className="text-foreground-secondary">+{c.phone}</span>
+                  </div>
+                ))}
+                {parsedData.length > 5 && (
+                  <div className="py-1 text-[10px] text-center text-foreground-muted font-sans">
+                    ... dan {parsedData.length - 5} kontak lainnya
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Preview of Parsed Contacts */}
-        {parsedData.length > 0 && (
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-xs font-bold text-foreground">
-              <span className="flex items-center gap-1.5 text-dark-green dark:text-wise-green font-semibold">
-                <CheckCircle2 className="size-4" />
-                <span>{t("contact.importPreviewTitle", { count: parsedData.length.toString() })}</span>
-              </span>
-            </div>
-
-            <div className="max-h-36 overflow-y-auto rounded border border-border bg-muted/40 p-2 text-xs divide-y divide-border/50 font-mono">
-              {parsedData.slice(0, 5).map((c, idx) => (
-                <div key={idx} className="py-1.5 flex justify-between text-[11px]">
-                  <span className="font-bold text-foreground truncate max-w-45">{c.name}</span>
-                  <span className="text-foreground-secondary">+{c.phone}</span>
-                </div>
-              ))}
-              {parsedData.length > 5 && (
-                <div className="py-1 text-[10px] text-center text-foreground-muted font-sans">
-                  ... dan {parsedData.length - 5} kontak lainnya
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Modal Footer */}
-        <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-border/80">
+        {/* Sticky Modal Footer */}
+        <div className="p-4 sm:p-6 pt-3 border-t border-border/80 bg-surface/90 dark:bg-[#161715]/90 backdrop-blur-sm flex items-center justify-end gap-2.5 shrink-0">
           <Button
             type="button"
             variant="outline"
             size="sm"
             onClick={onClose}
             disabled={isLoading}
-            className="rounded-full text-xs font-bold px-4 border-border hover:border-foreground-muted"
+            className="rounded-full text-xs font-bold px-4 border-border hover:border-foreground-muted cursor-pointer"
           >
             {t("contact.cancel")}
           </Button>
@@ -228,7 +231,7 @@ export function ImportCsvModal({
             size="sm"
             disabled={isLoading || parsedData.length === 0}
             onClick={handleStartImport}
-            className="text-xs font-bold gap-1.5 px-5 shadow-sm"
+            className="text-xs font-bold gap-1.5 px-5 shadow-sm cursor-pointer"
           >
             {isLoading ? (
               <>

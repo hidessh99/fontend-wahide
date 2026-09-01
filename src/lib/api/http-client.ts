@@ -3,7 +3,7 @@
 // Matches Go Backend: github.com/hidessh99/wahide/internal/shared/response
 // ==============================================================================
 
-import { getCookie, deleteCookie } from "@/lib/storage/cookies";
+import { getCookie,  clearAllAuthStorage } from "@/lib/storage/cookies";
 
 
 export interface GlobalResponse<T = unknown> {
@@ -68,6 +68,8 @@ interface RequestOptions extends RequestInit {
   retries?: number;
 }
 
+let isRedirectingToLogin = false;
+
 class HttpClient {
   private getAuthToken(): string | null {
     if (typeof window === "undefined") return null;
@@ -111,11 +113,15 @@ class HttpClient {
     } = options;
 
     const authToken = token || this.getAuthToken();
+    const isFormData = typeof FormData !== "undefined" && customConfig.body instanceof FormData;
 
     const defaultHeaders: Record<string, string> = {
-      "Content-Type": "application/json",
       Accept: "application/json",
     };
+
+    if (!isFormData) {
+      defaultHeaders["Content-Type"] = "application/json";
+    }
 
     if (authToken) {
       defaultHeaders["Authorization"] = `Bearer ${authToken}`;
@@ -160,12 +166,14 @@ class HttpClient {
           !endpoint.includes("/auth/forgot-password") &&
           !endpoint.includes("/auth/reset-password")
         ) {
-          deleteCookie("wahide_session_token");
-          deleteCookie("wahide_user_role");
-          localStorage.removeItem("wahide_auth_storage");
+          clearAllAuthStorage();
 
           const currentPath = window.location.pathname;
-          if (currentPath !== "/login" && currentPath !== "/register") {
+          if (currentPath !== "/login" && currentPath !== "/register" && !isRedirectingToLogin) {
+            isRedirectingToLogin = true;
+            setTimeout(() => {
+              isRedirectingToLogin = false;
+            }, 3000);
             // eslint-disable-next-line @next/next/no-location-assign-relative-destination
             window.location.href = "/login?session_expired=1";
           }
@@ -206,26 +214,29 @@ class HttpClient {
   }
 
   public post<T = unknown>(endpoint: string, body?: unknown, options?: RequestOptions): Promise<ApiResponse<T>> {
+    const isFormData = typeof FormData !== "undefined" && body instanceof FormData;
     return this.request<T>(endpoint, {
       ...options,
       method: "POST",
-      body: body ? JSON.stringify(body) : undefined,
+      body: isFormData ? (body as FormData) : body ? JSON.stringify(body) : undefined,
     });
   }
 
   public put<T = unknown>(endpoint: string, body?: unknown, options?: RequestOptions): Promise<ApiResponse<T>> {
+    const isFormData = typeof FormData !== "undefined" && body instanceof FormData;
     return this.request<T>(endpoint, {
       ...options,
       method: "PUT",
-      body: body ? JSON.stringify(body) : undefined,
+      body: isFormData ? (body as FormData) : body ? JSON.stringify(body) : undefined,
     });
   }
 
   public patch<T = unknown>(endpoint: string, body?: unknown, options?: RequestOptions): Promise<ApiResponse<T>> {
+    const isFormData = typeof FormData !== "undefined" && body instanceof FormData;
     return this.request<T>(endpoint, {
       ...options,
       method: "PATCH",
-      body: body ? JSON.stringify(body) : undefined,
+      body: isFormData ? (body as FormData) : body ? JSON.stringify(body) : undefined,
     });
   }
 

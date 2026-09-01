@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Ticket } from "../types/support.types";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/context";
-import { X, Send, Loader2, User, ShieldCheck } from "lucide-react";
+import { X, Send, Loader2, User, ShieldCheck, ExternalLink } from "lucide-react";
 
 interface TicketThreadModalProps {
   ticket: Ticket | null;
@@ -55,9 +55,9 @@ export function TicketThreadModal({
       }}
       className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-sm p-3 sm:p-6 flex min-h-full items-center justify-center animate-in fade-in"
     >
-      <div className="relative w-full max-w-2xl max-h-[90vh] flex flex-col justify-between rounded-md border border-border bg-surface dark:bg-[#161715] shadow-2xl overflow-hidden animate-in zoom-in-95 p-6 sm:p-8 space-y-5">
-        {/* Header */}
-        <div className="flex items-start justify-between border-b border-border pb-4">
+      <div className="relative w-full max-w-2xl max-h-[90vh] flex flex-col rounded-md border border-border bg-surface dark:bg-[#161715] shadow-2xl overflow-hidden animate-in zoom-in-95">
+        {/* Sticky Header */}
+        <div className="p-5 sm:p-6 pb-4 border-b border-border flex items-start justify-between shrink-0">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <span className="font-mono text-xs font-bold text-dark-green dark:text-wise-green bg-light-mint dark:bg-wise-green/15 px-2.5 py-0.5 rounded-full border border-wise-green/30">
@@ -75,58 +75,92 @@ export function TicketThreadModal({
           <button
             type="button"
             onClick={onClose}
-            className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
+            className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer shrink-0"
             aria-label="Tutup"
           >
             <X className="size-4" />
           </button>
         </div>
 
-        {/* Message Thread History */}
-        <div className="flex-1 overflow-y-auto space-y-4 py-2 pr-1 divide-y divide-transparent">
-          {ticket.messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={`flex flex-col space-y-1 ${
-                msg.isStaff ? "items-start" : "items-end"
-              }`}
-            >
-              <div className="flex items-center gap-1.5 text-[11px] font-bold text-foreground-muted px-1">
-                {msg.isStaff ? (
-                  <>
-                    <ShieldCheck className="size-3.5 text-dark-green dark:text-wise-green" />
-                    <span className="text-dark-green dark:text-wise-green font-extrabold">{msg.senderName}</span>
-                  </>
-                ) : (
-                  <>
-                    <User className="size-3 text-foreground-muted" />
-                    <span>{msg.senderName}</span>
-                  </>
-                )}
-                <span>•</span>
-                <span>
-                  {new Date(msg.createdAt).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </span>
+        {/* Scrollable Body: Attachment & Messages */}
+        <div className="flex-1 overflow-y-auto min-h-0 p-5 sm:p-6 space-y-4">
+          {/* Attachment preview if exists */}
+          {ticket.attachment && (
+            <div className="p-3 rounded-md bg-muted/50 border border-border flex items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-2.5 overflow-hidden">
+                <div className="size-10 rounded bg-surface dark:bg-black/40 border border-border flex items-center justify-center shrink-0 overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={ticket.attachment}
+                    alt="Lampiran Tiket"
+                    className="size-full object-cover"
+                  />
+                </div>
+                <div className="overflow-hidden">
+                  <span className="font-bold text-foreground block truncate">
+                    {t("support.attachmentLabel")}
+                  </span>
+                  <span className="text-[11px] text-foreground-muted">Cloudflare R2 Storage</span>
+                </div>
               </div>
+              <a
+                href={ticket.attachment}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs font-bold text-wise-green hover:underline px-3 py-1.5 rounded-full bg-wise-green/10 border border-wise-green/20 shrink-0"
+              >
+                <span>{t("support.viewAttachment")}</span>
+                <ExternalLink className="size-3" />
+              </a>
+            </div>
+          )}
 
+          {/* Message Thread History */}
+          <div className="space-y-4 py-1 divide-y divide-transparent">
+            {ticket.messages.map((msg) => (
               <div
-                className={`p-4 rounded-lg max-w-[85%] text-xs font-semibold leading-relaxed shadow-sm ${
-                  msg.isStaff
-                    ? "bg-muted/80 text-foreground border border-border"
-                    : "bg-[#e2f7cb] dark:bg-[#005c4b]/50 text-foreground border border-[#c4e8a5] dark:border-[#005c4b]"
+                key={msg.id}
+                className={`flex flex-col space-y-1 ${
+                  msg.isStaff ? "items-start" : "items-end"
                 }`}
               >
-                {msg.content}
+                <div className="flex items-center gap-1.5 text-[11px] font-bold text-foreground-muted px-1">
+                  {msg.isStaff ? (
+                    <>
+                      <ShieldCheck className="size-3.5 text-dark-green dark:text-wise-green" />
+                      <span className="text-dark-green dark:text-wise-green font-extrabold">{msg.senderName}</span>
+                    </>
+                  ) : (
+                    <>
+                      <User className="size-3 text-foreground-muted" />
+                      <span>{msg.senderName}</span>
+                    </>
+                  )}
+                  <span>•</span>
+                  <span>
+                    {new Date(msg.createdAt).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                </div>
+
+                <div
+                  className={`p-4 rounded-lg max-w-[85%] text-xs font-semibold leading-relaxed shadow-sm ${
+                    msg.isStaff
+                      ? "bg-muted/80 text-foreground border border-border"
+                      : "bg-[#e2f7cb] dark:bg-[#005c4b]/50 text-foreground border border-[#c4e8a5] dark:border-[#005c4b]"
+                  }`}
+                >
+                  {msg.content}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
-        {/* Reply Composer */}
-        <form onSubmit={handleSend} className="space-y-3 pt-3 border-t border-border">
+        {/* Sticky Reply Composer Footer */}
+        <form onSubmit={handleSend} className="p-4 sm:p-6 pt-3 border-t border-border bg-surface/90 dark:bg-[#161715]/90 backdrop-blur-sm shrink-0">
           <div className="relative">
             <textarea
               rows={3}
@@ -141,7 +175,7 @@ export function TicketThreadModal({
               variant="primaryPill"
               size="sm"
               disabled={isLoading || !replyText.trim()}
-              className="absolute right-2.5 bottom-3.5 text-xs font-bold gap-1.5 shadow-sm h-8 px-4"
+              className="absolute right-2.5 bottom-3.5 text-xs font-bold gap-1.5 shadow-sm h-8 px-4 cursor-pointer"
             >
               {isLoading ? (
                 <Loader2 className="size-3.5 animate-spin" />

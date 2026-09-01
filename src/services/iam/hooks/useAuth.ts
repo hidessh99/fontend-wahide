@@ -6,7 +6,7 @@ import { User, Tenant } from "../types/auth.types";
 import { authApi } from "../api/auth.api";
 import { userApi } from "../api/user.api";
 import { LoginInput, RegisterInput } from "../schemas/auth.schema";
-import { setCookie, deleteCookie } from "@/lib/storage/cookies";
+import { setCookie, clearAllAuthStorage } from "@/lib/storage/cookies";
 
 interface AuthState {
   user: User | null;
@@ -108,9 +108,8 @@ export const useAuth = create<AuthState>()(
             await authApi.logout().catch(() => null);
           }
         } finally {
-          // Clear cookies for Edge Middleware
-          deleteCookie("wahide_session_token");
-          deleteCookie("wahide_user_role");
+          // Clear all cookies & local storage
+          clearAllAuthStorage();
 
           set({
             user: null,
@@ -121,9 +120,6 @@ export const useAuth = create<AuthState>()(
             isLoading: false,
             error: null,
           });
-          if (typeof window !== "undefined") {
-            localStorage.removeItem("wahide_auth_storage");
-          }
         }
       },
 
