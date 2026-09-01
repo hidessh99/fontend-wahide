@@ -359,12 +359,27 @@ export function TicketList() {
       />
 
       {/* Ticket Thread Conversation Modal */}
-      <TicketThreadModal
-        ticket={selectedTicket}
-        isOpen={isThreadOpen}
-        onClose={handleCloseThread}
-        onSendReply={replyTicket}
-      />
+      {isThreadOpen && (
+        <TicketThreadModal
+          key={
+            selectedTicket
+              ? selectedTicket.id || selectedTicket.ticketNumber
+              : "thread_modal"
+          }
+          ticket={
+            selectedTicket
+              ? tickets.find(
+                  (t) =>
+                    (selectedTicket.id && t.id === selectedTicket.id) ||
+                    t.ticketNumber === selectedTicket.ticketNumber
+                ) || selectedTicket
+              : null
+          }
+          isOpen={isThreadOpen}
+          onClose={handleCloseThread}
+          onSendReply={replyTicket}
+        />
+      )}
     </div>
   );
 }

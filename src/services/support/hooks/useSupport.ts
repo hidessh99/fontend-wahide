@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { Ticket, TicketStatus, CreateTicketInput } from "../types/support.types";
+import { Ticket, TicketStatus, CreateTicketInput, TicketMessage } from "../types/support.types";
 import { supportApi } from "../api/support.api";
 import { toast } from "sonner";
 import { useI18n } from "@/lib/i18n/context";
@@ -111,12 +111,12 @@ export function useSupport() {
     }
   };
 
-  const replyTicket = async (ticketId: string, content: string) => {
+  const replyTicket = async (ticketId: string, content: string, attachment?: string): Promise<TicketMessage> => {
     try {
-      const newMsg = await supportApi.replyTicket(ticketId, content);
+      const newMsg = await supportApi.replyTicket(ticketId, content, attachment);
       setTickets((prev) =>
         prev.map((t) =>
-          t.id === ticketId
+          t.id === ticketId || t.ticketNumber === ticketId
             ? {
                 ...t,
                 messages: [...t.messages, newMsg],
@@ -126,6 +126,7 @@ export function useSupport() {
         )
       );
       toast.success(t("support.toastReplySent"));
+      return newMsg;
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal mengirim balasan";
       toast.error(msg);

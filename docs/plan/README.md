@@ -126,3 +126,12 @@ Daftar dokumen perencanaan arsitektur, optimasi performa, dan standarisasi tekni
 
 41. **[All Modals Viewport Scroll Audit Plan](./all_modals_viewport_scroll_audit_plan.md)**
     - **Audit Menyeluruh Seluruh Komponen Modal & Rencana Standarisasi Viewport Responsiveness (Anti-Cutoff)**: Audit 13 komponen modal/dialog di frontend dan rencana standarisasi struktur 3-layer sticky layout agar bebas terpotong di layar laptop.
+
+42. **[Support Ticket Reply Audit and Fix Plan](./support_ticket_reply_audit_and_fix_plan.md)**
+    - **Audit Mendalam & Rencana Perbaikan: Balasan Tiket Bantuan Tidak Muncul (Ticket Reply Synchronization)**: Investigasi 4 akar penyebab pesan balasan tidak muncul di thread tiket, penambahan API `getReplies`, sinkronisasi real-time thread messages, dan dukungan fleksibel ID/RefNumber di backend Go.
+
+43. **[Support Ticket Reply Image Upload Plan](./support_ticket_reply_image_upload_plan.md)**
+    - **Rencana Integrasi: Upload Gambar / Screenshot pada Balasan Tiket Bantuan (Ticket Thread Image Attachment)**: Arsitektur unggah screenshot Cloudflare R2 pada modal balasan tiket, komparasi Opsi A (Native Field Backend & Frontend) vs Opsi B (Murni Frontend), desain form attachment, dan rendering thumbnail gambar di bubble chat.
+
+44. **[Support Dedicated Page UX Refactor Plan](./support_dedicated_page_ux_refactor_plan.md)**
+    - **Perencanaan Arsitektur UX/UI: Transformasi Modal Support Menjadi Halaman Dedicated (`/support/[id]`)**: Evaluasi mendalam UX/UI engineer perbandingan modal vs dedicated page, adopsi 2-column master-detail layout standar B2B SaaS, deep linking, sticky metadata sidebar, dan breadcrumb navigasi.

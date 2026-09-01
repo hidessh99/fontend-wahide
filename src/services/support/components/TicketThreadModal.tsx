@@ -1,16 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
-import { Ticket } from "../types/support.types";
+import React, { useState, useRef } from "react";
+import { Ticket, TicketMessage } from "../types/support.types";
+import { supportApi } from "../api/support.api";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/context";
-import { X, Send, Loader2, User, ShieldCheck, ExternalLink } from "lucide-react";
+import { X, Send, Loader2, User, ShieldCheck, ExternalLink, Paperclip } from "lucide-react";
 
 interface TicketThreadModalProps {
   ticket: Ticket | null;
   isOpen: boolean;
   onClose: () => void;
-  onSendReply: (ticketId: string, message: string) => Promise<unknown>;
+  onSendReply: (ticketId: string, message: string, attachment?: string) => Promise<unknown>;
 }
 
 export function TicketThreadModal({
@@ -22,6 +23,16 @@ export function TicketThreadModal({
   const { t } = useI18n();
   const [replyText, setReplyText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [replies, setReplies] = useState<TicketMessage[]>([]);
+  const [isFetchingReplies, setIsFetchingReplies] = useState(false);
+
+  // Attachment state for replies
+  const [attachmentFile, setAttachmentFile] = useState<File | null>(null);
+  const [attachmentUrl, setAttachmentUrl] = useState("");
+  const [previewUrl, setPreviewUrl] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Escape key to dismiss
   React.useEffect(() => {
@@ -33,16 +44,148 @@ export function TicketThreadModal({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
 
+  // Initial message of the ticket (first message created by the user)
+  const initialMessage: TicketMessage | null = React.useMemo(() => {
+    if (!ticket) return null;
+    const initText = ticket.message || ticket.messages?.[0]?.content || "";
+    if (!initText) return null;
+    return {
+      id: "init_" + (ticket.id || ticket.ticketNumber),
+      senderName: "Anda",
+      isStaff: false,
+      content: initText,
+      attachment: ticket.attachment,
+      createdAt: ticket.createdAt,
+    };
+  }, [ticket]);
+
+  // Automatically fetch conversation replies from database whenever modal opens
+  React.useEffect(() => {
+    if (!isOpen || !ticket?.id) {
+      return;
+    }
+
+    let isMounted = true;
+    supportApi
+      .getReplies(ticket.id)
+      .then((data) => {
+        if (isMounted) {
+          setReplies(data);
+        }
+      })
+      .catch((err: unknown) => {
+        console.error("Gagal memuat balasan tiket:", err);
+      })
+      .finally(() => {
+        if (isMounted) {
+          setIsFetchingReplies(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [isOpen, ticket?.id]);
+
+  // Combine initial message and replies chronologically without duplication
+  const allMessages = React.useMemo(() => {
+    const list: TicketMessage[] = [];
+    if (initialMessage) {
+      list.push(initialMessage);
+    }
+    replies.forEach((r) => {
+      // Avoid duplicate of initial message
+      if (
+        initialMessage &&
+        r.content === initialMessage.content &&
+        Math.abs(new Date(r.createdAt).getTime() - new Date(initialMessage.createdAt).getTime()) < 3000
+      ) {
+        return;
+      }
+      list.push(r);
+    });
+    return list;
+  }, [initialMessage, replies]);
+
   if (!isOpen || !ticket) return null;
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const validTypes = ["image/png", "image/jpeg", "image/jpg"];
+    if (!validTypes.includes(file.type)) {
+      setUploadError("Format file tidak valid: hanya PNG, JPG, dan JPEG");
+      return;
+    }
+
+    if (file.size > 1 * 1024 * 1024) {
+      setUploadError("Ukuran file maksimal 1 MB");
+      return;
+    }
+
+    setUploadError(null);
+    setIsUploading(true);
+    setAttachmentFile(file);
+    const localPreview = URL.createObjectURL(file);
+    setPreviewUrl(localPreview);
+
+    try {
+      const url = await supportApi.uploadImage(file);
+      setAttachmentUrl(url);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Gagal mengunggah gambar";
+      setUploadError(msg);
+      setAttachmentUrl("");
+      setPreviewUrl("");
+      setAttachmentFile(null);
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  const handleRemoveAttachment = () => {
+    setAttachmentFile(null);
+    setAttachmentUrl("");
+    setPreviewUrl("");
+    setUploadError(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!replyText.trim()) return;
+    if ((!replyText.trim() && !attachmentUrl && !attachmentFile) || !ticket) return;
 
+    const text = replyText.trim();
     setIsLoading(true);
     try {
-      await onSendReply(ticket.id, replyText.trim());
+      let finalAttachmentUrl = attachmentUrl;
+      if (!finalAttachmentUrl && attachmentFile) {
+        finalAttachmentUrl = await supportApi.uploadImage(attachmentFile);
+      }
+
+      const result = await onSendReply(ticket.id, text, finalAttachmentUrl || undefined);
+      const newMsg: TicketMessage =
+        result && typeof result === "object" && "content" in result
+          ? (result as TicketMessage)
+          : {
+              id: "reply_" + Date.now(),
+              senderName: "Anda",
+              isStaff: false,
+              content: text,
+              attachment: finalAttachmentUrl || undefined,
+              createdAt: new Date().toISOString(),
+            };
+
+      // Instant optimistic update: bubble chat appears immediately!
+      setReplies((prev) => [...prev, newMsg]);
       setReplyText("");
+      handleRemoveAttachment();
     } finally {
       setIsLoading(false);
     }
@@ -84,7 +227,7 @@ export function TicketThreadModal({
 
         {/* Scrollable Body: Attachment & Messages */}
         <div className="flex-1 overflow-y-auto min-h-0 p-5 sm:p-6 space-y-4">
-          {/* Attachment preview if exists */}
+          {/* Top Initial Attachment preview if exists */}
           {ticket.attachment && (
             <div className="p-3 rounded-md bg-muted/50 border border-border flex items-center justify-between gap-3 text-xs">
               <div className="flex items-center gap-2.5 overflow-hidden">
@@ -98,7 +241,7 @@ export function TicketThreadModal({
                 </div>
                 <div className="overflow-hidden">
                   <span className="font-bold text-foreground block truncate">
-                    {t("support.attachmentLabel")}
+                    {t("support.attachmentLabel")} (Awal)
                   </span>
                   <span className="text-[11px] text-foreground-muted">Cloudflare R2 Storage</span>
                 </div>
@@ -115,9 +258,17 @@ export function TicketThreadModal({
             </div>
           )}
 
+          {/* Loading Indicator for replies */}
+          {isFetchingReplies && replies.length === 0 && (
+            <div className="flex items-center justify-center py-3 text-foreground-muted gap-2 text-xs font-semibold">
+              <Loader2 className="size-3.5 animate-spin text-wise-green" />
+              <span>Memuat riwayat balasan...</span>
+            </div>
+          )}
+
           {/* Message Thread History */}
           <div className="space-y-4 py-1 divide-y divide-transparent">
-            {ticket.messages.map((msg) => (
+            {allMessages.map((msg) => (
               <div
                 key={msg.id}
                 className={`flex flex-col space-y-1 ${
@@ -146,13 +297,36 @@ export function TicketThreadModal({
                 </div>
 
                 <div
-                  className={`p-4 rounded-lg max-w-[85%] text-xs font-semibold leading-relaxed shadow-sm ${
+                  className={`p-3.5 sm:p-4 rounded-lg max-w-[85%] text-xs font-semibold leading-relaxed shadow-sm space-y-2.5 ${
                     msg.isStaff
                       ? "bg-muted/80 text-foreground border border-border"
                       : "bg-[#e2f7cb] dark:bg-[#005c4b]/50 text-foreground border border-[#c4e8a5] dark:border-[#005c4b]"
                   }`}
                 >
-                  {msg.content}
+                  {/* Inline Image Attachment in Bubble */}
+                  {msg.attachment && (
+                    <div className="rounded overflow-hidden border border-border/50 bg-black/5 dark:bg-black/30 max-w-sm">
+                      <a
+                        href={msg.attachment}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block group relative overflow-hidden cursor-pointer"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={msg.attachment}
+                          alt="Lampiran Screenshot"
+                          className="max-h-56 w-full object-cover group-hover:scale-105 transition duration-200"
+                        />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition text-white text-[11px] font-bold gap-1">
+                          <span>Buka Ukuran Penuh</span>
+                          <ExternalLink className="size-3" />
+                        </div>
+                      </a>
+                    </div>
+                  )}
+
+                  {msg.content && <p className="whitespace-pre-wrap">{msg.content}</p>}
                 </div>
               </div>
             ))}
@@ -160,32 +334,102 @@ export function TicketThreadModal({
         </div>
 
         {/* Sticky Reply Composer Footer */}
-        <form onSubmit={handleSend} className="p-4 sm:p-6 pt-3 border-t border-border bg-surface/90 dark:bg-[#161715]/90 backdrop-blur-sm shrink-0">
-          <div className="relative">
+        <form onSubmit={handleSend} className="p-4 sm:p-6 pt-3 border-t border-border bg-surface/90 dark:bg-[#161715]/90 backdrop-blur-sm shrink-0 space-y-2.5">
+          {/* File Attachment Preview Chip */}
+          {(previewUrl || isUploading || uploadError) && (
+            <div>
+              {uploadError ? (
+                <div className="flex items-center justify-between gap-2 p-2 px-3 rounded-md bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-semibold">
+                  <span>{uploadError}</span>
+                  <button
+                    type="button"
+                    onClick={() => setUploadError(null)}
+                    className="text-foreground-muted hover:text-foreground cursor-pointer"
+                  >
+                    <X className="size-3.5" />
+                  </button>
+                </div>
+              ) : previewUrl ? (
+                <div className="flex items-center justify-between gap-3 p-2 px-3 rounded-md bg-muted/60 border border-border text-xs">
+                  <div className="flex items-center gap-2.5 overflow-hidden">
+                    <div className="size-10 rounded bg-surface border border-border overflow-hidden shrink-0 flex items-center justify-center">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={previewUrl} alt="Preview Lampiran" className="size-full object-cover" />
+                    </div>
+                    <div className="overflow-hidden">
+                      <span className="font-bold text-foreground block truncate">
+                        {attachmentFile?.name || "Lampiran Gambar"}
+                      </span>
+                      <span className="text-[11px] text-foreground-muted">
+                        {isUploading ? "Mengunggah ke Cloudflare R2..." : "Siap dilampirkan"}
+                      </span>
+                    </div>
+                  </div>
+                  {isUploading ? (
+                    <Loader2 className="size-4 animate-spin text-wise-green shrink-0" />
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleRemoveAttachment}
+                      className="size-6 rounded-full flex items-center justify-center text-foreground-muted hover:text-rose-500 hover:bg-rose-500/10 transition cursor-pointer shrink-0"
+                      title="Hapus Lampiran"
+                    >
+                      <X className="size-3.5" />
+                    </button>
+                  )}
+                </div>
+              ) : null}
+            </div>
+          )}
+
+          {/* Hidden File Input */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileSelect}
+            accept="image/png,image/jpeg,image/jpg"
+            className="hidden"
+          />
+
+          <div className="space-y-2">
             <textarea
               rows={3}
               value={replyText}
               onChange={(e) => setReplyText(e.target.value)}
               placeholder={t("support.replyPlaceholder")}
               disabled={isLoading}
-              className="w-full p-3 pr-24 rounded-md bg-surface dark:bg-[#10110e] text-foreground font-semibold text-xs border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition"
+              className="w-full p-3 rounded-md bg-surface dark:bg-[#10110e] text-foreground font-semibold text-xs border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition"
             />
-            <Button
-              type="submit"
-              variant="primaryPill"
-              size="sm"
-              disabled={isLoading || !replyText.trim()}
-              className="absolute right-2.5 bottom-3.5 text-xs font-bold gap-1.5 shadow-sm h-8 px-4 cursor-pointer"
-            >
-              {isLoading ? (
-                <Loader2 className="size-3.5 animate-spin" />
-              ) : (
-                <>
-                  <Send className="size-3.5" />
-                  <span>Kirim</span>
-                </>
-              )}
-            </Button>
+
+            <div className="flex items-center justify-between gap-2">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isLoading || isUploading}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-foreground-secondary hover:text-foreground hover:bg-muted border border-border transition cursor-pointer disabled:opacity-50"
+                title="Unggah Gambar / Screenshot"
+              >
+                <Paperclip className="size-3.5 text-wise-green" />
+                <span>Lampirkan Gambar</span>
+              </button>
+
+              <Button
+                type="submit"
+                variant="primaryPill"
+                size="sm"
+                disabled={isLoading || isUploading || (!replyText.trim() && !attachmentUrl && !attachmentFile)}
+                className="text-xs font-bold gap-1.5 shadow-sm h-8 px-4 cursor-pointer"
+              >
+                {isLoading || isUploading ? (
+                  <Loader2 className="size-3.5 animate-spin" />
+                ) : (
+                  <>
+                    <Send className="size-3.5" />
+                    <span>Kirim</span>
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </form>
       </div>

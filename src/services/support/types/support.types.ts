@@ -9,6 +9,7 @@ export interface TicketMessage {
   senderName: string;
   isStaff: boolean;
   content: string;
+  attachment?: string;
   createdAt: string;
 }
 
@@ -19,6 +20,7 @@ export interface Ticket {
   category: TicketCategory;
   priority: TicketPriority;
   status: TicketStatus;
+  message?: string;
   attachment?: string;
   messages: TicketMessage[];
   createdAt: string;
