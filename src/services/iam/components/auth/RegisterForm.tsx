@@ -6,8 +6,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { TurnstileWidget } from "@/components/ui/TurnstileWidget";
 import { TurnstileInstance } from "@marsidev/react-turnstile";
-import { registerSchema, RegisterInput } from "../schemas/auth.schema";
-import { useAuth } from "../hooks/useAuth";
+import { registerSchema, RegisterInput } from "@/services/iam/schemas/auth.schema";
+import { useAuth } from "@/services/iam/hooks/useAuth";
 import { useI18n } from "@/lib/i18n/context";
 import { Eye, EyeOff, Lock, Mail, Phone, User, ArrowRight, AlertCircle, Loader2 } from "lucide-react";
 

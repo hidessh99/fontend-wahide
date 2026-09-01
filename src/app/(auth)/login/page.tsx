@@ -1,6 +1,6 @@
 import React, { Suspense } from "react";
 import type { Metadata } from "next";
-import { LoginForm } from "@/services/iam/components/LoginForm";
+import { LoginForm } from "@/services/iam/components/auth/LoginForm";
 import { AuthLayout } from "@/components/layout/auth/AuthLayout";
 
 export const metadata: Metadata = {

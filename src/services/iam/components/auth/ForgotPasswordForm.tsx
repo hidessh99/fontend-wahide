@@ -5,8 +5,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { TurnstileWidget } from "@/components/ui/TurnstileWidget";
 import { TurnstileInstance } from "@marsidev/react-turnstile";
-import { forgotPasswordSchema, ForgotPasswordInput } from "../schemas/auth.schema";
-import { authApi } from "../api/auth.api";
+import { forgotPasswordSchema, ForgotPasswordInput } from "@/services/iam/schemas/auth.schema";
+import { authApi } from "@/services/iam/api/auth.api";
 import { useI18n } from "@/lib/i18n/context";
 import { Mail, ArrowLeft, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 

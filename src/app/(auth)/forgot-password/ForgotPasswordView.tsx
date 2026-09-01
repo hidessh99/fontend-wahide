@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ForgotPasswordForm } from "@/services/iam/components/ForgotPasswordForm";
+import { ForgotPasswordForm } from "@/services/iam/components/auth/ForgotPasswordForm";
 import { AuthHeader } from "@/components/layout/auth/AuthHeader";
 import { useI18n } from "@/lib/i18n/context";
 

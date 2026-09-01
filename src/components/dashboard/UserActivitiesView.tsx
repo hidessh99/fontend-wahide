@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useUserActivities } from "@/services/iam/hooks/useUserActivities";
-import { UserActivityForm } from "@/services/iam/components/UserActivityForm";
+import { UserActivityForm } from "@/services/iam/components/activity/UserActivityForm";
 import { Activity, ShieldCheck } from "lucide-react";
 
 export function UserActivitiesView() {

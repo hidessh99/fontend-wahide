@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { UserActivityItem } from "../types/activity.types";
+import { UserActivityItem } from "@/services/iam/types/activity.types";
 import { Button } from "@/components/ui/button";
 import {
   Search,
