@@ -245,7 +245,7 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
 
   if (isLoading) {
     return (
-      <div className="space-y-8 max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 animate-pulse">
+      <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto p-3 sm:p-6 lg:p-8 animate-pulse">
         <div className="h-4 w-40 bg-muted rounded" />
         <div className="h-10 w-3/4 bg-muted rounded" />
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-4">
@@ -263,7 +263,7 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
 
   if (error || !ticket) {
     return (
-      <div className="space-y-6 max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+      <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto p-3 sm:p-6 lg:p-8">
         <Link
           href="/support"
           className="inline-flex items-center gap-2 text-xs font-bold text-foreground-muted hover:text-foreground transition"
@@ -294,58 +294,59 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
 
   return (
     <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto p-3 sm:p-6 lg:p-8">
-      {/* Top Breadcrumb Link */}
-      <div>
-        <Link
-          href="/support"
-          className="inline-flex items-center gap-2 text-xs font-bold text-foreground-muted hover:text-foreground transition group"
-        >
-          <ArrowLeft className="size-3.5 group-hover:-translate-x-0.5 transition-transform" />
-          <span>{t("support.backToTickets")}</span>
-        </Link>
-      </div>
-
-      {/* Header Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5 sm:pb-6">
-        <div className="space-y-2">
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-foreground tracking-tight">
-            {ticket.subject}
-          </h1>
-          <div className="flex flex-wrap items-center gap-2.5 text-xs font-semibold text-foreground-muted">
-            <span className="font-mono text-dark-green dark:text-wise-green bg-light-mint dark:bg-wise-green/15 px-2.5 py-0.5 rounded-full border border-wise-green/30 font-bold">
-              {ticket.ticketNumber}
-            </span>
-            <span>•</span>
-            {renderStatusBadge(ticket.status)}
-            <span>•</span>
-            {renderPriorityBadge(ticket.priority)}
-            <span>•</span>
-            <span className="px-2 py-0.5 rounded bg-muted text-foreground-secondary font-medium">
-              {ticket.category}
-            </span>
-            <span>•</span>
-            <span>{formatDate(ticket.createdAt)}</span>
-          </div>
+      {/* Header Section dengan Breadcrumb Terintegrasi */}
+      <div className="space-y-3 border-b border-border pb-5 sm:pb-6">
+        <div>
+          <Link
+            href="/support"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-foreground-muted hover:text-foreground transition group"
+          >
+            <ArrowLeft className="size-3.5 group-hover:-translate-x-0.5 transition-transform" />
+            <span>{t("support.backToTickets")}</span>
+          </Link>
         </div>
 
-        {ticket.status !== "CLOSED" && (
-          <div className="shrink-0">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleCloseTicket}
-              disabled={isClosing}
-              className="h-9 px-4 rounded-full text-xs font-bold gap-1.5 border-border hover:border-rose-500/40 hover:text-rose-600 dark:hover:text-rose-400 transition cursor-pointer"
-            >
-              {isClosing ? (
-                <Loader2 className="size-3.5 animate-spin" />
-              ) : (
-                <Check className="size-3.5" />
-              )}
-              <span>{t("support.closeTicket")}</span>
-            </Button>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-2">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-foreground tracking-tight">
+              {ticket.subject}
+            </h1>
+            <div className="flex flex-wrap items-center gap-2.5 text-xs font-semibold text-foreground-muted">
+              <span className="font-mono text-dark-green dark:text-wise-green bg-light-mint dark:bg-wise-green/15 px-2.5 py-0.5 rounded-full border border-wise-green/30 font-bold">
+                {ticket.ticketNumber}
+              </span>
+              <span>•</span>
+              {renderStatusBadge(ticket.status)}
+              <span>•</span>
+              {renderPriorityBadge(ticket.priority)}
+              <span>•</span>
+              <span className="px-2 py-0.5 rounded bg-muted text-foreground-secondary font-medium">
+                {ticket.category}
+              </span>
+              <span>•</span>
+              <span>{formatDate(ticket.createdAt)}</span>
+            </div>
           </div>
-        )}
+
+          {ticket.status !== "CLOSED" && (
+            <div className="shrink-0">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCloseTicket}
+                disabled={isClosing}
+                className="h-9 px-4 rounded-full text-xs font-bold gap-1.5 border-border hover:border-rose-500/40 hover:text-rose-600 dark:hover:text-rose-400 transition cursor-pointer"
+              >
+                {isClosing ? (
+                  <Loader2 className="size-3.5 animate-spin" />
+                ) : (
+                  <Check className="size-3.5" />
+                )}
+                <span>{t("support.closeTicket")}</span>
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* 2-Column Layout */}

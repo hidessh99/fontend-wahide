@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/services/iam/hooks/useAuth";
 import { useI18n } from "@/lib/i18n/context";
 import { Button } from "@/components/ui/button";
+import { isAdmin } from "@/services/iam/types/auth.types";
 import { User, LogOut, Shield, Key, ChevronDown } from "lucide-react";
 
 export function DashboardUserNav() {
@@ -78,7 +79,7 @@ export function DashboardUserNav() {
               <Key className="size-3.5" />
               <span>{t("dashboardMenu.apiKey")}</span>
             </Link>
-            {user.role === "SUPER_ADMIN" && (
+            {isAdmin(user.role) && (
               <Link
                 href="/admin/overview"
                 onClick={() => setOpen(false)}

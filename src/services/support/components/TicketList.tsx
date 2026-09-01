@@ -25,6 +25,7 @@ import {
   ShieldAlert,
   ChevronLeft,
   ChevronRight,
+  Lock,
 } from "lucide-react";
 
 export function TicketList() {
@@ -71,6 +72,13 @@ export function TicketList() {
           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
             <CheckCircle2 className="size-3" />
             <span>{t("support.statusResolved")}</span>
+          </span>
+        );
+      case "CLOSED":
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-muted text-foreground-muted border border-border">
+            <Lock className="size-3" />
+            <span>{t("support.statusClosed")}</span>
           </span>
         );
       case "IN_PROGRESS":
@@ -163,7 +171,7 @@ export function TicketList() {
         <div className="flex items-center justify-between gap-2 pt-1 border-t border-border/50">
           {/* Scrollable Filter Chips (No awkward multi-line text wrapping on mobile!) */}
           <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 scroll-smooth flex-1 min-w-0">
-            {(["ALL", "OPEN", "IN_PROGRESS", "RESOLVED"] as (TicketStatus | "ALL")[]).map(
+            {(["ALL", "OPEN", "IN_PROGRESS", "RESOLVED", "CLOSED"] as (TicketStatus | "ALL")[]).map(
               (st) => {
                 const label =
                   st === "ALL"
@@ -172,7 +180,9 @@ export function TicketList() {
                     ? t("support.filterOpen")
                     : st === "IN_PROGRESS"
                     ? t("support.filterInProgress")
-                    : t("support.filterResolved");
+                    : st === "RESOLVED"
+                    ? t("support.filterResolved")
+                    : t("support.filterClosed");
 
                 const isActive = statusFilter === st;
 

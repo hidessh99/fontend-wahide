@@ -35,13 +35,29 @@ export function normalizeTicket(raw: Record<string, unknown>): Ticket {
       ]
     : [];
 
+  const rawStatus = String(raw.status || "OPEN").toUpperCase();
+  let status: TicketStatus = "OPEN";
+  if (rawStatus === "RESOLVED") {
+    status = "RESOLVED";
+  } else if (rawStatus === "CLOSED") {
+    status = "CLOSED";
+  } else if (
+    rawStatus === "IN_PROGRESS" ||
+    rawStatus === "PROCESSING" ||
+    rawStatus === "WAITING_FOR_REPLY"
+  ) {
+    status = "IN_PROGRESS";
+  } else {
+    status = "OPEN";
+  }
+
   return {
     id: String(raw.id || ""),
     ticketNumber: String(raw.ticketNumber || raw.ref_number || raw.ticket_number || "TKT"),
     subject: String(raw.subject || ""),
     category: (String(raw.category || "GENERAL").toUpperCase() as TicketCategory),
     priority: (String(raw.priority || "MEDIUM").toUpperCase() as TicketPriority),
-    status: (String(raw.status || "OPEN").toUpperCase() as TicketStatus),
+    status,
     message: initMessage,
     attachment: raw.attachment ? String(raw.attachment) : undefined,
     messages,

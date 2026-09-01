@@ -4,7 +4,7 @@ export type UserRole = "admin" | "seller" | "user" | "reseller" | "SUPER_ADMIN" 
 export function isAdmin(role?: string): boolean {
   if (!role) return false;
   const r = role.toLowerCase();
-  return r === "admin" || r === "super_admin";
+  return r === "admin" || r === "super_admin" || r === "superadmin";
 }
 
 export function isSeller(role?: string): boolean {
