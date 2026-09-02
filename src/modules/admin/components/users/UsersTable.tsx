@@ -357,7 +357,7 @@ export function UsersTable({
                             <div className="size-8 rounded-full bg-muted flex items-center justify-center font-black text-xs text-foreground shrink-0 uppercase border border-border">
                               {u.name ? u.name.charAt(0) : "U"}
                             </div>
-                            <span className="font-bold text-foreground text-sm truncate max-w-[180px]">
+                            <span className="font-bold text-foreground text-sm truncate max-w-45">
                               {u.name}
                             </span>
                           </div>
@@ -365,7 +365,7 @@ export function UsersTable({
 
                         {/* 2. Email */}
                         <td className="py-3.5 px-4">
-                          <div className="flex items-center gap-1.5 text-foreground-secondary font-mono text-xs truncate max-w-[200px]">
+                          <div className="flex items-center gap-1.5 text-foreground-secondary font-mono text-xs truncate max-w-50">
                             <Mail className="size-3 text-foreground-muted shrink-0" />
                             <span className="truncate">{u.email}</span>
                           </div>
@@ -373,7 +373,7 @@ export function UsersTable({
 
                         {/* 3. Nomor Telepon / WhatsApp */}
                         <td className="py-3.5 px-4">
-                          <div className="flex items-center gap-1.5 font-mono text-xs text-foreground truncate max-w-[160px]">
+                          <div className="flex items-center gap-1.5 font-mono text-xs text-foreground truncate max-w-40">
                             <Phone className="size-3 text-foreground-muted shrink-0" />
                             <span>{phone}</span>
                           </div>

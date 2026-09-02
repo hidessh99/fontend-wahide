@@ -123,6 +123,36 @@ export function useAdminNotifications() {
     }
   };
 
+  const sendDirectEmailsBatch = async (
+    targets: { email: string; name?: string }[],
+    subject: string,
+    message: string
+  ) => {
+    if (targets.length === 0) return;
+    setIsSending(true);
+    try {
+      let successCount = 0;
+      for (const t of targets) {
+        await adminApi.createDirectEmailQueue({
+          email: t.email,
+          name: t.name || "Pengguna",
+          subject,
+          message,
+          taskType: "EMAIL_BROADCAST",
+        });
+        successCount++;
+      }
+      toast.success(`Berhasil menjadwalkan ${successCount} email ke antrean worker.`);
+      await fetchQueues();
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Gagal memasukkan email ke antrean";
+      toast.error(msg);
+      throw err;
+    } finally {
+      setIsSending(false);
+    }
+  };
+
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   const executeSearch = (q: string) => {
@@ -190,6 +220,7 @@ export function useAdminNotifications() {
     sendBroadcastAll,
     sendBroadcastSpecific,
     sendDirectEmail,
+    sendDirectEmailsBatch,
     executeSearch,
     clearSearch,
     setStatusFilter: changeStatusFilter,

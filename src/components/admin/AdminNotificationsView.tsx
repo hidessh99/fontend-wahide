@@ -28,6 +28,7 @@ export function AdminNotificationsView() {
     deleteQueue,
     sendBroadcastAll,
     sendDirectEmail,
+    sendDirectEmailsBatch,
     executeSearch,
     clearSearch,
     setStatusFilter,
@@ -111,6 +112,7 @@ export function AdminNotificationsView() {
             isSending={isSending}
             onSendAll={sendBroadcastAll}
             onSendDirect={sendDirectEmail}
+            onSendBatch={sendDirectEmailsBatch}
           />
         </div>
 

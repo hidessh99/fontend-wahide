@@ -100,7 +100,7 @@ export function UpdateBillingStatusModal({
                   <User className="size-3.5 text-foreground-muted" />
                   <span>Pengguna:</span>
                 </span>
-                <span className="font-bold text-foreground truncate max-w-[200px]">
+                <span className="font-bold text-foreground truncate max-w-50">
                   {billing.user?.name || `User ${billing.userId.slice(-6)}`}
                 </span>
               </div>
