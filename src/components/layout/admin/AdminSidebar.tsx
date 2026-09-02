@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -127,37 +127,13 @@ export function AdminSidebar({ onItemClick, className }: AdminSidebarProps) {
   const pathname = usePathname();
   const user = useAuth((s) => s.user);
 
-  // State to track accordion open/close state for each parent menu
-  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() => {
-    const initial: Record<string, boolean> = {};
-    for (const group of ADMIN_NAV_GROUPS) {
-      for (const item of group.items) {
-        if (item.subItems && item.subItems.some((sub) => sub.href === pathname)) {
-          initial[item.title] = true;
-        }
-      }
-    }
-    return initial;
-  });
+  // User manual toggle overrides for accordions (keyed by item title)
+  const [manuallyToggled, setManuallyToggled] = useState<Record<string, boolean>>({});
 
-  // Auto-expand parent accordion when pathname changes
-  useEffect(() => {
-    for (const group of ADMIN_NAV_GROUPS) {
-      for (const item of group.items) {
-        if (item.subItems && item.subItems.some((sub) => sub.href === pathname)) {
-          setOpenGroups((prev) => {
-            if (prev[item.title]) return prev;
-            return { ...prev, [item.title]: true };
-          });
-        }
-      }
-    }
-  }, [pathname]);
-
-  const toggleGroup = (title: string) => {
-    setOpenGroups((prev) => ({
+  const toggleGroup = (title: string, currentIsOpen: boolean) => {
+    setManuallyToggled((prev) => ({
       ...prev,
-      [title]: !prev[title],
+      [title]: !currentIsOpen,
     }));
   };
 
@@ -202,7 +178,9 @@ export function AdminSidebar({ onItemClick, className }: AdminSidebarProps) {
               const isParentActive = hasSubItems
                 ? item.subItems?.some((sub) => pathname === sub.href)
                 : pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href + "/"));
-              const isOpen = hasSubItems ? Boolean(openGroups[item.title]) : false;
+              const isOpen = hasSubItems
+                ? (manuallyToggled[item.title] ?? isParentActive)
+                : false;
               const Icon = item.icon;
 
               return (
@@ -211,7 +189,7 @@ export function AdminSidebar({ onItemClick, className }: AdminSidebarProps) {
                     // Interactive Accordion Trigger Button
                     <button
                       type="button"
-                      onClick={() => toggleGroup(item.title)}
+                      onClick={() => toggleGroup(item.title, isOpen)}
                       aria-expanded={isOpen}
                       className={cn(
                         "w-full flex items-center justify-between px-3.5 py-2 rounded-full text-xs transition-all duration-150 cursor-pointer select-none",
