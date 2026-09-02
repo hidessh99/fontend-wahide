@@ -56,17 +56,17 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
             href: "/admin/activities",
             icon: Activity,
           },
+          {
+            title: "Billing & Topup",
+            href: "/admin/billing",
+            icon: Receipt,
+          },
         ],
       },
       {
         title: "Paket & Harga SaaS",
         href: "/admin/plans",
         icon: CreditCard,
-      },
-      {
-        title: "Billing & Topup",
-        href: "/admin/billing",
-        icon: Receipt,
       },
     ],
   },

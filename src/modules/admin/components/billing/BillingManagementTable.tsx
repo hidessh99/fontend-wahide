@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { useAdminBilling } from "@/modules/admin/hooks/useAdminBilling";
 import { AdminBillingItem } from "@/modules/admin/types/admin.types";
 import { UpdateBillingStatusModal } from "./UpdateBillingStatusModal";
-import { DeleteBillingModal } from "./DeleteBillingModal";
 import { Button } from "@/components/ui/button";
 import { formatDateTime } from "@/lib/utils";
 import {
@@ -20,7 +19,6 @@ import {
   ChevronLeft,
   ChevronRight,
   CreditCard,
-  Trash2,
   Loader2,
   ExternalLink,
 } from "lucide-react";
@@ -95,7 +93,6 @@ export function BillingManagementTable() {
     totalPages,
     metrics,
     updateStatus,
-    deleteBilling,
     executeSearch,
     clearSearch,
     setStatusFilter,
@@ -108,18 +105,11 @@ export function BillingManagementTable() {
 
   const [searchInput, setSearchInput] = useState("");
   const [selectedBillingForStatus, setSelectedBillingForStatus] = useState<AdminBillingItem | null>(null);
-  const [selectedBillingForDelete, setSelectedBillingForDelete] = useState<AdminBillingItem | null>(null);
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const handleOpenStatusModal = (b: AdminBillingItem) => {
     setSelectedBillingForStatus(b);
     setIsStatusModalOpen(true);
-  };
-
-  const handleOpenDeleteModal = (b: AdminBillingItem) => {
-    setSelectedBillingForDelete(b);
-    setIsDeleteModalOpen(true);
   };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -355,7 +345,7 @@ export function BillingManagementTable() {
                         size="sm"
                         onClick={() => handleOpenStatusModal(b)}
                         disabled={!canChangeStatus}
-                        className="h-8 px-2.5 rounded-full text-xs font-bold gap-1 border-border hover:bg-muted disabled:opacity-40"
+                        className="h-8 px-3 rounded-full text-xs font-bold gap-1 border-border hover:bg-muted disabled:opacity-40"
                         title={
                           canChangeStatus
                             ? "Tandai Expired atau Batalkan"
@@ -364,16 +354,6 @@ export function BillingManagementTable() {
                       >
                         <Ban className="size-3.5 text-rose-500" />
                         <span>Tutup / Batal</span>
-                      </Button>
-
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleOpenDeleteModal(b)}
-                        className="h-8 size-8 p-0 rounded-full border-border hover:border-rose-500/50 hover:bg-rose-500/10 text-rose-600"
-                        title="Hapus Catatan"
-                      >
-                        <Trash2 className="size-3.5" />
                       </Button>
                     </div>
                   </div>
@@ -413,7 +393,7 @@ export function BillingManagementTable() {
                                 href={b.invoiceUrl}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="text-foreground-muted hover:text-emerald-600 dark:hover:text-wise-green"
+                                className="text-foreground-muted hover:text-emerald-600 dark:text-wise-green"
                                 title="Buka Halaman Checkout Invoice"
                               >
                                 <ExternalLink className="size-3" />
@@ -429,10 +409,10 @@ export function BillingManagementTable() {
                               {b.user?.name ? b.user.name.charAt(0) : "U"}
                             </div>
                             <div className="min-w-0">
-                              <span className="font-bold text-foreground text-sm truncate block max-w-[160px]">
+                              <span className="font-bold text-foreground text-sm truncate block max-w-40">
                                 {b.user?.name || `User ${b.userId.slice(-6)}`}
                               </span>
-                              <span className="text-[11px] text-foreground-muted font-mono truncate block max-w-[160px]">
+                              <span className="text-[11px] text-foreground-muted font-mono truncate block max-w-40">
                                 {b.user?.email || b.userId}
                               </span>
                             </div>
@@ -471,7 +451,7 @@ export function BillingManagementTable() {
                               size="sm"
                               onClick={() => handleOpenStatusModal(b)}
                               disabled={!canChangeStatus}
-                              className="h-8 px-2.5 rounded-full text-xs font-bold gap-1 border-border hover:border-rose-500/50 hover:bg-rose-500/10 disabled:opacity-40"
+                              className="h-8 px-3 rounded-full text-xs font-bold gap-1.5 border-border hover:border-rose-500/50 hover:bg-rose-500/10 disabled:opacity-40"
                               title={
                                 canChangeStatus
                                   ? "Tandai Expired atau Batalkan"
@@ -480,17 +460,6 @@ export function BillingManagementTable() {
                             >
                               <Ban className="size-3.5 text-rose-500" />
                               <span>Batal / Expired</span>
-                            </Button>
-
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleOpenDeleteModal(b)}
-                              className="h-8 size-8 p-0 rounded-full border-border hover:border-rose-500/50 hover:bg-rose-500/10 text-rose-600"
-                              title="Hapus Catatan"
-                            >
-                              <Trash2 className="size-3.5" />
                             </Button>
                           </div>
                         </td>
@@ -579,18 +548,6 @@ export function BillingManagementTable() {
         isOpen={isStatusModalOpen}
         onClose={() => setIsStatusModalOpen(false)}
         onSubmit={updateStatus}
-      />
-
-      {/* Delete Billing Confirmation Modal */}
-      <DeleteBillingModal
-        billing={selectedBillingForDelete}
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        onConfirm={async () => {
-          if (selectedBillingForDelete) {
-            await deleteBilling(selectedBillingForDelete.id);
-          }
-        }}
       />
     </div>
   );
