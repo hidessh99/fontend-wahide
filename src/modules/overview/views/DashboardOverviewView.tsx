@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import Link from "next/link";
@@ -576,7 +576,7 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
                 </h2>
               </div>
               <Link
-                href="/admin/overview"
+                href="/admin/users"
                 className="text-xs font-bold text-dark-green dark:text-wise-green hover:underline inline-flex items-center gap-1"
               >
                 <span>Lihat Laporan</span>

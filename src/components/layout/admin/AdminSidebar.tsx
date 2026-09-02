@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import Link from "next/link";
@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/modules/iam/hooks/useAuth";
 import {
   ShieldAlert,
-  LayoutDashboard,
   Users,
   CreditCard,
   LifeBuoy,
@@ -41,11 +40,6 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
   {
     groupTitle: "Kontrol Platform",
     items: [
-      {
-        title: "Overview Global",
-        href: "/admin/overview",
-        icon: LayoutDashboard,
-      },
       {
         title: "Pengguna & Member",
         href: "/admin/users",
@@ -111,7 +105,7 @@ export function AdminSidebar({ onItemClick, className }: AdminSidebarProps) {
       {/* Brand Header */}
       <div className="h-16 px-5 flex items-center justify-between border-b border-border bg-muted/20">
         <Link
-          href="/admin/overview"
+          href="/admin/users"
           onClick={onItemClick}
           className="flex items-center gap-2.5"
         >

@@ -89,7 +89,7 @@ export function DashboardUserNav() {
             </Link>
             {isAdmin(user.role) && (
               <Link
-                href="/admin/overview"
+                href="/admin/users"
                 onClick={() => setOpen(false)}
                 className="flex items-center gap-2 px-3 py-2 rounded-full bg-[rgba(159,232,112,0.12)] text-dark-green dark:text-wise-green font-bold transition"
               >

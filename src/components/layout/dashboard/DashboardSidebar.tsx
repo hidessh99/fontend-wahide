@@ -198,7 +198,7 @@ export function DashboardSidebar({ onItemClick, className }: DashboardSidebarPro
               {t("dashboardMenu.superAdmin")}
             </p>
             <Link
-              href="/admin/overview"
+              href="/admin/users"
               onClick={onItemClick}
               className={cn(
                 "flex items-center gap-3 px-3.5 py-2 rounded-full text-xs font-semibold transition-all",

@@ -12,7 +12,6 @@ interface AdminHeaderProps {
 }
 
 const ROUTE_TITLES: Record<string, { title: string; section: string }> = {
-  "/admin/overview": { title: "Overview Global", section: "Platform" },
   "/admin/users": { title: "Kelola Pengguna", section: "Platform" },
   "/admin/activities": { title: "Log Aktivitas Pengguna", section: "Platform" },
   "/admin/plans": { title: "Paket & Harga SaaS", section: "Platform" },
