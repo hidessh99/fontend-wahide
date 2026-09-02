@@ -11,6 +11,9 @@ import {
   UserActivityItem,
   GetUserActivitiesParams,
   UserActivityListResponse,
+  AdminPlanItem,
+  CreatePlanInput,
+  UpdatePlanInput,
 } from "../types/admin.types";
 import { AdminDashboardStats } from "@/modules/iam/types/dashboard.types";
 
@@ -308,5 +311,103 @@ export const adminApi = {
     const res = await httpClient.delete(`${ADMIN_BASE}/admin/user-activity/${id}`);
     return { success: res.success, message: res.message || "Aktivitas berhasil dihapus" };
   },
+
+  getAdminPlans: async (): Promise<AdminPlanItem[]> => {
+    try {
+      const res = await httpClient.get<Record<string, unknown>[]>(`${ADMIN_BASE}/plans`);
+      const rawList = Array.isArray(res.payload) ? res.payload : [];
+      if (rawList.length > 0) {
+        return rawList.map(normalizeAdminPlan);
+      }
+      return [
+        {
+          id: "01M1PLAN01STARTER000000000",
+          name: "Starter",
+          price: 0,
+          monthly_message_limit: 1500,
+          max_devices: 1,
+          max_agents: 0,
+          has_watermark: true,
+          watermark_text: "\n\n_Sent via Wahide WhatsApp Gateway_",
+          allow_attachment: false,
+          allow_campaign: true,
+          allow_autoreply: true,
+          allow_schedule: false,
+        },
+        {
+          id: "01M1PLAN02PRO00000000000000",
+          name: "Professional",
+          price: 50000,
+          monthly_message_limit: 25000,
+          max_devices: 5,
+          max_agents: 2,
+          has_watermark: false,
+          watermark_text: "",
+          allow_attachment: true,
+          allow_campaign: true,
+          allow_autoreply: true,
+          allow_schedule: true,
+        },
+        {
+          id: "01M1PLAN03ENTERPRISE00000000",
+          name: "Enterprise Cluster",
+          price: 150000,
+          monthly_message_limit: 100000,
+          max_devices: 15,
+          max_agents: 10,
+          has_watermark: false,
+          watermark_text: "",
+          allow_attachment: true,
+          allow_campaign: true,
+          allow_autoreply: true,
+          allow_schedule: true,
+        },
+      ];
+    } catch {
+      return [];
+    }
+  },
+
+  createAdminPlan: async (payload: CreatePlanInput): Promise<AdminPlanItem> => {
+    const res = await httpClient.post<Record<string, unknown>>(`${ADMIN_BASE}/admin/plans`, payload);
+    if (!res.payload) {
+      throw new Error(res.message || "Gagal membuat paket langganan");
+    }
+    return normalizeAdminPlan(res.payload);
+  },
+
+  updateAdminPlan: async (id: string, payload: UpdatePlanInput): Promise<AdminPlanItem> => {
+    const res = await httpClient.put<Record<string, unknown>>(`${ADMIN_BASE}/admin/plans/${id}`, payload);
+    if (!res.payload) {
+      throw new Error(res.message || "Gagal memperbarui paket langganan");
+    }
+    return normalizeAdminPlan(res.payload);
+  },
+
+  deleteAdminPlan: async (id: string): Promise<{ success: boolean; message: string }> => {
+    const res = await httpClient.delete(`${ADMIN_BASE}/admin/plans/${id}`);
+    return { success: res.success, message: res.message || "Paket berhasil dihapus" };
+  },
 };
+
+function normalizeAdminPlan(raw: Record<string, unknown>): AdminPlanItem {
+  return {
+    id: String(raw.id || raw.plan_id || ""),
+    name: String(raw.name || raw.plan_name || "Custom Plan"),
+    price: Number(raw.price ?? raw.price_monthly ?? 0),
+    monthly_message_limit: Number(
+      raw.monthly_message_limit ?? raw.quota_monthly ?? raw.monthly_quota ?? 1000
+    ),
+    max_devices: Number(raw.max_devices ?? raw.max_device_slots ?? 1),
+    max_agents: Number(raw.max_agents ?? 0),
+    has_watermark: Boolean(raw.has_watermark ?? false),
+    watermark_text: String(raw.watermark_text ?? ""),
+    allow_attachment: Boolean(raw.allow_attachment ?? false),
+    allow_campaign: Boolean(raw.allow_campaign ?? true),
+    allow_autoreply: Boolean(raw.allow_autoreply ?? true),
+    allow_schedule: Boolean(raw.allow_schedule ?? false),
+    created_at: raw.created_at ? String(raw.created_at) : undefined,
+    updated_at: raw.updated_at ? String(raw.updated_at) : undefined,
+  };
+}
 

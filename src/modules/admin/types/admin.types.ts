@@ -90,3 +90,48 @@ export interface UserActivityListResponse {
   page: number;
   pageSize: number;
 }
+
+export interface AdminPlanItem {
+  id: string;
+  name: string;
+  price: number;
+  monthly_message_limit: number;
+  max_devices: number;
+  max_agents: number;
+  has_watermark: boolean;
+  watermark_text?: string;
+  allow_attachment: boolean;
+  allow_campaign: boolean;
+  allow_autoreply: boolean;
+  allow_schedule: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface CreatePlanInput {
+  name: string;
+  price: number;
+  monthly_message_limit: number;
+  max_devices: number;
+  max_agents: number;
+  has_watermark: boolean;
+  watermark_text?: string;
+  allow_attachment: boolean;
+  allow_campaign: boolean;
+  allow_autoreply: boolean;
+  allow_schedule: boolean;
+}
+
+export interface UpdatePlanInput {
+  name?: string;
+  price?: number;
+  monthly_message_limit?: number;
+  max_devices?: number;
+  max_agents?: number;
+  has_watermark?: boolean;
+  watermark_text?: string;
+  allow_attachment?: boolean;
+  allow_campaign?: boolean;
+  allow_autoreply?: boolean;
+  allow_schedule?: boolean;
+}
