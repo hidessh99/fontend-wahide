@@ -7,6 +7,7 @@ import {
   WebhookConfig,
 } from "../types/subscription.types";
 import { subscriptionApi } from "../api/subscription.api";
+import { userApi } from "@/modules/iam/api/user.api";
 import { toast } from "sonner";
 import { useI18n } from "@/lib/i18n/context";
 
@@ -15,19 +16,22 @@ export function useSubscription() {
   const [subscription, setSubscription] = useState<TenantSubscription | null>(null);
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
   const [webhookConfig, setWebhookConfig] = useState<WebhookConfig | null>(null);
+  const [balance, setBalance] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchSubscriptionData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const [subData, plansData, webhookData] = await Promise.all([
+      const [subData, plansData, webhookData, profileData] = await Promise.all([
         subscriptionApi.getSubscription(),
         subscriptionApi.getPlans(),
         subscriptionApi.getWebhookConfig(),
+        userApi.getProfile().catch(() => null),
       ]);
       setSubscription(subData);
       setPlans(plansData);
       setWebhookConfig(webhookData);
+      setBalance(profileData?.balance ?? 0);
     } catch {
       // Fallbacks already in API client
     } finally {
@@ -39,15 +43,17 @@ export function useSubscription() {
     let isMounted = true;
     const init = async () => {
       try {
-        const [subData, plansData, webhookData] = await Promise.all([
+        const [subData, plansData, webhookData, profileData] = await Promise.all([
           subscriptionApi.getSubscription(),
           subscriptionApi.getPlans(),
           subscriptionApi.getWebhookConfig(),
+          userApi.getProfile().catch(() => null),
         ]);
         if (isMounted) {
           setSubscription(subData);
           setPlans(plansData);
           setWebhookConfig(webhookData);
+          setBalance(profileData?.balance ?? 0);
           setIsLoading(false);
         }
       } catch {
@@ -63,11 +69,14 @@ export function useSubscription() {
   const upgradePlan = async (planId: string) => {
     try {
       const res = await subscriptionApi.upgradePlan(planId);
-      toast.success("Paket langganan berhasil diperbarui.");
+      toast.success("Paket langganan berhasil diaktifkan! Invoice tagihan lunas telah diterbitkan.");
       await fetchSubscriptionData();
       return res;
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal upgrade paket";
+      let msg = err instanceof Error ? err.message : "Gagal upgrade paket";
+      if (msg.toLowerCase().includes("insufficient") || msg.toLowerCase().includes("balance") || msg.toLowerCase().includes("saldo")) {
+        msg = "Saldo wallet Anda tidak mencukupi. Silakan lakukan Top-Up di menu Billing terlebih dahulu.";
+      }
       toast.error(msg);
       throw err;
     }
@@ -106,6 +115,7 @@ export function useSubscription() {
     subscription,
     plans,
     webhookConfig,
+    balance,
     isLoading,
     fetchSubscriptionData,
     upgradePlan,

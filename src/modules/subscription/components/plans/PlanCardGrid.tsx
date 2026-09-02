@@ -4,28 +4,56 @@ import React, { useState } from "react";
 import { SubscriptionPlan, TenantSubscription } from "@/modules/subscription/types/subscription.types";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/context";
-import { Check, Sparkles, Loader2 } from "lucide-react";
+import { Check, Sparkles, Loader2, ArrowUpRight, Lock, Calendar } from "lucide-react";
+import { ConfirmUpgradeModal } from "./ConfirmUpgradeModal";
 
 interface PlanCardGridProps {
   plans: SubscriptionPlan[];
   currentSubscription: TenantSubscription | null;
+  userBalance?: number | null;
   onUpgradePlan: (planId: string) => Promise<unknown>;
 }
 
 export function PlanCardGrid({
   plans,
   currentSubscription,
+  userBalance,
   onUpgradePlan,
 }: PlanCardGridProps) {
   const { t } = useI18n();
   const [loadingPlanId, setLoadingPlanId] = useState<string | null>(null);
+  const [selectedPlanForUpgrade, setSelectedPlanForUpgrade] = useState<SubscriptionPlan | null>(null);
+  const [isModalUpgrading, setIsModalUpgrading] = useState(false);
 
-  const handleSelectPlan = async (planId: string) => {
-    setLoadingPlanId(planId);
+  // Determine active subscription price dynamically (0 if free/starter or inactive)
+  const currentActivePrice = (currentSubscription?.isActive && currentSubscription?.planId)
+    ? (currentSubscription.planPrice || (plans.find((p) => p.id === currentSubscription.planId)?.priceMonthly ?? 0))
+    : 0;
+
+  const handleSelectPlanClick = async (plan: SubscriptionPlan) => {
+    // Free tier: direct upgrade without balance deduction
+    if (plan.priceMonthly === 0) {
+      setLoadingPlanId(plan.id);
+      try {
+        await onUpgradePlan(plan.id);
+      } finally {
+        setLoadingPlanId(null);
+      }
+      return;
+    }
+
+    // Paid tier: open confirmation modal with balance verification
+    setSelectedPlanForUpgrade(plan);
+  };
+
+  const handleConfirmModalUpgrade = async () => {
+    if (!selectedPlanForUpgrade) return;
+    setIsModalUpgrading(true);
     try {
-      await onUpgradePlan(planId);
+      await onUpgradePlan(selectedPlanForUpgrade.id);
+      setSelectedPlanForUpgrade(null);
     } finally {
-      setLoadingPlanId(null);
+      setIsModalUpgrading(false);
     }
   };
 
@@ -33,6 +61,30 @@ export function PlanCardGrid({
 
   return (
     <div className="space-y-6">
+      {/* Active Subscription Expiry Info Banner for Paid Active Plans */}
+      {currentSubscription && currentSubscription.isActive && currentActivePrice > 0 && currentSubscription.expiresAt && (
+        <div className="p-3.5 sm:p-4 rounded-xl border border-wise-green/30 bg-light-mint/50 dark:bg-wise-green/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2.5 text-foreground font-semibold">
+            <div className="size-6 rounded-full bg-wise-green/20 text-emerald-800 dark:text-wise-green flex items-center justify-center shrink-0">
+              <Calendar className="size-3.5" />
+            </div>
+            <div>
+              <span>Paket <strong>{currentSubscription.planName}</strong> Anda aktif hingga{" "}</span>
+              <strong className="text-emerald-700 dark:text-wise-green">
+                {new Date(currentSubscription.expiresAt).toLocaleDateString("id-ID", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </strong>
+            </div>
+          </div>
+          <span className="text-[11px] text-foreground-muted font-medium">
+            💡 Anda dapat melakukan upgrade ke paket yang lebih tinggi kapan saja.
+          </span>
+        </div>
+      )}
+
       <div className="space-y-1">
         <h2 className="text-xl sm:text-2xl font-black text-foreground tracking-tight">
           {t("subscription.plansTitle")}
@@ -44,7 +96,16 @@ export function PlanCardGrid({
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {safePlans.map((plan) => {
+          // 1. Strict relational active plan matching by Primary Key ID
           const isCurrent = currentSubscription?.planId === plan.id;
+
+          // 2. Strict upward migration logic purely based on mathematical price
+          const isLowerTier =
+            currentSubscription?.isActive &&
+            currentActivePrice > 0 &&
+            plan.priceMonthly < currentActivePrice;
+
+          const canUpgrade = !isCurrent && (!isLowerTier || currentActivePrice === 0);
           const isPopular = Boolean(plan.isPopular);
           const priceMonthly = Number(plan.priceMonthly ?? 0);
           const features = Array.isArray(plan.features) ? plan.features : [];
@@ -107,23 +168,40 @@ export function PlanCardGrid({
                   <Button
                     variant="outline"
                     disabled
-                    className="w-full rounded-full text-xs font-bold border-border bg-muted/40 text-foreground-muted"
+                    className="w-full rounded-full text-xs font-bold border-border bg-muted/40 text-foreground-muted cursor-not-allowed"
                   >
                     {t("subscription.currentPlanBadge")}
                   </Button>
+                ) : isLowerTier ? (
+                  <div className="space-y-1.5">
+                    <Button
+                      variant="outline"
+                      disabled
+                      className="w-full rounded-full text-xs font-bold border-border bg-muted/20 text-foreground-muted cursor-not-allowed gap-1.5"
+                    >
+                      <Lock className="size-3" />
+                      <span>Tier di Bawah Paket Aktif</span>
+                    </Button>
+                    <p className="text-[10px] text-center text-foreground-muted font-medium">
+                      Downgrade dapat dilakukan setelah masa aktif berakhir.
+                    </p>
+                  </div>
                 ) : (
                   <Button
                     variant={isPopular ? "primaryPill" : "outline"}
-                    disabled={loadingPlanId === plan.id}
-                    onClick={() => handleSelectPlan(plan.id)}
-                    className={`w-full rounded-full text-xs font-bold gap-2 ${
+                    disabled={loadingPlanId === plan.id || !canUpgrade}
+                    onClick={() => handleSelectPlanClick(plan)}
+                    className={`w-full rounded-full text-xs font-bold gap-1.5 cursor-pointer ${
                       !isPopular ? "border-border hover:border-foreground-muted" : "shadow-sm"
                     }`}
                   >
                     {loadingPlanId === plan.id ? (
                       <Loader2 className="size-3.5 animate-spin" />
                     ) : (
-                      <span>{t("subscription.choosePlan")}</span>
+                      <>
+                        <span>{plan.priceMonthly === 0 ? t("subscription.choosePlan") : "Upgrade ke Paket Ini"}</span>
+                        <ArrowUpRight className="size-3.5" />
+                      </>
                     )}
                   </Button>
                 )}
@@ -132,6 +210,16 @@ export function PlanCardGrid({
           );
         })}
       </div>
+
+      {/* Confirmation & Wallet Deduction Modal */}
+      <ConfirmUpgradeModal
+        plan={selectedPlanForUpgrade}
+        balance={userBalance ?? null}
+        isOpen={Boolean(selectedPlanForUpgrade)}
+        onClose={() => setSelectedPlanForUpgrade(null)}
+        onConfirm={handleConfirmModalUpgrade}
+        isUpgrading={isModalUpgrading}
+      />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { httpClient } from "@/lib/api/http-client";
 import { env } from "@/lib/config/env";
 import { Invoice, TenantBalance, CreateTopUpInput, InvoiceStatus, PaymentMethod, GetInvoicesParams, InvoiceListResponse } from "../types/finance.types";
+import { userApi } from "@/modules/iam/api/user.api";
 
 const BILLING_BASE = env.NEXT_PUBLIC_FINANCE_API_URL || env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -74,8 +75,11 @@ export function normalizeBalance(raw: Record<string, unknown> | null | undefined
 export const financeApi = {
   getBalance: async (): Promise<TenantBalance> => {
     try {
-      const res = await httpClient.get<Record<string, unknown>>(`${BILLING_BASE}/billing/balance`);
-      return normalizeBalance(res.payload);
+      const userProfile = await userApi.getProfile();
+      return {
+        amount: Number(userProfile.balance ?? 0),
+        currency: "IDR",
+      };
     } catch {
       return normalizeBalance(null);
     }

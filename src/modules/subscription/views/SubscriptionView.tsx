@@ -9,7 +9,7 @@ import { CreditCard } from "lucide-react";
 
 export function SubscriptionView() {
   const { t } = useI18n();
-  const { subscription, plans, upgradePlan } = useSubscription();
+  const { subscription, plans, balance, upgradePlan } = useSubscription();
 
   return (
     <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto p-3 sm:p-6 lg:p-8">
@@ -35,6 +35,7 @@ export function SubscriptionView() {
         <PlanCardGrid
           plans={plans}
           currentSubscription={subscription}
+          userBalance={balance}
           onUpgradePlan={upgradePlan}
         />
       </ErrorBoundary>
