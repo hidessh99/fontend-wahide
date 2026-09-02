@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import {
-  AdminMetrics,
   UserItem,
   AdjustBalanceInput,
   UpdateUserInput,
@@ -11,7 +10,6 @@ import { adminApi } from "../api/admin.api";
 import { toast } from "sonner";
 
 export function useAdmin() {
-  const [metrics, setMetrics] = useState<AdminMetrics | null>(null);
   const [users, setUsers] = useState<UserItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeSearch, setActiveSearch] = useState("");
@@ -23,11 +21,7 @@ export function useAdmin() {
   const fetchAdminData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const [metData, usrData] = await Promise.all([
-        adminApi.getMetrics(),
-        adminApi.getUsers({ page: 1, pageSize: 100 }),
-      ]);
-      setMetrics(metData);
+      const usrData = await adminApi.getUsers({ page: 1, pageSize: 100 });
       setUsers(usrData.users);
     } catch {
       // Fallbacks in API
@@ -40,12 +34,8 @@ export function useAdmin() {
     let isMounted = true;
     const init = async () => {
       try {
-        const [metData, usrData] = await Promise.all([
-          adminApi.getMetrics(),
-          adminApi.getUsers({ page: 1, pageSize: 100 }),
-        ]);
+        const usrData = await adminApi.getUsers({ page: 1, pageSize: 100 });
         if (isMounted) {
-          setMetrics(metData);
           setUsers(usrData.users);
           setIsLoading(false);
         }
@@ -194,7 +184,6 @@ export function useAdmin() {
   };
 
   return {
-    metrics,
     users,
     filteredUsers,
     paginatedUsers,

@@ -2,7 +2,6 @@ import { httpClient } from "@/lib/api/http-client";
 import { env } from "@/lib/config/env";
 import { generateSecureRandomString } from "@/lib/utils";
 import {
-  AdminMetrics,
   UserItem,
   AdjustBalanceInput,
   UpdateUserInput,
@@ -143,29 +142,6 @@ function normalizeUserActivity(raw: Record<string, unknown>): UserActivityItem {
 }
 
 export const adminApi = {
-  getMetrics: async (): Promise<AdminMetrics> => {
-    try {
-      const res = await httpClient.get<AdminMetrics>(`${ADMIN_BASE}/admin/overview`);
-      return (
-        res.payload || {
-          mrr: 48750000,
-          totalUsers: 142,
-          activeDevices: 68,
-          redisQueueMessages: 1240,
-          clusterHealth: "HEALTHY",
-        }
-      );
-    } catch {
-      return {
-        mrr: 48750000,
-        totalUsers: 142,
-        activeDevices: 68,
-        redisQueueMessages: 1240,
-        clusterHealth: "HEALTHY",
-      };
-    }
-  },
-
   getUsers: async (params?: GetUsersParams): Promise<UserListResponse> => {
     try {
       const page = params?.page ?? 1;

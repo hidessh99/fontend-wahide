@@ -1,11 +1,3 @@
-export interface AdminMetrics {
-  mrr: number;
-  totalUsers: number;
-  activeDevices: number;
-  redisQueueMessages: number;
-  clusterHealth: "HEALTHY" | "DEGRADED" | "CRITICAL";
-}
-
 export interface UserItem {
   id: string;
   name: string;
