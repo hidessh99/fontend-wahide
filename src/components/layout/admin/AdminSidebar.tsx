@@ -10,6 +10,7 @@ import {
   Users,
   CreditCard,
   LifeBuoy,
+  MessageSquare,
   Radio,
   ArrowLeft,
   ShieldCheck,
@@ -76,6 +77,11 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
         title: "Pusat Bantuan",
         href: "/admin/support",
         icon: LifeBuoy,
+      },
+      {
+        title: "Log Pesan User",
+        href: "/admin/messages",
+        icon: MessageSquare,
       },
       {
         title: "Siaran & Notifikasi",

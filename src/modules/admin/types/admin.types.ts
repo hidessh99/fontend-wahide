@@ -232,3 +232,35 @@ export interface CreateEmailQueueInput {
   taskType?: string;
   priority?: number;
 }
+
+export interface AdminMessageLogItem {
+  id: string;
+  tenantId: string;
+  deviceId: string;
+  campaignId?: string;
+  recipientJid: string;
+  direction: "OUTBOUND" | "INBOUND";
+  messageBody: string;
+  mediaUrl?: string;
+  status: "PENDING" | "SENT" | "DELIVERED" | "READ" | "FAILED" | string;
+  errorMessage?: string;
+  sentAt?: string;
+  createdAt: string;
+}
+
+export interface GetAdminMessageLogsParams {
+  page?: number;
+  pageSize?: number;
+  search?: string;
+  status?: string;
+  direction?: string;
+  tenantId?: string;
+  deviceId?: string;
+}
+
+export interface AdminMessageLogListResponse {
+  logs: AdminMessageLogItem[];
+  total: number;
+  page: number;
+  pageSize: number;
+}

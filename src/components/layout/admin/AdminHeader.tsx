@@ -17,6 +17,7 @@ const ROUTE_TITLES: Record<string, { title: string; section: string }> = {
   "/admin/plans": { title: "Paket & Harga SaaS", section: "Platform" },
   "/admin/billing": { title: "Billing & Topup", section: "Platform" },
   "/admin/support": { title: "Pusat Bantuan", section: "Operasional" },
+  "/admin/messages": { title: "Log Pesan WhatsApp", section: "Operasional" },
   "/admin/notifications": { title: "Siaran & Notifikasi", section: "Operasional" },
 };
 

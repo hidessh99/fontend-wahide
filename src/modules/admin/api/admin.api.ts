@@ -27,6 +27,9 @@ import {
   BroadcastToUsersInput,
   CreateEmailQueueInput,
   QueueStatus,
+  AdminMessageLogItem,
+  GetAdminMessageLogsParams,
+  AdminMessageLogListResponse,
 } from "../types/admin.types";
 import { AdminDashboardStats } from "@/modules/iam/types/dashboard.types";
 
@@ -569,7 +572,71 @@ export const adminApi = {
       message: res.message || `Email berhasil dimasukkan ke antrean worker untuk ${input.email}`,
     };
   },
+
+  getAdminMessageLogs: async (
+    params?: GetAdminMessageLogsParams
+  ): Promise<AdminMessageLogListResponse> => {
+    try {
+      const page = params?.page ?? 1;
+      const pageSize = params?.pageSize ?? 15;
+      const query = new URLSearchParams();
+      query.set("page", String(page));
+      query.set("page_size", String(pageSize));
+      if (params?.search && params.search.trim()) {
+        query.set("search", params.search.trim());
+      }
+      if (params?.status && params.status !== "ALL") {
+        query.set("status", params.status);
+      }
+      if (params?.direction && params.direction !== "ALL") {
+        query.set("direction", params.direction);
+      }
+      if (params?.tenantId) {
+        query.set("tenant_id", params.tenantId);
+      }
+      if (params?.deviceId) {
+        query.set("device_id", params.deviceId);
+      }
+
+      const res = await httpClient.get<Record<string, unknown>[]>(
+        `${ADMIN_BASE}/campaigns/logs?${query.toString()}`
+      );
+
+      const rawLogs = Array.isArray(res.payload) ? res.payload : [];
+      const logs = rawLogs.map(normalizeAdminMessageLog);
+
+      const addInfo = res.additional_info as { total?: number; page?: number; size?: number } | undefined;
+      const total = typeof addInfo?.total === "number" ? addInfo.total : logs.length;
+      const resPage = typeof addInfo?.page === "number" ? addInfo.page : page;
+      const resSize = typeof addInfo?.size === "number" ? addInfo.size : pageSize;
+
+      return {
+        logs,
+        total,
+        page: resPage,
+        pageSize: resSize,
+      };
+    } catch {
+      return {
+        logs: [],
+        total: 0,
+        page: params?.page ?? 1,
+        pageSize: params?.pageSize ?? 15,
+      };
+    }
+  },
+
+  deleteAdminMessageLog: async (id: string): Promise<{ success: boolean; message: string }> => {
+    const res = await httpClient.delete(`${ADMIN_BASE}/campaigns/logs/${id}`);
+    return {
+      success: res.success,
+      message: res.message || "Log pesan berhasil dihapus",
+    };
+  },
 };
+
+export const getAdminMessageLogs = adminApi.getAdminMessageLogs;
+export const deleteAdminMessageLog = adminApi.deleteAdminMessageLog;
 
 function normalizeAdminPlan(raw: Record<string, unknown>): AdminPlanItem {
   return {
@@ -660,6 +727,23 @@ function normalizeAdminQueue(raw: Record<string, unknown>): AdminQueueItem {
     updatedAt: String(raw.updated_at || new Date().toISOString()),
     targetEmail: targetEmail || "-",
     targetName: targetName || undefined,
+  };
+}
+
+function normalizeAdminMessageLog(raw: Record<string, unknown>): AdminMessageLogItem {
+  return {
+    id: String(raw.id || ""),
+    tenantId: String(raw.tenant_id || raw.tenantId || ""),
+    deviceId: String(raw.device_id || raw.deviceId || ""),
+    campaignId: raw.campaign_id || raw.campaignId ? String(raw.campaign_id || raw.campaignId) : undefined,
+    recipientJid: String(raw.recipient_jid || raw.recipientJid || ""),
+    direction: (String(raw.direction || "OUTBOUND").toUpperCase() as "OUTBOUND" | "INBOUND") || "OUTBOUND",
+    messageBody: String(raw.message_body || raw.messageBody || ""),
+    mediaUrl: raw.media_url || raw.mediaUrl ? String(raw.media_url || raw.mediaUrl) : undefined,
+    status: String(raw.status || "PENDING").toUpperCase(),
+    errorMessage: raw.error_message || raw.errorMessage ? String(raw.error_message || raw.errorMessage) : undefined,
+    sentAt: raw.sent_at ? String(raw.sent_at) : undefined,
+    createdAt: String(raw.created_at || raw.createdAt || new Date().toISOString()),
   };
 }
 
