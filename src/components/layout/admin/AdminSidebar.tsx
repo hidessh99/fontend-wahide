@@ -16,6 +16,7 @@ import {
   ShieldCheck,
   Activity,
   UserCheck,
+  Receipt,
 } from "lucide-react";
 
 export interface AdminNavSubItem {
@@ -61,6 +62,11 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
         title: "Paket & Harga SaaS",
         href: "/admin/plans",
         icon: CreditCard,
+      },
+      {
+        title: "Billing & Topup",
+        href: "/admin/billing",
+        icon: Receipt,
       },
     ],
   },

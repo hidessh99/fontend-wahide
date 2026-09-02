@@ -14,6 +14,12 @@ import {
   AdminPlanItem,
   CreatePlanInput,
   UpdatePlanInput,
+  AdminBillingItem,
+  GetAdminBillingsParams,
+  AdminBillingListResponse,
+  UpdateBillingStatusInput,
+  BillingStatus,
+  AdminBillingUser,
 } from "../types/admin.types";
 import { AdminDashboardStats } from "@/modules/iam/types/dashboard.types";
 
@@ -388,6 +394,80 @@ export const adminApi = {
     const res = await httpClient.delete(`${ADMIN_BASE}/admin/plans/${id}`);
     return { success: res.success, message: res.message || "Paket berhasil dihapus" };
   },
+
+  getAdminBillings: async (params?: GetAdminBillingsParams): Promise<AdminBillingListResponse> => {
+    try {
+      const page = params?.page ?? 1;
+      const pageSize = params?.pageSize ?? 10;
+      const query = new URLSearchParams();
+      query.set("page", String(page));
+      query.set("page_size", String(pageSize));
+      if (params?.search && params.search.trim()) {
+        query.set("search", params.search.trim());
+      }
+      if (params?.userId) {
+        query.set("user_id", params.userId);
+      }
+
+      const res = await httpClient.get<Record<string, unknown>[]>(
+        `${ADMIN_BASE}/admin/billing?${query.toString()}`
+      );
+
+      const rawBillings = Array.isArray(res.payload) ? res.payload : [];
+      let billings = rawBillings.map(normalizeAdminBilling);
+
+      if (params?.status && params.status !== "ALL") {
+        billings = billings.filter((b) => b.status === params.status);
+      }
+
+      const addInfo = res.additional_info as { total?: number; page?: number; size?: number } | undefined;
+      const total = typeof addInfo?.total === "number" ? addInfo.total : billings.length;
+      const resPage = typeof addInfo?.page === "number" ? addInfo.page : page;
+      const resSize = typeof addInfo?.size === "number" ? addInfo.size : pageSize;
+
+      return {
+        billings,
+        total,
+        page: resPage,
+        pageSize: resSize,
+      };
+    } catch {
+      return {
+        billings: [],
+        total: 0,
+        page: params?.page ?? 1,
+        pageSize: params?.pageSize ?? 10,
+      };
+    }
+  },
+
+  getAdminBillingById: async (id: string): Promise<AdminBillingItem> => {
+    const res = await httpClient.get<Record<string, unknown>>(`${ADMIN_BASE}/admin/billing/${id}`);
+    if (!res.payload) {
+      throw new Error(res.message || "Data transaksi tidak ditemukan");
+    }
+    return normalizeAdminBilling(res.payload);
+  },
+
+  updateAdminBillingStatus: async (
+    id: string,
+    input: UpdateBillingStatusInput
+  ): Promise<{ success: boolean; message: string }> => {
+    const res = await httpClient.put<Record<string, unknown>>(`${ADMIN_BASE}/admin/billing/${id}`, {
+      status: input.status,
+      amount: input.amount,
+      method: input.method,
+    });
+    return {
+      success: res.success,
+      message: res.message || `Status transaksi berhasil diubah menjadi ${input.status}`,
+    };
+  },
+
+  deleteAdminBilling: async (id: string): Promise<{ success: boolean; message: string }> => {
+    const res = await httpClient.delete(`${ADMIN_BASE}/admin/billing/${id}`);
+    return { success: res.success, message: res.message || "Data billing berhasil dihapus" };
+  },
 };
 
 function normalizeAdminPlan(raw: Record<string, unknown>): AdminPlanItem {
@@ -408,6 +488,37 @@ function normalizeAdminPlan(raw: Record<string, unknown>): AdminPlanItem {
     allow_schedule: Boolean(raw.allow_schedule ?? false),
     created_at: raw.created_at ? String(raw.created_at) : undefined,
     updated_at: raw.updated_at ? String(raw.updated_at) : undefined,
+  };
+}
+
+function normalizeAdminBilling(raw: Record<string, unknown>): AdminBillingItem {
+  let userObj: AdminBillingUser | undefined = undefined;
+  if (raw.user && typeof raw.user === "object") {
+    const u = raw.user as Record<string, unknown>;
+    userObj = {
+      id: String(u.id || raw.user_id || ""),
+      name: String(u.name || "Pengguna"),
+      email: String(u.email || "-"),
+      phoneNumber: u.phone_number ? String(u.phone_number) : undefined,
+    };
+  } else if (raw.user_id) {
+    userObj = {
+      id: String(raw.user_id),
+      name: `User ${String(raw.user_id).slice(-6)}`,
+      email: "-",
+    };
+  }
+
+  return {
+    id: String(raw.id || raw.billing_id || ""),
+    userId: String(raw.user_id || raw.userId || ""),
+    amount: Number(raw.amount ?? 0),
+    method: String(raw.method || "MANUAL_TRANSFER"),
+    status: (String(raw.status || "PENDING").toUpperCase() as BillingStatus) || "PENDING",
+    invoiceUrl: raw.invoice_url ? String(raw.invoice_url) : undefined,
+    createdAt: String(raw.created_at || raw.createdAt || new Date().toISOString()),
+    updatedAt: String(raw.updated_at || raw.updatedAt || new Date().toISOString()),
+    user: userObj,
   };
 }
 
