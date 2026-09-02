@@ -264,3 +264,68 @@ export interface AdminMessageLogListResponse {
   page: number;
   pageSize: number;
 }
+
+export interface AdminDeviceItem {
+  id: string;
+  tenantId: string;
+  jid: string;
+  pushName: string;
+  status: "ONLINE" | "OFFLINE" | "QR_PENDING" | "HIBERNATED" | "BANNED" | string;
+  trustScore: number;
+  warmupDay: number;
+  dailySentCount: number;
+  lastSeenAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GetAdminDevicesParams {
+  page?: number;
+  pageSize?: number;
+  search?: string;
+  status?: string;
+  tenantId?: string;
+}
+
+export interface AdminDeviceListResponse {
+  devices: AdminDeviceItem[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+export type SubscriptionStatus = "ACTIVE" | "EXPIRED" | "TRIAL" | "SUSPENDED" | string;
+
+export interface AdminSubscriptionItem {
+  id: string;
+  tenantId: string;
+  planId: string;
+  currentMonthUsage: number;
+  startedAt: string;
+  expiredAt: string;
+  status: SubscriptionStatus;
+  plan?: AdminPlanItem;
+  tenant?: {
+    id: string;
+    name: string;
+    status?: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GetAdminSubscriptionsParams {
+  page?: number;
+  pageSize?: number;
+  search?: string;
+  status?: string;
+  planId?: string;
+  tenantId?: string;
+}
+
+export interface AdminSubscriptionListResponse {
+  subscriptions: AdminSubscriptionItem[];
+  total: number;
+  page: number;
+  pageSize: number;
+}

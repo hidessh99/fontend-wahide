@@ -11,6 +11,7 @@ import {
   CreditCard,
   LifeBuoy,
   MessageSquare,
+  Smartphone,
   Radio,
   ArrowLeft,
   ShieldCheck,
@@ -68,6 +69,11 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
         href: "/admin/plans",
         icon: CreditCard,
       },
+      {
+        title: "Langganan Pengguna",
+        href: "/admin/subscriptions",
+        icon: Receipt,
+      },
     ],
   },
   {
@@ -77,6 +83,11 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
         title: "Pusat Bantuan",
         href: "/admin/support",
         icon: LifeBuoy,
+      },
+      {
+        title: "Perangkat WhatsApp",
+        href: "/admin/devices",
+        icon: Smartphone,
       },
       {
         title: "Log Pesan User",

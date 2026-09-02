@@ -30,6 +30,13 @@ import {
   AdminMessageLogItem,
   GetAdminMessageLogsParams,
   AdminMessageLogListResponse,
+  AdminDeviceItem,
+  GetAdminDevicesParams,
+  AdminDeviceListResponse,
+  AdminSubscriptionItem,
+  GetAdminSubscriptionsParams,
+  AdminSubscriptionListResponse,
+  SubscriptionStatus,
 } from "../types/admin.types";
 import { AdminDashboardStats } from "@/modules/iam/types/dashboard.types";
 
@@ -633,10 +640,131 @@ export const adminApi = {
       message: res.message || "Log pesan berhasil dihapus",
     };
   },
+
+  getAdminDevices: async (
+    params?: GetAdminDevicesParams
+  ): Promise<AdminDeviceListResponse> => {
+    try {
+      const page = params?.page ?? 1;
+      const pageSize = params?.pageSize ?? 15;
+      const query = new URLSearchParams();
+      query.set("page", String(page));
+      query.set("page_size", String(pageSize));
+      if (params?.search && params.search.trim()) {
+        query.set("search", params.search.trim());
+      }
+      if (params?.status && params.status !== "ALL") {
+        query.set("status", params.status);
+      }
+      if (params?.tenantId) {
+        query.set("tenant_id", params.tenantId);
+      }
+
+      const res = await httpClient.get<Record<string, unknown>[]>(
+        `${ADMIN_BASE}/admin/devices?${query.toString()}`
+      );
+
+      const rawDevices = Array.isArray(res.payload) ? res.payload : [];
+      const devices = rawDevices.map(normalizeAdminDevice);
+
+      const addInfo = res.additional_info as { total?: number; page?: number; size?: number } | undefined;
+      const total = typeof addInfo?.total === "number" ? addInfo.total : devices.length;
+      const resPage = typeof addInfo?.page === "number" ? addInfo.page : page;
+      const resSize = typeof addInfo?.size === "number" ? addInfo.size : pageSize;
+
+      return {
+        devices,
+        total,
+        page: resPage,
+        pageSize: resSize,
+      };
+    } catch {
+      return {
+        devices: [],
+        total: 0,
+        page: params?.page ?? 1,
+        pageSize: params?.pageSize ?? 15,
+      };
+    }
+  },
+
+  deleteAdminDevice: async (id: string): Promise<{ success: boolean; message: string }> => {
+    const res = await httpClient.delete(`${ADMIN_BASE}/admin/devices/${id}`);
+    return {
+      success: res.success,
+      message: res.message || "Perangkat WhatsApp berhasil dihapus",
+    };
+  },
+
+  getAdminSubscriptions: async (
+    params?: GetAdminSubscriptionsParams
+  ): Promise<AdminSubscriptionListResponse> => {
+    try {
+      const page = params?.page ?? 1;
+      const pageSize = params?.pageSize ?? 15;
+      const query = new URLSearchParams();
+      query.set("page", String(page));
+      query.set("page_size", String(pageSize));
+      if (params?.search && params.search.trim()) {
+        query.set("search", params.search.trim());
+      }
+      if (params?.status && params.status !== "ALL") {
+        query.set("status", params.status);
+      }
+      if (params?.planId && params.planId !== "ALL") {
+        query.set("plan_id", params.planId);
+      }
+      if (params?.tenantId) {
+        query.set("tenant_id", params.tenantId);
+      }
+
+      const res = await httpClient.get<Record<string, unknown>[]>(
+        `${ADMIN_BASE}/admin/subscriptions?${query.toString()}`
+      );
+
+      const rawSubs = Array.isArray(res.payload) ? res.payload : [];
+      const subscriptions = rawSubs.map(normalizeAdminSubscription);
+
+      const addInfo = res.additional_info as { total?: number; page?: number; size?: number } | undefined;
+      const total = typeof addInfo?.total === "number" ? addInfo.total : subscriptions.length;
+      const resPage = typeof addInfo?.page === "number" ? addInfo.page : page;
+      const resSize = typeof addInfo?.size === "number" ? addInfo.size : pageSize;
+
+      return {
+        subscriptions,
+        total,
+        page: resPage,
+        pageSize: resSize,
+      };
+    } catch {
+      return {
+        subscriptions: [],
+        total: 0,
+        page: params?.page ?? 1,
+        pageSize: params?.pageSize ?? 15,
+      };
+    }
+  },
+
+  expireAdminSubscription: async (
+    id: string
+  ): Promise<{ success: boolean; message: string }> => {
+    const res = await httpClient.put(`${ADMIN_BASE}/admin/subscriptions/${id}/expire`, {
+      status: "EXPIRED",
+    });
+    return {
+      success: res.success,
+      message: res.message || "Langganan berhasil diubah statusnya menjadi EXPIRED",
+    };
+  },
 };
 
 export const getAdminMessageLogs = adminApi.getAdminMessageLogs;
 export const deleteAdminMessageLog = adminApi.deleteAdminMessageLog;
+export const getAdminDevices = adminApi.getAdminDevices;
+export const deleteAdminDevice = adminApi.deleteAdminDevice;
+export const getAdminSubscriptions = adminApi.getAdminSubscriptions;
+export const expireAdminSubscription = adminApi.expireAdminSubscription;
 
 function normalizeAdminPlan(raw: Record<string, unknown>): AdminPlanItem {
   return {
@@ -744,6 +872,53 @@ function normalizeAdminMessageLog(raw: Record<string, unknown>): AdminMessageLog
     errorMessage: raw.error_message || raw.errorMessage ? String(raw.error_message || raw.errorMessage) : undefined,
     sentAt: raw.sent_at ? String(raw.sent_at) : undefined,
     createdAt: String(raw.created_at || raw.createdAt || new Date().toISOString()),
+  };
+}
+
+function normalizeAdminDevice(raw: Record<string, unknown>): AdminDeviceItem {
+  return {
+    id: String(raw.id || ""),
+    tenantId: String(raw.tenant_id || raw.tenantId || ""),
+    jid: String(raw.jid || raw.j_id || raw.phone || ""),
+    pushName: String(raw.push_name || raw.pushName || raw.name || "WhatsApp Device"),
+    status: String(raw.status || "OFFLINE").toUpperCase(),
+    trustScore: Number(raw.trust_score ?? raw.trustScore ?? 10),
+    warmupDay: Number(raw.warmup_day ?? raw.warmupDay ?? 1),
+    dailySentCount: Number(raw.daily_sent_count ?? raw.dailySentCount ?? 0),
+    lastSeenAt: raw.last_seen_at || raw.lastSeenAt ? String(raw.last_seen_at || raw.lastSeenAt) : undefined,
+    createdAt: String(raw.created_at || raw.createdAt || new Date().toISOString()),
+    updatedAt: String(raw.updated_at || raw.updatedAt || new Date().toISOString()),
+  };
+}
+
+function normalizeAdminSubscription(raw: Record<string, unknown>): AdminSubscriptionItem {
+  let planObj: AdminPlanItem | undefined = undefined;
+  if (raw.plan && typeof raw.plan === "object") {
+    planObj = normalizeAdminPlan(raw.plan as Record<string, unknown>);
+  }
+
+  let tenantObj: { id: string; name: string; status?: string } | undefined = undefined;
+  if (raw.tenant && typeof raw.tenant === "object") {
+    const t = raw.tenant as Record<string, unknown>;
+    tenantObj = {
+      id: String(t.id || raw.tenant_id || ""),
+      name: String(t.name || `Tenant ${String(t.id || "").slice(-6)}`),
+      status: t.status ? String(t.status) : undefined,
+    };
+  }
+
+  return {
+    id: String(raw.id || ""),
+    tenantId: String(raw.tenant_id || raw.tenantId || ""),
+    planId: String(raw.plan_id || raw.planId || ""),
+    currentMonthUsage: Number(raw.current_month_usage ?? raw.currentMonthUsage ?? 0),
+    startedAt: String(raw.started_at || raw.startedAt || new Date().toISOString()),
+    expiredAt: String(raw.expired_at || raw.expiredAt || new Date().toISOString()),
+    status: (String(raw.status || "ACTIVE").toUpperCase() as SubscriptionStatus) || "ACTIVE",
+    plan: planObj,
+    tenant: tenantObj,
+    createdAt: String(raw.created_at || raw.createdAt || new Date().toISOString()),
+    updatedAt: String(raw.updated_at || raw.updatedAt || new Date().toISOString()),
   };
 }
 
