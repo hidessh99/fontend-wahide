@@ -2,9 +2,10 @@
 
 import React, { useState, useRef, useMemo } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { Search, X, CheckCheck, Check, AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, X, CheckCheck, Check, AlertCircle, ChevronLeft, ChevronRight, RefreshCw, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/context";
+import { useMessageLogs } from "../../hooks/useMessageLogs";
 
 export interface MessageLogItem {
   id: string;
@@ -17,76 +18,32 @@ export interface MessageLogItem {
   errorMessage?: string;
 }
 
-const DEFAULT_LOGS: MessageLogItem[] = [
-  {
-    id: "log_01",
-    campaignName: "Promo Merdeka Flash Sale",
-    recipientPhone: "6281234567890",
-    recipientName: "Budi Santoso",
-    messageSnippet: "Halo Budi! Dapatkan diskon 30% khusus hari ini...",
-    status: "READ",
-    sentAt: "2026-08-30T10:15:20Z",
-  },
-  {
-    id: "log_02",
-    campaignName: "Promo Merdeka Flash Sale",
-    recipientPhone: "6285799887766",
-    recipientName: "Siti Rahma",
-    messageSnippet: "Hai Siti! Dapatkan diskon 30% khusus hari ini...",
-    status: "DELIVERED",
-    sentAt: "2026-08-30T10:15:25Z",
-  },
-  {
-    id: "log_03",
-    campaignName: "Follow Up Member VIP",
-    recipientPhone: "6281987654321",
-    recipientName: "Ahmad Dani",
-    messageSnippet: "Selamat siang Ahmad, kupon cashback Anda akan hangus...",
-    status: "FAILED",
-    errorMessage: "Nomor tidak terdaftar di WhatsApp",
-    sentAt: "2026-08-30T11:00:10Z",
-  },
-  {
-    id: "log_04",
-    campaignName: "Promo Merdeka Flash Sale",
-    recipientPhone: "6281311223344",
-    recipientName: "Dewi Lestari",
-    messageSnippet: "Halo Kak Dewi, promo spesial HUT RI tinggal 2 jam lagi...",
-    status: "READ",
-    sentAt: "2026-08-30T11:15:00Z",
-  },
-  {
-    id: "log_05",
-    campaignName: "Pemberitahuan Tagihan Bulanan",
-    recipientPhone: "6287711223399",
-    recipientName: "Rian Hidayat",
-    messageSnippet: "Yth. Bpk Rian, tagihan langganan Anda telah terbit...",
-    status: "DELIVERED",
-    sentAt: "2026-08-30T11:30:15Z",
-  },
-  {
-    id: "log_06",
-    campaignName: "Promo Merdeka Flash Sale",
-    recipientPhone: "6282199887711",
-    recipientName: "Eko Prasetyo",
-    messageSnippet: "Halo Eko! Dapatkan diskon 30% khusus hari ini...",
-    status: "SENT",
-    sentAt: "2026-08-30T11:45:00Z",
-  },
-];
-
 export function MessageLogsTable() {
   const { t } = useI18n();
-  const [logs] = useState<MessageLogItem[]>(DEFAULT_LOGS);
+  const { logs, total: serverTotal, page, setPage, pageSize, isLoading, fetchLogs } = useMessageLogs(1, 20);
   const [searchInput, setSearchInput] = useState("");
   const [activeSearch, setActiveSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
-  const [page, setPage] = useState(1);
-  const pageSize = 10;
   const parentRef = useRef<HTMLDivElement>(null);
 
+  const mappedLogs = useMemo<MessageLogItem[]>(() => {
+    return logs.map((m) => {
+      const cleanPhone = m.recipient_jid.replace(/@s\.whatsapp\.net$/, "");
+      return {
+        id: m.id,
+        campaignName: m.campaign_id ? `Kampanye #${m.campaign_id.slice(-6)}` : "Pesan Instan / Direct",
+        recipientPhone: cleanPhone,
+        recipientName: cleanPhone,
+        messageSnippet: m.message_body,
+        status: m.status,
+        sentAt: m.sent_at || m.created_at,
+        errorMessage: m.error_message,
+      };
+    });
+  }, [logs]);
+
   const filteredLogs = useMemo(() => {
-    return logs.filter((l) => {
+    return mappedLogs.filter((l) => {
       const matchSearch =
         activeSearch === "" ||
         l.recipientPhone.includes(activeSearch) ||
@@ -97,20 +54,15 @@ export function MessageLogsTable() {
       const matchStatus = statusFilter === "ALL" || l.status === statusFilter;
       return matchSearch && matchStatus;
     });
-  }, [logs, activeSearch, statusFilter]);
+  }, [mappedLogs, activeSearch, statusFilter]);
 
-  const total = filteredLogs.length;
+  const total = serverTotal || filteredLogs.length;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
-
-  const paginatedLogs = useMemo(() => {
-    const start = (page - 1) * pageSize;
-    return filteredLogs.slice(start, start + pageSize);
-  }, [filteredLogs, page, pageSize]);
 
   // High-Throughput DOM Virtualization
   // eslint-disable-next-line react-hooks/incompatible-library
   const rowVirtualizer = useVirtualizer({
-    count: paginatedLogs.length,
+    count: filteredLogs.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 64,
     overscan: 5,
@@ -208,6 +160,19 @@ export function MessageLogsTable() {
         </form>
 
         <div className="flex items-center gap-2 shrink-0">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => fetchLogs()}
+            disabled={isLoading}
+            className="h-10 px-3 rounded-full text-xs font-bold gap-1 border-border hover:border-foreground-muted cursor-pointer"
+            title="Refresh Log"
+          >
+            <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin" : ""}`} />
+            <span className="hidden sm:inline">Refresh</span>
+          </Button>
+
           <select
             value={statusFilter}
             onChange={(e) => handleStatusChange(e.target.value)}
@@ -223,7 +188,12 @@ export function MessageLogsTable() {
 
       {/* Logs Table */}
       <div className="rounded-md border border-border bg-surface dark:bg-[#161715] overflow-hidden shadow-xs">
-        {paginatedLogs.length === 0 ? (
+        {isLoading ? (
+          <div className="p-8 sm:p-12 text-center space-y-3">
+            <Loader2 className="size-8 text-wise-green animate-spin mx-auto" />
+            <p className="text-xs font-semibold text-foreground-secondary">Memuat log pesan dari server...</p>
+          </div>
+        ) : filteredLogs.length === 0 ? (
           <div className="p-6 sm:p-10 text-center space-y-2">
             <AlertCircle className="size-10 text-foreground-muted mx-auto" />
             <h3 className="font-bold text-sm text-foreground">Tidak ada log pesan ditemukan</h3>
@@ -237,7 +207,7 @@ export function MessageLogsTable() {
           <div>
             {/* Mobile View: Card-based Message Logs (Visible on < 768px) */}
             <div className="md:hidden divide-y divide-border/50">
-              {paginatedLogs.map((log) => (
+              {filteredLogs.map((log) => (
                 <div key={log.id} className="p-3.5 sm:p-4 space-y-2 bg-surface dark:bg-[#161715]">
                   <div className="flex items-center justify-between gap-2">
                     <div className="min-w-0">
@@ -302,7 +272,7 @@ export function MessageLogsTable() {
                   }}
                 >
                   {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-                    const log = paginatedLogs[virtualRow.index];
+                    const log = filteredLogs[virtualRow.index];
                     if (!log) return null;
 
                     return (

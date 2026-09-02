@@ -18,6 +18,12 @@ export interface GlobalResponse<T = unknown> {
     total?: number;
     [key: string]: unknown;
   } | unknown;
+  pagination?: {
+    page: number;
+    page_size: number;
+    total_items: number;
+    total_pages: number;
+  };
 }
 
 export type ApiResponse<T = unknown> = GlobalResponse<T>;
