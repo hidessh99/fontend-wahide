@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import { useAdmin } from "@/modules/admin/hooks/useAdmin";
@@ -12,18 +12,23 @@ export function AdminUsersView() {
     paginatedUsers,
     isLoading,
     activeSearch,
-    planFilter,
+    roleFilter,
+    statusFilter,
     page,
     pageSize,
     total,
     totalPages,
     executeSearch,
     clearSearch,
-    setPlanFilter,
+    setRoleFilter,
+    setStatusFilter,
+    setPage,
+    setPageSize,
     nextPage,
     prevPage,
     fetchAdminData,
     adjustBalance,
+    updateUser,
   } = useAdmin();
 
   return (
@@ -32,7 +37,7 @@ export function AdminUsersView() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5 sm:pb-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
-            <div className="size-8 sm:size-9 rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
+            <div className="size-8 sm:size-9 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-wise-green flex items-center justify-center shrink-0">
               <Users className="size-4 sm:size-5" />
             </div>
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-foreground tracking-tight">
@@ -45,23 +50,28 @@ export function AdminUsersView() {
         </div>
       </div>
 
-      {/* Users Table */}
+      {/* Users Data Table with 6 Columns + Actions */}
       <UsersTable
         users={paginatedUsers}
         isLoading={isLoading}
         activeSearch={activeSearch}
         onSearch={executeSearch}
         onClearSearch={clearSearch}
-        planFilter={planFilter}
-        onPlanFilterChange={setPlanFilter}
+        roleFilter={roleFilter}
+        onRoleFilterChange={setRoleFilter}
+        statusFilter={statusFilter}
+        onStatusFilterChange={setStatusFilter}
         page={page}
         pageSize={pageSize}
         total={total}
         totalPages={totalPages}
+        onPageChange={setPage}
+        onPageSizeChange={setPageSize}
         onPrevPage={prevPage}
         onNextPage={nextPage}
         onRefresh={fetchAdminData}
         onAdjustBalance={adjustBalance}
+        onUpdateUser={updateUser}
       />
     </div>
   );

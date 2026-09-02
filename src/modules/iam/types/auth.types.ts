@@ -91,3 +91,16 @@ export interface DashboardStats {
   totalContacts: number;
   monthlyCost?: number;
 }
+
+export interface ActiveSession {
+  token_id: string;
+  user_id: string;
+  email: string;
+  role: string;
+  tenant_id: string;
+  ip_address?: string;
+  user_agent?: string;
+  created_at?: string;
+  last_active?: string;
+  is_current?: boolean;
+}

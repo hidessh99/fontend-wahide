@@ -77,5 +77,33 @@ export const userApi = {
       }
     );
   },
+
+  getActiveSessions: async (): Promise<import("../types/auth.types").ActiveSession[]> => {
+    const res = await httpClient.get<{ sessions: import("../types/auth.types").ActiveSession[]; count: number }>(
+      `${IAM_BASE}/users/sessions`
+    );
+    const payload = res.payload || (res as unknown as { sessions: import("../types/auth.types").ActiveSession[] });
+    return payload?.sessions || [];
+  },
+
+  logoutAllSessions: async (): Promise<{ success: boolean; message: string }> => {
+    const res = await httpClient.post<{ success: boolean; message: string }>(
+      `${IAM_BASE}/users/logout-all`
+    );
+    return {
+      success: res.success,
+      message: res.message || "Seluruh sesi perangkat lain berhasil dicabut.",
+    };
+  },
+
+  revokeSession: async (tokenId: string): Promise<{ success: boolean; message: string }> => {
+    const res = await httpClient.delete<{ success: boolean; message: string }>(
+      `${IAM_BASE}/users/sessions/${tokenId}`
+    );
+    return {
+      success: res.success,
+      message: res.message || "Sesi berhasil dicabut.",
+    };
+  },
 };
 

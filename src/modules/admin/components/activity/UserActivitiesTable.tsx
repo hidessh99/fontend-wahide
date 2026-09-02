@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
 import { UserActivityItem } from "@/modules/admin/types/admin.types";
@@ -223,13 +223,13 @@ export function UserActivitiesTable({
   const endItem = total > 0 ? Math.min(page * pageSize, total) : 0;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 w-full min-w-0">
       {/* Toolbar Section: Search Bar & Filter Chips */}
-      <div className="space-y-3 p-4 rounded-xl border border-border bg-surface dark:bg-[#161715] shadow-xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="space-y-3 p-3.5 sm:p-4 rounded-xl border border-border bg-surface dark:bg-[#161715] shadow-xs w-full min-w-0 overflow-hidden">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 w-full min-w-0">
           {/* Search Form */}
-          <form onSubmit={handleSearchSubmit} className="flex items-center gap-2 flex-1 max-w-lg">
-            <div className="relative flex-1">
+          <form onSubmit={handleSearchSubmit} className="flex items-center gap-2 flex-1 w-full max-w-lg min-w-0">
+            <div className="relative flex-1 min-w-0">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted pointer-events-none" />
               <input
                 type="text"
@@ -254,51 +254,71 @@ export function UserActivitiesTable({
               type="submit"
               variant="outline"
               size="sm"
-              className="h-9.5 px-4 text-xs font-bold rounded-full shrink-0 border-border hover:border-foreground-muted cursor-pointer"
+              className="h-9.5 px-3.5 sm:px-4 text-xs font-bold rounded-full shrink-0 border-border hover:border-foreground-muted cursor-pointer"
             >
-              <Search className="size-3.5 mr-1" />
-              <span>Cari</span>
+              <Search className="size-3.5 sm:mr-1" />
+              <span className="hidden sm:inline">Cari</span>
+            </Button>
+            {/* Refresh Button on Mobile (Inline inside form container row) */}
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={onRefresh}
+              disabled={isLoading}
+              className="h-9.5 px-3 sm:hidden text-xs font-bold rounded-full border-border hover:border-foreground-muted shrink-0 gap-1 cursor-pointer"
+              title="Muat Ulang Data"
+            >
+              <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin text-rose-500" : ""}`} />
             </Button>
           </form>
 
-          {/* Refresh Button */}
+          {/* Refresh Button on Desktop */}
           <Button
             type="button"
             variant="outline"
             size="sm"
             onClick={onRefresh}
             disabled={isLoading}
-            className="h-9.5 px-3.5 text-xs font-bold rounded-full border-border hover:border-foreground-muted self-start sm:self-auto shrink-0 gap-1.5 cursor-pointer"
+            className="hidden sm:flex h-9.5 px-3.5 text-xs font-bold rounded-full border-border hover:border-foreground-muted shrink-0 gap-1.5 cursor-pointer"
             title="Muat Ulang Data"
           >
             <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin text-rose-500" : ""}`} />
-            <span className="hidden sm:inline">Refresh</span>
+            <span>Refresh</span>
           </Button>
         </div>
 
-        {/* Filter Category Chips (Horizontal Scrollable) */}
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1 border-t border-border/50 scroll-smooth">
-          <div className="flex items-center gap-1 text-[11px] font-bold text-foreground-muted mr-1 shrink-0">
-            <Filter className="size-3" />
-            <span>Kategori:</span>
+        {/* Filter Category Chips (Horizontal Scrollable with Touch Support) */}
+        <div className="w-full min-w-0 pt-2 border-t border-border/50 space-y-1.5">
+          <div className="flex items-center justify-between px-0.5">
+            <div className="flex items-center gap-1.5 text-[11px] font-bold text-foreground-muted">
+              <Filter className="size-3 text-rose-500" />
+              <span>Kategori Aktivitas:</span>
+            </div>
+            <span className="text-[10px] text-foreground-muted font-semibold sm:hidden tracking-tight">
+              Geser ke samping &rarr;
+            </span>
           </div>
-          {filterChips.map((chip) => {
-            const isActive = typeFilter === chip.value;
-            return (
-              <button
-                key={chip.value}
-                type="button"
-                onClick={() => onTypeFilterChange(chip.value)}
-                className={`px-3 py-1 rounded-full text-xs transition cursor-pointer whitespace-nowrap shrink-0 ${
-                  isActive
-                    ? "bg-rose-600 text-white font-extrabold shadow-xs"
-                    : "bg-muted/70 hover:bg-muted text-foreground-secondary hover:text-foreground font-semibold border border-border/60"
-                }`}
-              >
-                {chip.label}
-              </button>
-            );
-          })}
+
+          <div className="flex items-center gap-1.5 overflow-x-auto w-full min-w-0 pb-1 pt-0.5 scrollbar-thin scroll-smooth touch-pan-x snap-x">
+            {filterChips.map((chip) => {
+              const isActive = typeFilter === chip.value;
+              return (
+                <button
+                  key={chip.value}
+                  type="button"
+                  onClick={() => onTypeFilterChange(chip.value)}
+                  className={`px-3 py-1.5 rounded-full text-xs transition cursor-pointer whitespace-nowrap shrink-0 snap-start select-none ${
+                    isActive
+                      ? "bg-rose-600 text-white font-extrabold shadow-xs ring-2 ring-rose-500/30"
+                      : "bg-muted/70 hover:bg-muted text-foreground-secondary hover:text-foreground font-semibold border border-border/60"
+                  }`}
+                >
+                  {chip.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
@@ -335,29 +355,29 @@ export function UserActivitiesTable({
         ) : (
           <div>
             {/* Mobile View: Card List (Visible on < 768px) */}
-            <div className="md:hidden divide-y divide-border/50">
+            <div className="md:hidden divide-y divide-border/50 w-full min-w-0">
               {activities.map((act) => {
                 const { fullHuman } = formatHumanActivityDate(act.createdAt);
                 return (
-                  <div key={act.id} className="p-4 space-y-2.5 bg-surface dark:bg-[#161715]">
+                  <div key={act.id} className="p-4 space-y-2.5 bg-surface dark:bg-[#161715] w-full min-w-0">
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2 min-w-0">
                         <div className="size-7 rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold text-xs shrink-0">
                           {act.user?.name ? act.user.name.charAt(0).toUpperCase() : <User className="size-3.5" />}
                         </div>
-                        <div className="min-w-0">
+                        <div className="min-w-0 flex-1">
                           <div className="text-xs font-bold text-foreground truncate">
                             {act.user?.name || "Pengguna Tanpa Nama"}
                           </div>
-                          <div className="text-[10px] text-foreground-muted font-mono truncate max-w-40">
+                          <div className="text-[10px] text-foreground-muted font-mono truncate max-w-40 sm:max-w-xs">
                             {act.user?.email || act.userId}
                           </div>
                         </div>
                       </div>
-                      {renderTypeBadge(act.activityType || act.type)}
+                      <div className="shrink-0">{renderTypeBadge(act.activityType || act.type)}</div>
                     </div>
 
-                    <p className="text-xs font-medium text-foreground-secondary leading-relaxed bg-muted/30 p-2.5 rounded-lg border border-border/40">
+                    <p className="text-xs font-medium text-foreground-secondary leading-relaxed bg-muted/30 p-2.5 rounded-lg border border-border/40 break-words">
                       {act.description || "Tidak ada deskripsi rinci aktivitas."}
                     </p>
 

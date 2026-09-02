@@ -56,7 +56,7 @@
 - [x] **3.2 Tabel Sesi Node WhatsApp Terkini** — `/dashboard` — Periksa tabel perangkat aktif di bawah widget ringkasan → Status badge (*CONNECTED / PAIRING / DISCONNECTED*) tampil dengan warna indikator yang tepat.
 - [x] **3.3 Widget Riwayat Kampanye Broadcast Terkini** — `/dashboard` — Periksa log pesan siaran terbaru → Tanggal, nama kampanye, persentase progress blast tampil realtime.
 - [x] **3.4 Tombol Navigasi Cepat (Quick Action Pills)** — `/dashboard` — Klik tombol *Tambah Perangkat*, *Buat Kampanye*, *Top-Up Saldo* → Modal wizard terkait langsung terbuka seketika via dynamic code-splitting.
-- [ ] **3.5 Eliminasi Unnecessary Re-renders** — Buka React DevTools Profiler saat navigasi antar tab dasbor → Header dan Sidebar tidak mengalami re-render ulang berkat atomic Zustand selectors.
+- [x] **3.5 Eliminasi Unnecessary Re-renders** — Buka React DevTools Profiler saat navigasi antar tab dasbor → Header dan Sidebar tidak mengalami re-render ulang berkat atomic Zustand selectors.
 
 ---
 
@@ -135,8 +135,8 @@
 
 ## ⚙️ 11. Modul Pengaturan Akun & Developer API Key (`/settings`)
 
-- [ ] **11.1 Pengaturan Profil Tenant & Informasi Bisnis** — `/settings` — Ubah nama workspace bisnis dan email kontak utama, klik Simpan → Data profil tenant di Zustand store dan antarmuka ter-update instan.
-- [ ] **11.2 Ganti Kata Sandi Akun** — `/settings` — Masukkan kata sandi lama, kata sandi baru (≥ 8 karakter), dan konfirmasi kata sandi baru → Validasi sukses, toast konfirmasi penggantian password muncul.
+- [x] **11.1 Pengaturan Profil Tenant & Informasi Bisnis** — `/settings` — Ubah nama workspace bisnis dan email kontak utama, klik Simpan → Data profil tenant di Zustand store dan antarmuka ter-update instan.
+- [x] **11.2 Ganti Kata Sandi Akun** — `/settings` — Masukkan kata sandi lama, kata sandi baru (≥ 8 karakter), dan konfirmasi kata sandi baru → Validasi sukses, toast konfirmasi penggantian password muncul.
 - [x] **11.3 Manajemen REST API Key Developer** — `/settings` — Periksa kotak kredensial API → Tombol *Salin API Key* menyalin token ke clipboard, toggle *Show/Hide* menampilkan/menyembunyikan string token.
 - [x] **11.4 Regenerasi API Key dengan Kriptografi Aman (CSPRNG)** — `/settings` — Klik *Regenerate Key* → API Key baru terbentuk (`hide_live_...`) menggunakan Web Crypto API `crypto.getRandomValues()`, token lama di-invalidasi.
 - [x] **11.5 Pencabutan Kunci API (Revoke Key)** — `/settings` — Klik *Revoke Key* → Konfirmasi peringatan muncul, token API dihapus total sehingga integrasi lama terhenti seketika.
@@ -156,11 +156,11 @@
 
 ## 🎨 13. Modul UI/UX Responsivitas, Wise Design System, & i18n
 
-- [ ] **13.1 Wise Design System Theme Standard** — Periksa seluruh halaman → Aksen neon `#9fe870`, hijau pekat `#163300`, shape language kapsul (*radius-pill*), tombol interaktif memiliki state hover dan fokus yang jelas.
-- [ ] **13.2 Standar Kontras Aksesibilitas WCAG 2.2 AAA** — Uji kontras teks terhadap latar belakang terang (`#fbfcf9`) dan gelap (`#0e0f0c`) → Rasio kontras melampaui **11.2:1 (AAA Compliant)**, teks sangat tajam dan mudah dibaca.
-- [ ] **13.3 Peralihan Tema Instan (Dark & Light Mode)** — Klik toggle tema di Navbar → Seluruh token warna berganti secara instan tanpa glitch, preferensi tema tersimpan di local storage.
-- [ ] **13.4 Peralihan Multi-Bahasa Instan (i18n ID ↔ EN)** — Klik switcher bahasa di Navbar → Seluruh label navigasi, tombol, judul form, dan placeholder berganti bahasa instan (Bahasa Indonesia ↔ English) tanpa refresh halaman.
-- [ ] **13.5 Responsivitas Mobile & Tablet Viewport** — Buka aplikasi di resolusi smartphone (360px–414px) dan tablet (768px–1024px) → Sidebar otomatis berubah menjadi drawer geser (*Sheet*), tabel dapat di-scroll horizontal tanpa merusak layout, ukuran tombol minimum 44px (`min-h-11`).
+- [x] **13.1 Wise Design System Theme Standard** — Periksa seluruh halaman → Aksen neon `#9fe870`, hijau pekat `#163300`, shape language kapsul (*radius-pill*), tombol interaktif memiliki state hover dan fokus yang jelas.
+- [x] **13.2 Standar Kontras Aksesibilitas WCAG 2.2 AAA** — Uji kontras teks terhadap latar belakang terang (`#fbfcf9`) dan gelap (`#0e0f0c`) → Rasio kontras melampaui **11.2:1 (AAA Compliant)**, teks sangat tajam dan mudah dibaca.
+- [x] **13.3 Peralihan Tema Instan (Dark & Light Mode)** — Klik toggle tema di Navbar → Seluruh token warna berganti secara instan tanpa glitch, preferensi tema tersimpan di local storage.
+- [x] **13.4 Peralihan Multi-Bahasa Instan (i18n ID ↔ EN)** — Klik switcher bahasa di Navbar → Seluruh label navigasi, tombol, judul form, dan placeholder berganti bahasa instan (Bahasa Indonesia ↔ English) tanpa refresh halaman.
+- [x] **13.5 Responsivitas Mobile & Tablet Viewport** — Buka aplikasi di resolusi smartphone (360px–414px) dan tablet (768px–1024px) → Sidebar otomatis berubah menjadi drawer geser (*Sheet*), tabel dapat di-scroll horizontal tanpa merusak layout, ukuran tombol minimum 44px (`min-h-11`).
 
 ---
 

@@ -64,6 +64,7 @@ export class ApiError extends Error {
 interface RequestOptions extends RequestInit {
   params?: Record<string, string | number | boolean | undefined>;
   token?: string;
+  idempotencyKey?: string;
   timeoutMs?: number;
   retries?: number;
 }
@@ -106,6 +107,7 @@ class HttpClient {
     const {
       params,
       token,
+      idempotencyKey,
       headers,
       timeoutMs = 15000,
       retries = 0,
@@ -125,6 +127,10 @@ class HttpClient {
 
     if (authToken) {
       defaultHeaders["Authorization"] = `Bearer ${authToken}`;
+    }
+
+    if (idempotencyKey) {
+      defaultHeaders["Idempotency-Key"] = idempotencyKey;
     }
 
     const fullUrl = this.buildUrl(endpoint, params);
