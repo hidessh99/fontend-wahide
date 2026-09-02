@@ -394,7 +394,7 @@ export function PlansManagementTable() {
 
                         {/* 6. Fitur & Kemampuan */}
                         <td className="py-3.5 px-4">
-                          <div className="flex flex-wrap items-center gap-1 max-w-[280px]">
+                          <div className="flex flex-wrap items-center gap-1 max-w-70">
                             {p.allow_attachment && (
                               <span
                                 className="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded bg-muted text-foreground-secondary border border-border"
