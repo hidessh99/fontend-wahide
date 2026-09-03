@@ -61,12 +61,11 @@ export function CampaignList() {
     setIsCheckingDevices(true);
     try {
       const devices = await whatsappApi.getDevices();
-      const activeDevices = devices.filter(
-        (d) =>
-          d.status === "CONNECTED" || (d.status as string) === "ONLINE" || d.status === "HIBERNATED"
+      const onlineDevices = devices.filter(
+        (d) => d.status === "CONNECTED" || (d.status as string) === "ONLINE"
       );
 
-      if (activeDevices.length === 0) {
+      if (onlineDevices.length === 0) {
         toast.error(t("campaign.noActiveDeviceRedirect"));
         router.push("/devices");
         return;

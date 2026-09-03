@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { CreateCampaignInput } from "@/modules/campaign/types/campaign.types";
 import { useDevices } from "@/modules/whatsapp/hooks/useDevices";
 import { useContacts } from "@/modules/contact/hooks/useContacts";
@@ -37,6 +39,7 @@ interface CampaignWizardModalProps {
 }
 
 export function CampaignWizardModal({ isOpen, onClose, onSubmit }: CampaignWizardModalProps) {
+  const router = useRouter();
   const { t } = useI18n();
   const { devices } = useDevices();
   const { contacts, allTags } = useContacts();
@@ -58,13 +61,21 @@ export function CampaignWizardModal({ isOpen, onClose, onSubmit }: CampaignWizar
     "{Halo|Hi|Selamat Siang} Kak {nama}, dapatkan penawaran spesial {diskon 50%|potongan harga} hari ini!"
   );
 
-  const connectedDevices = devices.filter((d) => d.status === "CONNECTED");
+  const connectedDevices = devices.filter(
+    (d) => d.status === "CONNECTED" || (d.status as string) === "ONLINE"
+  );
 
   if (!isOpen) return null;
 
   const handleNext = () => {
     setError(null);
     if (step === 1) {
+      if (connectedDevices.length === 0) {
+        toast.error(t("campaign.noActiveDeviceRedirect"));
+        onClose();
+        router.push("/devices");
+        return;
+      }
       if (!name.trim()) {
         setError("Nama kampanye wajib diisi.");
         return;
@@ -260,6 +271,19 @@ export function CampaignWizardModal({ isOpen, onClose, onSubmit }: CampaignWizar
                     <p className="text-foreground-secondary mt-1 text-[11px]">
                       {t("campaign.pleaseConnectDeviceFirst")}
                     </p>
+                    <Button
+                      type="button"
+                      variant="primaryPill"
+                      size="sm"
+                      onClick={() => {
+                        onClose();
+                        router.push("/devices");
+                      }}
+                      className="mt-3.5 gap-1.5 px-4 text-xs font-bold"
+                    >
+                      <Smartphone className="size-3.5" />
+                      <span>{t("campaign.goToDevicesBtn")}</span>
+                    </Button>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -555,16 +579,32 @@ export function CampaignWizardModal({ isOpen, onClose, onSubmit }: CampaignWizar
           )}
 
           {step < 4 ? (
-            <Button
-              type="button"
-              variant="primaryPill"
-              size="sm"
-              onClick={handleNext}
-              className="cursor-pointer gap-1.5 px-6 text-xs font-bold shadow-sm"
-            >
-              <span>{t("campaign.btnNext")}</span>
-              <ArrowRight className="size-3.5" />
-            </Button>
+            step === 1 && connectedDevices.length === 0 ? (
+              <Button
+                type="button"
+                variant="primaryPill"
+                size="sm"
+                onClick={() => {
+                  onClose();
+                  router.push("/devices");
+                }}
+                className="cursor-pointer gap-1.5 px-5 text-xs font-bold shadow-sm"
+              >
+                <Smartphone className="size-3.5" />
+                <span>{t("campaign.goToDevicesBtn")}</span>
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                variant="primaryPill"
+                size="sm"
+                onClick={handleNext}
+                className="cursor-pointer gap-1.5 px-6 text-xs font-bold shadow-sm"
+              >
+                <span>{t("campaign.btnNext")}</span>
+                <ArrowRight className="size-3.5" />
+              </Button>
+            )
           ) : (
             <Button
               type="button"
