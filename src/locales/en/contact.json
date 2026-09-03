@@ -11,6 +11,7 @@
   "bulkDelete": "Delete Selected",
   "tableHeaderName": "Contact Name",
   "tableHeaderPhone": "WhatsApp Number",
+  "tableHeaderTags": "Tags / Segments",
   "tableHeaderCreated": "Added On",
   "tableHeaderActions": "Actions",
   "showingPagination": "Showing {start} - {end} of {total} contacts",

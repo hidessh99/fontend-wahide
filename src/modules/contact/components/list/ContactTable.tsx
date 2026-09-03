@@ -144,7 +144,7 @@ export function ContactTable({
       {/* Desktop View: Tabular Virtualized Grid (Visible on >= 768px) */}
       <div className="hidden md:block">
         {/* Table Header */}
-        <div className="bg-muted/60 border-border text-foreground-muted grid grid-cols-12 gap-3 border-b px-5 py-4 text-xs font-extrabold tracking-wider uppercase select-none">
+        <div className="bg-muted/60 border-border text-foreground-muted grid grid-cols-12 items-center gap-3 border-b px-5 py-4 text-xs font-extrabold tracking-wider uppercase select-none">
           <div className="col-span-1 flex items-center justify-center">
             <Checkbox
               checked={isAllSelected}
@@ -152,8 +152,9 @@ export function ContactTable({
               aria-label="Pilih Semua Kontak"
             />
           </div>
-          <div className="col-span-5">{t("contact.tableHeaderName")}</div>
-          <div className="col-span-4">{t("contact.tableHeaderPhone")}</div>
+          <div className="col-span-3">{t("contact.tableHeaderName")}</div>
+          <div className="col-span-3">{t("contact.tableHeaderPhone")}</div>
+          <div className="col-span-3">{t("contact.tableHeaderTags")}</div>
           <div className="col-span-2 text-right">{t("contact.tableHeaderActions")}</div>
         </div>
 
@@ -199,31 +200,37 @@ export function ContactTable({
                     />
                   </div>
 
-                  {/* Name & Tags Column */}
-                  <div className="col-span-5 min-w-0 pr-2">
-                    <div className="text-foreground truncate text-sm font-bold tracking-tight sm:text-base">
+                  {/* Name Column */}
+                  <div className="col-span-3 min-w-0 pr-2">
+                    <span className="text-foreground block truncate text-sm font-bold tracking-tight sm:text-base">
                       {contact.name}
-                    </div>
-                    {contact.tags && contact.tags.length > 0 && (
-                      <div className="mt-1 flex flex-wrap gap-1">
+                    </span>
+                  </div>
+
+                  {/* Phone Column */}
+                  <div className="text-foreground-secondary col-span-3 truncate font-mono text-xs font-medium tracking-wide sm:text-sm">
+                    +{contact.phone}
+                  </div>
+
+                  {/* Dedicated Tags Column */}
+                  <div className="col-span-3 min-w-0 pr-2">
+                    {contact.tags && contact.tags.length > 0 ? (
+                      <div className="flex flex-wrap items-center gap-1.5">
                         {contact.tags.map((tag, idx) => {
                           const tagName = typeof tag === "string" ? tag : tag.name;
                           return (
                             <span
                               key={idx}
-                              className="bg-wise-green/15 dark:text-wise-green border-wise-green/30 inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-bold text-emerald-800"
+                              className="bg-wise-green/15 dark:text-wise-green border-wise-green/30 inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] font-bold text-emerald-800"
                             >
                               #{tagName}
                             </span>
                           );
                         })}
                       </div>
+                    ) : (
+                      <span className="text-foreground-muted/60 text-xs font-medium italic">-</span>
                     )}
-                  </div>
-
-                  {/* Phone Column */}
-                  <div className="text-foreground-secondary col-span-4 truncate font-mono text-xs font-medium tracking-wide sm:text-sm">
-                    +{contact.phone}
                   </div>
 
                   {/* Action Buttons */}

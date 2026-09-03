@@ -11,6 +11,7 @@
   "bulkDelete": "Hapus Terpilih",
   "tableHeaderName": "Nama Kontak",
   "tableHeaderPhone": "Nomor WhatsApp",
+  "tableHeaderTags": "Tag / Segmentasi",
   "tableHeaderCreated": "Ditambahkan",
   "tableHeaderActions": "Aksi",
   "showingPagination": "Menampilkan {start} - {end} dari {total} kontak",
