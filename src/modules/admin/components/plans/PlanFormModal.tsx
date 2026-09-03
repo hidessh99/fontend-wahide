@@ -319,7 +319,7 @@ function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentP
                   onChange={(e) => setHasWatermark(e.target.checked)}
                   className="peer sr-only"
                 />
-                <div className="peer peer-checked:bg-wise-green dark:peer-checked:bg-wise-green h-5 w-9 rounded-full bg-neutral-300 peer-focus:outline-none after:absolute after:top-[2px] after:left-[2px] after:size-4 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full dark:bg-neutral-700"></div>
+                <div className="peer peer-checked:bg-wise-green dark:peer-checked:bg-wise-green h-5 w-9 rounded-full bg-neutral-300 peer-focus:outline-none after:absolute after:top-0.5 after:left-0.5 after:size-4 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full dark:bg-neutral-700"></div>
               </label>
             </div>
 

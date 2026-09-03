@@ -182,7 +182,7 @@ export function UpdateTicketStatusModal({
                         </span>
                         {isSelected && (
                           <div className="dark:bg-wise-green flex size-4 items-center justify-center rounded-full bg-emerald-600 text-white">
-                            <Check className="size-2.5 stroke-[3]" />
+                            <Check className="size-2.5 stroke-3" />
                           </div>
                         )}
                       </div>

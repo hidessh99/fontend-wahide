@@ -192,7 +192,7 @@ function EditUserModalContent({ user, onClose, onSubmit }: EditUserModalContentP
                 onChange={(e) => setIsActive(e.target.checked)}
                 className="peer sr-only"
               />
-              <div className="peer peer-checked:bg-wise-green dark:peer-checked:bg-wise-green h-6 w-11 rounded-full bg-neutral-300 peer-focus:outline-none after:absolute after:top-[2px] after:left-[2px] after:size-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full dark:bg-neutral-700"></div>
+              <div className="peer peer-checked:bg-wise-green dark:peer-checked:bg-wise-green h-6 w-11 rounded-full bg-neutral-300 peer-focus:outline-none after:absolute after:top-0.5 after:left-0.5 after:size-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full dark:bg-neutral-700"></div>
             </label>
           </div>
 
