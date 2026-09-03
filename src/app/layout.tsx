@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
+import { NetworkStatusBanner } from "@/components/layout/shared/NetworkStatusBanner";
 import { env } from "@/lib/config/env";
 
 const siteUrl = env.NEXT_PUBLIC_APP_URL || "https://wahide.id";
@@ -141,7 +142,10 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground selection:bg-wise-green selection:text-dark-green">
-        <Providers>{children}</Providers>
+        <Providers>
+          <NetworkStatusBanner />
+          {children}
+        </Providers>
       </body>
     </html>
   );
