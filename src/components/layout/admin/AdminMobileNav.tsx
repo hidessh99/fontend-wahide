@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect } from "react";
+
 import { AdminSidebar } from "./AdminSidebar";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { X } from "lucide-react";
 
 interface AdminMobileNavProps {
@@ -10,15 +11,8 @@ interface AdminMobileNavProps {
 }
 
 export function AdminMobileNav({ open, onClose }: AdminMobileNavProps) {
-  // Escape key listener to close drawer
-  useEffect(() => {
-    if (!open) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [open, onClose]);
+  // Universal Escape key dismissal with zero listener churn
+  useEscapeKey(open, onClose);
 
   if (!open) return null;
 

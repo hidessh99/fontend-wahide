@@ -4,6 +4,7 @@ import React, { useState, useRef } from "react";
 import { CreateTicketInput, TicketCategory, TicketPriority } from "@/modules/support/types/support.types";
 import { supportApi } from "@/modules/support/api/support.api";
 import { Button } from "@/components/ui/button";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { useI18n } from "@/lib/i18n/context";
 import { X, LifeBuoy, Send, Loader2, Paperclip, Trash2, CheckCircle2, Image as ImageIcon } from "lucide-react";
 
@@ -32,15 +33,8 @@ export function CreateTicketModal({
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Escape key to dismiss
-  React.useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
+  // Universal Escape key dismissal with zero listener churn
+  useEscapeKey(isOpen, onClose);
 
   if (!isOpen) return null;
 

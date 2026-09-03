@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { AdminBillingItem } from "@/modules/admin/types/admin.types";
 import { Button } from "@/components/ui/button";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
 import {
   X,
   AlertTriangle,
@@ -30,15 +31,8 @@ export function UpdateBillingStatusModal({
   const [selectedStatus, setSelectedStatus] = useState<"EXPIRED" | "CANCELLED">("CANCELLED");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Escape key to dismiss
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && !isLoading) onClose();
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, isLoading, onClose]);
+  // Universal Escape key dismissal with zero listener churn
+  useEscapeKey(isOpen && !isLoading, onClose);
 
   if (!isOpen || !billing) return null;
 

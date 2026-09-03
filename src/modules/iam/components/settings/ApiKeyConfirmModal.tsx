@@ -1,7 +1,8 @@
-﻿"use client";
+"use client";
 
-import React, { useEffect } from "react";
+
 import { Button } from "@/components/ui/button";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
 import {
   X,
   AlertTriangle,
@@ -29,17 +30,8 @@ export function ApiKeyConfirmModal({
   onClose,
   onConfirm,
 }: ApiKeyConfirmModalProps) {
-  // Close on Escape key press
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && !isLoading) {
-        onClose();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, isLoading, onClose]);
+  // Universal Escape key dismissal with zero listener churn
+  useEscapeKey(isOpen && !isLoading, onClose);
 
   if (!isOpen) return null;
 

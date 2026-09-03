@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Ticket, TicketStatus } from "@/modules/support/types/support.types";
 import { supportApi } from "@/modules/support/api/support.api";
 import { Button } from "@/components/ui/button";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { useI18n } from "@/lib/i18n/context";
 import { toast } from "sonner";
 import {
@@ -37,15 +38,8 @@ export function UpdateTicketStatusModal({
   const [confirmChange, setConfirmChange] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Escape key listener
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
+  // Universal Escape key dismissal with zero listener churn
+  useEscapeKey(isOpen, onClose);
 
   if (!isOpen || !ticket) return null;
 

@@ -1,8 +1,9 @@
-﻿"use client";
+"use client";
 
-import React, { useEffect } from "react";
+
 import { Invoice } from "@/modules/finance/types/finance.types";
 import { Button } from "@/components/ui/button";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { useI18n } from "@/lib/i18n/context";
 import {
   X,
@@ -24,15 +25,8 @@ export function InvoiceReceiptModal({
 }: InvoiceReceiptModalProps) {
   const { t } = useI18n();
 
-  // Dismiss on Escape key
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
+  // Universal Escape key dismissal with zero listener churn
+  useEscapeKey(isOpen, onClose);
 
   if (!isOpen || !invoice) return null;
 

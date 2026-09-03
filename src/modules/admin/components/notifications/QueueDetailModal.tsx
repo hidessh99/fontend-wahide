@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useEffect } from "react";
+
 import { AdminQueueItem } from "@/modules/admin/types/admin.types";
 import { Button } from "@/components/ui/button";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { formatDateTime } from "@/lib/utils";
 import { X, Layers, AlertCircle, Clock, CheckCircle2, User, Mail } from "lucide-react";
 
@@ -13,14 +14,8 @@ interface QueueDetailModalProps {
 }
 
 export function QueueDetailModal({ queue, isOpen, onClose }: QueueDetailModalProps) {
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
+  // Universal Escape key dismissal with zero listener churn
+  useEscapeKey(isOpen, onClose);
 
   if (!isOpen || !queue) return null;
 

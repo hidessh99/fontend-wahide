@@ -1,6 +1,25 @@
 import type { NextConfig } from "next";
 
+const cspHeader = `
+  default-src 'self';
+  script-src 'self' 'unsafe-eval' 'unsafe-inline' https://challenges.cloudflare.com;
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+  font-src 'self' https://fonts.gstatic.com data:;
+  img-src 'self' data: blob: https:;
+  connect-src 'self' http://localhost:* ws://localhost:* https://*.wahide.id wss://*.wahide.id https://challenges.cloudflare.com;
+  frame-src 'self' https://challenges.cloudflare.com;
+  frame-ancestors 'none';
+  object-src 'none';
+  base-uri 'self';
+  form-action 'self';
+  upgrade-insecure-requests;
+`.replace(/\s{2,}/g, " ").trim();
+
 const securityHeaders = [
+  {
+    key: "Content-Security-Policy",
+    value: cspHeader,
+  },
   {
     key: "X-DNS-Prefetch-Control",
     value: "on",

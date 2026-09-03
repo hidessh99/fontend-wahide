@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { CreateCampaignInput } from "@/modules/campaign/types/campaign.types";
 import { useDevices } from "@/modules/whatsapp/hooks/useDevices";
 import { useContacts } from "@/modules/contact/hooks/useContacts";
 import { useSpintax } from "@/modules/campaign/hooks/useSpintax";
 import { SpintaxVisualizer } from "@/modules/campaign/components/spintax/SpintaxVisualizer";
 import { Button } from "@/components/ui/button";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { useI18n } from "@/lib/i18n/context";
 import {
   X,
@@ -57,15 +58,8 @@ export function CampaignWizardModal({
     randomize,
   } = useSpintax("{Halo|Hi|Selamat Siang} Kak {nama}, dapatkan penawaran spesial {diskon 50%|potongan harga} hari ini!");
 
-  // Escape key to dismiss
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
+  // Universal Escape key dismissal with zero listener churn
+  useEscapeKey(isOpen, onClose);
 
   if (!isOpen) return null;
 

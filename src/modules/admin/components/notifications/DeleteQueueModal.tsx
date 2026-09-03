@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { AdminQueueItem } from "@/modules/admin/types/admin.types";
 import { Button } from "@/components/ui/button";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { X, Trash2, AlertTriangle, Loader2 } from "lucide-react";
 
 interface DeleteQueueModalProps {
@@ -20,14 +21,8 @@ export function DeleteQueueModal({
 }: DeleteQueueModalProps) {
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && !isLoading) onClose();
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, isLoading, onClose]);
+  // Universal Escape key dismissal with zero listener churn
+  useEscapeKey(isOpen && !isLoading, onClose);
 
   if (!isOpen || !queue) return null;
 

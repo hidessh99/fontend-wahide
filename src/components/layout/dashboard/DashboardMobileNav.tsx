@@ -2,6 +2,7 @@
 
 import React from "react";
 import { DashboardSidebar } from "./DashboardSidebar";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { X } from "lucide-react";
 
 interface DashboardMobileNavProps {
@@ -10,6 +11,8 @@ interface DashboardMobileNavProps {
 }
 
 export function DashboardMobileNav({ open, onClose }: DashboardMobileNavProps) {
+  useEscapeKey(open, onClose);
+
   if (!open) return null;
 
   return (

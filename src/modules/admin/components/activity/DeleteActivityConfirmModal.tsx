@@ -1,8 +1,9 @@
-﻿"use client";
+"use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { UserActivityItem } from "@/modules/admin/types/admin.types";
 import { formatHumanActivityDate } from "./UserActivitiesTable";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { Button } from "@/components/ui/button";
 import {
   AlertTriangle,
@@ -36,15 +37,8 @@ export function DeleteActivityConfirmModal({
     onClose();
   }, [onClose]);
 
-  // Escape key listener
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") handleClose();
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, handleClose]);
+  // Universal Escape key dismissal with zero listener churn
+  useEscapeKey(isOpen, handleClose);
 
   if (!isOpen || !activity) return null;
 
