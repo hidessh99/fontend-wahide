@@ -370,7 +370,7 @@ export function MessageLogsTable({
                       {/* 4. Cuplikan Pesan */}
                       <td className="max-w-xs px-4 py-3.5">
                         <div className="space-y-1">
-                          <p className="text-foreground max-w-[260px] truncate text-xs font-medium">
+                          <p className="text-foreground max-w-65 truncate text-xs font-medium">
                             {m.messageBody || "(Pesan kosong)"}
                           </p>
                           {m.mediaUrl && (

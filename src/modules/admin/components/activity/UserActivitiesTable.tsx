@@ -390,7 +390,7 @@ export function UserActivitiesTable({
                       </div>
                     </div>
 
-                    <p className="text-foreground-secondary bg-muted/30 border-border/40 rounded-lg border p-2.5 text-xs leading-relaxed font-medium break-words">
+                    <p className="text-foreground-secondary bg-muted/30 border-border/40 rounded-lg border p-2.5 text-xs leading-relaxed font-medium wrap-break-word">
                       {act.description || "Tidak ada deskripsi rinci aktivitas."}
                     </p>
 
