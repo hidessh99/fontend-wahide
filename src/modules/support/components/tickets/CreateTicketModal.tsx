@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   CreateTicketInput,
   TicketCategory,
@@ -48,6 +48,15 @@ export function CreateTicketModal({ isOpen, onClose, onSubmit }: CreateTicketMod
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Clean up object URL on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      if (previewUrl && previewUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
+
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -63,6 +72,10 @@ export function CreateTicketModal({ isOpen, onClose, onSubmit }: CreateTicketMod
       return;
     }
 
+    if (previewUrl && previewUrl.startsWith("blob:")) {
+      URL.revokeObjectURL(previewUrl);
+    }
+
     setError(null);
     setIsUploading(true);
     setAttachmentFileName(file.name);
@@ -76,6 +89,9 @@ export function CreateTicketModal({ isOpen, onClose, onSubmit }: CreateTicketMod
       setError(msg);
       setAttachmentUrl("");
       setAttachmentFileName("");
+      if (previewUrl && previewUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(previewUrl);
+      }
       setPreviewUrl("");
     } finally {
       setIsUploading(false);
@@ -83,6 +99,9 @@ export function CreateTicketModal({ isOpen, onClose, onSubmit }: CreateTicketMod
   };
 
   const handleRemoveAttachment = () => {
+    if (previewUrl && previewUrl.startsWith("blob:")) {
+      URL.revokeObjectURL(previewUrl);
+    }
     setAttachmentUrl("");
     setAttachmentFileName("");
     setPreviewUrl("");
@@ -260,11 +279,11 @@ export function CreateTicketModal({ isOpen, onClose, onSubmit }: CreateTicketMod
                 <div className="border-border bg-surface mt-2 flex items-center justify-between gap-3 rounded-md border p-2.5 dark:bg-[#10110e]">
                   <div className="flex items-center gap-2.5 overflow-hidden">
                     {previewUrl ? (
-                      /* eslint-disable-next-line @next/next/no-img-element */
-                      <img
-                        src={previewUrl}
-                        alt="Screenshot Preview"
-                        className="size-10 shrink-0 rounded object-cover"
+                      <div
+                        role="img"
+                        aria-label={attachmentFileName || "Screenshot Preview"}
+                        className="size-10 shrink-0 rounded bg-cover bg-center"
+                        style={{ backgroundImage: `url("${previewUrl}")` }}
                       />
                     ) : (
                       <div className="bg-muted flex size-10 shrink-0 items-center justify-center rounded">

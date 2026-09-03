@@ -561,11 +561,11 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
                       <div className="bg-muted/60 border-border flex items-center justify-between gap-3 rounded-md border p-2.5 px-3 text-xs">
                         <div className="flex items-center gap-2.5 overflow-hidden">
                           <div className="bg-surface border-border flex size-12 shrink-0 items-center justify-center overflow-hidden rounded border">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                              src={getSafeMediaUrl(previewUrl)!}
-                              alt="Preview"
-                              className="size-full object-cover"
+                            <div
+                              role="img"
+                              aria-label="Preview"
+                              className="size-full bg-cover bg-center"
+                              style={{ backgroundImage: `url("${getSafeMediaUrl(previewUrl)!}")` }}
                             />
                           </div>
                           <div className="overflow-hidden">

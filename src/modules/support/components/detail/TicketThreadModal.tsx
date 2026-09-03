@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Ticket, TicketMessage } from "@/modules/support/types/support.types";
 import { supportApi } from "@/modules/support/api/support.api";
 import { Button } from "@/components/ui/button";
@@ -96,6 +96,15 @@ export function TicketThreadModal({
     };
   }, [isOpen, ticket?.id]);
 
+  // Clean up object URL on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      if (previewUrl && previewUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
+
   if (!ticket) return null;
 
   // Handle file picker selection
@@ -114,12 +123,19 @@ export function TicketThreadModal({
       return;
     }
 
+    if (previewUrl && previewUrl.startsWith("blob:")) {
+      URL.revokeObjectURL(previewUrl);
+    }
+
     setUploadError(null);
     setAttachmentFile(file);
     setPreviewUrl(URL.createObjectURL(file));
   };
 
   const handleRemoveAttachment = () => {
+    if (previewUrl && previewUrl.startsWith("blob:")) {
+      URL.revokeObjectURL(previewUrl);
+    }
     setAttachmentFile(null);
     setAttachmentUrl("");
     setPreviewUrl("");
@@ -359,8 +375,12 @@ export function TicketThreadModal({
             <div className="border-border bg-muted/40 mb-3 flex items-center justify-between rounded-md border p-2 text-xs">
               <div className="flex items-center gap-2 overflow-hidden">
                 <div className="bg-surface border-border flex size-8 shrink-0 items-center justify-center overflow-hidden rounded border dark:bg-black/40">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={previewUrl} alt="Preview reply" className="size-full object-cover" />
+                  <div
+                    role="img"
+                    aria-label="Preview reply"
+                    className="size-full bg-cover bg-center"
+                    style={{ backgroundImage: `url("${previewUrl}")` }}
+                  />
                 </div>
                 <span className="text-foreground truncate font-mono text-[11px] font-semibold">
                   {attachmentFile?.name || "Lampiran.jpg"}
