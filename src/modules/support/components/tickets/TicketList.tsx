@@ -6,6 +6,8 @@ import dynamic from "next/dynamic";
 import { Ticket, TicketStatus } from "@/modules/support/types/support.types";
 import { useSupport } from "@/modules/support/hooks/useSupport";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty";
 import { useI18n } from "@/lib/i18n/context";
 import { UpdateTicketStatusModal } from "./UpdateTicketStatusModal";
 
@@ -77,32 +79,32 @@ export function TicketList() {
     switch (status) {
       case "RESOLVED":
         return (
-          <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+          <Badge variant="success">
             <CheckCircle2 className="size-3" />
             <span>{t("support.statusResolved")}</span>
-          </span>
+          </Badge>
         );
       case "CLOSED":
         return (
-          <span className="bg-muted text-foreground-muted border-border inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-bold">
+          <Badge variant="neutral">
             <Lock className="size-3" />
             <span>{t("support.statusClosed")}</span>
-          </span>
+          </Badge>
         );
       case "IN_PROGRESS":
         return (
-          <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/20 bg-amber-500/10 px-2.5 py-0.5 text-[11px] font-bold text-amber-600 dark:text-amber-400">
+          <Badge variant="warning">
             <Clock className="size-3" />
             <span>{t("support.statusInProgress")}</span>
-          </span>
+          </Badge>
         );
       case "OPEN":
       default:
         return (
-          <span className="inline-flex items-center gap-1 rounded-full border border-sky-500/20 bg-sky-500/10 px-2.5 py-0.5 text-[11px] font-bold text-sky-600 dark:text-sky-400">
+          <Badge variant="info">
             <AlertCircle className="size-3" />
             <span>{t("support.statusOpen")}</span>
-          </span>
+          </Badge>
         );
     }
   };
@@ -238,28 +240,22 @@ export function TicketList() {
       {isLoading && tickets.length === 0 ? (
         <div className="border-border bg-surface h-64 animate-pulse rounded-md border p-6 dark:bg-[#161715]" />
       ) : filteredTickets.length === 0 ? (
-        <div className="border-border bg-surface flex flex-col items-center justify-center space-y-3 rounded-md border border-dashed p-6 text-center sm:p-10 dark:bg-[#161715]/50">
-          <div className="dark:bg-wise-green/10 dark:text-wise-green flex size-12 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
-            <LifeBuoy className="size-6" />
-          </div>
-          <div className="max-w-sm space-y-1">
-            <h3 className="text-foreground text-base font-extrabold sm:text-lg">
-              {t("support.noTickets")}
-            </h3>
-            <p className="text-foreground-secondary text-xs font-semibold">
-              {t("support.noTicketsDesc")}
-            </p>
-          </div>
-          <Button
-            variant="primaryPill"
-            size="sm"
-            onClick={() => setIsCreateOpen(true)}
-            className="mt-2 cursor-pointer gap-2 text-xs font-bold shadow-sm"
-          >
-            <Plus className="size-4" />
-            <span>{t("support.createTicket")}</span>
-          </Button>
-        </div>
+        <EmptyState
+          icon={<LifeBuoy className="size-6" />}
+          title={t("support.noTickets")}
+          description={t("support.noTicketsDesc")}
+          action={
+            <Button
+              variant="primaryPill"
+              size="sm"
+              onClick={() => setIsCreateOpen(true)}
+              className="mt-2 cursor-pointer gap-2 text-xs font-bold shadow-sm"
+            >
+              <Plus className="size-4" />
+              <span>{t("support.createTicket")}</span>
+            </Button>
+          }
+        />
       ) : (
         <div className="space-y-3">
           {/* Mobile View: Card-based Ticket List (Visible on < 768px) */}

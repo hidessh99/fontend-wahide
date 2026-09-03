@@ -91,4 +91,30 @@ function EmptyContent({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-export { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyContent, EmptyMedia };
+export interface EmptyStateProps extends React.ComponentProps<"div"> {
+  icon?: React.ReactNode;
+  title: string;
+  description?: string;
+  action?: React.ReactNode;
+}
+
+function EmptyState({ icon, title, description, action, className, ...props }: EmptyStateProps) {
+  return (
+    <Empty className={cn("p-8 sm:p-12", className)} {...props}>
+      {icon && (
+        <EmptyMedia className="text-foreground-muted mb-1 [&_svg]:size-10">{icon}</EmptyMedia>
+      )}
+      <EmptyHeader>
+        <EmptyTitle className="text-foreground text-sm font-bold">{title}</EmptyTitle>
+        {description && (
+          <EmptyDescription className="text-foreground-secondary mx-auto max-w-sm text-xs">
+            {description}
+          </EmptyDescription>
+        )}
+      </EmptyHeader>
+      {action && <EmptyContent>{action}</EmptyContent>}
+    </Empty>
+  );
+}
+
+export { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyContent, EmptyMedia, EmptyState };

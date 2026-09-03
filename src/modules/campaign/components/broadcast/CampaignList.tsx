@@ -5,6 +5,8 @@ import dynamic from "next/dynamic";
 import { CampaignStatus } from "@/modules/campaign/types/campaign.types";
 import { useCampaigns } from "@/modules/campaign/hooks/useCampaigns";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty";
 import { useI18n } from "@/lib/i18n/context";
 
 const CampaignWizardModal = dynamic(
@@ -44,45 +46,45 @@ export function CampaignList() {
     switch (status) {
       case "RUNNING":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-600 dark:text-emerald-400">
-            <span className="size-2 animate-pulse rounded-full bg-emerald-500" />
-            {t("campaign.statusRunning")}
-          </span>
+          <Badge variant="success">
+            <span className="mr-1 size-1.5 animate-pulse rounded-full bg-emerald-500" />
+            <span>{t("campaign.statusRunning")}</span>
+          </Badge>
         );
       case "PAUSED":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1 text-xs font-bold text-amber-600 dark:text-amber-400">
-            <Pause className="size-3" />
-            {t("campaign.statusPaused")}
-          </span>
+          <Badge variant="warning">
+            <Pause className="mr-1 size-3" />
+            <span>{t("campaign.statusPaused")}</span>
+          </Badge>
         );
       case "COMPLETED":
         return (
-          <span className="dark:bg-wise-green/15 dark:text-wise-green dark:border-wise-green/20 inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-700">
-            <CheckCircle2 className="size-3" />
-            {t("campaign.statusCompleted")}
-          </span>
+          <Badge variant="success">
+            <CheckCircle2 className="mr-1 size-3" />
+            <span>{t("campaign.statusCompleted")}</span>
+          </Badge>
         );
       case "SCHEDULED":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-500/20 bg-sky-500/10 px-3 py-1 text-xs font-bold text-sky-600 dark:text-sky-400">
-            <Clock className="size-3" />
-            {t("campaign.statusScheduled")}
-          </span>
+          <Badge variant="info">
+            <Clock className="mr-1 size-3" />
+            <span>{t("campaign.statusScheduled")}</span>
+          </Badge>
         );
       case "FAILED":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-rose-500/20 bg-rose-500/10 px-3 py-1 text-xs font-bold text-rose-600 dark:text-rose-400">
-            <AlertCircle className="size-3" />
-            {t("campaign.statusFailed")}
-          </span>
+          <Badge variant="danger">
+            <AlertCircle className="mr-1 size-3" />
+            <span>{t("campaign.statusFailed")}</span>
+          </Badge>
         );
       case "DRAFT":
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-zinc-500/20 bg-zinc-500/10 px-3 py-1 text-xs font-bold text-zinc-600 dark:text-zinc-400">
-            {t("campaign.statusDraft")}
-          </span>
+          <Badge variant="neutral">
+            <span>{t("campaign.statusDraft")}</span>
+          </Badge>
         );
     }
   };
@@ -140,28 +142,22 @@ export function CampaignList() {
           ))}
         </div>
       ) : campaigns.length === 0 ? (
-        <div className="border-border bg-surface flex flex-col items-center justify-center space-y-3 rounded-md border border-dashed p-6 text-center sm:p-10 dark:bg-[#161715]/50">
-          <div className="dark:bg-wise-green/10 dark:text-wise-green flex size-12 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
-            <Send className="size-6" />
-          </div>
-          <div className="max-w-sm space-y-1">
-            <h3 className="text-foreground text-base font-extrabold sm:text-lg">
-              {t("campaign.noCampaigns")}
-            </h3>
-            <p className="text-foreground-secondary text-xs font-semibold">
-              {t("campaign.noCampaignsDesc")}
-            </p>
-          </div>
-          <Button
-            variant="primaryPill"
-            size="sm"
-            onClick={() => setIsWizardOpen(true)}
-            className="mt-2 h-9 gap-2 px-4 text-xs font-bold shadow-sm"
-          >
-            <Plus className="size-4" />
-            <span>{t("campaign.createCampaign")}</span>
-          </Button>
-        </div>
+        <EmptyState
+          icon={<Send className="size-6" />}
+          title={t("campaign.noCampaigns")}
+          description={t("campaign.noCampaignsDesc")}
+          action={
+            <Button
+              variant="primaryPill"
+              size="sm"
+              onClick={() => setIsWizardOpen(true)}
+              className="mt-2 h-9 gap-2 px-4 text-xs font-bold shadow-sm"
+            >
+              <Plus className="size-4" />
+              <span>{t("campaign.createCampaign")}</span>
+            </Button>
+          }
+        />
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2">
           {campaigns.map((campaign) => {

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
@@ -7,6 +7,7 @@ import { ContactTable } from "@/modules/contact/components/list/ContactTable";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { Contact, CreateContactInput } from "@/modules/contact/types/contact.types";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty";
 import { useI18n } from "@/lib/i18n/context";
 
 const ContactModal = dynamic(
@@ -263,46 +264,42 @@ export function ContactsView() {
       {isLoading && contacts.length === 0 ? (
         <div className="border-border bg-surface h-64 animate-pulse rounded-md border p-6 dark:bg-[#161715]" />
       ) : filteredContacts.length === 0 ? (
-        <div className="border-border bg-surface flex flex-col items-center justify-center space-y-3 rounded-md border border-dashed p-6 text-center sm:p-10 dark:bg-[#161715]/50">
-          <div className="bg-wise-green/10 text-dark-green dark:text-wise-green flex size-12 items-center justify-center rounded-full">
-            <Users className="size-6" />
-          </div>
-          <div className="max-w-sm space-y-1">
-            <h3 className="text-foreground text-base font-extrabold sm:text-lg">
-              {activeSearch ? t("contact.noSearchResults") : t("contact.noContacts")}
-            </h3>
-            <p className="text-foreground-secondary text-xs font-semibold">
-              {activeSearch
-                ? `Tidak ditemukan kontak dengan kata kunci "${activeSearch}". Silakan periksa kembali ejaan atau hapus filter.`
-                : t("contact.noContactsDesc")}
-            </p>
-          </div>
-          {!activeSearch && (
-            <div className="flex items-center gap-2 pt-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsImportModalOpen(true)}
-                className="border-border cursor-pointer gap-2 rounded-full text-xs font-bold"
-              >
-                <FileSpreadsheet className="text-dark-green dark:text-wise-green size-4" />
-                <span>{t("contact.importCsv")}</span>
-              </Button>
-              <Button
-                variant="primaryPill"
-                size="sm"
-                onClick={() => {
-                  setEditingContact(null);
-                  setIsAddModalOpen(true);
-                }}
-                className="cursor-pointer gap-2 text-xs font-bold shadow-sm"
-              >
-                <UserPlus className="size-4" />
-                <span>{t("contact.addContact")}</span>
-              </Button>
-            </div>
-          )}
-        </div>
+        <EmptyState
+          icon={<Users className="size-6" />}
+          title={activeSearch ? t("contact.noSearchResults") : t("contact.noContacts")}
+          description={
+            activeSearch
+              ? `Tidak ditemukan kontak dengan kata kunci "${activeSearch}". Silakan periksa kembali ejaan atau hapus filter.`
+              : t("contact.noContactsDesc")
+          }
+          action={
+            !activeSearch && (
+              <div className="flex items-center gap-2 pt-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsImportModalOpen(true)}
+                  className="border-border cursor-pointer gap-2 rounded-full text-xs font-bold"
+                >
+                  <FileSpreadsheet className="text-dark-green dark:text-wise-green size-4" />
+                  <span>{t("contact.importCsv")}</span>
+                </Button>
+                <Button
+                  variant="primaryPill"
+                  size="sm"
+                  onClick={() => {
+                    setEditingContact(null);
+                    setIsAddModalOpen(true);
+                  }}
+                  className="cursor-pointer gap-2 text-xs font-bold shadow-sm"
+                >
+                  <UserPlus className="size-4" />
+                  <span>{t("contact.addContact")}</span>
+                </Button>
+              </div>
+            )
+          }
+        />
       ) : (
         <ErrorBoundary fallbackTitle="Gagal Merender Tabel Kontak Virtual">
           <ContactTable

@@ -3,6 +3,8 @@
 import React from "react";
 import { Invoice, InvoiceStatus } from "@/modules/finance/types/finance.types";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty";
 import { DataTablePagination } from "@/components/ui/pagination";
 import { useI18n } from "@/lib/i18n/context";
 import { FileText, CheckCircle2, Clock, AlertCircle, CreditCard } from "lucide-react";
@@ -39,25 +41,25 @@ export function InvoiceTable({
     switch (status) {
       case "PAID":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+          <Badge variant="success">
             <CheckCircle2 className="size-3" />
             <span>{t("billing.statusPaid")}</span>
-          </span>
+          </Badge>
         );
       case "PENDING":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-2.5 py-0.5 text-[11px] font-bold text-amber-600 dark:text-amber-400">
+          <Badge variant="warning">
             <Clock className="size-3" />
             <span>{t("billing.statusPending")}</span>
-          </span>
+          </Badge>
         );
       case "EXPIRED":
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-zinc-500/20 bg-zinc-500/10 px-2.5 py-0.5 text-[11px] font-bold text-zinc-600 dark:text-zinc-400">
+          <Badge variant="neutral">
             <AlertCircle className="size-3" />
             <span>{t("billing.statusExpired")}</span>
-          </span>
+          </Badge>
         );
     }
   };
@@ -66,11 +68,11 @@ export function InvoiceTable({
     <div className="border-border bg-surface overflow-hidden rounded-md border shadow-xs dark:bg-[#161715]">
       {/* Invoices List */}
       {invoices.length === 0 ? (
-        <div className="space-y-2 p-6 text-center sm:p-10">
-          <FileText className="text-foreground-muted mx-auto size-10" />
-          <h3 className="text-foreground text-sm font-bold">{t("billing.noInvoices")}</h3>
-          <p className="text-foreground-secondary text-xs">{t("billing.noInvoicesDesc")}</p>
-        </div>
+        <EmptyState
+          icon={<FileText />}
+          title={t("billing.noInvoices")}
+          description={t("billing.noInvoicesDesc")}
+        />
       ) : (
         <div>
           {/* Mobile View: Card-based Invoice List (Visible on < 768px) */}

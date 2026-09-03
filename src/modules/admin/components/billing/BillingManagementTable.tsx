@@ -5,6 +5,8 @@ import { useAdminBilling } from "@/modules/admin/hooks/useAdminBilling";
 import { AdminBillingItem } from "@/modules/admin/types/admin.types";
 import { UpdateBillingStatusModal } from "./UpdateBillingStatusModal";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty";
 import { DataTablePagination } from "@/components/ui/pagination";
 import { formatDateTime } from "@/lib/utils";
 import {
@@ -27,44 +29,44 @@ function getStatusBadge(status: string) {
   switch (upper) {
     case "PAID":
       return (
-        <span className="dark:text-wise-green inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-black tracking-wider text-emerald-700 uppercase">
+        <Badge variant="success">
           <CheckCircle2 className="size-3" />
           <span>Lunas (PAID)</span>
-        </span>
+        </Badge>
       );
     case "PENDING":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-[10px] font-black tracking-wider text-amber-700 uppercase dark:text-amber-400">
+        <Badge variant="warning">
           <Clock className="size-3" />
           <span>Menunggu</span>
-        </span>
+        </Badge>
       );
     case "PROCESSING":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full border border-blue-500/20 bg-blue-500/10 px-2 py-0.5 text-[10px] font-black tracking-wider text-blue-600 uppercase dark:text-blue-400">
+        <Badge variant="info">
           <RotateCcw className="size-3" />
           <span>Diproses</span>
-        </span>
+        </Badge>
       );
     case "EXPIRED":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full border border-zinc-500/20 bg-zinc-500/10 px-2 py-0.5 text-[10px] font-bold tracking-wider text-zinc-600 uppercase dark:text-zinc-400">
+        <Badge variant="neutral">
           <AlertCircle className="size-3" />
           <span>Kadaluarsa</span>
-        </span>
+        </Badge>
       );
     case "CANCELLED":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full border border-rose-500/20 bg-rose-500/10 px-2 py-0.5 text-[10px] font-black tracking-wider text-rose-600 uppercase dark:text-rose-400">
+        <Badge variant="danger">
           <Ban className="size-3" />
           <span>Dibatalkan</span>
-        </span>
+        </Badge>
       );
     default:
       return (
-        <span className="bg-muted text-foreground-secondary border-border rounded-full border px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase">
-          {status}
-        </span>
+        <Badge variant="neutral">
+          <span>{status}</span>
+        </Badge>
       );
   }
 }
@@ -255,15 +257,15 @@ export function BillingManagementTable() {
             </span>
           </div>
         ) : billings.length === 0 ? (
-          <div className="space-y-2 p-10 text-center">
-            <Receipt className="text-foreground-muted mx-auto size-8" />
-            <div className="text-foreground text-xs font-bold">Tidak Ada Transaksi Ditemukan</div>
-            <p className="text-foreground-muted mx-auto max-w-sm text-[11px]">
-              {searchQuery
+          <EmptyState
+            icon={<Receipt />}
+            title="Tidak Ada Transaksi Ditemukan"
+            description={
+              searchQuery
                 ? `Tidak ditemukan hasil yang cocok dengan kata kunci "${searchQuery}".`
-                : "Belum ada riwayat transaksi billing atau topup saldo pada sistem."}
-            </p>
-          </div>
+                : "Belum ada riwayat transaksi billing atau topup saldo pada sistem."
+            }
+          />
         ) : (
           <div>
             {/* Mobile View: Cards (< 1024px) */}

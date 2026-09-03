@@ -5,6 +5,8 @@ import { AdminSubscriptionItem } from "@/modules/admin/types/admin.types";
 import { ExpireSubscriptionModal } from "./ExpireSubscriptionModal";
 import { SubscriptionDetailModal } from "./SubscriptionDetailModal";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty";
 import { DataTablePagination } from "@/components/ui/pagination";
 import { formatCurrency, formatDateTime } from "@/lib/utils";
 import {
@@ -46,37 +48,37 @@ function getSubscriptionStatusBadge(status: string) {
   switch (upper) {
     case "ACTIVE":
       return (
-        <span className="dark:text-wise-green inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-black tracking-wider text-emerald-700 uppercase">
+        <Badge variant="success">
           <CheckCircle2 className="size-3" />
           <span>Aktif</span>
-        </span>
+        </Badge>
       );
     case "EXPIRED":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full border border-rose-500/20 bg-rose-500/10 px-2 py-0.5 text-[10px] font-black tracking-wider text-rose-600 uppercase dark:text-rose-400">
+        <Badge variant="danger">
           <Clock className="size-3" />
           <span>Expired</span>
-        </span>
+        </Badge>
       );
     case "TRIAL":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-[10px] font-black tracking-wider text-amber-700 uppercase dark:text-amber-400">
+        <Badge variant="warning">
           <Sparkles className="size-3" />
           <span>Trial</span>
-        </span>
+        </Badge>
       );
     case "SUSPENDED":
       return (
-        <span className="bg-muted text-foreground-secondary border-border inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase">
+        <Badge variant="neutral">
           <Ban className="size-3" />
           <span>Suspended</span>
-        </span>
+        </Badge>
       );
     default:
       return (
-        <span className="bg-muted text-foreground-secondary border-border rounded-full border px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase">
-          {status}
-        </span>
+        <Badge variant="neutral">
+          <span>{status}</span>
+        </Badge>
       );
   }
 }
@@ -208,15 +210,15 @@ export function SubscriptionsTable({
             <span className="text-xs font-bold">Memuat data paket langganan pengguna...</span>
           </div>
         ) : subscriptions.length === 0 ? (
-          <div className="space-y-2 p-10 text-center">
-            <CreditCard className="text-foreground-muted mx-auto size-8" />
-            <div className="text-foreground text-xs font-bold">Tidak Ada Langganan Ditemukan</div>
-            <p className="text-foreground-muted mx-auto max-w-sm text-[11px]">
-              {searchQuery
+          <EmptyState
+            icon={<CreditCard />}
+            title="Tidak Ada Langganan Ditemukan"
+            description={
+              searchQuery
                 ? `Tidak ditemukan langganan dengan kata kunci "${searchQuery}".`
-                : "Saat ini belum ada data langganan yang tercatat di sistem."}
-            </p>
-          </div>
+                : "Saat ini belum ada data langganan yang tercatat di sistem."
+            }
+          />
         ) : (
           <div>
             {/* Mobile View: Cards (< 1024px) */}

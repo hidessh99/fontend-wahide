@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { UserActivityItem } from "@/modules/admin/types/admin.types";
 import { DeleteActivityConfirmModal } from "./DeleteActivityConfirmModal";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty";
 import { DataTablePagination } from "@/components/ui/pagination";
 import {
   Search,
@@ -132,89 +134,98 @@ export function UserActivitiesTable({
 
     if (t.includes("TOPUP")) {
       return (
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+        <Badge variant="success">
           <CreditCard className="size-3" />
           <span>TOP-UP</span>
-        </span>
+        </Badge>
       );
     }
     if (t.includes("PAYMENT") || t.includes("SUBSCRIPTION")) {
       return (
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-500/20 bg-sky-500/10 px-2.5 py-0.5 text-[11px] font-bold text-sky-600 dark:text-sky-400">
+        <Badge variant="info">
           <Receipt className="size-3" />
           <span>PAYMENT</span>
-        </span>
+        </Badge>
       );
     }
     if (t.includes("WITHDRAWAL")) {
       return (
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-2.5 py-0.5 text-[11px] font-bold text-amber-600 dark:text-amber-400">
+        <Badge variant="warning">
           <Wallet className="size-3" />
           <span>WITHDRAWAL</span>
-        </span>
+        </Badge>
       );
     }
     if (t.includes("DEVICE")) {
       return (
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-500/20 bg-indigo-500/10 px-2.5 py-0.5 text-[11px] font-bold text-indigo-600 dark:text-indigo-400">
+        <Badge
+          variant="outline"
+          className="border-indigo-500/20 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
+        >
           <Smartphone className="size-3" />
           <span>DEVICE</span>
-        </span>
+        </Badge>
       );
     }
     if (t.includes("CAMPAIGN")) {
       return (
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-2.5 py-0.5 text-[11px] font-bold text-cyan-600 dark:text-cyan-400">
+        <Badge
+          variant="outline"
+          className="border-cyan-500/20 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400"
+        >
           <Send className="size-3" />
           <span>CAMPAIGN</span>
-        </span>
+        </Badge>
       );
     }
     if (t.includes("LOGIN")) {
       return (
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+        <Badge variant="success">
           <LogIn className="size-3" />
           <span>LOGIN</span>
-        </span>
+        </Badge>
       );
     }
     if (t.includes("LOGOUT")) {
       return (
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-zinc-500/20 bg-zinc-500/10 px-2.5 py-0.5 text-[11px] font-bold text-zinc-600 dark:text-zinc-400">
+        <Badge variant="neutral">
           <LogOut className="size-3" />
           <span>LOGOUT</span>
-        </span>
+        </Badge>
       );
     }
     if (t.includes("REGISTER") || t.includes("SIGNUP")) {
       return (
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-500/20 bg-sky-500/10 px-2.5 py-0.5 text-[11px] font-bold text-sky-600 dark:text-sky-400">
+        <Badge variant="info">
           <UserPlus className="size-3" />
           <span>REGISTER</span>
-        </span>
+        </Badge>
       );
     }
     if (t.includes("PASSWORD") || t.includes("VERIFY")) {
       return (
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-2.5 py-0.5 text-[11px] font-bold text-amber-600 dark:text-amber-400">
+        <Badge variant="warning">
           <KeyRound className="size-3" />
           <span>SECURITY</span>
-        </span>
+        </Badge>
       );
     }
     if (t.includes("TOKEN") || t.includes("APIKEY")) {
       return (
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-purple-500/20 bg-purple-500/10 px-2.5 py-0.5 text-[11px] font-bold text-purple-600 dark:text-purple-400">
+        <Badge
+          variant="outline"
+          className="border-purple-500/20 bg-purple-500/10 text-purple-600 dark:text-purple-400"
+        >
           <Shield className="size-3" />
           <span>API TOKEN</span>
-        </span>
+        </Badge>
       );
     }
     return (
-      <span className="bg-muted text-foreground-secondary border-border inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-bold">
+      <Badge variant="neutral">
         <Activity className="size-3" />
         <span>{t}</span>
-      </span>
+      </Badge>
     );
   };
 
@@ -334,28 +345,28 @@ export function UserActivitiesTable({
             <p className="text-foreground text-xs font-bold">Memuat rekaman log aktivitas...</p>
           </div>
         ) : activities.length === 0 ? (
-          <div className="space-y-2.5 p-10 text-center sm:p-14">
-            <Activity className="text-foreground-muted mx-auto size-10" />
-            <h3 className="text-foreground text-sm font-bold">
-              Tidak Ada Aktivitas Pengguna Ditemukan
-            </h3>
-            <p className="text-foreground-secondary mx-auto max-w-sm text-xs">
-              {activeSearch
+          <EmptyState
+            icon={<Activity />}
+            title="Tidak Ada Aktivitas Pengguna Ditemukan"
+            description={
+              activeSearch
                 ? `Tidak ada hasil yang sesuai dengan kata kunci "${activeSearch}". Silakan periksa kembali filter Anda.`
-                : "Belum ada rekaman aktivitas pengguna yang tercatat pada sistem."}
-            </p>
-            {activeSearch && (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleClear}
-                className="mt-2 cursor-pointer rounded-full text-xs font-bold"
-              >
-                Reset Pencarian
-              </Button>
-            )}
-          </div>
+                : "Belum ada rekaman aktivitas pengguna yang tercatat pada sistem."
+            }
+            action={
+              activeSearch && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleClear}
+                  className="cursor-pointer rounded-full text-xs font-bold"
+                >
+                  Reset Pencarian
+                </Button>
+              )
+            }
+          />
         ) : (
           <div>
             {/* Mobile View: Card List (Visible on < 768px) */}

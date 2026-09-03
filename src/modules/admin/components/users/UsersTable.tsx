@@ -5,6 +5,8 @@ import { UserItem, AdjustBalanceInput, UpdateUserInput } from "@/modules/admin/t
 import { AdjustBalanceModal } from "./AdjustBalanceModal";
 import { EditUserModal } from "./EditUserModal";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty";
 import { DataTablePagination } from "@/components/ui/pagination";
 import {
   Search,
@@ -46,31 +48,15 @@ interface UsersTableProps {
 function getRoleBadge(role: string) {
   const upper = (role || "").toUpperCase();
   if (upper === "SUPER_ADMIN" || upper === "ADMIN") {
-    return (
-      <span className="rounded-full border border-rose-500/20 bg-rose-500/10 px-2 py-0.5 text-[10px] font-black tracking-wider text-rose-600 uppercase dark:text-rose-400">
-        Super Admin
-      </span>
-    );
+    return <Badge variant="danger">Super Admin</Badge>;
   }
   if (upper === "SELLER") {
-    return (
-      <span className="dark:text-wise-green dark:border-wise-green/20 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-black tracking-wider text-emerald-700 uppercase">
-        Seller
-      </span>
-    );
+    return <Badge variant="success">Seller</Badge>;
   }
   if (upper === "AGENT") {
-    return (
-      <span className="rounded-full border border-blue-500/20 bg-blue-500/10 px-2 py-0.5 text-[10px] font-black tracking-wider text-blue-600 uppercase dark:text-blue-400">
-        CS Agent
-      </span>
-    );
+    return <Badge variant="info">CS Agent</Badge>;
   }
-  return (
-    <span className="bg-muted text-foreground-secondary border-border rounded-full border px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase">
-      {role || "User"}
-    </span>
-  );
+  return <Badge variant="neutral">{role || "User"}</Badge>;
 }
 
 export function UsersTable({
@@ -212,15 +198,15 @@ export function UsersTable({
             <span className="text-xs font-bold">Memuat daftar pengguna platform...</span>
           </div>
         ) : users.length === 0 ? (
-          <div className="space-y-2 p-10 text-center">
-            <User className="text-foreground-muted mx-auto size-8" />
-            <div className="text-foreground text-xs font-bold">Tidak Ada Pengguna Ditemukan</div>
-            <p className="text-foreground-muted mx-auto max-w-sm text-[11px]">
-              {activeSearch
+          <EmptyState
+            icon={<User />}
+            title="Tidak Ada Pengguna Ditemukan"
+            description={
+              activeSearch
                 ? `Tidak ditemukan hasil yang cocok dengan kata kunci "${activeSearch}". Coba kata kunci lain.`
-                : "Belum ada data pengguna yang terdaftar pada sistem."}
-            </p>
-          </div>
+                : "Belum ada data pengguna yang terdaftar pada sistem."
+            }
+          />
         ) : (
           <div>
             {/* Mobile View: Card-based list for screen < 1024px */}

@@ -5,6 +5,8 @@ import { AdminMessageLogItem } from "@/modules/admin/types/admin.types";
 import { DeleteMessageModal } from "./DeleteMessageModal";
 import { MessageDetailModal } from "./MessageDetailModal";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty";
 import { DataTablePagination } from "@/components/ui/pagination";
 import { formatDateTime } from "@/lib/utils";
 import {
@@ -51,44 +53,47 @@ function getMessageStatusBadge(status: string) {
   switch (upper) {
     case "READ":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full border border-blue-500/20 bg-blue-500/10 px-2 py-0.5 text-[10px] font-black tracking-wider text-blue-600 uppercase dark:text-blue-400">
+        <Badge variant="info">
           <CheckCheck className="size-3" />
           <span>Terbaca</span>
-        </span>
+        </Badge>
       );
     case "DELIVERED":
       return (
-        <span className="dark:text-wise-green inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-black tracking-wider text-emerald-700 uppercase">
+        <Badge variant="success">
           <CheckCircle2 className="size-3" />
           <span>Tersampaikan</span>
-        </span>
+        </Badge>
       );
     case "SENT":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full border border-teal-500/20 bg-teal-500/10 px-2 py-0.5 text-[10px] font-black tracking-wider text-teal-600 uppercase dark:text-teal-400">
+        <Badge
+          variant="outline"
+          className="border-teal-500/20 bg-teal-500/10 text-teal-600 dark:text-teal-400"
+        >
           <Send className="size-3" />
           <span>Terkirim</span>
-        </span>
+        </Badge>
       );
     case "PENDING":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-[10px] font-black tracking-wider text-amber-700 uppercase dark:text-amber-400">
+        <Badge variant="warning">
           <Clock className="size-3" />
           <span>Menunggu</span>
-        </span>
+        </Badge>
       );
     case "FAILED":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full border border-rose-500/20 bg-rose-500/10 px-2 py-0.5 text-[10px] font-black tracking-wider text-rose-600 uppercase dark:text-rose-400">
+        <Badge variant="danger">
           <AlertCircle className="size-3" />
           <span>Gagal</span>
-        </span>
+        </Badge>
       );
     default:
       return (
-        <span className="bg-muted text-foreground-secondary border-border rounded-full border px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase">
-          {status}
-        </span>
+        <Badge variant="neutral">
+          <span>{status}</span>
+        </Badge>
       );
   }
 }
@@ -233,15 +238,15 @@ export function MessageLogsTable({
             <span className="text-xs font-bold">Memuat riwayat log pesan WhatsApp...</span>
           </div>
         ) : logs.length === 0 ? (
-          <div className="space-y-2 p-10 text-center">
-            <MessageSquare className="text-foreground-muted mx-auto size-8" />
-            <div className="text-foreground text-xs font-bold">Tidak Ada Pesan Ditemukan</div>
-            <p className="text-foreground-muted mx-auto max-w-sm text-[11px]">
-              {searchQuery
+          <EmptyState
+            icon={<MessageSquare />}
+            title="Tidak Ada Pesan Ditemukan"
+            description={
+              searchQuery
                 ? `Tidak ditemukan pesan dengan kata kunci "${searchQuery}".`
-                : "Saat ini belum ada riwayat pesan WhatsApp yang tercatat di sistem."}
-            </p>
-          </div>
+                : "Saat ini belum ada riwayat pesan WhatsApp yang tercatat di sistem."
+            }
+          />
         ) : (
           <div>
             {/* Mobile View: Cards (< 1024px) */}

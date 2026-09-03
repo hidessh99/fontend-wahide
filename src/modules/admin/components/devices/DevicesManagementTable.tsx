@@ -5,6 +5,8 @@ import { AdminDeviceItem } from "@/modules/admin/types/admin.types";
 import { DeleteDeviceModal } from "./DeleteDeviceModal";
 import { DeviceDetailModal } from "./DeviceDetailModal";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty";
 import { DataTablePagination } from "@/components/ui/pagination";
 import { formatDateTime } from "@/lib/utils";
 import {
@@ -47,44 +49,44 @@ function getDeviceStatusBadge(status: string) {
   switch (upper) {
     case "ONLINE":
       return (
-        <span className="dark:text-wise-green inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-black tracking-wider text-emerald-700 uppercase">
+        <Badge variant="success">
           <Wifi className="size-3" />
           <span>Online</span>
-        </span>
+        </Badge>
       );
     case "OFFLINE":
       return (
-        <span className="bg-muted text-foreground-secondary border-border inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase">
+        <Badge variant="neutral">
           <WifiOff className="size-3" />
           <span>Offline</span>
-        </span>
+        </Badge>
       );
     case "QR_PENDING":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-[10px] font-black tracking-wider text-amber-700 uppercase dark:text-amber-400">
+        <Badge variant="warning">
           <QrCode className="size-3" />
           <span>Scan QR</span>
-        </span>
+        </Badge>
       );
     case "HIBERNATED":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full border border-blue-500/20 bg-blue-500/10 px-2 py-0.5 text-[10px] font-black tracking-wider text-blue-600 uppercase dark:text-blue-400">
+        <Badge variant="info">
           <Moon className="size-3" />
           <span>Hibernasi</span>
-        </span>
+        </Badge>
       );
     case "BANNED":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full border border-rose-500/20 bg-rose-500/10 px-2 py-0.5 text-[10px] font-black tracking-wider text-rose-600 uppercase dark:text-rose-400">
+        <Badge variant="danger">
           <Ban className="size-3" />
           <span>Banned</span>
-        </span>
+        </Badge>
       );
     default:
       return (
-        <span className="bg-muted text-foreground-secondary border-border rounded-full border px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase">
-          {status}
-        </span>
+        <Badge variant="neutral">
+          <span>{status}</span>
+        </Badge>
       );
   }
 }
@@ -217,15 +219,15 @@ export function DevicesManagementTable({
             <span className="text-xs font-bold">Memuat data perangkat WhatsApp...</span>
           </div>
         ) : devices.length === 0 ? (
-          <div className="space-y-2 p-10 text-center">
-            <Smartphone className="text-foreground-muted mx-auto size-8" />
-            <div className="text-foreground text-xs font-bold">Tidak Ada Perangkat Ditemukan</div>
-            <p className="text-foreground-muted mx-auto max-w-sm text-[11px]">
-              {searchQuery
+          <EmptyState
+            icon={<Smartphone />}
+            title="Tidak Ada Perangkat Ditemukan"
+            description={
+              searchQuery
                 ? `Tidak ditemukan perangkat dengan kata kunci "${searchQuery}".`
-                : "Saat ini belum ada perangkat WhatsApp yang terdaftar di sistem."}
-            </p>
-          </div>
+                : "Saat ini belum ada perangkat WhatsApp yang terdaftar di sistem."
+            }
+          />
         ) : (
           <div>
             {/* Mobile View: Cards (< 1024px) */}

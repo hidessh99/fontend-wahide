@@ -4,6 +4,8 @@ import React, { useState, useRef, useMemo } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Search, X, CheckCheck, Check, AlertCircle, RefreshCw, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty";
 import { DataTablePagination } from "@/components/ui/pagination";
 import { useI18n } from "@/lib/i18n/context";
 import { useMessageLogs } from "../../hooks/useMessageLogs";
@@ -103,32 +105,32 @@ export function MessageLogsTable() {
     switch (status) {
       case "READ":
         return (
-          <span className="inline-flex items-center gap-1 text-xs font-bold text-sky-500">
-            <CheckCheck className="size-3.5" />
+          <Badge variant="info">
+            <CheckCheck className="size-3" />
             <span>{t("campaign.statusRead")}</span>
-          </span>
+          </Badge>
         );
       case "DELIVERED":
         return (
-          <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 dark:text-emerald-400">
-            <CheckCheck className="size-3.5" />
+          <Badge variant="success">
+            <CheckCheck className="size-3" />
             <span>{t("campaign.statusDelivered")}</span>
-          </span>
+          </Badge>
         );
       case "FAILED":
         return (
-          <span className="inline-flex items-center gap-1 text-xs font-bold text-rose-600 dark:text-rose-400">
-            <AlertCircle className="size-3.5" />
+          <Badge variant="danger">
+            <AlertCircle className="size-3" />
             <span>{t("campaign.statusFailed")}</span>
-          </span>
+          </Badge>
         );
       case "SENT":
       default:
         return (
-          <span className="text-foreground-muted inline-flex items-center gap-1 text-xs font-bold">
-            <Check className="size-3.5" />
+          <Badge variant="neutral">
+            <Check className="size-3" />
             <span>{t("campaign.statusSent")}</span>
-          </span>
+          </Badge>
         );
     }
   };
@@ -207,15 +209,15 @@ export function MessageLogsTable() {
             </p>
           </div>
         ) : filteredLogs.length === 0 ? (
-          <div className="space-y-2 p-6 text-center sm:p-10">
-            <AlertCircle className="text-foreground-muted mx-auto size-10" />
-            <h3 className="text-foreground text-sm font-bold">Tidak ada log pesan ditemukan</h3>
-            <p className="text-foreground-secondary text-xs">
-              {activeSearch
+          <EmptyState
+            icon={<AlertCircle />}
+            title="Tidak ada log pesan ditemukan"
+            description={
+              activeSearch
                 ? `Tidak ditemukan pesan dengan kata kunci "${activeSearch}".`
-                : "Belum ada riwayat pengiriman pesan."}
-            </p>
-          </div>
+                : "Belum ada riwayat pengiriman pesan."
+            }
+          />
         ) : (
           <div>
             {/* Mobile View: Card-based Message Logs (Visible on < 768px) */}

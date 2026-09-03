@@ -6,6 +6,8 @@ import { AdminPlanItem, CreatePlanInput, UpdatePlanInput } from "@/modules/admin
 import { PlanFormModal } from "./PlanFormModal";
 import { DeletePlanModal } from "./DeletePlanModal";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty";
 import { DataTablePagination } from "@/components/ui/pagination";
 import {
   Search,
@@ -166,15 +168,15 @@ export function PlansManagementTable() {
             <span className="text-xs font-bold">Memuat daftar paket langganan...</span>
           </div>
         ) : paginatedPlans.length === 0 ? (
-          <div className="space-y-2 p-10 text-center">
-            <Layers className="text-foreground-muted mx-auto size-8" />
-            <div className="text-foreground text-xs font-bold">Tidak Ada Paket Ditemukan</div>
-            <p className="text-foreground-muted mx-auto max-w-sm text-[11px]">
-              {searchQuery
+          <EmptyState
+            icon={<Layers />}
+            title="Tidak Ada Paket Ditemukan"
+            description={
+              searchQuery
                 ? `Tidak ditemukan hasil yang cocok dengan kata kunci "${searchQuery}".`
-                : "Belum ada paket langganan yang dikonfigurasi pada sistem."}
-            </p>
-          </div>
+                : "Belum ada paket langganan yang dikonfigurasi pada sistem."
+            }
+          />
         ) : (
           <div>
             {/* Mobile View: Cards (< 1024px) */}
@@ -194,13 +196,9 @@ export function PlansManagementTable() {
                           <div className="flex items-center gap-2">
                             <span className="text-foreground text-sm font-bold">{p.name}</span>
                             {isFree ? (
-                              <span className="rounded border border-blue-500/20 bg-blue-500/10 px-1.5 py-0.5 text-[10px] font-extrabold text-blue-600 dark:text-blue-400">
-                                Free Tier
-                              </span>
+                              <Badge variant="info">Free Tier</Badge>
                             ) : (
-                              <span className="dark:text-wise-green rounded border border-emerald-500/20 bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-extrabold text-emerald-700">
-                                Paid Tier
-                              </span>
+                              <Badge variant="success">Paid Tier</Badge>
                             )}
                           </div>
                           <span className="dark:text-wise-green font-mono text-xs font-bold text-emerald-700">
@@ -336,13 +334,9 @@ export function PlansManagementTable() {
                               <div className="flex items-center gap-1.5">
                                 <span className="text-foreground text-sm font-bold">{p.name}</span>
                                 {isFree ? (
-                                  <span className="py-0.2 rounded border border-blue-500/20 bg-blue-500/10 px-1.5 text-[10px] font-extrabold text-blue-600 dark:text-blue-400">
-                                    Free
-                                  </span>
+                                  <Badge variant="info">Free</Badge>
                                 ) : (
-                                  <span className="py-0.2 dark:text-wise-green rounded border border-emerald-500/20 bg-emerald-500/10 px-1.5 text-[10px] font-extrabold text-emerald-700">
-                                    Pro
-                                  </span>
+                                  <Badge variant="success">Pro</Badge>
                                 )}
                               </div>
                             </div>

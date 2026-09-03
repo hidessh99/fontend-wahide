@@ -5,6 +5,8 @@ import { AdminQueueItem } from "@/modules/admin/types/admin.types";
 import { DeleteQueueModal } from "./DeleteQueueModal";
 import { QueueDetailModal } from "./QueueDetailModal";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty";
 import { DataTablePagination } from "@/components/ui/pagination";
 import { formatDateTime } from "@/lib/utils";
 import {
@@ -47,37 +49,37 @@ function getQueueStatusBadge(status: string) {
   switch (upper) {
     case "COMPLETED":
       return (
-        <span className="dark:text-wise-green inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-black tracking-wider text-emerald-700 uppercase">
+        <Badge variant="success">
           <CheckCircle2 className="size-3" />
           <span>Selesai</span>
-        </span>
+        </Badge>
       );
     case "PENDING":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-[10px] font-black tracking-wider text-amber-700 uppercase dark:text-amber-400">
+        <Badge variant="warning">
           <Clock className="size-3" />
           <span>Menunggu</span>
-        </span>
+        </Badge>
       );
     case "PROCESSING":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full border border-blue-500/20 bg-blue-500/10 px-2 py-0.5 text-[10px] font-black tracking-wider text-blue-600 uppercase dark:text-blue-400">
+        <Badge variant="info">
           <RotateCcw className="size-3 animate-spin" />
           <span>Diproses</span>
-        </span>
+        </Badge>
       );
     case "FAILED":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full border border-rose-500/20 bg-rose-500/10 px-2 py-0.5 text-[10px] font-black tracking-wider text-rose-600 uppercase dark:text-rose-400">
+        <Badge variant="danger">
           <AlertCircle className="size-3" />
           <span>Gagal</span>
-        </span>
+        </Badge>
       );
     default:
       return (
-        <span className="bg-muted text-foreground-secondary border-border rounded-full border px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase">
-          {status}
-        </span>
+        <Badge variant="neutral">
+          <span>{status}</span>
+        </Badge>
       );
   }
 }
@@ -205,15 +207,15 @@ export function QueueMonitorTable({
             <span className="text-xs font-bold">Memuat antrean tugas background worker...</span>
           </div>
         ) : queues.length === 0 ? (
-          <div className="space-y-2 p-10 text-center">
-            <Layers className="text-foreground-muted mx-auto size-8" />
-            <div className="text-foreground text-xs font-bold">Tidak Ada Antrean Ditemukan</div>
-            <p className="text-foreground-muted mx-auto max-w-sm text-[11px]">
-              {searchQuery
+          <EmptyState
+            icon={<Layers />}
+            title="Tidak Ada Antrean Ditemukan"
+            description={
+              searchQuery
                 ? `Tidak ditemukan antrean dengan kata kunci "${searchQuery}".`
-                : "Saat ini tidak ada antrean notifikasi atau pengiriman email."}
-            </p>
-          </div>
+                : "Saat ini tidak ada antrean notifikasi atau pengiriman email."
+            }
+          />
         ) : (
           <div>
             {/* Mobile View: Cards (< 1024px) */}
