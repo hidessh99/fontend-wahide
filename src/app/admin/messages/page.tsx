@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { AdminMessagesView } from "@/components/admin/AdminMessagesView";
+import { AdminMessagesView } from "@/modules/admin/views";
 
 export const metadata: Metadata = {
   title: "Log Pesan WhatsApp Seluruh Pengguna",

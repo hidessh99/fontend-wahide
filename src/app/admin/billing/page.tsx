@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { AdminBillingView } from "@/components/admin/AdminBillingView";
+import { AdminBillingView } from "@/modules/admin/views";
 
 export const metadata: Metadata = {
   title: "Kelola Billing & Topup Platform",

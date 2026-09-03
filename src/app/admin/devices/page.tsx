@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { AdminDevicesView } from "@/components/admin/AdminDevicesView";
+import { AdminDevicesView } from "@/modules/admin/views";
 
 export const metadata: Metadata = {
   title: "Manajemen Perangkat WhatsApp Seluruh Pengguna",

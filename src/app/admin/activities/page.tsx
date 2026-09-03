@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { AdminActivitiesView } from "@/components/admin/AdminActivitiesView";
+import { AdminActivitiesView } from "@/modules/admin/views";
 
 export const metadata: Metadata = {
   title: "Log Aktivitas Pengguna | Wahide Superadmin",

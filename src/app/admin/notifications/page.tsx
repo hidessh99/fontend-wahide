@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { AdminNotificationsView } from "@/components/admin/AdminNotificationsView";
+import { AdminNotificationsView } from "@/modules/admin/views";
 
 export const metadata: Metadata = {
   title: "Siaran Massal & Antrean Notifikasi",
