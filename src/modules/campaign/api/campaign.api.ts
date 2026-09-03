@@ -29,6 +29,28 @@ const mapBackendCampaign = (c: any): Campaign => {
   const sentCount = Number(c.total_sent ?? c.sentCount ?? 0);
   const failedCount = Number(c.total_failed ?? c.failedCount ?? 0);
 
+  const rawTags: string[] = Array.isArray(c.tag_ids) ? c.tag_ids : c.targetTags || [];
+  let derivedTargetType: "ALL" | "TAGS" | "CUSTOM" = "ALL";
+  let targetTags: string[] = [];
+  let targetNumbers: string[] = Array.isArray(c.target_numbers)
+    ? c.target_numbers
+    : c.targetNumbers || [];
+
+  if (
+    c.target_type === "CUSTOM" ||
+    rawTags.some((t) => typeof t === "string" && t.startsWith("phone:"))
+  ) {
+    derivedTargetType = "CUSTOM";
+    targetNumbers = rawTags
+      .filter((t) => typeof t === "string" && t.startsWith("phone:"))
+      .map((t) => t.replace("phone:", ""));
+  } else if (c.target_type === "TAGS" || (rawTags.length > 0 && !rawTags.includes("ALL"))) {
+    derivedTargetType = "TAGS";
+    targetTags = rawTags.filter((t) => t !== "ALL");
+  } else {
+    derivedTargetType = "ALL";
+  }
+
   return {
     id: String(c.id || ""),
     name: c.name || "Kampanye Siaran",
@@ -37,9 +59,9 @@ const mapBackendCampaign = (c: any): Campaign => {
     messageTemplate: c.message_template || c.messageTemplate || "",
     jitterDelaySeconds: Number(c.jitter_delay_seconds ?? c.jitterDelaySeconds ?? 3),
     enableHumanTyping: Boolean(c.enable_human_typing ?? c.enableHumanTyping ?? true),
-    targetType: c.target_type || c.targetType || "ALL",
-    targetTags: Array.isArray(c.tag_ids) ? c.tag_ids : c.targetTags || [],
-    targetNumbers: Array.isArray(c.target_numbers) ? c.target_numbers : c.targetNumbers || [],
+    targetType: derivedTargetType,
+    targetTags,
+    targetNumbers,
     totalRecipients: isNaN(totalRecipients) ? 0 : totalRecipients,
     sentCount: isNaN(sentCount) ? 0 : sentCount,
     failedCount: isNaN(failedCount) ? 0 : failedCount,

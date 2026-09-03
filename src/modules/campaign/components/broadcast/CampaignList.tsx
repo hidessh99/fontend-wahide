@@ -44,6 +44,7 @@ import {
   Loader2,
   Calendar,
   ExternalLink,
+  Users,
 } from "lucide-react";
 
 export function CampaignList() {
@@ -251,19 +252,11 @@ export function CampaignList() {
                 ? Math.min(100, Math.round((sentCount / totalRecipients) * 100))
                 : 0;
 
-            const formattedDate = campaign.createdAt
-              ? new Date(campaign.createdAt).toLocaleDateString([], {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })
-              : "-";
-
             return (
               <div
                 key={campaign.id}
                 onClick={() => setSelectedCampaignForDetail(campaign)}
-                className="border-border bg-surface hover:border-wise-green/60 hover:shadow-md group flex cursor-pointer flex-col justify-between space-y-4 rounded-md border p-5 transition sm:p-6 dark:bg-[#161715]"
+                className="border-border bg-surface hover:border-wise-green/60 group flex cursor-pointer flex-col justify-between space-y-4 rounded-md border p-5 transition hover:shadow-md sm:p-6 dark:bg-[#161715]"
                 title={t("campaign.cardClickHint")}
               >
                 {/* Header */}
@@ -275,12 +268,29 @@ export function CampaignList() {
                       </h3>
                       <ExternalLink className="text-foreground-muted size-3.5 opacity-0 transition group-hover:opacity-100" />
                     </div>
-                    <div className="text-foreground-muted flex items-center gap-2 text-xs font-semibold">
-                      <Smartphone className="size-3.5" />
-                      <span>{campaign.deviceName || "Perangkat Utama"}</span>
+                    <div className="text-foreground-muted flex items-center gap-2 text-xs font-semibold flex-wrap">
+                      <div className="flex items-center gap-1">
+                        <Smartphone className="size-3.5" />
+                        <span>{campaign.deviceName || "Perangkat Utama"}</span>
+                      </div>
                       <span>•</span>
-                      <ShieldCheck className="dark:text-wise-green size-3.5 text-emerald-700" />
-                      <span>Jitter {campaign.jitterDelaySeconds ?? 3}s</span>
+                      <div className="flex items-center gap-1">
+                        <ShieldCheck className="dark:text-wise-green size-3.5 text-emerald-700" />
+                        <span>Jitter {campaign.jitterDelaySeconds ?? 3}s</span>
+                      </div>
+                      <span>•</span>
+                      <div className="flex items-center gap-1">
+                        <Users className="size-3.5" />
+                        <span>
+                          {campaign.targetType === "CUSTOM"
+                            ? `Input Manual (${campaign.totalRecipients ?? 0} no)`
+                            : campaign.targetType === "TAGS" &&
+                                campaign.targetTags &&
+                                campaign.targetTags.length > 0
+                              ? `#${campaign.targetTags[0]}`
+                              : "Semua Kontak"}
+                        </span>
+                      </div>
                     </div>
                   </div>
                   {renderStatusBadge(campaign.status, campaign.scheduledAt)}
@@ -291,7 +301,9 @@ export function CampaignList() {
                   <div className="flex items-center gap-2 rounded-md border border-amber-500/20 bg-amber-500/10 px-3 py-1.5 text-[11px] font-semibold text-amber-700 dark:border-amber-500/30 dark:text-amber-400">
                     <Clock className="size-3.5 shrink-0" />
                     <span className="font-bold">
-                      {t("campaign.scheduledBanner", { time: formatDateTime(campaign.scheduledAt) })}
+                      {t("campaign.scheduledBanner", {
+                        time: formatDateTime(campaign.scheduledAt),
+                      })}
                     </span>
                   </div>
                 )}

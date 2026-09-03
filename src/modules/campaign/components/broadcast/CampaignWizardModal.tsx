@@ -38,6 +38,29 @@ interface CampaignWizardModalProps {
   onSubmit: (data: CreateCampaignInput) => Promise<unknown>;
 }
 
+const normalizePhoneNumber = (raw: string): string => {
+  let cleaned = raw.trim().replace(/[^0-9]/g, "");
+  if (cleaned.startsWith("08")) {
+    cleaned = "628" + cleaned.slice(2);
+  } else if (cleaned.startsWith("8") && !cleaned.startsWith("800")) {
+    cleaned = "62" + cleaned;
+  }
+  return cleaned;
+};
+
+const parseCustomNumbers = (raw: string): string[] => {
+  const seen = new Set<string>();
+  const result: string[] = [];
+  for (const line of raw.split("\n")) {
+    const normalized = normalizePhoneNumber(line);
+    if (normalized.length >= 9 && normalized.length <= 16 && !seen.has(normalized)) {
+      seen.add(normalized);
+      result.push(normalized);
+    }
+  }
+  return result;
+};
+
 export function CampaignWizardModal({ isOpen, onClose, onSubmit }: CampaignWizardModalProps) {
   const router = useRouter();
   const { t } = useI18n();
@@ -90,12 +113,11 @@ export function CampaignWizardModal({ isOpen, onClose, onSubmit }: CampaignWizar
         return;
       }
       if (targetType === "CUSTOM") {
-        const parsed = customNumbersStr
-          .split("\n")
-          .map((n) => n.trim().replace(/[^0-9]/g, ""))
-          .filter(Boolean);
+        const parsed = parseCustomNumbers(customNumbersStr);
         if (parsed.length === 0) {
-          setError("Silakan masukkan minimal satu nomor telepon tujuan yang valid.");
+          setError(
+            "Silakan masukkan minimal satu nomor telepon tujuan yang valid (contoh: 08123456789 atau 628123456789)."
+          );
           return;
         }
       }
@@ -124,10 +146,7 @@ export function CampaignWizardModal({ isOpen, onClose, onSubmit }: CampaignWizar
         })
       ).length;
     }
-    return customNumbersStr
-      .split("\n")
-      .map((n) => n.trim().replace(/[^0-9]/g, ""))
-      .filter(Boolean).length;
+    return parseCustomNumbers(customNumbersStr).length;
   };
 
   const handleSubmit = async () => {
@@ -136,12 +155,7 @@ export function CampaignWizardModal({ isOpen, onClose, onSubmit }: CampaignWizar
 
     try {
       const targetNumbers =
-        targetType === "CUSTOM"
-          ? customNumbersStr
-              .split("\n")
-              .map((n) => n.trim().replace(/[^0-9]/g, ""))
-              .filter(Boolean)
-          : undefined;
+        targetType === "CUSTOM" ? parseCustomNumbers(customNumbersStr) : undefined;
 
       const payload: CreateCampaignInput = {
         name: name.trim(),
@@ -412,9 +426,16 @@ export function CampaignWizardModal({ isOpen, onClose, onSubmit }: CampaignWizar
                     placeholder={"6281234567890\n6289876543210"}
                     className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green w-full rounded-md border p-3 font-mono text-xs font-semibold outline-none focus:ring-1 dark:bg-[#10110e]"
                   />
-                  <span className="text-foreground-muted text-[11px]">
-                    {t("campaign.customNumbersHint")}
-                  </span>
+                  <div className="flex items-center justify-between text-[11px]">
+                    <span className="text-foreground-muted">
+                      {t("campaign.customNumbersHint")} (otomatis normalisasi 08xx → 628xx)
+                    </span>
+                    {parseCustomNumbers(customNumbersStr).length > 0 && (
+                      <span className="font-bold text-emerald-700 dark:text-wise-green">
+                        ✓ {parseCustomNumbers(customNumbersStr).length} nomor valid
+                      </span>
+                    )}
+                  </div>
                 </div>
               )}
 

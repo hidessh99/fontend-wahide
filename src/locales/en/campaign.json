@@ -146,6 +146,7 @@
   "sentMessages": "Sent Messages",
   "failedMessages": "Failed Messages",
   "startBroadcastNow": "Start Broadcast Now",
+  "closeBtn": "Close",
   "cardClickHint": "Click to view campaign details",
   "btnBack": "Back"
 }

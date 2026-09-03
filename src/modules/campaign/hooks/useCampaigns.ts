@@ -28,26 +28,45 @@ export function useCampaigns() {
 
   useEffect(() => {
     let isMounted = true;
-    const init = async () => {
+    const loadCampaigns = async () => {
       try {
         const data = await campaignApi.getCampaigns();
         if (isMounted) {
           setCampaigns(data);
-          setIsLoading(false);
         }
       } catch (err: unknown) {
         if (isMounted) {
           const msg = err instanceof Error ? err.message : "Gagal memuat kampanye";
           setError(msg);
+        }
+      } finally {
+        if (isMounted) {
           setIsLoading(false);
         }
       }
     };
-    init();
+    loadCampaigns();
     return () => {
       isMounted = false;
     };
   }, []);
+
+  // Auto-polling: automatically refresh campaigns while any campaign is RUNNING
+  useEffect(() => {
+    const hasRunning = campaigns.some((c) => c.status === "RUNNING");
+    if (!hasRunning) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const data = await campaignApi.getCampaigns();
+        setCampaigns(data);
+      } catch {
+        // silent polling error
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [campaigns]);
 
   const startCampaign = async (id: string): Promise<void> => {
     try {
@@ -57,12 +76,16 @@ export function useCampaigns() {
       await fetchCampaigns();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal memulai kampanye";
+      if (msg.toLowerCase().includes("already active") || msg.toLowerCase().includes("completed")) {
+        toast.info("Kampanye sudah aktif atau sudah selesai.");
+        await fetchCampaigns();
+        return;
+      }
       toast.error(msg);
-      throw err;
     }
   };
 
-  const createCampaign = async (data: CreateCampaignInput): Promise<Campaign> => {
+  const createCampaign = async (data: CreateCampaignInput): Promise<Campaign | null> => {
     try {
       const newCampaign = await campaignApi.createCampaign(data);
       if (!data.scheduledAt && newCampaign.id) {
@@ -82,7 +105,7 @@ export function useCampaigns() {
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal membuat kampanye";
       toast.error(msg);
-      throw err;
+      return null;
     }
   };
 

@@ -139,6 +139,8 @@ export function CampaignDetailModal({
     setIsSubmitting(true);
     try {
       await action();
+    } catch (err: unknown) {
+      console.warn("Modal action error:", err);
     } finally {
       setIsSubmitting(false);
     }
@@ -146,27 +148,27 @@ export function CampaignDetailModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-2xl border-border bg-surface p-6 shadow-2xl sm:rounded-xl dark:bg-[#161715]">
-        <DialogHeader className="space-y-2 text-left">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
-                <Send className="size-5" />
-              </div>
-              <div>
-                <DialogTitle className="text-foreground text-lg font-extrabold tracking-tight">
+      <DialogContent className="border-border bg-surface flex max-h-[90dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-2xl dark:bg-[#161715]">
+        <DialogHeader className="border-border/80 shrink-0 space-y-2 border-b p-5 pr-12 text-left sm:p-6">
+          <div className="flex items-start gap-3">
+            <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
+              <Send className="size-5" />
+            </div>
+            <div className="min-w-0 flex-1 space-y-1.5">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <DialogTitle className="text-foreground truncate text-lg font-extrabold tracking-tight sm:text-xl">
                   {campaign.name || "Kampanye Siaran"}
                 </DialogTitle>
-                <DialogDescription className="text-foreground-secondary text-xs font-medium">
-                  {t("campaign.detailModalSubtitle")}
-                </DialogDescription>
+                {renderStatusBadge()}
               </div>
+              <DialogDescription className="text-foreground-secondary line-clamp-2 text-xs font-medium">
+                {t("campaign.detailModalSubtitle")}
+              </DialogDescription>
             </div>
-            {renderStatusBadge()}
           </div>
         </DialogHeader>
 
-        <div className="mt-4 space-y-4 text-xs font-semibold">
+        <div className="flex-1 space-y-4 overflow-y-auto p-5 text-xs font-semibold sm:p-6">
           {/* Scheduled Banner (if set) */}
           {campaign.scheduledAt && (
             <div className="flex items-center gap-2.5 rounded-lg border border-amber-500/20 bg-amber-500/10 p-3 text-amber-700 dark:border-amber-500/30 dark:text-amber-400">
@@ -185,7 +187,7 @@ export function CampaignDetailModal({
           {/* Key Details Grid */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {/* Created At */}
-            <div className="border-border bg-muted/30 dark:bg-[#10110e] flex items-center gap-3 rounded-lg border p-3">
+            <div className="border-border bg-muted/30 flex items-center gap-3 rounded-lg border p-3 dark:bg-[#10110e]">
               <Calendar className="text-foreground-muted size-4 shrink-0" />
               <div>
                 <span className="text-foreground-muted block text-[11px]">
@@ -198,7 +200,7 @@ export function CampaignDetailModal({
             </div>
 
             {/* Device Info */}
-            <div className="border-border bg-muted/30 dark:bg-[#10110e] flex items-center gap-3 rounded-lg border p-3">
+            <div className="border-border bg-muted/30 flex items-center gap-3 rounded-lg border p-3 dark:bg-[#10110e]">
               <Smartphone className="dark:text-wise-green size-4 shrink-0 text-emerald-700" />
               <div>
                 <span className="text-foreground-muted block text-[11px]">
@@ -211,39 +213,57 @@ export function CampaignDetailModal({
             </div>
 
             {/* Audience Scope */}
-            <div className="border-border bg-muted/30 dark:bg-[#10110e] flex items-center gap-3 rounded-lg border p-3">
-              <Users className="text-foreground-secondary size-4 shrink-0" />
-              <div>
+            <div className="border-border bg-muted/30 flex min-w-0 items-start gap-3 rounded-lg border p-3.5 dark:bg-[#10110e]">
+              <Users className="text-foreground-secondary mt-0.5 size-4 shrink-0" />
+              <div className="min-w-0 flex-1">
                 <span className="text-foreground-muted block text-[11px]">
                   {t("campaign.audienceScope")}
                 </span>
                 <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
                   <span className="text-foreground font-bold">
-                    {campaign.targetType === "ALL"
-                      ? t("campaign.audienceAllTitle")
+                    {campaign.targetType === "TAGS" ||
+                    (campaign.targetTags &&
+                      campaign.targetTags.length > 0 &&
+                      !campaign.targetTags.includes("ALL"))
+                      ? t("campaign.audienceTagsTitle")
                       : campaign.targetType === "CUSTOM"
                         ? t("campaign.audienceCustomTitle")
-                        : t("campaign.audienceTagsTitle")}
+                        : t("campaign.audienceAllTitle")}
                   </span>
-                  {campaign.targetTags && campaign.targetTags.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
-                      {campaign.targetTags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="dark:bg-wise-green/20 dark:text-wise-green inline-flex items-center gap-0.5 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-700"
-                        >
-                          <TagIcon className="size-2.5" />
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
+                  {campaign.targetTags &&
+                    campaign.targetTags.length > 0 &&
+                    !campaign.targetTags.includes("ALL") && (
+                      <div className="flex flex-wrap gap-1">
+                        {campaign.targetTags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="dark:bg-wise-green/20 dark:text-wise-green inline-flex items-center gap-0.5 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-700"
+                          >
+                            <TagIcon className="size-2.5" />#{tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  {campaign.targetType === "CUSTOM" &&
+                    campaign.targetNumbers &&
+                    campaign.targetNumbers.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {campaign.targetNumbers.map((num) => (
+                          <span
+                            key={num}
+                            className="dark:bg-sky-500/20 dark:text-sky-300 inline-flex items-center gap-0.5 rounded-full bg-sky-500/10 px-2 py-0.5 font-mono text-[10px] font-bold text-sky-700"
+                          >
+                            📞 {num}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                 </div>
               </div>
             </div>
 
             {/* Anti-Ban Settings */}
-            <div className="border-border bg-muted/30 dark:bg-[#10110e] flex items-center gap-3 rounded-lg border p-3">
+            <div className="border-border bg-muted/30 flex items-center gap-3 rounded-lg border p-3 dark:bg-[#10110e]">
               <ShieldCheck className="dark:text-wise-green size-4 shrink-0 text-emerald-700" />
               <div>
                 <span className="text-foreground-muted block text-[11px]">
@@ -263,29 +283,29 @@ export function CampaignDetailModal({
           </div>
 
           {/* Delivery Metrics Card */}
-          <div className="border-border bg-muted/20 dark:bg-[#10110e] space-y-2.5 rounded-lg border p-4">
+          <div className="border-border bg-muted/20 space-y-2.5 rounded-lg border p-4 dark:bg-[#10110e]">
             <div className="flex items-center justify-between">
               <span className="text-foreground font-bold">{t("campaign.deliveryMetrics")}</span>
-              <span className="text-dark-green dark:text-wise-green font-mono font-black text-sm">
+              <span className="text-dark-green dark:text-wise-green font-mono text-sm font-black">
                 {percent}%
               </span>
             </div>
             <Progress value={percent} className="h-2 w-full" />
             <div className="grid grid-cols-3 gap-2 pt-1 text-center font-mono text-xs">
               <div className="border-border/60 rounded border p-2">
-                <span className="text-foreground-muted block text-[10px] font-sans font-semibold">
+                <span className="text-foreground-muted block font-sans text-[10px] font-semibold">
                   {t("campaign.totalRecipients")}
                 </span>
                 <span className="text-foreground font-bold">{totalRecipients}</span>
               </div>
               <div className="border-border/60 rounded border p-2">
-                <span className="text-foreground-muted block text-[10px] font-sans font-semibold">
+                <span className="text-foreground-muted block font-sans text-[10px] font-semibold">
                   {t("campaign.sentMessages")}
                 </span>
                 <span className="dark:text-wise-green font-bold text-emerald-700">{sentCount}</span>
               </div>
               <div className="border-border/60 rounded border p-2">
-                <span className="text-foreground-muted block text-[10px] font-sans font-semibold">
+                <span className="text-foreground-muted block font-sans text-[10px] font-semibold">
                   {t("campaign.failedMessages")}
                 </span>
                 <span className="font-bold text-rose-500">{failedCount}</span>
@@ -318,14 +338,14 @@ export function CampaignDetailModal({
                 )}
               </Button>
             </div>
-            <div className="border-border/60 bg-muted/40 text-foreground dark:bg-[#10110e] max-h-40 overflow-y-auto rounded-lg border p-3.5 font-mono text-xs leading-relaxed whitespace-pre-wrap select-text">
+            <div className="border-border/60 bg-muted/40 text-foreground max-h-40 overflow-y-auto rounded-lg border p-3.5 font-mono text-xs leading-relaxed whitespace-pre-wrap select-text dark:bg-[#10110e]">
               {campaign.messageTemplate || "-"}
             </div>
           </div>
         </div>
 
         {/* Modal Footer Actions */}
-        <DialogFooter className="border-border/60 mt-4 flex items-center justify-between border-t pt-4 sm:justify-between">
+        <DialogFooter className="border-border/70 bg-muted/20 flex shrink-0 items-center justify-between border-t p-4 sm:justify-between sm:p-5 dark:bg-[#10110e]">
           <div>
             {campaign.status === "DRAFT" && onStartCampaign && (
               <Button
@@ -365,10 +385,22 @@ export function CampaignDetailModal({
                 <span>{t("campaign.resumeCampaign")}</span>
               </Button>
             )}
+
+            {campaign.status === "COMPLETED" && (
+              <div className="dark:text-wise-green flex items-center gap-1.5 text-xs font-bold text-emerald-700">
+                <CheckCircle2 className="size-4" />
+                <span>{t("campaign.statusCompleted")}</span>
+              </div>
+            )}
           </div>
 
-          <Button variant="outline" size="sm" onClick={onClose} className="border-border text-xs font-bold">
-            {t("campaign.closeBtn") || "Tutup"}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onClose}
+            className="border-border text-xs font-bold"
+          >
+            {t("campaign.closeBtn") || t("campaign.btnClose") || "Tutup"}
           </Button>
         </DialogFooter>
       </DialogContent>

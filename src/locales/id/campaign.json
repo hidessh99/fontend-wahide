@@ -146,6 +146,7 @@
   "sentMessages": "Pesan Terkirim",
   "failedMessages": "Pesan Gagal",
   "startBroadcastNow": "Mulai Siaran Sekarang",
+  "closeBtn": "Tutup",
   "cardClickHint": "Klik untuk melihat detail kampanye",
   "btnBack": "Kembali"
 }
