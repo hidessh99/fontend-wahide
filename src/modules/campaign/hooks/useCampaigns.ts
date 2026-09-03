@@ -52,6 +52,14 @@ export function useCampaigns() {
   const createCampaign = async (data: CreateCampaignInput): Promise<Campaign> => {
     try {
       const newCampaign = await campaignApi.createCampaign(data);
+      if (!data.scheduledAt && newCampaign.id) {
+        try {
+          await campaignApi.startCampaign(newCampaign.id);
+          newCampaign.status = "RUNNING";
+        } catch (startErr) {
+          console.warn("Auto-start campaign warning:", startErr);
+        }
+      }
       setCampaigns((prev) => [newCampaign, ...prev]);
       toast.success(t("campaign.toastCreated"));
       return newCampaign;

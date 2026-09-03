@@ -16,7 +16,28 @@ export const campaignApi = {
     }
   },
 
-  createCampaign: async (payload: CreateCampaignInput): Promise<Campaign> => {
+  createCampaign: async (input: CreateCampaignInput): Promise<Campaign> => {
+    let tagIDs: string[] = [];
+    if (input.targetType === "ALL") {
+      tagIDs = ["ALL"];
+    } else if (input.targetType === "TAGS" && input.targetTags) {
+      tagIDs = input.targetTags;
+    } else if (input.targetType === "CUSTOM" && input.targetNumbers) {
+      tagIDs = input.targetNumbers.map((num) => `phone:${num}`);
+    }
+
+    const payload = {
+      device_id: input.deviceId,
+      name: input.name,
+      message_template: input.messageTemplate,
+      target_type: input.targetType,
+      tag_ids: tagIDs,
+      target_numbers: input.targetNumbers,
+      jitter_delay_seconds: input.jitterDelaySeconds,
+      enable_human_typing: input.enableHumanTyping,
+      scheduled_at: input.scheduledAt || null,
+    };
+
     const res = await httpClient.post<Campaign>(`${CAMPAIGN_BASE}/campaigns`, payload);
     return res.payload || (res as unknown as Campaign);
   },

@@ -103,7 +103,13 @@ export function CampaignWizardModal({ isOpen, onClose, onSubmit }: CampaignWizar
   const calculateTargetCount = (): number => {
     if (targetType === "ALL") return contacts.length;
     if (targetType === "TAGS") {
-      return contacts.filter((c) => c.tags?.some((t) => selectedTags.includes(t))).length;
+      return contacts.filter((c) =>
+        c.tags?.some((t) => {
+          const name = typeof t === "string" ? t : t.name;
+          const id = typeof t === "string" ? t : t.id;
+          return selectedTags.includes(name) || selectedTags.includes(id);
+        })
+      ).length;
     }
     return customNumbersStr
       .split("\n")
@@ -159,9 +165,9 @@ export function CampaignWizardModal({ isOpen, onClose, onSubmit }: CampaignWizar
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && !isLoading && onClose()}>
-      <DialogContent className="border-border bg-surface max-h-[90vh] max-w-2xl gap-0 overflow-hidden p-0 dark:bg-[#161715]">
+      <DialogContent className="border-border bg-surface flex max-h-[90dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden p-0 sm:max-w-2xl dark:bg-[#161715]">
         {/* Sticky Header with Step Tracker */}
-        <DialogHeader className="border-border/80 shrink-0 space-y-3 border-b p-5 pb-3 text-left sm:p-6">
+        <DialogHeader className="border-border/80 shrink-0 space-y-3 border-b p-4 pb-3 text-left sm:p-6">
           <div>
             <DialogTitle className="text-foreground text-xl font-black tracking-tight sm:text-2xl">
               {t("campaign.wizardTitle")}
@@ -172,7 +178,7 @@ export function CampaignWizardModal({ isOpen, onClose, onSubmit }: CampaignWizar
           </div>
 
           {/* Stepper Indicator */}
-          <div className="grid grid-cols-4 gap-2 pt-1 text-xs font-bold">
+          <div className="grid grid-cols-4 gap-1.5 pt-1 text-xs font-bold sm:gap-2">
             {[
               { num: 1, label: t("campaign.step1Device"), icon: Smartphone },
               { num: 2, label: t("campaign.step2Audience"), icon: Users },
@@ -210,7 +216,7 @@ export function CampaignWizardModal({ isOpen, onClose, onSubmit }: CampaignWizar
         </DialogHeader>
 
         {/* Scrollable Wizard Steps Body */}
-        <div className="flex-1 space-y-4 overflow-x-hidden overflow-y-auto p-5 sm:p-6">
+        <div className="min-h-0 flex-1 space-y-4 overflow-x-hidden overflow-y-auto p-4 sm:p-6">
           {error && (
             <div className="rounded-md border border-rose-500/20 bg-rose-500/10 p-3 text-xs font-semibold text-rose-600 dark:text-rose-400">
               {error}
@@ -520,7 +526,7 @@ export function CampaignWizardModal({ isOpen, onClose, onSubmit }: CampaignWizar
         </div>
 
         {/* Sticky Footer Navigation */}
-        <DialogFooter className="border-border/80 bg-surface/90 m-0 flex shrink-0 flex-row items-center justify-between gap-2.5 rounded-none border-t p-4 pt-3 backdrop-blur-sm sm:p-6 dark:bg-[#161715]/90">
+        <DialogFooter className="border-border/80 bg-surface/90 m-0 flex shrink-0 flex-row items-center justify-between gap-2.5 rounded-none border-t p-3.5 backdrop-blur-sm sm:p-5 dark:bg-[#161715]/90">
           {step > 1 ? (
             <Button
               type="button"

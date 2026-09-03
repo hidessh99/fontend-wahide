@@ -5,11 +5,31 @@ import {
   CreateContactInput,
   GetContactsParams,
   ContactListResponse,
+  Tag,
 } from "../types/contact.types";
 
 const CONTACT_BASE = env.NEXT_PUBLIC_WHATSAPP_API_URL;
 
 export const contactApi = {
+  getTags: async (): Promise<Tag[]> => {
+    try {
+      const res = await httpClient.get<Tag[]>(`${CONTACT_BASE}/contacts/tags`);
+      return res.payload || (Array.isArray(res) ? res : []);
+    } catch {
+      return [];
+    }
+  },
+
+  createTag: async (name: string): Promise<Tag> => {
+    const res = await httpClient.post<Tag>(`${CONTACT_BASE}/contacts/tags`, { name: name.trim() });
+    return res.payload || (res as unknown as Tag);
+  },
+
+  deleteTag: async (id: string): Promise<{ success: boolean; message: string }> => {
+    const res = await httpClient.delete(`${CONTACT_BASE}/contacts/tags/${id}`);
+    return { success: res.success, message: res.message || "Tag berhasil dihapus" };
+  },
+
   getContacts: async (
     params?: GetContactsParams,
     signal?: AbortSignal
@@ -54,12 +74,23 @@ export const contactApi = {
   },
 
   createContact: async (payload: CreateContactInput): Promise<Contact> => {
-    const res = await httpClient.post<Contact>(`${CONTACT_BASE}/contacts`, payload);
+    const body = {
+      name: payload.name,
+      phone: payload.phone,
+      tag_ids: payload.tag_ids || payload.tags || [],
+    };
+    const res = await httpClient.post<Contact>(`${CONTACT_BASE}/contacts`, body);
     return res.payload || (res as unknown as Contact);
   },
 
   updateContact: async (id: string, payload: Partial<CreateContactInput>): Promise<Contact> => {
-    const res = await httpClient.put<Contact>(`${CONTACT_BASE}/contacts/${id}`, payload);
+    const body: Record<string, unknown> = {};
+    if (payload.name !== undefined) body.name = payload.name;
+    if (payload.phone !== undefined) body.phone = payload.phone;
+    if (payload.tag_ids !== undefined || payload.tags !== undefined) {
+      body.tag_ids = payload.tag_ids || payload.tags || [];
+    }
+    const res = await httpClient.put<Contact>(`${CONTACT_BASE}/contacts/${id}`, body);
     return res.payload || (res as unknown as Contact);
   },
 

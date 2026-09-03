@@ -116,8 +116,25 @@ export function ContactTable({
                 </div>
               </div>
 
-              <div className="text-foreground-secondary pl-7 font-mono text-xs">
-                +{contact.phone}
+              <div className="flex flex-wrap items-center gap-2 pl-7">
+                <span className="text-foreground-secondary font-mono text-xs">
+                  +{contact.phone}
+                </span>
+                {contact.tags && contact.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1">
+                    {contact.tags.map((tag, idx) => {
+                      const tagName = typeof tag === "string" ? tag : tag.name;
+                      return (
+                        <span
+                          key={idx}
+                          className="bg-wise-green/15 dark:text-wise-green border-wise-green/30 inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-bold text-emerald-800"
+                        >
+                          #{tagName}
+                        </span>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             </div>
           );
@@ -182,9 +199,26 @@ export function ContactTable({
                     />
                   </div>
 
-                  {/* Name Column */}
-                  <div className="text-foreground col-span-5 truncate text-sm font-bold tracking-tight sm:text-base">
-                    {contact.name}
+                  {/* Name & Tags Column */}
+                  <div className="col-span-5 min-w-0 pr-2">
+                    <div className="text-foreground truncate text-sm font-bold tracking-tight sm:text-base">
+                      {contact.name}
+                    </div>
+                    {contact.tags && contact.tags.length > 0 && (
+                      <div className="mt-1 flex flex-wrap gap-1">
+                        {contact.tags.map((tag, idx) => {
+                          const tagName = typeof tag === "string" ? tag : tag.name;
+                          return (
+                            <span
+                              key={idx}
+                              className="bg-wise-green/15 dark:text-wise-green border-wise-green/30 inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-bold text-emerald-800"
+                            >
+                              #{tagName}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
 
                   {/* Phone Column */}

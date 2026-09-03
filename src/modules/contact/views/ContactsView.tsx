@@ -35,6 +35,8 @@ export function ContactsView() {
   const {
     contacts,
     filteredContacts,
+    tags,
+    createTag,
     isLoading,
     activeSearch,
     page,
@@ -286,6 +288,8 @@ export function ContactsView() {
       <ContactModal
         isOpen={isAddModalOpen}
         contact={editingContact}
+        availableTags={tags}
+        onCreateTag={createTag}
         onClose={handleCloseModal}
         onSubmit={handleModalSubmit}
       />

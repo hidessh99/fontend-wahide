@@ -25,8 +25,8 @@ export function SpintaxVisualizer({ previewText, onRandomize }: SpintaxVisualize
           type="button"
           variant="outline"
           size="sm"
-          onClick={onRandomize}
-          className="border-border hover:border-foreground-muted h-7 gap-1.5 rounded-full px-3 text-xs font-bold"
+          onClick={() => onRandomize()}
+          className="border-border hover:border-foreground-muted h-7 cursor-pointer gap-1.5 rounded-full px-3 text-xs font-bold"
         >
           <RefreshCw className="dark:text-wise-green size-3 text-emerald-700" />
           <span>{t("campaign.randomizeVariation")}</span>
