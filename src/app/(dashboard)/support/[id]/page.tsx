@@ -4,8 +4,7 @@ import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 
 export const metadata: Metadata = {
   title: "Detail Tiket Bantuan",
-  description:
-    "Lihat riwayat percakapan tiket bantuan, lampiran screenshot, dan kirim balasan.",
+  description: "Lihat riwayat percakapan tiket bantuan, lampiran screenshot, dan kirim balasan.",
   robots: {
     index: false,
     follow: false,

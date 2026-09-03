@@ -21,15 +21,15 @@ export default function GlobalAppError({
   }, [error]);
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center p-6 bg-background text-foreground">
-      <div className="max-w-xl w-full text-center space-y-8 p-8 sm:p-12 rounded-lg border border-border bg-surface dark:bg-[#161715] shadow-lg animate-in fade-in zoom-in-95 duration-200">
+    <div className="bg-background text-foreground flex min-h-[80vh] items-center justify-center p-6">
+      <div className="border-border bg-surface animate-in fade-in zoom-in-95 w-full max-w-xl space-y-8 rounded-lg border p-8 text-center shadow-lg duration-200 sm:p-12 dark:bg-[#161715]">
         {/* Warning Icon & Badge */}
         <div className="space-y-3">
-          <div className="size-16 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto">
+          <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400">
             <AlertTriangle className="size-8" />
           </div>
 
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-3.5 py-1 text-xs font-bold text-amber-600 dark:text-amber-400">
             <ShieldAlert className="size-3.5" />
             <span>{t("common.errors.serverError.badge")}</span>
           </div>
@@ -37,21 +37,21 @@ export default function GlobalAppError({
 
         {/* Title & Description */}
         <div className="space-y-2">
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
+          <h1 className="text-foreground text-2xl font-black tracking-tight sm:text-3xl">
             {t("common.errors.serverError.title")}
           </h1>
-          <p className="text-xs sm:text-sm font-semibold text-foreground-secondary leading-relaxed max-w-md mx-auto">
+          <p className="text-foreground-secondary mx-auto max-w-md text-xs leading-relaxed font-semibold sm:text-sm">
             {t("common.errors.serverError.subtitle")}
           </p>
         </div>
 
         {/* Incident Digest Code */}
         {error?.digest && (
-          <div className="p-3 rounded-md bg-muted/40 border border-border text-xs font-mono text-foreground-muted inline-block">
-            <span className="font-sans font-bold text-foreground mr-1.5">
+          <div className="bg-muted/40 border-border text-foreground-muted inline-block rounded-md border p-3 font-mono text-xs">
+            <span className="text-foreground mr-1.5 font-sans font-bold">
               {t("common.errors.serverError.digestLabel")}
             </span>
-            <code className="text-emerald-700 dark:text-wise-green font-bold">{error.digest}</code>
+            <code className="dark:text-wise-green font-bold text-emerald-700">{error.digest}</code>
           </div>
         )}
 
@@ -68,7 +68,11 @@ export default function GlobalAppError({
           </Button>
 
           <Link href="/">
-            <Button variant="outline" size="default" className="rounded-full gap-2 px-6 border-border hover:border-foreground-muted">
+            <Button
+              variant="outline"
+              size="default"
+              className="border-border hover:border-foreground-muted gap-2 rounded-full px-6"
+            >
               <Home className="size-4" />
               <span>{t("common.errors.serverError.backHome")}</span>
             </Button>
@@ -76,7 +80,7 @@ export default function GlobalAppError({
         </div>
 
         {/* Direct WhatsApp CS Report */}
-        <div className="pt-6 border-t border-border/80 text-xs font-semibold text-foreground-muted">
+        <div className="border-border/80 text-foreground-muted border-t pt-6 text-xs font-semibold">
           <span>Membutuhkan bantuan darurat? </span>
           <a
             href={`https://wa.me/62877111301818?text=Halo%20Tim%20Wahide,%20saya%20mengalami%20kendala%20aplikasi:%20${encodeURIComponent(
@@ -84,7 +88,7 @@ export default function GlobalAppError({
             )}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-emerald-700 dark:text-wise-green font-bold hover:underline inline-flex items-center gap-1"
+            className="dark:text-wise-green inline-flex items-center gap-1 font-bold text-emerald-700 hover:underline"
           >
             <MessageSquare className="size-3" />
             <span>{t("common.errors.serverError.reportWhatsApp")}</span>

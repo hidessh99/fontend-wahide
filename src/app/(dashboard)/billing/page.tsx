@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 export default function BillingPage() {
   return (
     <SellerRouteGuard>
-      <Suspense fallback={<div className="h-96 flex items-center justify-center animate-pulse" />}>
+      <Suspense fallback={<div className="flex h-96 animate-pulse items-center justify-center" />}>
         <BillingView />
       </Suspense>
     </SellerRouteGuard>

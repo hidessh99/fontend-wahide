@@ -16,9 +16,9 @@ export default function GlobalError({
 
   return (
     <html lang="id" className="h-full">
-      <body className="h-full flex items-center justify-center p-6 bg-near-black text-[#fbfcf9] font-sans antialiased">
-        <div className="max-w-md w-full text-center space-y-6 p-8 rounded-lg border border-white/10 bg-[#161715] shadow-2xl">
-          <div className="size-14 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center mx-auto text-2xl font-black">
+      <body className="bg-near-black flex h-full items-center justify-center p-6 font-sans text-[#fbfcf9] antialiased">
+        <div className="w-full max-w-md space-y-6 rounded-lg border border-white/10 bg-[#161715] p-8 text-center shadow-2xl">
+          <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-rose-500/20 text-2xl font-black text-rose-400">
             !
           </div>
 
@@ -26,13 +26,14 @@ export default function GlobalError({
             <h1 className="text-xl font-black tracking-tight">
               Terjadi Hambatan Fatal pada Aplikasi
             </h1>
-            <p className="text-xs text-white/70 leading-relaxed">
-              Root layout mengalami kendala tidak terduga. Silakan segarkan ulang aplikasi untuk memulihkan sesi Anda.
+            <p className="text-xs leading-relaxed text-white/70">
+              Root layout mengalami kendala tidak terduga. Silakan segarkan ulang aplikasi untuk
+              memulihkan sesi Anda.
             </p>
           </div>
 
           {error?.digest && (
-            <div className="p-2.5 rounded bg-black/40 border border-white/10 text-[11px] font-mono text-white/60">
+            <div className="rounded border border-white/10 bg-black/40 p-2.5 font-mono text-[11px] text-white/60">
               Ref ID: <span className="text-wise-green font-bold">{error.digest}</span>
             </div>
           )}
@@ -40,13 +41,13 @@ export default function GlobalError({
           <div className="flex flex-col gap-2 pt-2">
             <button
               onClick={() => reset()}
-              className="w-full h-10 px-5 rounded-full bg-wise-green text-dark-green font-bold text-xs hover:bg-wise-green/90 transition"
+              className="bg-wise-green text-dark-green hover:bg-wise-green/90 h-10 w-full rounded-full px-5 text-xs font-bold transition"
             >
               Coba Pulihkan
             </button>
             <Link
               href="/"
-              className="w-full h-10 px-5 rounded-full border border-white/20 text-white font-bold text-xs hover:bg-white/10 transition flex items-center justify-center"
+              className="flex h-10 w-full items-center justify-center rounded-full border border-white/20 px-5 text-xs font-bold text-white transition hover:bg-white/10"
             >
               Kembali ke Beranda
             </Link>

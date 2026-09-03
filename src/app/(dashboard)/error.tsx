@@ -19,23 +19,24 @@ export default function DashboardSegmentError({
   }, [error]);
 
   return (
-    <div className="p-6 sm:p-10 rounded-md border border-amber-500/20 bg-amber-500/5 text-center space-y-4 my-6 animate-in fade-in">
-      <div className="size-12 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto">
+    <div className="animate-in fade-in my-6 space-y-4 rounded-md border border-amber-500/20 bg-amber-500/5 p-6 text-center sm:p-10">
+      <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400">
         <AlertCircle className="size-6" />
       </div>
 
-      <div className="space-y-1 max-w-md mx-auto">
-        <h2 className="text-lg font-black text-foreground">
+      <div className="mx-auto max-w-md space-y-1">
+        <h2 className="text-foreground text-lg font-black">
           {t("common.errorBoundary.defaultTitle")}
         </h2>
-        <p className="text-xs font-semibold text-foreground-secondary leading-relaxed">
+        <p className="text-foreground-secondary text-xs leading-relaxed font-semibold">
           {error.message || t("common.errorBoundary.defaultDesc")}
         </p>
       </div>
 
       {error?.digest && (
-        <div className="text-[11px] font-mono text-foreground-muted">
-          Digest: <code className="text-emerald-700 dark:text-wise-green font-bold">{error.digest}</code>
+        <div className="text-foreground-muted font-mono text-[11px]">
+          Digest:{" "}
+          <code className="dark:text-wise-green font-bold text-emerald-700">{error.digest}</code>
         </div>
       )}
 

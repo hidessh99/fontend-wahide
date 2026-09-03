@@ -61,9 +61,7 @@ export const metadata: Metadata = {
       { url: "/icon.png", sizes: "512x512", type: "image/png" },
     ],
     shortcut: "/favicon.svg",
-    apple: [
-      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
-    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
   openGraph: {
     title: "Wahide - Enterprise WhatsApp Multi-Tenant Gateway",
@@ -100,33 +98,29 @@ const jsonLd = {
   "@graph": [
     {
       "@type": "SoftwareApplication",
-      "name": "Wahide WhatsApp Gateway",
-      "applicationCategory": "BusinessApplication",
-      "operatingSystem": "All",
-      "offers": {
+      name: "Wahide WhatsApp Gateway",
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "All",
+      offers: {
         "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "IDR",
+        price: "0",
+        priceCurrency: "IDR",
       },
-      "description":
+      description:
         "Platform SaaS WhatsApp Multi-Tenant & Multi-Device berkinerja tinggi dengan Session Hibernation dan 5 Lapis Anti-Ban.",
     },
     {
       "@type": "Organization",
-      "name": "Hide Digital Security ",
-      "url": siteUrl,
-      "logo": `${siteUrl}/logo.png`,
+      name: "Hide Digital Security ",
+      url: siteUrl,
+      logo: `${siteUrl}/logo.png`,
     },
   ],
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="id" className="h-full antialiased font-sans" suppressHydrationWarning>
+    <html lang="id" className="h-full font-sans antialiased" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -141,7 +135,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="min-h-full flex flex-col bg-background text-foreground selection:bg-wise-green selection:text-dark-green">
+      <body className="bg-background text-foreground selection:bg-wise-green selection:text-dark-green flex min-h-full flex-col">
         <Providers>
           <NetworkStatusBanner />
           {children}

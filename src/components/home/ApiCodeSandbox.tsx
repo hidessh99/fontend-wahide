@@ -126,18 +126,18 @@ print(response.json())`,
   };
 
   return (
-    <div className="rounded-lg border border-border bg-surface dark:bg-[#161715] p-6 sm:p-8 shadow-sm space-y-6">
+    <div className="border-border bg-surface space-y-6 rounded-lg border p-6 shadow-sm sm:p-8 dark:bg-[#161715]">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border pb-6">
-        <div className="space-y-2 max-w-xl">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green">
+      <div className="border-border flex flex-col justify-between gap-4 border-b pb-6 md:flex-row md:items-end">
+        <div className="max-w-xl space-y-2">
+          <div className="bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold">
             <Code2 className="size-3.5" />
             <span>{t("common.landing.apiSandbox.badge")}</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
+          <h2 className="text-foreground text-2xl font-black tracking-tight sm:text-3xl">
             {t("common.landing.apiSandbox.title")}
           </h2>
-          <p className="text-xs sm:text-sm font-semibold text-foreground-secondary leading-relaxed">
+          <p className="text-foreground-secondary text-xs leading-relaxed font-semibold sm:text-sm">
             {t("common.landing.apiSandbox.subtitle")}
           </p>
         </div>
@@ -148,7 +148,7 @@ print(response.json())`,
           rel="noopener noreferrer"
           className={cn(
             buttonVariants({ variant: "outline", size: "sm" }),
-            "rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted shrink-0 min-h-9"
+            "border-border hover:border-foreground-muted min-h-9 shrink-0 gap-1.5 rounded-full text-xs font-bold"
           )}
         >
           <span>{t("common.landing.apiSandbox.docsBtn")}</span>
@@ -157,9 +157,9 @@ print(response.json())`,
       </div>
 
       {/* Code Container */}
-      <div className="rounded-lg bg-near-black border border-white/10 overflow-hidden shadow-xl text-xs font-mono">
+      <div className="bg-near-black overflow-hidden rounded-lg border border-white/10 font-mono text-xs shadow-xl">
         {/* Language Tabs & Copy Button */}
-        <div className="flex items-center justify-between px-4 py-2.5 bg-black/50 border-b border-white/10">
+        <div className="flex items-center justify-between border-b border-white/10 bg-black/50 px-4 py-2.5">
           <div className="flex items-center gap-1 overflow-x-auto">
             {(Object.keys(codeSnippets) as LangType[]).map((key) => {
               const isActive = activeLang === key;
@@ -167,10 +167,10 @@ print(response.json())`,
                 <button
                   key={key}
                   onClick={() => setActiveLang(key)}
-                  className={`px-3 py-1 rounded text-xs font-bold transition ${
+                  className={`rounded px-3 py-1 text-xs font-bold transition ${
                     isActive
                       ? "bg-wise-green text-near-black"
-                      : "text-white/80 hover:text-white hover:bg-white/5"
+                      : "text-white/80 hover:bg-white/5 hover:text-white"
                   }`}
                 >
                   {codeSnippets[key].langName}
@@ -181,11 +181,11 @@ print(response.json())`,
 
           <button
             onClick={handleCopy}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/10 hover:bg-white/15 text-white/90 hover:text-white transition text-[11px] font-sans font-semibold shrink-0 min-h-7"
+            className="inline-flex min-h-7 shrink-0 items-center gap-1.5 rounded bg-white/10 px-2.5 py-1 font-sans text-[11px] font-semibold text-white/90 transition hover:bg-white/15 hover:text-white"
           >
             {isCopied ? (
               <>
-                <Check className="size-3 text-wise-green" />
+                <Check className="text-wise-green size-3" />
                 <span>Disalin</span>
               </>
             ) : (
@@ -198,7 +198,7 @@ print(response.json())`,
         </div>
 
         {/* Code Pre Block */}
-        <div className="p-4 sm:p-6 overflow-x-auto text-white/95 leading-relaxed font-mono text-[11px] sm:text-xs">
+        <div className="overflow-x-auto p-4 font-mono text-[11px] leading-relaxed text-white/95 sm:p-6 sm:text-xs">
           <pre>
             <code>{codeSnippets[activeLang].code}</code>
           </pre>
@@ -206,20 +206,20 @@ print(response.json())`,
       </div>
 
       {/* Meta WhatsApp Cloud API Drop-in Compatibility Callout */}
-      <div className="rounded-lg border border-wise-green/30 bg-wise-green/5 dark:bg-wise-green/10 p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-3.5 shadow-xs">
-        <div className="size-9 rounded-full bg-wise-green/20 text-dark-green dark:text-wise-green flex items-center justify-center shrink-0">
+      <div className="border-wise-green/30 bg-wise-green/5 dark:bg-wise-green/10 flex flex-col items-start gap-3.5 rounded-lg border p-4 shadow-xs sm:flex-row sm:items-center sm:p-5">
+        <div className="bg-wise-green/20 text-dark-green dark:text-wise-green flex size-9 shrink-0 items-center justify-center rounded-full">
           <Workflow className="size-4.5" />
         </div>
         <div className="space-y-1">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="px-2 py-0.5 rounded-full bg-wise-green text-near-black text-[10px] font-black uppercase tracking-wider">
+            <span className="bg-wise-green text-near-black rounded-full px-2 py-0.5 text-[10px] font-black tracking-wider uppercase">
               {t("common.landing.apiSandbox.metaCompatBadge")}
             </span>
-            <h3 className="text-xs sm:text-sm font-bold text-foreground">
+            <h3 className="text-foreground text-xs font-bold sm:text-sm">
               {t("common.landing.apiSandbox.metaCompatTitle")}
             </h3>
           </div>
-          <p className="text-xs font-semibold text-foreground-secondary leading-relaxed">
+          <p className="text-foreground-secondary text-xs leading-relaxed font-semibold">
             {t("common.landing.apiSandbox.metaCompatDesc")}
           </p>
         </div>

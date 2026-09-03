@@ -142,7 +142,9 @@
   }
   html {
     @apply font-sans;
-    font-feature-settings: "calt" 1, "tnum" 1;
+    font-feature-settings:
+      "calt" 1,
+      "tnum" 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }

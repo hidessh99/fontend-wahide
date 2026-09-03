@@ -9,16 +9,16 @@ export function ForgotPasswordView() {
   const { t } = useI18n();
 
   return (
-    <main className="min-h-screen flex flex-col justify-between p-6 sm:p-12 bg-background">
-      <header className="max-w-xl w-full mx-auto">
+    <main className="bg-background flex min-h-screen flex-col justify-between p-6 sm:p-12">
+      <header className="mx-auto w-full max-w-xl">
         <AuthHeader />
       </header>
 
-      <div className="my-auto py-8 max-w-md w-full mx-auto">
+      <div className="mx-auto my-auto w-full max-w-md py-8">
         <ForgotPasswordForm />
       </div>
 
-      <footer className="text-center text-xs font-semibold text-foreground-muted">
+      <footer className="text-foreground-muted text-center text-xs font-semibold">
         {t("auth.layout.emergencySupport")}
       </footer>
     </main>
