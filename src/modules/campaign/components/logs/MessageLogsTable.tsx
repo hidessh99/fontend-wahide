@@ -2,18 +2,9 @@
 
 import React, { useState, useRef, useMemo } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import {
-  Search,
-  X,
-  CheckCheck,
-  Check,
-  AlertCircle,
-  ChevronLeft,
-  ChevronRight,
-  RefreshCw,
-  Loader2,
-} from "lucide-react";
+import { Search, X, CheckCheck, Check, AlertCircle, RefreshCw, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { DataTablePagination } from "@/components/ui/pagination";
 import { useI18n } from "@/lib/i18n/context";
 import { useMessageLogs } from "../../hooks/useMessageLogs";
 
@@ -362,35 +353,16 @@ export function MessageLogsTable() {
               Menampilkan {startItem} - {endItem} dari {total} log pesan
             </div>
 
-            {/* Page navigation: Previous, Page Indicator, Next */}
+            {/* Shadcn UI Pagination */}
             {totalPages > 1 && (
-              <div className="flex items-center gap-2">
-                <span className="text-foreground-muted px-1.5 text-xs font-bold select-none">
-                  Halaman {page} dari {totalPages}
-                </span>
-
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setPage((prev) => Math.max(1, prev - 1))}
-                  disabled={page <= 1}
-                  className="border-border hover:border-foreground-muted h-8.5 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold disabled:opacity-40"
-                >
-                  <ChevronLeft className="size-3.5" />
-                  <span>Sebelumnya</span>
-                </Button>
-
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
-                  disabled={page >= totalPages}
-                  className="border-border hover:border-foreground-muted h-8.5 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold disabled:opacity-40"
-                >
-                  <span>Berikutnya</span>
-                  <ChevronRight className="size-3.5" />
-                </Button>
-              </div>
+              <DataTablePagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={(p) => setPage(p)}
+                onPrevPage={() => setPage((prev) => Math.max(1, prev - 1))}
+                onNextPage={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+                className="mx-0 w-auto"
+              />
             )}
           </div>
         )}

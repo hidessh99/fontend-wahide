@@ -5,6 +5,7 @@ import { AdminQueueItem } from "@/modules/admin/types/admin.types";
 import { DeleteQueueModal } from "./DeleteQueueModal";
 import { QueueDetailModal } from "./QueueDetailModal";
 import { Button } from "@/components/ui/button";
+import { DataTablePagination } from "@/components/ui/pagination";
 import { formatDateTime } from "@/lib/utils";
 import {
   Search,
@@ -17,8 +18,6 @@ import {
   AlertCircle,
   Trash2,
   Eye,
-  ChevronLeft,
-  ChevronRight,
   Loader2,
   Mail,
 } from "lucide-react";
@@ -130,18 +129,6 @@ export function QueueMonitorTable({
 
   const startItem = total > 0 ? (page - 1) * pageSize + 1 : 0;
   const endItem = total > 0 ? Math.min(page * pageSize, total) : 0;
-
-  // Pagination numbers
-  const pageNumbers: number[] = [];
-  const maxButtons = 5;
-  let startPage = Math.max(1, page - Math.floor(maxButtons / 2));
-  const endPage = Math.min(totalPages, startPage + maxButtons - 1);
-  if (endPage - startPage + 1 < maxButtons) {
-    startPage = Math.max(1, endPage - maxButtons + 1);
-  }
-  for (let i = startPage; i <= endPage; i++) {
-    pageNumbers.push(i);
-  }
 
   return (
     <div className="space-y-4">
@@ -407,46 +394,14 @@ export function QueueMonitorTable({
               </div>
             </div>
 
-            <div className="flex items-center gap-1.5">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={onPrevPage}
-                disabled={page <= 1}
-                className="border-border hover:border-foreground-muted h-8 cursor-pointer gap-1 rounded-full px-2.5 text-xs font-bold disabled:opacity-40"
-              >
-                <ChevronLeft className="size-3.5" />
-                <span className="hidden sm:inline">Sebelumnya</span>
-              </Button>
-
-              {pageNumbers.map((p) => (
-                <button
-                  key={p}
-                  type="button"
-                  onClick={() => onPageChange(p)}
-                  className={`flex size-8 cursor-pointer items-center justify-center rounded-full text-xs font-bold transition ${
-                    page === p
-                      ? "dark:bg-wise-green bg-emerald-600 font-black text-white shadow-xs dark:text-black"
-                      : "text-foreground-secondary hover:bg-muted border-border border"
-                  }`}
-                >
-                  {p}
-                </button>
-              ))}
-
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={onNextPage}
-                disabled={page >= totalPages}
-                className="border-border hover:border-foreground-muted h-8 cursor-pointer gap-1 rounded-full px-2.5 text-xs font-bold disabled:opacity-40"
-              >
-                <span className="hidden sm:inline">Berikutnya</span>
-                <ChevronRight className="size-3.5" />
-              </Button>
-            </div>
+            <DataTablePagination
+              page={page}
+              totalPages={totalPages}
+              onPageChange={onPageChange}
+              onPrevPage={onPrevPage}
+              onNextPage={onNextPage}
+              className="mx-0 w-auto"
+            />
           </div>
         )}
       </div>

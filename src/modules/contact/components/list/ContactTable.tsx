@@ -4,8 +4,9 @@ import React, { useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Contact } from "@/modules/contact/types/contact.types";
 import { useI18n } from "@/lib/i18n/context";
-import { Edit2, Trash2, Check, ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Edit2, Trash2, Check } from "lucide-react";
+
+import { DataTablePagination } from "@/components/ui/pagination";
 
 interface ContactTableProps {
   contacts: Contact[];
@@ -257,38 +258,17 @@ export function ContactTable({
             })}
           </div>
 
-          {/* Page buttons: Previous, Page Indicator, Next */}
+          {/* Shadcn UI Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center gap-2">
-              <span className="text-foreground-muted px-1.5 text-xs font-bold select-none">
-                {t("contact.pageIndicator", {
-                  page: String(page),
-                  total: String(totalPages),
-                })}
-              </span>
-
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onPrevPage}
-                disabled={page <= 1}
-                className="border-border hover:border-foreground-muted h-8.5 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold disabled:opacity-40"
-              >
-                <ChevronLeft className="size-3.5" />
-                <span>{t("contact.prevPage")}</span>
-              </Button>
-
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onNextPage}
-                disabled={page >= totalPages}
-                className="border-border hover:border-foreground-muted h-8.5 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold disabled:opacity-40"
-              >
-                <span>{t("contact.nextPage")}</span>
-                <ChevronRight className="size-3.5" />
-              </Button>
-            </div>
+            <DataTablePagination
+              page={page}
+              totalPages={totalPages}
+              onPrevPage={onPrevPage}
+              onNextPage={onNextPage}
+              prevText={t("contact.prevPage")}
+              nextText={t("contact.nextPage")}
+              className="mx-0 w-auto"
+            />
           )}
         </div>
       )}

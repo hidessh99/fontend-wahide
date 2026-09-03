@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { UserActivityItem } from "@/modules/admin/types/admin.types";
 import { DeleteActivityConfirmModal } from "./DeleteActivityConfirmModal";
 import { Button } from "@/components/ui/button";
+import { DataTablePagination } from "@/components/ui/pagination";
 import {
   Search,
   X,
@@ -16,8 +17,6 @@ import {
   Shield,
   Clock,
   User,
-  ChevronLeft,
-  ChevronRight,
   Filter,
   CreditCard,
   Receipt,
@@ -507,33 +506,13 @@ export function UserActivitiesTable({
               <span className="text-foreground font-bold">{total}</span> rekaman aktivitas
             </div>
 
-            <div className="flex items-center gap-2">
-              <span className="text-foreground-muted mr-1 text-[11px]">
-                Halaman {page} dari {totalPages}
-              </span>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={onPrevPage}
-                disabled={page <= 1}
-                className="border-border hover:border-foreground-muted h-8 cursor-pointer gap-1 rounded-full px-3 text-xs font-bold disabled:opacity-40"
-              >
-                <ChevronLeft className="size-3.5" />
-                <span>Sebelumnya</span>
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={onNextPage}
-                disabled={page >= totalPages}
-                className="border-border hover:border-foreground-muted h-8 cursor-pointer gap-1 rounded-full px-3 text-xs font-bold disabled:opacity-40"
-              >
-                <span>Berikutnya</span>
-                <ChevronRight className="size-3.5" />
-              </Button>
-            </div>
+            <DataTablePagination
+              page={page}
+              totalPages={totalPages}
+              onPrevPage={onPrevPage}
+              onNextPage={onNextPage}
+              className="mx-0 w-auto"
+            />
           </div>
         )}
       </div>

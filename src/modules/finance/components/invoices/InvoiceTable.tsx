@@ -1,18 +1,11 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import { Invoice, InvoiceStatus } from "@/modules/finance/types/finance.types";
 import { Button } from "@/components/ui/button";
+import { DataTablePagination } from "@/components/ui/pagination";
 import { useI18n } from "@/lib/i18n/context";
-import {
-  FileText,
-  CheckCircle2,
-  Clock,
-  AlertCircle,
-  CreditCard,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { FileText, CheckCircle2, Clock, AlertCircle, CreditCard } from "lucide-react";
 
 interface InvoiceTableProps {
   invoices: Invoice[];
@@ -256,35 +249,17 @@ export function InvoiceTable({
             Menampilkan {startItem} - {endItem} dari {total} faktur
           </div>
 
-          {/* Page navigation: Previous, Page Indicator, Next */}
+          {/* Shadcn UI Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center gap-2">
-              <span className="text-foreground-muted px-1.5 text-xs font-bold select-none">
-                Halaman {page} dari {totalPages}
-              </span>
-
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onPrevPage}
-                disabled={page <= 1}
-                className="border-border hover:border-foreground-muted h-8.5 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold disabled:opacity-40"
-              >
-                <ChevronLeft className="size-3.5" />
-                <span>Sebelumnya</span>
-              </Button>
-
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onNextPage}
-                disabled={page >= totalPages}
-                className="border-border hover:border-foreground-muted h-8.5 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold disabled:opacity-40"
-              >
-                <span>Berikutnya</span>
-                <ChevronRight className="size-3.5" />
-              </Button>
-            </div>
+            <DataTablePagination
+              page={page}
+              totalPages={totalPages}
+              onPrevPage={onPrevPage}
+              onNextPage={onNextPage}
+              prevText={t("billing.prevPage") || "Sebelumnya"}
+              nextText={t("billing.nextPage") || "Berikutnya"}
+              className="mx-0 w-auto"
+            />
           )}
         </div>
       )}

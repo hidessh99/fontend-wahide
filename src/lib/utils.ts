@@ -30,6 +30,8 @@ const idrDateShortFormatter = new Intl.DateTimeFormat("id-ID", {
   year: "numeric",
 });
 
+const idrNumberFormatter = new Intl.NumberFormat("id-ID");
+
 /**
  * Format angka ke Rupiah IDR atau USD (Zero Allocation)
  */
@@ -45,6 +47,13 @@ export function formatCurrency(amount: number, currency: "IDR" | "USD" = "IDR"):
  */
 export function formatRupiah(amount: number): string {
   return idrFormatter.format(amount);
+}
+
+/**
+ * Format pemisah ribuan standar Indonesia (Zero Allocation)
+ */
+export function formatNumber(value: number): string {
+  return idrNumberFormatter.format(value);
 }
 
 /**
