@@ -170,7 +170,7 @@ export interface DataTablePaginationProps {
 }
 
 /**
- * Reusable Unified Table Pagination Component built with Shadcn UI and Wise Theme
+ * Reusable Minimal Table Pagination Component: [ < Sebelumnya ] [ Berikutnya > ]
  */
 export function DataTablePagination({
   page,
@@ -180,94 +180,46 @@ export function DataTablePagination({
   onNextPage,
   prevText = "Sebelumnya",
   nextText = "Berikutnya",
-  showPageNumbers = true,
   className,
 }: DataTablePaginationProps) {
   if (totalPages <= 1) return null;
 
-  // Generate page numbers with smart ellipsis
-  const getPageItems = () => {
-    if (!showPageNumbers) return [];
-    if (totalPages <= 7) {
-      return Array.from({ length: totalPages }, (_, i) => i + 1);
-    }
-    if (page <= 4) {
-      return [1, 2, 3, 4, 5, "ellipsis", totalPages];
-    }
-    if (page >= totalPages - 3) {
-      return [
-        1,
-        "ellipsis",
-        totalPages - 4,
-        totalPages - 3,
-        totalPages - 2,
-        totalPages - 1,
-        totalPages,
-      ];
-    }
-    return [1, "ellipsis", page - 1, page, page + 1, "ellipsis", totalPages];
-  };
-
-  const pageItems = getPageItems();
-
   return (
-    <Pagination className={className}>
-      <PaginationContent>
-        {/* Previous Button */}
-        <PaginationItem>
-          <PaginationPrevious
-            text={prevText}
-            disabled={page <= 1}
-            onClick={() => {
-              if (page > 1) {
-                if (onPrevPage) onPrevPage();
-                else if (onPageChange) onPageChange(page - 1);
-              }
-            }}
-          />
-        </PaginationItem>
+    <div className={cn("flex items-center gap-2", className)}>
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        disabled={page <= 1}
+        onClick={() => {
+          if (page > 1) {
+            if (onPrevPage) onPrevPage();
+            else if (onPageChange) onPageChange(page - 1);
+          }
+        }}
+        className="border-border hover:border-foreground-muted h-8.5 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold transition disabled:pointer-events-none disabled:opacity-40"
+      >
+        <ChevronLeftIcon className="size-3.5" />
+        <span>{prevText}</span>
+      </Button>
 
-        {/* Page Numbers */}
-        {showPageNumbers &&
-          pageItems.map((item, idx) => (
-            <PaginationItem key={idx}>
-              {item === "ellipsis" ? (
-                <PaginationEllipsis />
-              ) : (
-                <PaginationLink
-                  isActive={page === item}
-                  onClick={() => onPageChange?.(item as number)}
-                >
-                  {item}
-                </PaginationLink>
-              )}
-            </PaginationItem>
-          ))}
-
-        {/* Simple Page Indicator on Mobile when numbers are hidden */}
-        {!showPageNumbers && (
-          <PaginationItem>
-            <span className="text-foreground-muted px-2 text-xs font-bold select-none">
-              {page} / {totalPages}
-            </span>
-          </PaginationItem>
-        )}
-
-        {/* Next Button */}
-        <PaginationItem>
-          <PaginationNext
-            text={nextText}
-            disabled={page >= totalPages}
-            onClick={() => {
-              if (page < totalPages) {
-                if (onNextPage) onNextPage();
-                else if (onPageChange) onPageChange(page + 1);
-              }
-            }}
-          />
-        </PaginationItem>
-      </PaginationContent>
-    </Pagination>
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        disabled={page >= totalPages}
+        onClick={() => {
+          if (page < totalPages) {
+            if (onNextPage) onNextPage();
+            else if (onPageChange) onPageChange(page + 1);
+          }
+        }}
+        className="border-border hover:border-foreground-muted h-8.5 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold transition disabled:pointer-events-none disabled:opacity-40"
+      >
+        <span>{nextText}</span>
+        <ChevronRightIcon className="size-3.5" />
+      </Button>
+    </div>
   );
 }
 
