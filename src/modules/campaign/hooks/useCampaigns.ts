@@ -49,6 +49,19 @@ export function useCampaigns() {
     };
   }, []);
 
+  const startCampaign = async (id: string): Promise<void> => {
+    try {
+      await campaignApi.startCampaign(id);
+      setCampaigns((prev) => prev.map((c) => (c.id === id ? { ...c, status: "RUNNING" } : c)));
+      toast.success(t("campaign.toastStarted"));
+      await fetchCampaigns();
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Gagal memulai kampanye";
+      toast.error(msg);
+      throw err;
+    }
+  };
+
   const createCampaign = async (data: CreateCampaignInput): Promise<Campaign> => {
     try {
       const newCampaign = await campaignApi.createCampaign(data);
@@ -56,12 +69,15 @@ export function useCampaigns() {
         try {
           await campaignApi.startCampaign(newCampaign.id);
           newCampaign.status = "RUNNING";
+          toast.success(t("campaign.toastStarted"));
         } catch (startErr) {
-          console.warn("Auto-start campaign warning:", startErr);
+          const msg = startErr instanceof Error ? startErr.message : "Audiens kosong";
+          toast.warning(t("campaign.toastNoAudienceWarning") || msg);
         }
+      } else {
+        toast.success(t("campaign.toastCreated"));
       }
-      setCampaigns((prev) => [newCampaign, ...prev]);
-      toast.success(t("campaign.toastCreated"));
+      await fetchCampaigns();
       return newCampaign;
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal membuat kampanye";
@@ -112,6 +128,7 @@ export function useCampaigns() {
     error,
     fetchCampaigns,
     createCampaign,
+    startCampaign,
     pauseCampaign,
     resumeCampaign,
     cancelCampaign,

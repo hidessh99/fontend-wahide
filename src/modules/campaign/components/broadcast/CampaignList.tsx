@@ -20,6 +20,11 @@ const DeleteCampaignModal = dynamic(
   () => import("./DeleteCampaignModal").then((m) => m.DeleteCampaignModal),
   { ssr: false }
 );
+
+const CampaignDetailModal = dynamic(
+  () => import("./CampaignDetailModal").then((m) => m.CampaignDetailModal),
+  { ssr: false }
+);
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { whatsappApi } from "@/modules/whatsapp/api/whatsapp.api";
@@ -37,6 +42,8 @@ import {
   ShieldCheck,
   Zap,
   Loader2,
+  Calendar,
+  ExternalLink,
 } from "lucide-react";
 
 export function CampaignList() {
@@ -47,6 +54,7 @@ export function CampaignList() {
     isLoading,
     fetchCampaigns,
     createCampaign,
+    startCampaign,
     pauseCampaign,
     resumeCampaign,
     cancelCampaign,
@@ -55,6 +63,27 @@ export function CampaignList() {
   const [isWizardOpen, setIsWizardOpen] = useState(false);
   const [isCheckingDevices, setIsCheckingDevices] = useState(false);
   const [campaignToDelete, setCampaignToDelete] = useState<Campaign | null>(null);
+  const [selectedCampaignForDetail, setSelectedCampaignForDetail] = useState<Campaign | null>(null);
+
+  const { locale } = useI18n();
+
+  const formatDateTime = (dateStr?: string) => {
+    if (!dateStr) return "-";
+    try {
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) return dateStr;
+      return new Intl.DateTimeFormat(locale === "id" ? "id-ID" : "en-US", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      }).format(date);
+    } catch {
+      return dateStr;
+    }
+  };
 
   const handleCreateCampaignClick = async () => {
     if (isCheckingDevices) return;
@@ -80,7 +109,16 @@ export function CampaignList() {
     }
   };
 
-  const renderStatusBadge = (status: CampaignStatus) => {
+  const renderStatusBadge = (status: CampaignStatus, scheduledAt?: string) => {
+    if (scheduledAt && status === "DRAFT") {
+      return (
+        <Badge variant="warning" className="gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold">
+          <Clock className="size-3" />
+          <span>{t("campaign.statusScheduled")}</span>
+        </Badge>
+      );
+    }
+
     switch (status) {
       case "RUNNING":
         return (
@@ -224,14 +262,19 @@ export function CampaignList() {
             return (
               <div
                 key={campaign.id}
-                className="border-border bg-surface hover:border-foreground-muted/40 flex flex-col justify-between space-y-4 rounded-md border p-5 transition sm:p-6 dark:bg-[#161715]"
+                onClick={() => setSelectedCampaignForDetail(campaign)}
+                className="border-border bg-surface hover:border-wise-green/60 hover:shadow-md group flex cursor-pointer flex-col justify-between space-y-4 rounded-md border p-5 transition sm:p-6 dark:bg-[#161715]"
+                title={t("campaign.cardClickHint")}
               >
                 {/* Header */}
                 <div className="flex items-start justify-between gap-3">
                   <div className="space-y-1">
-                    <h3 className="text-foreground line-clamp-1 text-base font-extrabold">
-                      {campaign.name || "Kampanye Siaran"}
-                    </h3>
+                    <div className="flex items-center gap-1.5">
+                      <h3 className="text-foreground group-hover:text-dark-green dark:group-hover:text-wise-green line-clamp-1 text-base font-extrabold transition">
+                        {campaign.name || "Kampanye Siaran"}
+                      </h3>
+                      <ExternalLink className="text-foreground-muted size-3.5 opacity-0 transition group-hover:opacity-100" />
+                    </div>
                     <div className="text-foreground-muted flex items-center gap-2 text-xs font-semibold">
                       <Smartphone className="size-3.5" />
                       <span>{campaign.deviceName || "Perangkat Utama"}</span>
@@ -240,8 +283,18 @@ export function CampaignList() {
                       <span>Jitter {campaign.jitterDelaySeconds ?? 3}s</span>
                     </div>
                   </div>
-                  {renderStatusBadge(campaign.status)}
+                  {renderStatusBadge(campaign.status, campaign.scheduledAt)}
                 </div>
+
+                {/* Scheduled banner pill (if set) */}
+                {campaign.scheduledAt && (
+                  <div className="flex items-center gap-2 rounded-md border border-amber-500/20 bg-amber-500/10 px-3 py-1.5 text-[11px] font-semibold text-amber-700 dark:border-amber-500/30 dark:text-amber-400">
+                    <Clock className="size-3.5 shrink-0" />
+                    <span className="font-bold">
+                      {t("campaign.scheduledBanner", { time: formatDateTime(campaign.scheduledAt) })}
+                    </span>
+                  </div>
+                )}
 
                 {/* Template preview */}
                 <div className="bg-muted/40 border-border/50 text-foreground-secondary line-clamp-2 rounded-md border p-3 text-xs leading-relaxed font-semibold">
@@ -267,16 +320,37 @@ export function CampaignList() {
 
                 {/* Action Footer */}
                 <div className="border-border/60 flex items-center justify-between border-t pt-2">
-                  <span className="text-foreground-muted text-[11px] font-semibold">
-                    {formattedDate}
-                  </span>
+                  <div className="text-foreground-muted flex items-center gap-1.5 text-[11px] font-semibold">
+                    <Calendar className="size-3.5 shrink-0" />
+                    <span>
+                      {t("campaign.createdAtLabel")}: {formatDateTime(campaign.createdAt)}
+                    </span>
+                  </div>
 
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                    {campaign.status === "DRAFT" && (
+                      <Button
+                        variant="primaryPill"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          startCampaign(campaign.id);
+                        }}
+                        className="gap-1.5 text-xs font-bold"
+                      >
+                        <Play className="size-3 fill-current" />
+                        <span>{t("campaign.startCampaign") || "Mulai Siaran"}</span>
+                      </Button>
+                    )}
+
                     {campaign.status === "RUNNING" && (
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => pauseCampaign(campaign.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          pauseCampaign(campaign.id);
+                        }}
                         className="border-border gap-1.5 rounded-full text-xs font-bold"
                       >
                         <Pause className="size-3" />
@@ -288,7 +362,10 @@ export function CampaignList() {
                       <Button
                         variant="primaryPill"
                         size="sm"
-                        onClick={() => resumeCampaign(campaign.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          resumeCampaign(campaign.id);
+                        }}
                         className="gap-1.5 text-xs font-bold"
                       >
                         <Play className="size-3" />
@@ -299,7 +376,10 @@ export function CampaignList() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setCampaignToDelete(campaign)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCampaignToDelete(campaign);
+                      }}
                       className="size-8 rounded-full border-rose-500/20 p-0 text-rose-500 hover:bg-rose-500/10"
                       aria-label={t("campaign.deleteConfirmBtn") || "Hapus Kampanye"}
                     >
@@ -311,6 +391,33 @@ export function CampaignList() {
             );
           })}
         </div>
+      )}
+
+      {/* Campaign Detail Modal */}
+      {selectedCampaignForDetail && (
+        <CampaignDetailModal
+          isOpen={Boolean(selectedCampaignForDetail)}
+          campaign={selectedCampaignForDetail}
+          onClose={() => setSelectedCampaignForDetail(null)}
+          onStartCampaign={async (id) => {
+            await startCampaign(id);
+            setSelectedCampaignForDetail((prev) =>
+              prev && prev.id === id ? { ...prev, status: "RUNNING" } : prev
+            );
+          }}
+          onPauseCampaign={async (id) => {
+            await pauseCampaign(id);
+            setSelectedCampaignForDetail((prev) =>
+              prev && prev.id === id ? { ...prev, status: "PAUSED" } : prev
+            );
+          }}
+          onResumeCampaign={async (id) => {
+            await resumeCampaign(id);
+            setSelectedCampaignForDetail((prev) =>
+              prev && prev.id === id ? { ...prev, status: "RUNNING" } : prev
+            );
+          }}
+        />
       )}
 
       {/* Campaign Creation Wizard Modal */}
