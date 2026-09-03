@@ -3,6 +3,14 @@
 import React, { useState } from "react";
 import { Device } from "@/modules/whatsapp/types/whatsapp.types";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import { useI18n } from "@/lib/i18n/context";
 import {
   Smartphone,
@@ -38,11 +46,9 @@ export function DeviceCard({
 }: DeviceCardProps) {
   const { t } = useI18n();
   const [isActionLoading, setIsActionLoading] = useState(false);
-  const [showMenu, setShowMenu] = useState(false);
 
   const handleAction = async (actionFn: (id: string) => Promise<void>) => {
     setIsActionLoading(true);
-    setShowMenu(false);
     try {
       await actionFn(device.id);
     } finally {
@@ -54,32 +60,32 @@ export function DeviceCard({
     switch (device.status) {
       case "CONNECTED":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-600 dark:text-emerald-400">
+          <Badge variant="success" className="gap-1.5 py-1">
             <span className="size-2 animate-pulse rounded-full bg-emerald-500" />
             {t("whatsapp.statusConnected")}
-          </span>
+          </Badge>
         );
       case "PAIRING":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1 text-xs font-bold text-amber-600 dark:text-amber-400">
+          <Badge variant="warning" className="gap-1.5 py-1">
             <span className="size-2 animate-ping rounded-full bg-amber-500" />
             {t("whatsapp.statusPairing")}
-          </span>
+          </Badge>
         );
       case "HIBERNATED":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-500/20 bg-sky-500/10 px-3 py-1 text-xs font-bold text-sky-600 dark:text-sky-400">
+          <Badge variant="info" className="gap-1.5 py-1">
             <Moon className="size-3" />
             {t("whatsapp.statusHibernated")}
-          </span>
+          </Badge>
         );
       case "DISCONNECTED":
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-zinc-500/20 bg-zinc-500/10 px-3 py-1 text-xs font-bold text-zinc-600 dark:text-zinc-400">
+          <Badge variant="neutral" className="gap-1.5 py-1">
             <span className="size-2 rounded-full bg-zinc-400" />
             {t("whatsapp.statusDisconnected")}
-          </span>
+          </Badge>
         );
     }
   };
@@ -129,64 +135,56 @@ export function DeviceCard({
         <div className="flex items-center gap-2">
           {renderStatusBadge()}
 
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setShowMenu(!showMenu)}
-              className="hover:bg-muted text-foreground-muted hover:text-foreground flex size-8 cursor-pointer items-center justify-center rounded-full transition"
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              className="hover:bg-muted text-foreground-muted hover:text-foreground flex size-8 cursor-pointer items-center justify-center rounded-full transition outline-none"
               aria-label="Opsi Perangkat"
             >
               <MoreVertical className="size-4" />
-            </button>
-
-            {showMenu && (
-              <>
-                <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
-                <div className="border-border bg-surface animate-in fade-in zoom-in-95 absolute top-9 right-0 z-50 w-44 rounded-md border py-1 text-xs font-semibold shadow-xl dark:bg-[#1b1d1a]">
-                  {device.status === "CONNECTED" && (
-                    <>
-                      <button
-                        type="button"
-                        onClick={() => handleAction(onHibernate)}
-                        className="hover:bg-muted text-foreground flex w-full items-center gap-2 px-3.5 py-2 text-left"
-                      >
-                        <Moon className="size-3.5" />
-                        <span>{t("whatsapp.hibernate")}</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleAction(onDisconnect)}
-                        className="flex w-full items-center gap-2 px-3.5 py-2 text-left text-rose-600 hover:bg-rose-500/10 dark:text-rose-400"
-                      >
-                        <Power className="size-3.5" />
-                        <span>{t("whatsapp.disconnect")}</span>
-                      </button>
-                    </>
-                  )}
-
-                  {device.status === "HIBERNATED" && (
-                    <button
-                      type="button"
-                      onClick={() => handleAction(onWake)}
-                      className="hover:bg-muted dark:text-wise-green flex w-full items-center gap-2 px-3.5 py-2 text-left font-bold text-emerald-700"
-                    >
-                      <Sun className="size-3.5" />
-                      <span>{t("whatsapp.wake")}</span>
-                    </button>
-                  )}
-
-                  <button
-                    type="button"
-                    onClick={() => handleAction(onDelete)}
-                    className="border-border mt-1 flex w-full items-center gap-2 border-t px-3.5 py-2 text-left text-rose-600 hover:bg-rose-500/10 dark:text-rose-400"
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-44">
+              {device.status === "CONNECTED" && (
+                <>
+                  <DropdownMenuItem
+                    onClick={() => handleAction(onHibernate)}
+                    className="cursor-pointer gap-2"
                   >
-                    <Trash2 className="size-3.5" />
-                    <span>{t("whatsapp.delete")}</span>
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
+                    <Moon className="size-3.5" />
+                    <span>{t("whatsapp.hibernate")}</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    variant="destructive"
+                    onClick={() => handleAction(onDisconnect)}
+                    className="cursor-pointer gap-2"
+                  >
+                    <Power className="size-3.5" />
+                    <span>{t("whatsapp.disconnect")}</span>
+                  </DropdownMenuItem>
+                </>
+              )}
+
+              {device.status === "HIBERNATED" && (
+                <DropdownMenuItem
+                  onClick={() => handleAction(onWake)}
+                  className="dark:text-wise-green cursor-pointer gap-2 font-bold text-emerald-700"
+                >
+                  <Sun className="size-3.5" />
+                  <span>{t("whatsapp.wake")}</span>
+                </DropdownMenuItem>
+              )}
+
+              <DropdownMenuSeparator />
+
+              <DropdownMenuItem
+                variant="destructive"
+                onClick={() => handleAction(onDelete)}
+                className="cursor-pointer gap-2"
+              >
+                <Trash2 className="size-3.5" />
+                <span>{t("whatsapp.delete")}</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 

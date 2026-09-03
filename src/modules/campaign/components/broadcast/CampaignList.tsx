@@ -7,6 +7,8 @@ import { useCampaigns } from "@/modules/campaign/hooks/useCampaigns";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty";
+import { Progress } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useI18n } from "@/lib/i18n/context";
 
 const CampaignWizardModal = dynamic(
@@ -135,10 +137,7 @@ export function CampaignList() {
       {isLoading && campaigns.length === 0 ? (
         <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2">
           {[1, 2].map((i) => (
-            <div
-              key={i}
-              className="border-border bg-surface h-56 animate-pulse rounded-md border p-4 sm:p-6 dark:bg-[#161715]"
-            />
+            <Skeleton key={i} className="h-56 w-full rounded-md" />
           ))}
         </div>
       ) : campaigns.length === 0 ? (
@@ -207,12 +206,7 @@ export function CampaignList() {
                       {percent}%
                     </span>
                   </div>
-                  <div className="bg-muted h-2 w-full overflow-hidden rounded-full">
-                    <div
-                      className="bg-wise-green h-full rounded-full transition-all duration-300"
-                      style={{ width: `${percent}%` }}
-                    />
-                  </div>
+                  <Progress value={percent} className="h-2 w-full" />
                 </div>
 
                 {/* Action Footer */}

@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Ticket, TicketMessage, TicketStatus } from "../../types/support.types";
 import { supportApi } from "../../api/support.api";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useI18n } from "@/lib/i18n/context";
 import { toast } from "sonner";
 import {
@@ -176,32 +178,32 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
     switch (status) {
       case "RESOLVED":
         return (
-          <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-0.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">
+          <Badge variant="success">
             <CheckCircle2 className="size-3" />
             <span>{t("support.statusResolved")}</span>
-          </span>
+          </Badge>
         );
       case "IN_PROGRESS":
         return (
-          <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/20 bg-amber-500/10 px-2.5 py-0.5 text-xs font-bold text-amber-600 dark:text-amber-400">
+          <Badge variant="warning">
             <Clock className="size-3" />
             <span>{t("support.statusInProgress")}</span>
-          </span>
+          </Badge>
         );
       case "CLOSED":
         return (
-          <span className="bg-muted text-foreground-muted border-border inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-bold">
+          <Badge variant="neutral">
             <Lock className="size-3" />
             <span>{t("support.statusClosed")}</span>
-          </span>
+          </Badge>
         );
       case "OPEN":
       default:
         return (
-          <span className="inline-flex items-center gap-1 rounded-full border border-sky-500/20 bg-sky-500/10 px-2.5 py-0.5 text-xs font-bold text-sky-600 dark:text-sky-400">
+          <Badge variant="info">
             <AlertCircle className="size-3" />
             <span>{t("support.statusOpen")}</span>
-          </span>
+          </Badge>
         );
     }
   };
@@ -209,16 +211,16 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
   const renderPriorityBadge = (priority: string) => {
     if (priority === "HIGH") {
       return (
-        <span className="inline-flex items-center gap-1 text-xs font-extrabold text-rose-600 uppercase dark:text-rose-400">
-          <ShieldAlert className="size-3.5" />
+        <Badge variant="danger">
+          <ShieldAlert className="size-3" />
           <span>{t("support.priorityHigh")}</span>
-        </span>
+        </Badge>
       );
     }
     return (
-      <span className="text-foreground-muted text-xs font-bold uppercase">
+      <Badge variant="neutral">
         {priority === "MEDIUM" ? t("support.priorityMedium") : t("support.priorityLow")}
-      </span>
+      </Badge>
     );
   };
 
@@ -239,16 +241,16 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
 
   if (isLoading) {
     return (
-      <div className="mx-auto max-w-7xl animate-pulse space-y-6 p-3 sm:space-y-8 sm:p-6 lg:p-8">
-        <div className="bg-muted h-4 w-40 rounded" />
-        <div className="bg-muted h-10 w-3/4 rounded" />
+      <div className="mx-auto max-w-7xl space-y-6 p-3 sm:space-y-8 sm:p-6 lg:p-8">
+        <Skeleton className="h-4 w-40 rounded" />
+        <Skeleton className="h-10 w-3/4 rounded-md" />
         <div className="grid grid-cols-1 gap-6 pt-4 lg:grid-cols-12">
           <div className="space-y-6 lg:col-span-8">
-            <div className="bg-muted h-48 rounded-md" />
-            <div className="bg-muted h-64 rounded-md" />
+            <Skeleton className="h-48 w-full rounded-md" />
+            <Skeleton className="h-64 w-full rounded-md" />
           </div>
           <div className="lg:col-span-4">
-            <div className="bg-muted h-80 rounded-md" />
+            <Skeleton className="h-80 w-full rounded-md" />
           </div>
         </div>
       </div>

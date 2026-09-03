@@ -9,6 +9,7 @@ import { Contact, CreateContactInput } from "@/modules/contact/types/contact.typ
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty";
 import { SearchInput } from "@/components/ui/search-input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useI18n } from "@/lib/i18n/context";
 
 const ContactModal = dynamic(
@@ -224,7 +225,7 @@ export function ContactsView() {
 
       {/* Main Table or Empty State */}
       {isLoading && contacts.length === 0 ? (
-        <div className="border-border bg-surface h-64 animate-pulse rounded-md border p-6 dark:bg-[#161715]" />
+        <Skeleton className="h-64 w-full rounded-md" />
       ) : filteredContacts.length === 0 ? (
         <EmptyState
           icon={<Users className="size-6" />}

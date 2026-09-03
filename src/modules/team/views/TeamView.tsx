@@ -5,6 +5,9 @@ import { useTeam } from "@/modules/team/hooks/useTeam";
 import { Agent } from "@/modules/team/types/team.types";
 import { DeleteTeamMemberModal } from "@/modules/team/components/modals/DeleteTeamMemberModal";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty";
+import { SearchInput } from "@/components/ui/search-input";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { useI18n } from "@/lib/i18n/context";
 import { toast } from "sonner";
@@ -17,7 +20,6 @@ import {
   ShieldCheck,
   Smartphone,
   CheckCircle2,
-  Search,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -66,12 +68,6 @@ export function TeamView() {
 
   const startItem = total > 0 ? (page - 1) * pageSize + 1 : 0;
   const endItem = total > 0 ? Math.min(page * pageSize, total) : 0;
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setActiveSearch(searchInput.trim());
-    setPage(1);
-  };
 
   const handleClearSearch = () => {
     setSearchInput("");
@@ -147,54 +143,34 @@ export function TeamView() {
       </div>
 
       {/* Filter Toolbar (Search Submit Form) */}
+      {/* Search Bar */}
       <div className="border-border bg-surface rounded-md border p-3 sm:p-4 dark:bg-[#161715]">
-        <form onSubmit={handleSearchSubmit} className="flex items-center gap-2">
-          <div className="relative flex-1">
-            <Search className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
-            <input
-              type="text"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Cari nama, email, atau nomor staf..."
-              className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full rounded-full border pr-9 pl-10 text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
-            />
-            {(searchInput || activeSearch) && (
-              <button
-                type="button"
-                onClick={handleClearSearch}
-                className="text-foreground-muted hover:text-foreground hover:bg-muted absolute top-1/2 right-3 flex size-5 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full transition"
-                title="Hapus Pencarian"
-                aria-label="Hapus Pencarian"
-              >
-                <X className="size-3.5" />
-              </button>
-            )}
-          </div>
-          <Button
-            type="submit"
-            variant="primaryPill"
-            size="sm"
-            className="h-10 shrink-0 cursor-pointer px-4 text-xs font-bold shadow-xs"
-          >
-            <Search className="mr-1 size-3.5" />
-            <span>Cari</span>
-          </Button>
-        </form>
+        <SearchInput
+          value={searchInput}
+          onChange={setSearchInput}
+          onSearch={(val) => {
+            setActiveSearch(val.trim());
+            setPage(1);
+          }}
+          onClear={handleClearSearch}
+          placeholder="Cari nama, email, atau nomor staf..."
+          buttonText="Cari"
+        />
       </div>
 
       {/* Agents Table with Error Boundary */}
       <ErrorBoundary fallbackTitle="Gagal Memuat Daftar Tim Staf Agen">
         <div className="border-border bg-surface overflow-hidden rounded-md border shadow-xs dark:bg-[#161715]">
           {paginatedAgents.length === 0 ? (
-            <div className="space-y-2 p-6 text-center sm:p-10">
-              <Users className="text-foreground-muted mx-auto size-10" />
-              <h3 className="text-foreground text-sm font-bold">{t("team.noAgents")}</h3>
-              <p className="text-foreground-secondary text-xs">
-                {activeSearch
+            <EmptyState
+              icon={<Users className="size-8" />}
+              title={t("team.noAgents")}
+              description={
+                activeSearch
                   ? `Tidak ditemukan staf dengan kata kunci "${activeSearch}".`
-                  : t("team.noAgentsDesc")}
-              </p>
-            </div>
+                  : t("team.noAgentsDesc")
+              }
+            />
           ) : (
             <div>
               {/* Mobile View: Card-based Agent List (Visible on < 768px) */}
@@ -210,22 +186,22 @@ export function TeamView() {
                           {agt.name}
                         </span>
                         {agt.role === "SELLER" ? (
-                          <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/15 px-2 py-0.5 text-[9px] font-bold text-amber-600 dark:text-amber-400">
+                          <Badge variant="warning">
                             <ShieldCheck className="size-2.5" />
                             <span>{t("team.roleOwner")}</span>
-                          </span>
+                          </Badge>
                         ) : (
-                          <span className="bg-wise-green/15 text-dark-green dark:text-wise-green border-wise-green/30 inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[9px] font-bold">
+                          <Badge variant="wise">
                             <ShieldCheck className="size-2.5" />
                             <span>{t("team.roleAgent")}</span>
-                          </span>
+                          </Badge>
                         )}
                       </div>
 
-                      <span className="inline-flex shrink-0 items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                      <Badge variant="success">
                         <CheckCircle2 className="size-3" />
                         <span>{t("team.statusActive")}</span>
-                      </span>
+                      </Badge>
                     </div>
 
                     <div className="text-foreground-secondary space-y-0.5 text-xs">
@@ -301,15 +277,15 @@ export function TeamView() {
                       {/* Role */}
                       <div className="col-span-2">
                         {agt.role === "SELLER" ? (
-                          <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/15 px-2.5 py-0.5 text-[10px] font-bold text-amber-600 dark:text-amber-400">
+                          <Badge variant="warning">
                             <ShieldCheck className="size-3" />
                             <span>{t("team.roleOwner")}</span>
-                          </span>
+                          </Badge>
                         ) : (
-                          <span className="bg-wise-green/15 text-dark-green dark:text-wise-green border-wise-green/30 inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[10px] font-bold">
+                          <Badge variant="wise">
                             <ShieldCheck className="size-3" />
                             <span>{t("team.roleAgent")}</span>
-                          </span>
+                          </Badge>
                         )}
                       </div>
 
@@ -321,10 +297,10 @@ export function TeamView() {
 
                       {/* Status */}
                       <div className="col-span-1 flex justify-center">
-                        <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                        <Badge variant="success">
                           <CheckCircle2 className="size-3.5" />
                           <span>{t("team.statusActive")}</span>
-                        </span>
+                        </Badge>
                       </div>
 
                       {/* Action */}

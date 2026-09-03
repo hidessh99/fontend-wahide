@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { AdminPlanItem, CreatePlanInput } from "@/modules/admin/types/admin.types";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
   DialogContent,
@@ -312,15 +313,11 @@ function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentP
                   Tambahkan teks promosi default di akhir setiap pesan keluar.
                 </span>
               </div>
-              <label className="relative inline-flex cursor-pointer items-center">
-                <input
-                  type="checkbox"
-                  checked={hasWatermark}
-                  onChange={(e) => setHasWatermark(e.target.checked)}
-                  className="peer sr-only"
-                />
-                <div className="peer peer-checked:bg-wise-green dark:peer-checked:bg-wise-green h-5 w-9 rounded-full bg-neutral-300 peer-focus:outline-none after:absolute after:top-0.5 after:left-0.5 after:size-4 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full dark:bg-neutral-700"></div>
-              </label>
+              <Switch
+                checked={hasWatermark}
+                onCheckedChange={setHasWatermark}
+                aria-label="Sertakan Watermark Footer Pesan"
+              />
             </div>
 
             {hasWatermark && (

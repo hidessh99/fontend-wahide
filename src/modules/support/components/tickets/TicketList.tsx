@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty";
 import { SearchInput } from "@/components/ui/search-input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useI18n } from "@/lib/i18n/context";
 import { UpdateTicketStatusModal } from "./UpdateTicketStatusModal";
 
@@ -207,7 +208,7 @@ export function TicketList() {
 
       {/* Ticket List Content */}
       {isLoading && tickets.length === 0 ? (
-        <div className="border-border bg-surface h-64 animate-pulse rounded-md border p-6 dark:bg-[#161715]" />
+        <Skeleton className="h-64 w-full rounded-md" />
       ) : filteredTickets.length === 0 ? (
         <EmptyState
           icon={<LifeBuoy className="size-6" />}

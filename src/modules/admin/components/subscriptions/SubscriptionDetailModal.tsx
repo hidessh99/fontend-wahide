@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { AdminSubscriptionItem } from "@/modules/admin/types/admin.types";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import {
   Dialog,
   DialogContent,
@@ -151,18 +152,7 @@ export function SubscriptionDetailModal({
             </div>
 
             {/* Progress Track */}
-            <div className="bg-muted h-2 w-full overflow-hidden rounded-full">
-              <div
-                className={`h-full transition-all duration-500 ${
-                  usagePercentage > 90
-                    ? "bg-rose-500"
-                    : usagePercentage > 70
-                      ? "bg-amber-500"
-                      : "dark:bg-wise-green bg-emerald-600"
-                }`}
-                style={{ width: `${usagePercentage}%` }}
-              />
-            </div>
+            <Progress value={usagePercentage} className="h-2 w-full" />
             <div className="text-foreground-muted flex justify-between font-mono text-[10px]">
               <span>{usagePercentage}% terpakai</span>
               <span>Sisa: {Math.max(0, quotaLimit - quotaUsed).toLocaleString("id-ID")} pesan</span>

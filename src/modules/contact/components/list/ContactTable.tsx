@@ -4,8 +4,8 @@ import React, { useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Contact } from "@/modules/contact/types/contact.types";
 import { useI18n } from "@/lib/i18n/context";
-import { Edit2, Trash2, Check } from "lucide-react";
-
+import { Edit2, Trash2 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { DataTablePagination } from "@/components/ui/pagination";
 
 interface ContactTableProps {
@@ -60,18 +60,11 @@ export function ContactTable({
         {/* Select All Bar on Mobile */}
         <div className="bg-muted/50 border-border text-foreground-muted flex items-center justify-between border-b p-3 text-xs font-bold">
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => onToggleSelectAll(contacts.map((c) => c.id))}
-              className={`flex size-4.5 cursor-pointer items-center justify-center rounded border transition ${
-                isAllSelected
-                  ? "bg-wise-green border-wise-green text-dark-green"
-                  : "border-foreground-muted/50 hover:border-foreground"
-              }`}
+            <Checkbox
+              checked={isAllSelected}
+              onCheckedChange={() => onToggleSelectAll(contacts.map((c) => c.id))}
               aria-label="Pilih Semua Kontak"
-            >
-              {isAllSelected && <Check className="size-3.5 stroke-3" />}
-            </button>
+            />
             <span>Pilih Semua ({contacts.length})</span>
           </div>
           {selectedIds.size > 0 && (
@@ -95,18 +88,11 @@ export function ContactTable({
             >
               <div className="flex items-center justify-between gap-2">
                 <div className="flex min-w-0 items-center gap-2.5">
-                  <button
-                    type="button"
-                    onClick={() => onToggleSelectOne(contact.id)}
-                    className={`flex size-5 shrink-0 cursor-pointer items-center justify-center rounded border transition ${
-                      isSelected
-                        ? "bg-wise-green border-wise-green text-dark-green"
-                        : "border-foreground-muted/50 hover:border-foreground"
-                    }`}
+                  <Checkbox
+                    checked={isSelected}
+                    onCheckedChange={() => onToggleSelectOne(contact.id)}
                     aria-label={`Pilih ${contact.name}`}
-                  >
-                    {isSelected && <Check className="size-3.5 stroke-3" />}
-                  </button>
+                  />
                   <span className="text-foreground truncate text-sm font-bold">{contact.name}</span>
                 </div>
 
@@ -143,18 +129,11 @@ export function ContactTable({
         {/* Table Header */}
         <div className="bg-muted/60 border-border text-foreground-muted grid grid-cols-12 gap-3 border-b px-5 py-4 text-xs font-extrabold tracking-wider uppercase select-none">
           <div className="col-span-1 flex items-center justify-center">
-            <button
-              type="button"
-              onClick={() => onToggleSelectAll(contacts.map((c) => c.id))}
-              className={`flex size-4.5 cursor-pointer items-center justify-center rounded border transition ${
-                isAllSelected
-                  ? "bg-wise-green border-wise-green text-dark-green"
-                  : "border-foreground-muted/50 hover:border-foreground"
-              }`}
+            <Checkbox
+              checked={isAllSelected}
+              onCheckedChange={() => onToggleSelectAll(contacts.map((c) => c.id))}
               aria-label="Pilih Semua Kontak"
-            >
-              {isAllSelected && <Check className="size-3.5 stroke-3" />}
-            </button>
+            />
           </div>
           <div className="col-span-5">{t("contact.tableHeaderName")}</div>
           <div className="col-span-4">{t("contact.tableHeaderPhone")}</div>
@@ -196,18 +175,11 @@ export function ContactTable({
                 >
                   {/* Select Checkbox */}
                   <div className="col-span-1 flex items-center justify-center">
-                    <button
-                      type="button"
-                      onClick={() => onToggleSelectOne(contact.id)}
-                      className={`flex size-4.5 cursor-pointer items-center justify-center rounded border transition ${
-                        isSelected
-                          ? "bg-wise-green border-wise-green text-dark-green"
-                          : "border-foreground-muted/50 hover:border-foreground"
-                      }`}
+                    <Checkbox
+                      checked={isSelected}
+                      onCheckedChange={() => onToggleSelectOne(contact.id)}
                       aria-label={`Pilih ${contact.name}`}
-                    >
-                      {isSelected && <Check className="size-3.5 stroke-3" />}
-                    </button>
+                    />
                   </div>
 
                   {/* Name Column */}

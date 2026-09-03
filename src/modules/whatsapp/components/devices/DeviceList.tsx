@@ -6,6 +6,9 @@ import { Device, DeviceStatus } from "@/modules/whatsapp/types/whatsapp.types";
 import { DeviceCard } from "./DeviceCard";
 import { useDevices } from "@/modules/whatsapp/hooks/useDevices";
 import { Button } from "@/components/ui/button";
+import { SearchInput } from "@/components/ui/search-input";
+import { EmptyState } from "@/components/ui/empty";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useI18n } from "@/lib/i18n/context";
 
 const LiveQRModal = dynamic(() => import("./LiveQRModal").then((m) => m.LiveQRModal), {
@@ -21,14 +24,12 @@ const SendMessageModal = dynamic(
 import {
   Smartphone,
   Plus,
-  Search,
   RefreshCw,
   Server,
   CheckCircle2,
   XCircle,
   Moon,
   Send,
-  X,
 } from "lucide-react";
 
 export function DeviceList() {
@@ -138,26 +139,14 @@ export function DeviceList() {
         {/* Top Row: Search Bar & Action Buttons */}
         <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
           {/* Search Input */}
-          <div className="relative flex-1">
-            <Search className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
-            <input
-              type="text"
+          <div className="flex-1">
+            <SearchInput
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={setSearchQuery}
+              onSearch={(val) => setSearchQuery(val)}
+              onClear={() => setSearchQuery("")}
               placeholder={t("whatsapp.searchPlaceholder")}
-              className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full rounded-full border pr-9 pl-10 text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
             />
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => setSearchQuery("")}
-                className="text-foreground-muted hover:text-foreground hover:bg-muted absolute top-1/2 right-3 flex size-5 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full transition"
-                title="Hapus Pencarian"
-                aria-label="Hapus Pencarian"
-              >
-                <X className="size-3.5" />
-              </button>
-            )}
           </div>
 
           {/* Action CTAs */}
@@ -240,47 +229,45 @@ export function DeviceList() {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="border-border bg-surface h-56 animate-pulse space-y-4 rounded-md border p-5 sm:p-6 dark:bg-[#161715]"
+              className="border-border bg-surface h-56 space-y-4 rounded-md border p-5 sm:p-6 dark:bg-[#161715]"
             >
               <div className="flex items-center justify-between">
-                <div className="bg-muted size-10 rounded-full" />
-                <div className="bg-muted h-6 w-24 rounded-full" />
+                <Skeleton className="size-10 rounded-full" />
+                <Skeleton className="h-6 w-24 rounded-full" />
               </div>
-              <div className="bg-muted h-5 w-3/4 rounded" />
-              <div className="bg-muted h-4 w-1/2 rounded" />
-              <div className="bg-muted mt-6 h-10 rounded-full" />
+              <Skeleton className="h-5 w-3/4 rounded" />
+              <Skeleton className="h-4 w-1/2 rounded" />
+              <Skeleton className="mt-6 h-10 w-full rounded-full" />
             </div>
           ))}
         </div>
       ) : filteredDevices.length === 0 ? (
-        <div className="border-border bg-surface flex flex-col items-center justify-center space-y-3 rounded-md border border-dashed p-6 text-center sm:p-10 dark:bg-[#161715]/50">
-          <div className="dark:bg-wise-green/10 dark:text-wise-green flex size-12 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
-            <Smartphone className="size-6" />
-          </div>
-          <div className="max-w-sm space-y-1">
-            <h3 className="text-foreground text-base font-extrabold sm:text-lg">
-              {searchQuery || statusFilter !== "ALL"
-                ? t("whatsapp.noSearchResults")
-                : t("whatsapp.noDevices")}
-            </h3>
-            <p className="text-foreground-secondary text-xs font-semibold">
-              {searchQuery || statusFilter !== "ALL"
-                ? "Coba ubah kata kunci pencarian atau reset filter status perangkat."
-                : t("whatsapp.noDevicesDesc")}
-            </p>
-          </div>
-          {!searchQuery && statusFilter === "ALL" && (
-            <Button
-              variant="primaryPill"
-              size="sm"
-              onClick={() => setIsAddModalOpen(true)}
-              className="mt-2 cursor-pointer gap-2 text-xs font-bold shadow-sm"
-            >
-              <Plus className="size-4" />
-              <span>{t("whatsapp.addDevice")}</span>
-            </Button>
-          )}
-        </div>
+        <EmptyState
+          icon={<Smartphone className="size-6" />}
+          title={
+            searchQuery || statusFilter !== "ALL"
+              ? t("whatsapp.noSearchResults")
+              : t("whatsapp.noDevices")
+          }
+          description={
+            searchQuery || statusFilter !== "ALL"
+              ? "Coba ubah kata kunci pencarian atau reset filter status perangkat."
+              : t("whatsapp.noDevicesDesc")
+          }
+          action={
+            !searchQuery && statusFilter === "ALL" ? (
+              <Button
+                variant="primaryPill"
+                size="sm"
+                onClick={() => setIsAddModalOpen(true)}
+                className="mt-2 cursor-pointer gap-2 text-xs font-bold shadow-sm"
+              >
+                <Plus className="size-4" />
+                <span>{t("whatsapp.addDevice")}</span>
+              </Button>
+            ) : undefined
+          }
+        />
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2 lg:grid-cols-3">
           {filteredDevices.map((device) => (

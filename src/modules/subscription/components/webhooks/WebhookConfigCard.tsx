@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { WebhookConfig } from "@/modules/subscription/types/subscription.types";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { useI18n } from "@/lib/i18n/context";
 import {
   Webhook,
@@ -80,20 +81,7 @@ export function WebhookConfigCard({
           <span className="text-foreground text-xs font-bold">
             {isEnabled ? "Webhook Aktif" : "Webhook Nonaktif"}
           </span>
-          <button
-            type="button"
-            onClick={() => setIsEnabled(!isEnabled)}
-            className={`h-6 w-12 cursor-pointer rounded-full p-0.5 transition-colors ${
-              isEnabled ? "bg-wise-green" : "bg-muted"
-            }`}
-            aria-label="Toggle Webhook"
-          >
-            <div
-              className={`size-5 rounded-full bg-white transition-transform ${
-                isEnabled ? "bg-dark-green translate-x-6" : "translate-x-0"
-              }`}
-            />
-          </button>
+          <Switch checked={isEnabled} onCheckedChange={setIsEnabled} aria-label="Toggle Webhook" />
         </div>
       </div>
 

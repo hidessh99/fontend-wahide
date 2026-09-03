@@ -7,6 +7,7 @@ import { useContacts } from "@/modules/contact/hooks/useContacts";
 import { useSpintax } from "@/modules/campaign/hooks/useSpintax";
 import { SpintaxVisualizer } from "@/modules/campaign/components/spintax/SpintaxVisualizer";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
   DialogContent,
@@ -475,11 +476,10 @@ export function CampaignWizardModal({ isOpen, onClose, onSubmit }: CampaignWizar
                         {t("campaign.simulateTypingHint")}
                       </span>
                     </div>
-                    <input
-                      type="checkbox"
+                    <Switch
                       checked={enableHumanTyping}
-                      onChange={(e) => setEnableHumanTyping(e.target.checked)}
-                      className="border-border size-4 rounded"
+                      onCheckedChange={setEnableHumanTyping}
+                      aria-label={t("campaign.simulateTypingLabel")}
                     />
                   </div>
                 </div>
@@ -494,11 +494,10 @@ export function CampaignWizardModal({ isOpen, onClose, onSubmit }: CampaignWizar
                       {t("campaign.scheduleBroadcastLabel")}
                     </span>
                   </div>
-                  <input
-                    type="checkbox"
+                  <Switch
                     checked={isScheduled}
-                    onChange={(e) => setIsScheduled(e.target.checked)}
-                    className="border-border size-4 rounded"
+                    onCheckedChange={setIsScheduled}
+                    aria-label={t("campaign.scheduleBroadcastLabel")}
                   />
                 </div>
 

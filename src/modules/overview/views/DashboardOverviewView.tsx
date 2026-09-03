@@ -7,6 +7,7 @@ import { useDevices } from "@/modules/whatsapp/hooks/useDevices";
 import { useCampaigns } from "@/modules/campaign/hooks/useCampaigns";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Smartphone,
   Send,
@@ -643,17 +644,17 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
 
 function DashboardSkeleton() {
   return (
-    <div className="mx-auto max-w-7xl animate-pulse space-y-6 p-3 sm:space-y-8 sm:p-6 lg:p-8">
+    <div className="mx-auto max-w-7xl space-y-6 p-3 sm:space-y-8 sm:p-6 lg:p-8">
       {/* Header Skeleton */}
       <div className="border-border flex flex-col justify-between gap-4 border-b pb-5 sm:flex-row sm:items-center sm:pb-6">
         <div className="space-y-2">
-          <div className="bg-foreground/10 h-5 w-40 rounded-full" />
-          <div className="bg-foreground/10 h-8 w-64 rounded" />
-          <div className="bg-foreground/10 h-4 w-96 rounded" />
+          <Skeleton className="h-5 w-40 rounded-full" />
+          <Skeleton className="h-8 w-64 rounded-md" />
+          <Skeleton className="h-4 w-96 rounded-md" />
         </div>
         <div className="flex gap-2">
-          <div className="bg-foreground/10 h-9 w-28 rounded-full" />
-          <div className="bg-foreground/10 h-9 w-32 rounded-full" />
+          <Skeleton className="h-9 w-28 rounded-full" />
+          <Skeleton className="h-9 w-32 rounded-full" />
         </div>
       </div>
 
@@ -665,11 +666,11 @@ function DashboardSkeleton() {
             className="border-border bg-surface space-y-3 rounded-md border p-4 sm:p-5 dark:bg-[#161715]"
           >
             <div className="flex items-center justify-between">
-              <div className="bg-foreground/10 h-3 w-24 rounded" />
-              <div className="bg-foreground/10 size-8 rounded-full" />
+              <Skeleton className="h-3 w-24 rounded" />
+              <Skeleton className="size-8 rounded-full" />
             </div>
-            <div className="bg-foreground/10 h-7 w-32 rounded" />
-            <div className="bg-foreground/10 h-3 w-40 rounded" />
+            <Skeleton className="h-7 w-32 rounded" />
+            <Skeleton className="h-3 w-40 rounded" />
           </div>
         ))}
       </div>
@@ -681,10 +682,10 @@ function DashboardSkeleton() {
             key={i}
             className="border-border bg-surface space-y-4 rounded-md border p-4 sm:p-6 dark:bg-[#161715]"
           >
-            <div className="bg-foreground/10 h-5 w-40 rounded" />
+            <Skeleton className="h-5 w-40 rounded" />
             <div className="space-y-2.5">
               {[1, 2, 3].map((j) => (
-                <div key={j} className="bg-foreground/5 h-14 rounded-md" />
+                <Skeleton key={j} className="h-14 w-full rounded-md" />
               ))}
             </div>
           </div>

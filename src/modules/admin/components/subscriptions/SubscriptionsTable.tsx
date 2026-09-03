@@ -7,6 +7,7 @@ import { SubscriptionDetailModal } from "./SubscriptionDetailModal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty";
+import { Progress } from "@/components/ui/progress";
 import { SearchInput } from "@/components/ui/search-input";
 import { DataTablePagination } from "@/components/ui/pagination";
 import { formatCurrency, formatDateTime } from "@/lib/utils";
@@ -225,12 +226,7 @@ export function SubscriptionsTable({
                           {s.currentMonthUsage} / {quotaLimit} ({usagePercent}%)
                         </span>
                       </div>
-                      <div className="bg-muted h-1.5 w-full overflow-hidden rounded-full">
-                        <div
-                          className="dark:bg-wise-green h-full rounded-full bg-emerald-600"
-                          style={{ width: `${usagePercent}%` }}
-                        />
-                      </div>
+                      <Progress value={usagePercent} className="h-1.5 w-full" />
                     </div>
 
                     <div className="text-foreground-muted flex items-center justify-between pt-1 text-[11px]">

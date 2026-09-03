@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { userApi } from "@/modules/iam/api/user.api";
 import { ActiveSession } from "@/modules/iam/types/auth.types";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { SessionConfirmModal } from "./SessionConfirmModal";
 import { toast } from "sonner";
 import { ShieldCheck, Trash2, RefreshCw, Laptop, Smartphone, Globe, Loader2 } from "lucide-react";
@@ -209,11 +210,7 @@ export function ActiveSessionsCard() {
                       <span className="text-foreground truncate text-xs font-bold">
                         {name} {s.is_current ? "(Perangkat Ini)" : ""}
                       </span>
-                      {s.is_current && (
-                        <span className="dark:bg-wise-green/15 dark:text-wise-green dark:border-wise-green/20 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2 py-0.5 text-[9px] font-black tracking-wider text-emerald-700 uppercase">
-                          Sesi Saat Ini
-                        </span>
-                      )}
+                      {s.is_current && <Badge variant="success">Sesi Saat Ini</Badge>}
                     </div>
                     <span className="text-foreground-muted block truncate font-mono text-[11px]">
                       {s.ip_address || "127.0.0.1"} • {timeLabel}

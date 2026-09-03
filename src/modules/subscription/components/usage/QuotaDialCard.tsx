@@ -2,6 +2,7 @@
 
 import React from "react";
 import { TenantSubscription } from "@/modules/subscription/types/subscription.types";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useI18n } from "@/lib/i18n/context";
 import { Zap, Smartphone, ShieldCheck, Calendar, CheckCircle2, AlertCircle } from "lucide-react";
 
@@ -13,9 +14,7 @@ export function QuotaDialCard({ subscription }: QuotaDialCardProps) {
   const { t } = useI18n();
 
   if (!subscription) {
-    return (
-      <div className="border-border bg-surface h-64 animate-pulse rounded-md border p-6 dark:bg-[#161715]" />
-    );
+    return <Skeleton className="h-64 w-full rounded-md" />;
   }
 
   const quotaTotal = Number(subscription.quotaTotal ?? 0);

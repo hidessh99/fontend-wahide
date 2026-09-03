@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { UserItem, UpdateUserInput } from "@/modules/admin/types/admin.types";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
   DialogContent,
@@ -185,15 +186,11 @@ function EditUserModalContent({ user, onClose, onSubmit }: EditUserModalContentP
                 Izinkan pengguna login dan mengakses seluruh modul Wahide.
               </span>
             </div>
-            <label className="relative inline-flex cursor-pointer items-center">
-              <input
-                type="checkbox"
-                checked={isActive}
-                onChange={(e) => setIsActive(e.target.checked)}
-                className="peer sr-only"
-              />
-              <div className="peer peer-checked:bg-wise-green dark:peer-checked:bg-wise-green h-6 w-11 rounded-full bg-neutral-300 peer-focus:outline-none after:absolute after:top-0.5 after:left-0.5 after:size-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full dark:bg-neutral-700"></div>
-            </label>
+            <Switch
+              checked={isActive}
+              onCheckedChange={setIsActive}
+              aria-label="Status Akun Aktif"
+            />
           </div>
 
           {/* Reset Password Optional */}
