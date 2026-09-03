@@ -7,11 +7,10 @@ import { DeviceDetailModal } from "./DeviceDetailModal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty";
+import { SearchInput } from "@/components/ui/search-input";
 import { DataTablePagination } from "@/components/ui/pagination";
 import { formatDateTime } from "@/lib/utils";
 import {
-  Search,
-  X,
   RefreshCw,
   Smartphone,
   Trash2,
@@ -120,11 +119,6 @@ export function DevicesManagementTable({
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSearch(searchInput);
-  };
-
   const handleResetSearch = () => {
     setSearchInput("");
     onClearSearch();
@@ -149,38 +143,13 @@ export function DevicesManagementTable({
       <div className="border-border bg-surface rounded-xl border p-3.5 shadow-xs sm:p-4 dark:bg-[#161715]">
         <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
           {/* Search Form */}
-          <form onSubmit={handleSearchSubmit} className="flex flex-1 items-center gap-2">
-            <div className="relative flex-1">
-              <Search className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
-              <input
-                type="text"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                placeholder="Cari berdasarkan nama perangkat, nomor WhatsApp, ID, atau Tenant..."
-                className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-full border pr-9 pl-10 text-xs font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e]"
-              />
-              {(searchInput || searchQuery) && (
-                <button
-                  type="button"
-                  onClick={handleResetSearch}
-                  className="text-foreground-muted hover:text-foreground hover:bg-muted absolute top-1/2 right-3 flex size-5 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full transition"
-                  title="Hapus Pencarian"
-                  aria-label="Hapus Pencarian"
-                >
-                  <X className="size-3.5" />
-                </button>
-              )}
-            </div>
-            <Button
-              type="submit"
-              variant="primaryPill"
-              size="sm"
-              className="h-10 shrink-0 cursor-pointer px-4 text-xs font-bold shadow-xs"
-            >
-              <Search className="mr-1 size-3.5" />
-              <span>Cari</span>
-            </Button>
-          </form>
+          <SearchInput
+            value={searchInput}
+            onChange={setSearchInput}
+            onSearch={() => onSearch(searchInput.trim())}
+            onClear={handleResetSearch}
+            placeholder="Cari berdasarkan nama perangkat, nomor WhatsApp, ID, atau Tenant..."
+          />
 
           {/* Filter Status & Refresh */}
           <div className="flex shrink-0 items-center gap-2">

@@ -3,10 +3,16 @@
 import React, { useState } from "react";
 import { UserItem, UpdateUserInput } from "@/modules/admin/types/admin.types";
 import { Button } from "@/components/ui/button";
-import { useEscapeKey } from "@/hooks/useEscapeKey";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { generateSecureRandomString } from "@/lib/utils";
 import {
-  X,
   Edit,
   Eye,
   EyeOff,
@@ -72,172 +78,172 @@ function EditUserModalContent({ user, onClose, onSubmit }: EditUserModalContentP
   };
 
   return (
-    <div className="border-border bg-surface animate-in zoom-in-95 relative flex max-h-[92vh] w-full max-w-lg flex-col overflow-hidden rounded-xl border shadow-2xl dark:bg-[#161715]">
+    <>
       {/* Header */}
-      <div className="border-border flex shrink-0 items-start justify-between border-b p-5 pb-4 sm:p-6">
-        <div className="flex items-center gap-3">
-          <div className="dark:text-wise-green flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600">
-            <Edit className="size-5" />
-          </div>
-          <div>
-            <h2 className="text-foreground text-lg font-black tracking-tight sm:text-xl">
-              Ubah Data Pengguna
-            </h2>
-            <p className="text-foreground-secondary text-xs font-semibold">
-              Kelola profil, kontak, peran, dan reset kata sandi akun {user.name}.
-            </p>
-          </div>
+      <DialogHeader className="border-border flex flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
+        <div className="dark:text-wise-green flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600">
+          <Edit className="size-5" />
         </div>
+        <div>
+          <DialogTitle className="text-foreground text-lg font-black tracking-tight sm:text-xl">
+            Ubah Data Pengguna
+          </DialogTitle>
+          <DialogDescription className="text-foreground-secondary text-xs font-semibold">
+            Kelola profil, kontak, peran, dan reset kata sandi akun {user.name}.
+          </DialogDescription>
+        </div>
+      </DialogHeader>
 
-        <button
-          type="button"
-          onClick={onClose}
-          disabled={isLoading}
-          className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full transition disabled:opacity-50"
-          aria-label="Tutup"
-        >
-          <X className="size-4" />
-        </button>
-      </div>
-
-      {/* Form Body */}
+      {/* Scrollable Form Body */}
       <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col overflow-y-auto">
         <div className="flex-1 space-y-4 p-5 text-xs sm:p-6">
           {/* Nama Lengkap */}
           <div>
-            <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
-              Nama Lengkap
+            <label
+              htmlFor="edit-user-name"
+              className="text-foreground-secondary mb-1 flex items-center gap-1.5 font-bold"
+            >
+              <User className="size-3.5" />
+              <span>Nama Lengkap:</span>
             </label>
-            <div className="relative">
-              <User className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
+            <input
+              id="edit-user-name"
+              type="text"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Contoh: John Doe"
+              className="bg-surface border-border text-foreground focus:border-foreground h-10 w-full rounded-lg border px-3 text-xs font-semibold outline-none dark:bg-[#10110e]"
+            />
+          </div>
+
+          {/* Email */}
+          <div>
+            <label
+              htmlFor="edit-user-email"
+              className="text-foreground-secondary mb-1 flex items-center gap-1.5 font-bold"
+            >
+              <Mail className="size-3.5" />
+              <span>Alamat Email:</span>
+            </label>
+            <input
+              id="edit-user-email"
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="user@example.com"
+              className="bg-surface border-border text-foreground focus:border-foreground h-10 w-full rounded-lg border px-3 text-xs font-semibold outline-none dark:bg-[#10110e]"
+            />
+          </div>
+
+          {/* Nomor WhatsApp */}
+          <div>
+            <label
+              htmlFor="edit-user-phone"
+              className="text-foreground-secondary mb-1 flex items-center gap-1.5 font-bold"
+            >
+              <Phone className="size-3.5" />
+              <span>Nomor WhatsApp:</span>
+            </label>
+            <input
+              id="edit-user-phone"
+              type="tel"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              placeholder="6281234567890"
+              className="bg-surface border-border text-foreground focus:border-foreground h-10 w-full rounded-lg border px-3 font-mono text-xs font-semibold outline-none dark:bg-[#10110e]"
+            />
+          </div>
+
+          {/* Role Selection */}
+          <div>
+            <label
+              htmlFor="edit-user-role"
+              className="text-foreground-secondary mb-1 flex items-center gap-1.5 font-bold"
+            >
+              <Shield className="size-3.5" />
+              <span>Peran Akun (Role):</span>
+            </label>
+            <select
+              id="edit-user-role"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="bg-surface border-border text-foreground focus:border-foreground h-10 w-full rounded-lg border px-3 text-xs font-bold outline-none dark:bg-[#10110e]"
+            >
+              <option value="SELLER">SELLER (Pengguna Standar)</option>
+              <option value="ADMIN">ADMIN (Staf Pengelola Platform)</option>
+              <option value="SUPERADMIN">SUPERADMIN (Akses Penuh)</option>
+            </select>
+          </div>
+
+          {/* Status Toggle */}
+          <div className="border-border bg-muted/20 flex items-center justify-between rounded-lg border p-3">
+            <div>
+              <span className="text-foreground block font-bold">Status Akun Aktif</span>
+              <span className="text-foreground-secondary text-[11px]">
+                Izinkan pengguna login dan mengakses seluruh modul Wahide.
+              </span>
+            </div>
+            <label className="relative inline-flex cursor-pointer items-center">
               <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                placeholder="Masukkan nama lengkap"
-                className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-full border pr-4 pl-10 font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e]"
+                type="checkbox"
+                checked={isActive}
+                onChange={(e) => setIsActive(e.target.checked)}
+                className="peer sr-only"
               />
-            </div>
+              <div className="peer peer-checked:bg-wise-green dark:peer-checked:bg-wise-green h-6 w-11 rounded-full bg-neutral-300 peer-focus:outline-none after:absolute after:top-[2px] after:left-[2px] after:size-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full dark:bg-neutral-700"></div>
+            </label>
           </div>
 
-          {/* Email & Nomor WhatsApp Row */}
-          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
-            <div>
-              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
-                Alamat Email
-              </label>
-              <div className="relative">
-                <Mail className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  placeholder="email@domain.com"
-                  className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-full border pr-4 pl-10 font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e]"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
-                Nomor WhatsApp / Phone
-              </label>
-              <div className="relative">
-                <Phone className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
-                <input
-                  type="tel"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                  placeholder="0812xxxxxxxx"
-                  className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-full border pr-4 pl-10 font-mono font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e]"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Password Reset Section */}
-          <div className="border-border bg-muted/20 space-y-2 rounded-lg border p-3.5">
+          {/* Reset Password Optional */}
+          <div className="border-border space-y-2 border-t pt-3">
             <div className="flex items-center justify-between">
-              <label className="text-foreground flex items-center gap-1.5 text-xs font-semibold tracking-wider uppercase">
-                <Lock className="size-3.5 text-rose-500" />
-                <span>Kata Sandi Baru (Opsional)</span>
+              <label
+                htmlFor="edit-user-password"
+                className="text-foreground-secondary flex items-center gap-1.5 font-bold"
+              >
+                <Lock className="size-3.5" />
+                <span>Reset Kata Sandi (Opsional):</span>
               </label>
-
               <button
                 type="button"
                 onClick={handleGeneratePassword}
-                className="dark:text-wise-green flex cursor-pointer items-center gap-1 text-[11px] font-bold text-emerald-600 hover:underline"
+                className="dark:text-wise-green flex cursor-pointer items-center gap-1 font-mono text-[11px] font-bold text-emerald-600 hover:underline"
               >
                 <Sparkles className="size-3" />
-                <span>Generate Sandi Acak</span>
+                <span>Acak Sandi Kuat</span>
               </button>
             </div>
-
             <div className="relative">
               <input
+                id="edit-user-password"
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Kosongkan jika tidak ingin mengubah kata sandi"
-                className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-full border pr-10 pl-4 font-mono text-xs font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e]"
+                placeholder="Kosongkan jika tidak ingin mengubah sandi"
+                className="bg-surface border-border text-foreground focus:border-foreground h-10 w-full rounded-lg border pr-10 pl-3 font-mono text-xs font-semibold outline-none dark:bg-[#10110e]"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="text-foreground-muted hover:text-foreground absolute top-1/2 right-3.5 -translate-y-1/2 cursor-pointer transition"
-                aria-label={showPassword ? "Sembunyikan Kata Sandi" : "Lihat Kata Sandi"}
+                className="text-foreground-muted hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
+                aria-label={showPassword ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}
               >
                 {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
               </button>
             </div>
-
-            <p className="text-foreground-muted text-[11px] leading-tight">
-              ℹ️ Jika kata sandi diubah, seluruh sesi login aktif pengguna di perangkat lain akan
-              dicabut secara otomatis di Redis.
-            </p>
-          </div>
-
-          {/* Role & Status Row */}
-          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
-            <div>
-              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
-                Role / Peran Akun
-              </label>
-              <div className="relative">
-                <Shield className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
-                <select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green h-10 w-full cursor-pointer rounded-full border pr-4 pl-10 font-semibold transition outline-none focus:border-emerald-600 dark:bg-[#10110e]"
-                >
-                  <option value="SELLER">Seller (Tenant Owner)</option>
-                  <option value="SUPER_ADMIN">Super Admin</option>
-                  <option value="AGENT">CS Agent</option>
-                  <option value="USER">User Reguler</option>
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
-                Status Akun
-              </label>
-              <select
-                value={isActive ? "ACTIVE" : "SUSPENDED"}
-                onChange={(e) => setIsActive(e.target.value === "ACTIVE")}
-                className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green h-10 w-full cursor-pointer rounded-full border px-4 font-semibold transition outline-none focus:border-emerald-600 dark:bg-[#10110e]"
-              >
-                <option value="ACTIVE">🟢 Aktif (Active)</option>
-                <option value="SUSPENDED">🔴 Ditangguhkan (Suspended)</option>
-              </select>
-            </div>
+            {password && (
+              <span className="text-[11px] font-medium text-amber-600 dark:text-amber-400">
+                ⚠️ Kata sandi pengguna akan langsung ditimpa menjadi:{" "}
+                <code className="bg-muted rounded px-1 font-mono font-bold">{password}</code>
+              </span>
+            )}
           </div>
         </div>
 
         {/* Footer Actions */}
-        <div className="border-border bg-muted/20 flex shrink-0 items-center justify-end gap-3 border-t p-4 sm:p-5">
+        <DialogFooter className="border-border bg-muted/20 m-0 flex shrink-0 flex-row items-center justify-end gap-3 rounded-none border-t p-4 sm:p-5">
           <Button
             type="button"
             variant="outline"
@@ -268,28 +274,20 @@ function EditUserModalContent({ user, onClose, onSubmit }: EditUserModalContentP
               </>
             )}
           </Button>
-        </div>
+        </DialogFooter>
       </form>
-    </div>
+    </>
   );
 }
 
 export function EditUserModal({ user, isOpen, onClose, onSubmit }: EditUserModalProps) {
-  // Universal Escape key dismissal with zero listener churn
-  useEscapeKey(isOpen, onClose);
-
-  if (!isOpen || !user) return null;
+  if (!user) return null;
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-      className="animate-in fade-in fixed inset-0 z-50 flex min-h-full items-center justify-center overflow-y-auto bg-black/75 p-3 backdrop-blur-sm sm:p-6"
-    >
-      <EditUserModalContent key={user.id} user={user} onClose={onClose} onSubmit={onSubmit} />
-    </div>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="border-border bg-surface max-h-[92vh] max-w-lg gap-0 overflow-hidden p-0 dark:bg-[#161715]">
+        <EditUserModalContent key={user.id} user={user} onClose={onClose} onSubmit={onSubmit} />
+      </DialogContent>
+    </Dialog>
   );
 }

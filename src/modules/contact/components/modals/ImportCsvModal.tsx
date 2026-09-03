@@ -3,9 +3,16 @@
 import React, { useState } from "react";
 import { CreateContactInput } from "@/modules/contact/types/contact.types";
 import { Button } from "@/components/ui/button";
-import { useEscapeKey } from "@/hooks/useEscapeKey";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { useI18n } from "@/lib/i18n/context";
-import { X, UploadCloud, FileSpreadsheet, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import { UploadCloud, FileSpreadsheet, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 
 interface ImportCsvModalProps {
   isOpen: boolean;
@@ -19,11 +26,6 @@ export function ImportCsvModal({ isOpen, onClose, onImport }: ImportCsvModalProp
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
-
-  // Universal Escape key dismissal with zero listener churn
-  useEscapeKey(isOpen, onClose);
-
-  if (!isOpen) return null;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -100,17 +102,17 @@ export function ImportCsvModal({ isOpen, onClose, onImport }: ImportCsvModalProp
         setError("Gagal memproses file CSV. Pastikan format CSV valid.");
       }
     };
+
     reader.readAsText(file);
   };
 
   const handleStartImport = async () => {
     if (parsedData.length === 0) return;
+
     setIsLoading(true);
     setError(null);
     try {
       await onImport(parsedData);
-      setParsedData([]);
-      setFileName(null);
       onClose();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal mengimpor kontak";
@@ -121,82 +123,87 @@ export function ImportCsvModal({ isOpen, onClose, onImport }: ImportCsvModalProp
   };
 
   return (
-    <div
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-      className="animate-in fade-in fixed inset-0 z-50 flex min-h-full items-center justify-center overflow-y-auto bg-black/75 p-3 backdrop-blur-sm sm:p-6"
-    >
-      <div className="border-border bg-surface animate-in zoom-in-95 relative flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-md border shadow-2xl dark:bg-[#161715]">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && !isLoading && onClose()}>
+      <DialogContent className="border-border bg-surface max-h-[90vh] max-w-lg gap-0 overflow-hidden p-0 dark:bg-[#161715]">
         {/* Sticky Modal Header */}
-        <div className="border-border/80 flex shrink-0 items-start justify-between border-b p-5 pb-4 sm:p-6">
-          <div className="flex items-center gap-3">
-            <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
-              <FileSpreadsheet className="size-5" />
-            </div>
-            <div>
-              <h2 className="text-foreground text-lg font-black tracking-tight sm:text-xl">
-                {t("contact.importModalTitle")}
-              </h2>
-              <p className="text-foreground-secondary text-xs font-semibold">
-                {t("contact.importModalSubtitle")}
-              </p>
-            </div>
+        <DialogHeader className="border-border/80 flex flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
+          <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
+            <UploadCloud className="size-5" />
           </div>
+          <div>
+            <DialogTitle className="text-foreground text-lg font-black tracking-tight sm:text-xl">
+              {t("contact.importCsvModalTitle")}
+            </DialogTitle>
+            <DialogDescription className="text-foreground-secondary text-xs font-semibold">
+              {t("contact.importCsvModalSubtitle")}
+            </DialogDescription>
+          </div>
+        </DialogHeader>
 
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full transition"
-            aria-label="Tutup"
-          >
-            <X className="size-4" />
-          </button>
-        </div>
-
-        {/* Scrollable Body */}
-        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-5 sm:p-6">
-          {/* Error Alert */}
+        {/* Scrollable Content */}
+        <div className="flex-1 space-y-4.5 overflow-y-auto p-5 sm:p-6">
           {error && (
-            <div className="flex items-center gap-2 rounded-md border border-rose-500/20 bg-rose-500/10 p-3 text-xs font-semibold text-rose-600 dark:text-rose-400">
-              <AlertCircle className="size-4 shrink-0" />
+            <div className="flex items-start gap-2 rounded-md border border-rose-500/20 bg-rose-500/10 p-3 text-xs font-semibold text-rose-600 dark:text-rose-400">
+              <AlertCircle className="mt-0.5 size-4 shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
-          {/* Dropzone Upload */}
-          <div className="border-border hover:border-wise-green/80 bg-muted/20 relative flex flex-col items-center justify-center rounded-md border-2 border-dashed p-6 text-center transition">
+          {/* Instructions Box */}
+          <div className="border-border bg-muted/20 space-y-2 rounded-md border p-3.5 text-xs">
+            <span className="text-foreground block font-bold">Ketentuan Format CSV:</span>
+            <ul className="text-foreground-secondary list-inside list-disc space-y-1">
+              <li>
+                Gunakan baris pertama untuk header:{" "}
+                <code className="bg-muted text-foreground rounded px-1.5 py-0.5 font-mono text-[11px] font-bold">
+                  name,phone,tags
+                </code>
+              </li>
+              <li>
+                Format nomor WhatsApp: diawali <code className="font-bold">628xxx</code> atau{" "}
+                <code className="font-bold">08xxx</code> (otomatis dinormalisasi).
+              </li>
+              <li>
+                Kolom <code className="font-bold">tags</code> bersifat opsional, pisahkan tag dengan
+                titik koma (contoh: <code className="font-mono">VIP;Pelanggan;Bandung</code>).
+              </li>
+            </ul>
+          </div>
+
+          {/* Dropzone / File Picker */}
+          <label className="border-border hover:border-wise-green/80 bg-surface group relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-6 transition dark:bg-[#10110e]">
             <input
               type="file"
               accept=".csv"
               onChange={handleFileChange}
               disabled={isLoading}
-              className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+              className="sr-only"
             />
-            <div className="dark:bg-wise-green/10 dark:text-wise-green mb-3 flex size-12 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
-              <UploadCloud className="size-6" />
+            <div className="dark:bg-wise-green/10 dark:text-wise-green flex size-12 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700 transition group-hover:scale-105">
+              <FileSpreadsheet className="size-6" />
             </div>
-            <p className="text-foreground mb-1 text-xs font-bold">
-              {fileName || t("contact.importDropzone")}
-            </p>
-            <p className="text-foreground-muted text-[11px] font-semibold">
-              {t("contact.importSupportedFormat")}
-            </p>
-          </div>
+            <span className="text-foreground mt-3 text-xs font-bold sm:text-sm">
+              {fileName ? fileName : t("contact.dropCsvLabel")}
+            </span>
+            <span className="text-foreground-muted mt-1 text-[11px]">
+              {fileName ? "Klik untuk mengganti file" : "Format yang didukung: .csv (Maksimal 5MB)"}
+            </span>
+          </label>
 
-          {/* Preview of Parsed Contacts */}
+          {/* Preview Parsed Contacts */}
           {parsedData.length > 0 && (
-            <div className="space-y-2">
-              <div className="text-foreground flex items-center justify-between text-xs font-bold">
-                <span className="text-dark-green dark:text-wise-green flex items-center gap-1.5 font-semibold">
-                  <CheckCircle2 className="size-4" />
-                  <span>
-                    {t("contact.importPreviewTitle", { count: parsedData.length.toString() })}
-                  </span>
+            <div className="border-border bg-surface rounded-md border p-3.5 text-xs dark:bg-[#10110e]">
+              <div className="border-border/60 flex items-center justify-between border-b pb-2">
+                <span className="text-foreground flex items-center gap-1.5 font-bold">
+                  <CheckCircle2 className="dark:text-wise-green size-4 text-emerald-600" />
+                  <span>Pratinjau Data CSV Terbaca</span>
+                </span>
+                <span className="dark:bg-wise-green/15 dark:text-wise-green bg-light-mint text-dark-green rounded-full px-2.5 py-0.5 font-mono text-[10px] font-bold">
+                  {parsedData.length} Kontak Siap Impor
                 </span>
               </div>
 
-              <div className="border-border bg-muted/40 divide-border/50 max-h-40 divide-y overflow-y-auto rounded border p-2 font-mono text-xs">
+              <div className="divide-border/40 mt-2 max-h-32 divide-y overflow-y-auto font-mono">
                 {parsedData.slice(0, 5).map((c, idx) => (
                   <div key={idx} className="flex justify-between py-1.5 text-[11px]">
                     <span className="text-foreground max-w-45 truncate font-bold">{c.name}</span>
@@ -214,7 +221,7 @@ export function ImportCsvModal({ isOpen, onClose, onImport }: ImportCsvModalProp
         </div>
 
         {/* Sticky Modal Footer */}
-        <div className="border-border/80 bg-surface/90 flex shrink-0 items-center justify-end gap-2.5 border-t p-4 pt-3 backdrop-blur-sm sm:p-6 dark:bg-[#161715]/90">
+        <DialogFooter className="border-border/80 bg-surface/90 m-0 flex shrink-0 flex-row items-center justify-end gap-2.5 rounded-none border-t p-4 pt-3 backdrop-blur-sm sm:p-6 dark:bg-[#161715]/90">
           <Button
             type="button"
             variant="outline"
@@ -242,8 +249,8 @@ export function ImportCsvModal({ isOpen, onClose, onImport }: ImportCsvModalProp
               <span>{t("contact.importSubmit")}</span>
             )}
           </Button>
-        </div>
-      </div>
-    </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

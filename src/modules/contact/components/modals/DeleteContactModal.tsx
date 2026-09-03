@@ -3,9 +3,17 @@
 import React, { useState } from "react";
 import { Contact } from "@/modules/contact/types/contact.types";
 import { Button } from "@/components/ui/button";
-import { useEscapeKey } from "@/hooks/useEscapeKey";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+} from "@/components/ui/alert-dialog";
 import { useI18n } from "@/lib/i18n/context";
-import { X, AlertTriangle, Loader2, Trash2 } from "lucide-react";
+import { AlertTriangle, Loader2, Trash2 } from "lucide-react";
 
 interface DeleteContactModalProps {
   isOpen: boolean;
@@ -27,10 +35,11 @@ export function DeleteContactModal({
   const { t } = useI18n();
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Universal Escape key dismissal with zero listener churn
-  useEscapeKey(isOpen && !isDeleting, onClose);
-
-  if (!isOpen) return null;
+  const handleOpenChange = (open: boolean) => {
+    if (!open && !isDeleting) {
+      onClose();
+    }
+  };
 
   const handleConfirm = async () => {
     setIsDeleting(true);
@@ -49,49 +58,22 @@ export function DeleteContactModal({
     : t("contact.deleteConfirmTitle");
 
   const desc = isBulk ? t("contact.deleteBulkDesc") : t("contact.deleteConfirmDesc");
-
   const confirmText = isBulk ? t("contact.confirmBulkDelete") : t("contact.confirmDelete");
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
-      <div
-        className="animate-in fade-in fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
-        onClick={!isDeleting ? onClose : undefined}
-      />
-
-      {/* Modal Dialog Card */}
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="delete-dialog-title"
-        className="bg-surface border-border animate-in zoom-in-95 relative z-10 w-full max-w-md overflow-hidden rounded-xl border shadow-2xl dark:bg-[#161715]"
-      >
+    <AlertDialog open={isOpen} onOpenChange={handleOpenChange}>
+      <AlertDialogContent className="bg-surface border-border max-w-md gap-0 overflow-hidden p-0 dark:bg-[#161715]">
         {/* Header */}
-        <div className="border-border/60 flex items-start justify-between border-b p-6 pb-4">
-          <div className="flex items-center gap-3.5">
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-rose-500/10 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400">
-              <AlertTriangle className="size-5" />
-            </div>
-            <div>
-              <h3
-                id="delete-dialog-title"
-                className="text-foreground text-base font-bold tracking-tight sm:text-lg"
-              >
-                {title}
-              </h3>
-            </div>
+        <AlertDialogHeader className="border-border/60 flex flex-row items-center gap-3.5 border-b p-6 pb-4 text-left">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-rose-500/10 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400">
+            <AlertTriangle className="size-5" />
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={isDeleting}
-            className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-8 cursor-pointer items-center justify-center rounded-full transition disabled:opacity-50"
-            aria-label={t("contact.cancel")}
-          >
-            <X className="size-4" />
-          </button>
-        </div>
+          <div>
+            <AlertDialogTitle className="text-foreground text-base font-bold tracking-tight sm:text-lg">
+              {title}
+            </AlertDialogTitle>
+          </div>
+        </AlertDialogHeader>
 
         {/* Body Content */}
         <div className="text-foreground-secondary space-y-4 p-6 text-sm">
@@ -111,26 +93,26 @@ export function DeleteContactModal({
             </div>
           )}
 
-          <p className="text-foreground-muted text-xs leading-relaxed sm:text-sm">{desc}</p>
+          <AlertDialogDescription className="text-foreground-muted text-xs leading-relaxed sm:text-sm">
+            {desc}
+          </AlertDialogDescription>
         </div>
 
         {/* Footer Actions */}
-        <div className="border-border/60 bg-muted/20 flex items-center justify-end gap-2.5 border-t p-6 pt-4">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onClose}
+        <AlertDialogFooter className="border-border/60 bg-muted/20 m-0 flex flex-row items-center justify-end gap-2.5 rounded-none border-t p-6 pt-4">
+          <AlertDialogCancel
             disabled={isDeleting}
             className="border-border h-10 cursor-pointer rounded-full px-4 text-xs font-bold sm:text-sm"
           >
             {t("contact.cancel")}
-          </Button>
+          </AlertDialogCancel>
 
           <Button
             type="button"
+            variant="destructive"
             onClick={handleConfirm}
             disabled={isDeleting}
-            className="h-10 cursor-pointer gap-2 rounded-full bg-rose-600 px-5 text-xs font-bold text-white shadow-sm hover:bg-rose-700 disabled:opacity-50 sm:text-sm"
+            className="h-10 cursor-pointer gap-2 rounded-full px-5 text-xs font-bold shadow-sm disabled:opacity-50 sm:text-sm"
           >
             {isDeleting ? (
               <>
@@ -144,8 +126,8 @@ export function DeleteContactModal({
               </>
             )}
           </Button>
-        </div>
-      </div>
-    </div>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

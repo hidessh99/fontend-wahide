@@ -4,9 +4,16 @@ import React, { useState } from "react";
 import { Device } from "@/modules/whatsapp/types/whatsapp.types";
 import { whatsappApi } from "@/modules/whatsapp/api/whatsapp.api";
 import { Button } from "@/components/ui/button";
-import { useEscapeKey } from "@/hooks/useEscapeKey";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { X, Send, Loader2 } from "lucide-react";
+import { Send, Loader2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n/context";
 
 interface SendMessageModalProps {
@@ -28,11 +35,6 @@ export function SendMessageModal({ devices, isOpen, onClose }: SendMessageModalP
     userSelectedDeviceId && connectedDevices.some((d) => d.id === userSelectedDeviceId)
       ? userSelectedDeviceId
       : connectedDevices[0]?.id || "";
-
-  // Universal Escape key dismissal with zero listener churn
-  useEscapeKey(isOpen, onClose);
-
-  if (!isOpen) return null;
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,38 +68,22 @@ export function SendMessageModal({ devices, isOpen, onClose }: SendMessageModalP
   };
 
   return (
-    <div
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-      className="animate-in fade-in fixed inset-0 z-50 flex min-h-full items-center justify-center overflow-y-auto bg-black/75 p-3 backdrop-blur-sm sm:p-6"
-    >
-      <div className="border-border bg-surface animate-in zoom-in-95 relative flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-md border shadow-2xl dark:bg-[#161715]">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && !isSending && onClose()}>
+      <DialogContent className="border-border bg-surface max-h-[90vh] max-w-lg gap-0 overflow-hidden p-0 dark:bg-[#161715]">
         {/* Sticky Header */}
-        <div className="border-border flex shrink-0 items-start justify-between border-b p-5 pb-4 sm:p-6">
-          <div className="flex items-center gap-3">
-            <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
-              <Send className="size-5" />
-            </div>
-            <div>
-              <h2 className="text-foreground text-lg font-black tracking-tight sm:text-xl">
-                {t("whatsapp.fastSendTitle")}
-              </h2>
-              <p className="text-foreground-secondary text-xs font-semibold">
-                {t("whatsapp.fastSendSubtitle")}
-              </p>
-            </div>
+        <DialogHeader className="border-border flex flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
+          <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
+            <Send className="size-5" />
           </div>
-
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full transition"
-            aria-label={t("whatsapp.qrClose")}
-          >
-            <X className="size-4" />
-          </button>
-        </div>
+          <div>
+            <DialogTitle className="text-foreground text-lg font-black tracking-tight sm:text-xl">
+              {t("whatsapp.fastSendTitle")}
+            </DialogTitle>
+            <DialogDescription className="text-foreground-secondary text-xs font-semibold">
+              {t("whatsapp.fastSendSubtitle")}
+            </DialogDescription>
+          </div>
+        </DialogHeader>
 
         {/* Scrollable Form Body */}
         <form onSubmit={handleSend} className="flex min-h-0 flex-1 flex-col overflow-y-auto">
@@ -130,19 +116,19 @@ export function SendMessageModal({ devices, isOpen, onClose }: SendMessageModalP
                 {t("whatsapp.recipientPhoneLabel")}
               </label>
               <input
-                type="text"
+                type="tel"
                 value={recipient}
                 onChange={(e) => setRecipient(e.target.value)}
-                placeholder={t("whatsapp.recipientPhonePlaceholder")}
-                className="bg-surface text-foreground border-border focus:border-wise-green h-10 w-full rounded-md border px-3 text-xs font-semibold outline-none dark:bg-[#10110e]"
+                placeholder="6281234567890"
+                className="bg-surface text-foreground border-border focus:border-wise-green h-10 w-full rounded-md border px-3 font-mono text-xs font-semibold outline-none dark:bg-[#10110e]"
                 required
               />
-              <p className="text-foreground-muted mt-1 text-[11px]">
+              <span className="text-foreground-muted mt-1 block text-[11px]">
                 {t("whatsapp.recipientPhoneHint")}
-              </p>
+              </span>
             </div>
 
-            {/* Message Content */}
+            {/* Message Body */}
             <div>
               <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                 {t("whatsapp.messageTextLabel")}
@@ -159,7 +145,7 @@ export function SendMessageModal({ devices, isOpen, onClose }: SendMessageModalP
           </div>
 
           {/* Sticky Footer */}
-          <div className="border-border/80 bg-surface/90 flex shrink-0 items-center justify-end gap-2.5 border-t p-4 pt-3 backdrop-blur-sm sm:p-6 dark:bg-[#161715]/90">
+          <DialogFooter className="border-border/80 bg-surface/90 m-0 flex shrink-0 flex-row items-center justify-end gap-2.5 rounded-none border-t p-4 pt-3 backdrop-blur-sm sm:p-6 dark:bg-[#161715]/90">
             <Button
               type="button"
               variant="outline"
@@ -189,9 +175,9 @@ export function SendMessageModal({ devices, isOpen, onClose }: SendMessageModalP
                 </>
               )}
             </Button>
-          </div>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

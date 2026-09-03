@@ -3,9 +3,15 @@
 import React, { useState } from "react";
 import { AdminPlanItem, CreatePlanInput } from "@/modules/admin/types/admin.types";
 import { Button } from "@/components/ui/button";
-import { useEscapeKey } from "@/hooks/useEscapeKey";
 import {
-  X,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
   CreditCard,
   Layers,
   MessageSquare,
@@ -83,218 +89,255 @@ function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentP
   };
 
   return (
-    <div className="border-border bg-surface animate-in zoom-in-95 relative flex max-h-[92vh] w-full max-w-xl flex-col overflow-hidden rounded-xl border shadow-2xl dark:bg-[#161715]">
+    <>
       {/* Header */}
-      <div className="border-border flex shrink-0 items-start justify-between border-b p-5 pb-4 sm:p-6">
-        <div className="flex items-center gap-3">
-          <div className="dark:text-wise-green flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600">
-            {isEdit ? <Edit3 className="size-5" /> : <PlusCircle className="size-5" />}
-          </div>
-          <div>
-            <h2 className="text-foreground text-lg font-black tracking-tight sm:text-xl">
-              {isEdit ? `Ubah Paket Langganan` : "Tambah Paket Langganan Baru"}
-            </h2>
-            <p className="text-foreground-secondary text-xs font-semibold">
-              {isEdit
-                ? `Konfigurasi harga, kuota pesan, dan fitur tier ${plan?.name}.`
-                : "Tentukan kuota pesan, batas slot WhatsApp, dan harga tier baru."}
-            </p>
-          </div>
+      <DialogHeader className="border-border flex flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
+        <div className="dark:text-wise-green flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600">
+          {isEdit ? <Edit3 className="size-5" /> : <PlusCircle className="size-5" />}
         </div>
+        <div>
+          <DialogTitle className="text-foreground text-lg font-black tracking-tight sm:text-xl">
+            {isEdit ? `Ubah Paket Langganan` : "Tambah Paket Langganan Baru"}
+          </DialogTitle>
+          <DialogDescription className="text-foreground-secondary text-xs font-semibold">
+            {isEdit
+              ? `Konfigurasi harga, kuota pesan, dan fitur tier ${plan?.name}.`
+              : "Tentukan kuota pesan, batas slot WhatsApp, dan harga tier baru."}
+          </DialogDescription>
+        </div>
+      </DialogHeader>
 
-        <button
-          type="button"
-          onClick={onClose}
-          disabled={isLoading}
-          className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full transition disabled:opacity-50"
-          aria-label="Tutup"
-        >
-          <X className="size-4" />
-        </button>
-      </div>
-
-      {/* Form Body */}
+      {/* Scrollable Form Body */}
       <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col overflow-y-auto">
-        <div className="flex-1 space-y-4 p-5 text-xs sm:p-6">
-          {/* Row 1: Nama Paket & Harga */}
-          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
+        <div className="flex-1 space-y-4.5 p-5 text-xs sm:p-6">
+          {/* Nama Paket & Harga */}
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
-              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
-                Nama Paket Tier
+              <label
+                htmlFor="plan-name-input"
+                className="text-foreground-secondary mb-1 flex items-center gap-1.5 font-bold"
+              >
+                <Tag className="size-3.5" />
+                <span>Nama Paket Langganan:</span>
               </label>
-              <div className="relative">
-                <Layers className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                  placeholder="Contoh: Professional Plus"
-                  className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-full border pr-4 pl-10 font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e]"
-                />
-              </div>
+              <input
+                id="plan-name-input"
+                type="text"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Contoh: Pro Enterprise"
+                className="bg-surface border-border text-foreground focus:border-foreground h-10 w-full rounded-lg border px-3 text-xs font-semibold outline-none dark:bg-[#10110e]"
+              />
             </div>
 
             <div>
-              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
-                Harga Bulanan (IDR)
+              <label
+                htmlFor="plan-price-input"
+                className="text-foreground-secondary mb-1 flex items-center gap-1.5 font-bold"
+              >
+                <CreditCard className="size-3.5" />
+                <span>Harga / Bulan (Rp):</span>
               </label>
-              <div className="relative">
-                <CreditCard className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
-                <input
-                  type="number"
-                  min={0}
-                  step={1000}
-                  value={price}
-                  onChange={(e) => setPrice(Math.max(0, parseInt(e.target.value, 10) || 0))}
-                  required
-                  placeholder="50000"
-                  className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-full border pr-4 pl-10 font-mono font-bold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e]"
-                />
-              </div>
+              <input
+                id="plan-price-input"
+                type="number"
+                min={0}
+                step={1000}
+                required
+                value={price}
+                onChange={(e) => setPrice(Number(e.target.value))}
+                placeholder="50000"
+                className="bg-surface border-border text-foreground focus:border-foreground h-10 w-full rounded-lg border px-3 font-mono text-xs font-black outline-none dark:bg-[#10110e]"
+              />
             </div>
           </div>
 
-          {/* Row 2: Batas Kuota Pesan, Slot Device, Slot CS */}
-          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-3">
-            <div>
-              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
-                Batas Pesan / Bulan
-              </label>
-              <div className="relative">
-                <MessageSquare className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
+          {/* Kuota Pesan & Batas Resource */}
+          <div className="border-border bg-muted/20 space-y-3 rounded-xl border p-3.5">
+            <span className="text-foreground-secondary block text-[11px] font-bold tracking-wider uppercase">
+              Batas Kuota Operasional:
+            </span>
+
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <div>
+                <label
+                  htmlFor="plan-message-limit-input"
+                  className="text-foreground-secondary mb-1 flex items-center gap-1.5 font-semibold"
+                >
+                  <MessageSquare className="size-3.5" />
+                  <span>Limit Pesan/Bulan:</span>
+                </label>
                 <input
+                  id="plan-message-limit-input"
                   type="number"
                   min={100}
-                  value={monthlyMessageLimit}
-                  onChange={(e) =>
-                    setMonthlyMessageLimit(Math.max(1, parseInt(e.target.value, 10) || 1000))
-                  }
                   required
-                  placeholder="25000"
-                  className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green h-10 w-full rounded-full border pr-3 pl-10 font-mono font-bold transition outline-none focus:border-emerald-600 dark:bg-[#10110e]"
+                  value={monthlyMessageLimit}
+                  onChange={(e) => setMonthlyMessageLimit(Number(e.target.value))}
+                  className="bg-surface border-border text-foreground focus:border-foreground h-9 w-full rounded-lg border px-3 font-mono text-xs font-bold outline-none dark:bg-[#10110e]"
                 />
               </div>
-            </div>
 
-            <div>
-              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
-                Batas Slot WA
-              </label>
-              <div className="relative">
-                <Smartphone className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
+              <div>
+                <label
+                  htmlFor="plan-max-devices-input"
+                  className="text-foreground-secondary mb-1 flex items-center gap-1.5 font-semibold"
+                >
+                  <Smartphone className="size-3.5" />
+                  <span>Slot Nomor WhatsApp:</span>
+                </label>
                 <input
+                  id="plan-max-devices-input"
                   type="number"
                   min={1}
-                  max={100}
-                  value={maxDevices}
-                  onChange={(e) => setMaxDevices(Math.max(1, parseInt(e.target.value, 10) || 1))}
                   required
-                  placeholder="5"
-                  className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green h-10 w-full rounded-full border pr-3 pl-10 font-mono font-bold transition outline-none focus:border-emerald-600 dark:bg-[#10110e]"
+                  value={maxDevices}
+                  onChange={(e) => setMaxDevices(Number(e.target.value))}
+                  className="bg-surface border-border text-foreground focus:border-foreground h-9 w-full rounded-lg border px-3 font-mono text-xs font-bold outline-none dark:bg-[#10110e]"
                 />
               </div>
-            </div>
 
-            <div>
-              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
-                Batas CS Agent
-              </label>
-              <div className="relative">
-                <Users className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
+              <div>
+                <label
+                  htmlFor="plan-max-agents-input"
+                  className="text-foreground-secondary mb-1 flex items-center gap-1.5 font-semibold"
+                >
+                  <Users className="size-3.5" />
+                  <span>Maks Anggota CS:</span>
+                </label>
                 <input
+                  id="plan-max-agents-input"
                   type="number"
                   min={0}
-                  max={100}
-                  value={maxAgents}
-                  onChange={(e) => setMaxAgents(Math.max(0, parseInt(e.target.value, 10) || 0))}
                   required
-                  placeholder="2"
-                  className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green h-10 w-full rounded-full border pr-3 pl-10 font-mono font-bold transition outline-none focus:border-emerald-600 dark:bg-[#10110e]"
+                  value={maxAgents}
+                  onChange={(e) => setMaxAgents(Number(e.target.value))}
+                  className="bg-surface border-border text-foreground focus:border-foreground h-9 w-full rounded-lg border px-3 font-mono text-xs font-bold outline-none dark:bg-[#10110e]"
                 />
               </div>
             </div>
           </div>
 
-          {/* Features Capabilities Grid */}
-          <div className="border-border bg-muted/20 space-y-3 rounded-lg border p-3.5">
-            <span className="text-foreground block text-xs font-bold tracking-wider uppercase">
-              Izin &amp; Kemampuan Fitur WhatsApp
+          {/* Toggle Hak Akses Fitur */}
+          <div className="space-y-2.5">
+            <span className="text-foreground-secondary block text-[11px] font-bold tracking-wider uppercase">
+              Hak Akses Modul Fitur:
             </span>
 
             <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-              <label className="bg-surface border-border flex cursor-pointer items-center gap-2.5 rounded-md border p-2 select-none dark:bg-[#10110e]">
+              <label className="border-border bg-surface hover:border-foreground-muted flex cursor-pointer items-center justify-between rounded-lg border p-3 dark:bg-[#10110e]">
+                <div className="flex items-center gap-2">
+                  <Paperclip className="text-foreground-muted size-4" />
+                  <div>
+                    <span className="text-foreground block font-bold">Kirim Lampiran File</span>
+                    <span className="text-foreground-muted text-[10px]">
+                      Gambar, Dokumen PDF, &amp; Audio
+                    </span>
+                  </div>
+                </div>
                 <input
                   type="checkbox"
                   checked={allowAttachment}
                   onChange={(e) => setAllowAttachment(e.target.checked)}
-                  className="size-4 rounded text-emerald-600 focus:ring-emerald-500"
+                  className="border-border dark:text-wise-green size-4 rounded text-emerald-600 focus:ring-emerald-500"
                 />
-                <Paperclip className="text-foreground-secondary size-3.5 shrink-0" />
-                <span className="text-foreground font-semibold">Kirim File / Lampiran</span>
               </label>
 
-              <label className="bg-surface border-border flex cursor-pointer items-center gap-2.5 rounded-md border p-2 select-none dark:bg-[#10110e]">
+              <label className="border-border bg-surface hover:border-foreground-muted flex cursor-pointer items-center justify-between rounded-lg border p-3 dark:bg-[#10110e]">
+                <div className="flex items-center gap-2">
+                  <Send className="text-foreground-muted size-4" />
+                  <div>
+                    <span className="text-foreground block font-bold">Kampanye Broadcast</span>
+                    <span className="text-foreground-muted text-[10px]">
+                      Kirim Pesan Massal Terjadwal
+                    </span>
+                  </div>
+                </div>
                 <input
                   type="checkbox"
                   checked={allowCampaign}
                   onChange={(e) => setAllowCampaign(e.target.checked)}
-                  className="size-4 rounded text-emerald-600 focus:ring-emerald-500"
+                  className="border-border dark:text-wise-green size-4 rounded text-emerald-600 focus:ring-emerald-500"
                 />
-                <Send className="text-foreground-secondary size-3.5 shrink-0" />
-                <span className="text-foreground font-semibold">Broadcast &amp; Campaign</span>
               </label>
 
-              <label className="bg-surface border-border flex cursor-pointer items-center gap-2.5 rounded-md border p-2 select-none dark:bg-[#10110e]">
+              <label className="border-border bg-surface hover:border-foreground-muted flex cursor-pointer items-center justify-between rounded-lg border p-3 dark:bg-[#10110e]">
+                <div className="flex items-center gap-2">
+                  <Bot className="text-foreground-muted size-4" />
+                  <div>
+                    <span className="text-foreground block font-bold">Auto-Reply &amp; Bot</span>
+                    <span className="text-foreground-muted text-[10px]">
+                      Balas Cepat Berbasis Kata Kunci
+                    </span>
+                  </div>
+                </div>
                 <input
                   type="checkbox"
                   checked={allowAutoreply}
                   onChange={(e) => setAllowAutoreply(e.target.checked)}
-                  className="size-4 rounded text-emerald-600 focus:ring-emerald-500"
+                  className="border-border dark:text-wise-green size-4 rounded text-emerald-600 focus:ring-emerald-500"
                 />
-                <Bot className="text-foreground-secondary size-3.5 shrink-0" />
-                <span className="text-foreground font-semibold">Auto-Reply &amp; Bot</span>
               </label>
 
-              <label className="bg-surface border-border flex cursor-pointer items-center gap-2.5 rounded-md border p-2 select-none dark:bg-[#10110e]">
+              <label className="border-border bg-surface hover:border-foreground-muted flex cursor-pointer items-center justify-between rounded-lg border p-3 dark:bg-[#10110e]">
+                <div className="flex items-center gap-2">
+                  <Clock className="text-foreground-muted size-4" />
+                  <div>
+                    <span className="text-foreground block font-bold">Jadwal Pesan Kalender</span>
+                    <span className="text-foreground-muted text-[10px]">
+                      Antrean Pengiriman Otomatis
+                    </span>
+                  </div>
+                </div>
                 <input
                   type="checkbox"
                   checked={allowSchedule}
                   onChange={(e) => setAllowSchedule(e.target.checked)}
-                  className="size-4 rounded text-emerald-600 focus:ring-emerald-500"
+                  className="border-border dark:text-wise-green size-4 rounded text-emerald-600 focus:ring-emerald-500"
                 />
-                <Clock className="text-foreground-secondary size-3.5 shrink-0" />
-                <span className="text-foreground font-semibold">Pesan Terjadwal</span>
               </label>
             </div>
           </div>
 
           {/* Watermark Section */}
-          <div className="border-border bg-muted/20 space-y-2.5 rounded-lg border p-3.5">
+          <div className="border-border bg-muted/20 space-y-2.5 rounded-xl border p-3.5">
             <div className="flex items-center justify-between">
-              <label className="text-foreground flex cursor-pointer items-center gap-2 text-xs font-bold tracking-wider uppercase select-none">
+              <div>
+                <span className="text-foreground flex items-center gap-1.5 font-bold">
+                  <Layers className="size-3.5" />
+                  <span>Sertakan Watermark Footer Pesan</span>
+                </span>
+                <span className="text-foreground-muted text-[11px]">
+                  Tambahkan teks promosi default di akhir setiap pesan keluar.
+                </span>
+              </div>
+              <label className="relative inline-flex cursor-pointer items-center">
                 <input
                   type="checkbox"
                   checked={hasWatermark}
                   onChange={(e) => setHasWatermark(e.target.checked)}
-                  className="size-4 rounded text-emerald-600 focus:ring-emerald-500"
+                  className="peer sr-only"
                 />
-                <Tag className="text-foreground-secondary size-3.5 shrink-0" />
-                <span>Paksa Watermark Pada Pesan Broadcast</span>
+                <div className="peer peer-checked:bg-wise-green dark:peer-checked:bg-wise-green h-5 w-9 rounded-full bg-neutral-300 peer-focus:outline-none after:absolute after:top-[2px] after:left-[2px] after:size-4 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full dark:bg-neutral-700"></div>
               </label>
             </div>
 
             {hasWatermark && (
               <div>
-                <label className="text-foreground-muted mb-1 block text-[11px] font-semibold">
-                  Teks Watermark (Muncul di akhir pesan)
+                <label
+                  htmlFor="plan-watermark-text-input"
+                  className="text-foreground-secondary mb-1 block text-[11px] font-semibold"
+                >
+                  Isi Teks Watermark:
                 </label>
-                <input
-                  type="text"
+                <textarea
+                  id="plan-watermark-text-input"
+                  rows={2}
                   value={watermarkText}
                   onChange={(e) => setWatermarkText(e.target.value)}
-                  placeholder="\n\n_Sent via Wahide WhatsApp Gateway_"
-                  className="bg-surface text-foreground border-border dark:focus:border-wise-green h-9 w-full rounded-md border px-3 font-mono text-xs outline-none focus:border-emerald-600 dark:bg-[#10110e]"
+                  placeholder="_Sent via Wahide WhatsApp Gateway_"
+                  className="bg-surface border-border text-foreground focus:border-foreground w-full rounded-lg border p-2.5 font-mono text-[11px] outline-none dark:bg-[#10110e]"
                 />
               </div>
             )}
@@ -302,7 +345,7 @@ function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentP
         </div>
 
         {/* Footer Actions */}
-        <div className="border-border bg-muted/20 flex shrink-0 items-center justify-end gap-3 border-t p-4 sm:p-5">
+        <DialogFooter className="border-border bg-muted/20 m-0 flex shrink-0 flex-row items-center justify-end gap-3 rounded-none border-t p-4 sm:p-5">
           <Button
             type="button"
             variant="outline"
@@ -333,33 +376,25 @@ function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentP
               </>
             )}
           </Button>
-        </div>
+        </DialogFooter>
       </form>
-    </div>
+    </>
   );
 }
 
 export function PlanFormModal({ plan, isOpen, onClose, onSubmit }: PlanFormModalProps) {
-  // Universal Escape key dismissal with zero listener churn
-  useEscapeKey(isOpen, onClose);
-
   if (!isOpen) return null;
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-      className="animate-in fade-in fixed inset-0 z-50 flex min-h-full items-center justify-center overflow-y-auto bg-black/75 p-3 backdrop-blur-sm sm:p-6"
-    >
-      <PlanFormModalContent
-        key={plan?.id || "new-plan"}
-        plan={plan}
-        onClose={onClose}
-        onSubmit={onSubmit}
-      />
-    </div>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="border-border bg-surface max-h-[92vh] max-w-xl gap-0 overflow-hidden p-0 dark:bg-[#161715]">
+        <PlanFormModalContent
+          key={plan?.id || "new-plan"}
+          plan={plan}
+          onClose={onClose}
+          onSubmit={onSubmit}
+        />
+      </DialogContent>
+    </Dialog>
   );
 }

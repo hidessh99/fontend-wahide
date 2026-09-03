@@ -3,9 +3,16 @@
 import React, { useState } from "react";
 import { Contact, CreateContactInput } from "@/modules/contact/types/contact.types";
 import { Button } from "@/components/ui/button";
-import { useEscapeKey } from "@/hooks/useEscapeKey";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { useI18n } from "@/lib/i18n/context";
-import { X, UserPlus, Loader2, Save } from "lucide-react";
+import { UserPlus, Loader2, Save } from "lucide-react";
 
 interface ContactModalProps {
   isOpen: boolean;
@@ -104,7 +111,7 @@ function ContactForm({
       </div>
 
       {/* Sticky Modal Footer */}
-      <div className="border-border/80 bg-surface/90 flex shrink-0 items-center justify-end gap-2.5 border-t p-4 pt-3 backdrop-blur-sm sm:p-6 dark:bg-[#161715]/90">
+      <DialogFooter className="border-border/80 bg-surface/90 m-0 flex shrink-0 flex-row items-center justify-end gap-2.5 rounded-none border-t p-4 pt-3 backdrop-blur-sm sm:p-6 dark:bg-[#161715]/90">
         <Button
           type="button"
           variant="outline"
@@ -134,7 +141,7 @@ function ContactForm({
             </>
           )}
         </Button>
-      </div>
+      </DialogFooter>
     </form>
   );
 }
@@ -142,44 +149,23 @@ function ContactForm({
 export function ContactModal({ isOpen, contact, onClose, onSubmit }: ContactModalProps) {
   const { t } = useI18n();
 
-  // Escape key to dismiss
-  useEscapeKey(isOpen, onClose);
-
-  if (!isOpen) return null;
-
   return (
-    <div
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-      className="animate-in fade-in fixed inset-0 z-50 flex min-h-full items-center justify-center overflow-y-auto bg-black/75 p-3 backdrop-blur-sm sm:p-6"
-    >
-      <div className="border-border bg-surface animate-in zoom-in-95 relative flex max-h-[90vh] w-full max-w-md flex-col overflow-hidden rounded-md border shadow-2xl dark:bg-[#161715]">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="border-border bg-surface max-h-[90vh] max-w-md gap-0 overflow-hidden p-0 dark:bg-[#161715]">
         {/* Sticky Modal Header */}
-        <div className="border-border/80 flex shrink-0 items-start justify-between border-b p-5 pb-4 sm:p-6">
-          <div className="flex items-center gap-3">
-            <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
-              <UserPlus className="size-5" />
-            </div>
-            <div>
-              <h2 className="text-foreground text-lg font-black tracking-tight sm:text-xl">
-                {contact ? t("contact.editModalTitle") : t("contact.addModalTitle")}
-              </h2>
-              <p className="text-foreground-secondary text-xs font-semibold">
-                {contact ? t("contact.editModalSubtitle") : t("contact.addModalSubtitle")}
-              </p>
-            </div>
+        <DialogHeader className="border-border/80 flex flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
+          <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
+            <UserPlus className="size-5" />
           </div>
-
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full transition"
-            aria-label="Tutup"
-          >
-            <X className="size-4" />
-          </button>
-        </div>
+          <div>
+            <DialogTitle className="text-foreground text-lg font-black tracking-tight sm:text-xl">
+              {contact ? t("contact.editModalTitle") : t("contact.addModalTitle")}
+            </DialogTitle>
+            <DialogDescription className="text-foreground-secondary text-xs font-semibold">
+              {contact ? t("contact.editModalSubtitle") : t("contact.addModalSubtitle")}
+            </DialogDescription>
+          </div>
+        </DialogHeader>
 
         {/* Form Content Component with key for automatic state mount/unmount */}
         <ContactForm
@@ -188,7 +174,7 @@ export function ContactModal({ isOpen, contact, onClose, onSubmit }: ContactModa
           onClose={onClose}
           onSubmit={onSubmit}
         />
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

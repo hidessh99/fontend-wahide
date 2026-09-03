@@ -8,6 +8,7 @@ import { useSupport } from "@/modules/support/hooks/useSupport";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty";
+import { SearchInput } from "@/components/ui/search-input";
 import { useI18n } from "@/lib/i18n/context";
 import { UpdateTicketStatusModal } from "./UpdateTicketStatusModal";
 
@@ -20,8 +21,6 @@ import { isAdmin } from "@/modules/iam/types/auth.types";
 import {
   LifeBuoy,
   Plus,
-  Search,
-  X,
   MessageSquare,
   RefreshCw,
   Clock,
@@ -44,7 +43,6 @@ export function TicketList() {
     tickets,
     filteredTickets,
     isLoading,
-    activeSearch,
     statusFilter,
     page,
     pageSize,
@@ -61,11 +59,6 @@ export function TicketList() {
 
   const [searchInput, setSearchInput] = useState("");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    executeSearch(searchInput);
-  };
 
   const handleClearSearch = () => {
     setSearchInput("");
@@ -140,38 +133,14 @@ export function TicketList() {
         {/* Top Row: Search Form + Primary CTA */}
         <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
           {/* Search Form */}
-          <form onSubmit={handleSearchSubmit} className="flex flex-1 items-center gap-2">
-            <div className="relative flex-1">
-              <Search className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
-              <input
-                type="text"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                placeholder={t("support.searchPlaceholder")}
-                className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full rounded-full border pr-9 pl-10 text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
-              />
-              {(searchInput || activeSearch) && (
-                <button
-                  type="button"
-                  onClick={handleClearSearch}
-                  className="text-foreground-muted hover:text-foreground hover:bg-muted absolute top-1/2 right-3 flex size-5 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full transition"
-                  title="Hapus Pencarian"
-                  aria-label="Hapus Pencarian"
-                >
-                  <X className="size-3.5" />
-                </button>
-              )}
-            </div>
-            <Button
-              type="submit"
-              variant="primaryPill"
-              size="sm"
-              className="h-10 shrink-0 cursor-pointer px-4 text-xs font-bold shadow-xs"
-            >
-              <Search className="mr-1 size-3.5" />
-              <span>{t("support.search")}</span>
-            </Button>
-          </form>
+          <SearchInput
+            value={searchInput}
+            onChange={setSearchInput}
+            onSearch={() => executeSearch(searchInput.trim())}
+            onClear={handleClearSearch}
+            placeholder={t("support.searchPlaceholder")}
+            buttonText={t("support.search")}
+          />
 
           {/* Primary CTA Button */}
           <Button

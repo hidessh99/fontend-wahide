@@ -1,11 +1,19 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import { UserActivityItem } from "@/modules/admin/types/admin.types";
 import { formatHumanActivityDate } from "./UserActivitiesTable";
-import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, X, Trash2, Loader2, Clock, User, Mail } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+} from "@/components/ui/alert-dialog";
+import { AlertTriangle, Trash2, Loader2, Clock, User, Mail } from "lucide-react";
 
 interface DeleteActivityConfirmModalProps {
   isOpen: boolean;
@@ -23,16 +31,14 @@ export function DeleteActivityConfirmModal({
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const handleClose = useCallback(() => {
-    setIsConfirmed(false);
-    setIsDeleting(false);
-    onClose();
-  }, [onClose]);
+  const handleOpenChange = (open: boolean) => {
+    if (!open && !isDeleting) {
+      setIsConfirmed(false);
+      onClose();
+    }
+  };
 
-  // Universal Escape key dismissal with zero listener churn
-  useEscapeKey(isOpen, handleClose);
-
-  if (!isOpen || !activity) return null;
+  if (!activity) return null;
 
   const handleDelete = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,6 +47,7 @@ export function DeleteActivityConfirmModal({
     try {
       setIsDeleting(true);
       await onConfirm(activity.id);
+      setIsConfirmed(false);
       onClose();
     } catch {
       // Handled in parent / hook
@@ -50,36 +57,22 @@ export function DeleteActivityConfirmModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
-      <div
-        className="bg-surface border-border animate-in fade-in zoom-in-95 relative w-full max-w-lg overflow-hidden rounded-xl border shadow-2xl duration-200 dark:bg-[#161715]"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="delete-activity-title"
-      >
+    <AlertDialog open={isOpen} onOpenChange={handleOpenChange}>
+      <AlertDialogContent className="border-border bg-surface max-w-lg gap-0 overflow-hidden p-0 dark:bg-[#161715]">
         {/* Header Section */}
-        <div className="border-border flex items-center justify-between border-b bg-rose-500/5 p-5">
-          <div className="flex items-center gap-3">
-            <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400">
-              <AlertTriangle className="size-4.5" />
-            </div>
-            <div>
-              <h2 id="delete-activity-title" className="text-foreground text-base font-extrabold">
-                Hapus Rekaman Aktivitas
-              </h2>
-              <p className="text-foreground-secondary text-xs font-semibold">
-                Tindakan ini akan menghapus rekaman log audit secara permanen.
-              </p>
-            </div>
+        <AlertDialogHeader className="border-border flex flex-row items-center gap-3 border-b bg-rose-500/5 p-5 text-left">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400">
+            <AlertTriangle className="size-4.5" />
           </div>
-          <button
-            onClick={handleClose}
-            className="text-foreground-secondary hover:text-foreground hover:bg-muted flex size-8 cursor-pointer items-center justify-center rounded-full transition"
-            aria-label="Tutup Dialog"
-          >
-            <X className="size-4" />
-          </button>
-        </div>
+          <div>
+            <AlertDialogTitle className="text-foreground text-base font-extrabold">
+              Hapus Rekaman Aktivitas
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-foreground-secondary text-xs font-semibold">
+              Tindakan ini akan menghapus rekaman log audit secara permanen.
+            </AlertDialogDescription>
+          </div>
+        </AlertDialogHeader>
 
         {/* Form Body */}
         <form onSubmit={handleDelete} className="space-y-4 p-5 text-xs font-semibold">
@@ -142,17 +135,13 @@ export function DeleteActivityConfirmModal({
           </div>
 
           {/* Footer Action Buttons */}
-          <div className="border-border flex items-center justify-end gap-2.5 border-t pt-3">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={handleClose}
+          <AlertDialogFooter className="border-border m-0 flex flex-row items-center justify-end gap-2.5 rounded-none border-t bg-transparent p-0 pt-3">
+            <AlertDialogCancel
               disabled={isDeleting}
               className="border-border hover:border-foreground-muted cursor-pointer rounded-full px-4 text-xs font-bold"
             >
               Batal
-            </Button>
+            </AlertDialogCancel>
             <Button
               type="submit"
               variant="destructive"
@@ -172,9 +161,9 @@ export function DeleteActivityConfirmModal({
                 </>
               )}
             </Button>
-          </div>
+          </AlertDialogFooter>
         </form>
-      </div>
-    </div>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

@@ -3,11 +3,17 @@
 import React, { useState } from "react";
 import { AdminDeviceItem } from "@/modules/admin/types/admin.types";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { formatDateTime } from "@/lib/utils";
 import { toast } from "sonner";
 import {
   Smartphone,
-  X,
   Copy,
   Check,
   Building2,
@@ -74,7 +80,7 @@ function getDeviceStatusVisual(status: string) {
 export function DeviceDetailModal({ device, isOpen, onClose }: DeviceDetailModalProps) {
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
-  if (!isOpen || !device) return null;
+  if (!device) return null;
 
   const handleCopy = async (text: string, label: string) => {
     try {
@@ -90,40 +96,22 @@ export function DeviceDetailModal({ device, isOpen, onClose }: DeviceDetailModal
   const statusVisual = getDeviceStatusVisual(device.status);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
-      <div
-        className="animate-in fade-in fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
-        onClick={onClose}
-      />
-
-      {/* Dialog */}
-      <div className="border-border bg-surface animate-in fade-in zoom-in-95 relative z-10 flex max-h-[90vh] w-full max-w-lg flex-col space-y-4 rounded-2xl border p-5 shadow-2xl sm:p-6 dark:bg-[#161715]">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="border-border bg-surface max-h-[90vh] max-w-lg gap-0 space-y-4 overflow-hidden p-5 sm:p-6 dark:bg-[#161715]">
         {/* Header */}
-        <div className="border-border flex shrink-0 items-start justify-between gap-3 border-b pb-3.5">
-          <div className="flex items-center gap-2.5">
-            <div className="dark:text-wise-green flex size-9 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600">
-              <Smartphone className="size-4.5" />
-            </div>
-            <div>
-              <h2 className="text-foreground text-base font-black tracking-tight">
-                {device.pushName}
-              </h2>
-              <span className="text-foreground-muted block font-mono text-[11px]">
-                ID: {device.id}
-              </span>
-            </div>
+        <DialogHeader className="border-border flex flex-row items-center gap-2.5 border-b pb-3.5 text-left">
+          <div className="dark:text-wise-green flex size-9 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600">
+            <Smartphone className="size-4.5" />
           </div>
-
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-7 cursor-pointer items-center justify-center rounded-full transition"
-            aria-label="Tutup"
-          >
-            <X className="size-4" />
-          </button>
-        </div>
+          <div>
+            <DialogTitle className="text-foreground text-base font-black tracking-tight">
+              {device.pushName}
+            </DialogTitle>
+            <span className="text-foreground-muted block font-mono text-[11px]">
+              ID: {device.id}
+            </span>
+          </div>
+        </DialogHeader>
 
         {/* Scrollable Content */}
         <div className="flex-1 space-y-4 overflow-y-auto pr-1 text-xs">
@@ -173,26 +161,27 @@ export function DeviceDetailModal({ device, isOpen, onClose }: DeviceDetailModal
             </div>
           </div>
 
-          {/* Technical Metadata Grid */}
-          <div className="border-border bg-muted/20 space-y-2.5 rounded-xl border p-3.5 text-xs">
-            {/* WhatsApp JID */}
+          {/* Identity & Technical Detail Card */}
+          <div className="border-border bg-muted/20 space-y-2.5 rounded-xl border p-4">
+            <span className="text-foreground-secondary block text-[11px] font-bold tracking-wider uppercase">
+              Detail Teknis &amp; Identitas Sesi:
+            </span>
+
+            {/* JID */}
             <div className="flex items-center justify-between">
-              <span className="text-foreground-secondary flex items-center gap-1.5 font-semibold">
-                <Smartphone className="text-foreground-muted size-3.5" />
-                <span>Nomor WhatsApp / JID:</span>
-              </span>
+              <span className="text-foreground-secondary font-semibold">WhatsApp JID:</span>
               <div className="flex items-center gap-1.5">
-                <span className="text-foreground font-mono font-bold select-text">
+                <span className="text-foreground font-mono text-[11px] font-bold">
                   {device.jid || "(Belum terhubung)"}
                 </span>
                 {device.jid && (
                   <button
                     type="button"
-                    onClick={() => handleCopy(device.jid, "Nomor JID")}
-                    className="hover:bg-muted text-foreground-muted hover:text-foreground cursor-pointer rounded p-1"
+                    onClick={() => handleCopy(device.jid, "WhatsApp JID")}
+                    className="text-foreground-muted hover:text-foreground cursor-pointer p-0.5"
                     title="Salin JID"
                   >
-                    {copiedField === "Nomor JID" ? (
+                    {copiedField === "WhatsApp JID" ? (
                       <Check className="size-3 text-emerald-600" />
                     ) : (
                       <Copy className="size-3" />
@@ -202,45 +191,31 @@ export function DeviceDetailModal({ device, isOpen, onClose }: DeviceDetailModal
               </div>
             </div>
 
+            {/* Push Name */}
+            <div className="border-border/50 flex items-center justify-between border-t pt-2">
+              <span className="text-foreground-secondary font-semibold">
+                Nama Profil (PushName):
+              </span>
+              <span className="text-foreground font-bold">{device.pushName}</span>
+            </div>
+
             {/* Tenant ID */}
             <div className="border-border/50 flex items-center justify-between border-t pt-2">
-              <span className="text-foreground-secondary flex items-center gap-1.5 font-semibold">
-                <Building2 className="text-foreground-muted size-3.5" />
-                <span>Tenant ID:</span>
+              <span className="text-foreground-secondary flex items-center gap-1 font-semibold">
+                <Building2 className="text-foreground-muted size-3" />
+                <span>Pemilik (Tenant ID):</span>
               </span>
               <div className="flex items-center gap-1.5">
-                <span className="text-foreground font-mono text-[11px] font-bold select-text">
+                <span className="text-foreground font-mono text-[11px] font-semibold">
                   {device.tenantId}
                 </span>
                 <button
                   type="button"
                   onClick={() => handleCopy(device.tenantId, "Tenant ID")}
-                  className="hover:bg-muted text-foreground-muted hover:text-foreground cursor-pointer rounded p-1"
+                  className="text-foreground-muted hover:text-foreground cursor-pointer p-0.5"
                   title="Salin Tenant ID"
                 >
                   {copiedField === "Tenant ID" ? (
-                    <Check className="size-3 text-emerald-600" />
-                  ) : (
-                    <Copy className="size-3" />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            {/* Device ID */}
-            <div className="border-border/50 flex items-center justify-between border-t pt-2">
-              <span className="text-foreground-secondary font-semibold">Device ID (ULID):</span>
-              <div className="flex items-center gap-1.5">
-                <span className="text-foreground-muted font-mono text-[11px] select-text">
-                  {device.id}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => handleCopy(device.id, "Device ID")}
-                  className="hover:bg-muted text-foreground-muted hover:text-foreground cursor-pointer rounded p-1"
-                  title="Salin Device ID"
-                >
-                  {copiedField === "Device ID" ? (
                     <Check className="size-3 text-emerald-600" />
                   ) : (
                     <Copy className="size-3" />
@@ -271,7 +246,7 @@ export function DeviceDetailModal({ device, isOpen, onClose }: DeviceDetailModal
         </div>
 
         {/* Footer */}
-        <div className="border-border flex shrink-0 justify-end border-t pt-2">
+        <DialogFooter className="border-border m-0 flex shrink-0 flex-row justify-end rounded-none border-t p-0 pt-2">
           <Button
             type="button"
             variant="outline"
@@ -281,8 +256,8 @@ export function DeviceDetailModal({ device, isOpen, onClose }: DeviceDetailModal
           >
             Tutup
           </Button>
-        </div>
-      </div>
-    </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

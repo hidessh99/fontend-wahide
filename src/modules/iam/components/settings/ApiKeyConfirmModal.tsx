@@ -1,8 +1,16 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useEscapeKey } from "@/hooks/useEscapeKey";
-import { X, AlertTriangle, RefreshCw, Trash2, ShieldAlert, Loader2, Zap } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+} from "@/components/ui/alert-dialog";
+import { AlertTriangle, RefreshCw, Trash2, ShieldAlert, Loader2, Zap } from "lucide-react";
 
 interface ApiKeyConfirmModalProps {
   isOpen: boolean;
@@ -21,58 +29,43 @@ export function ApiKeyConfirmModal({
   onClose,
   onConfirm,
 }: ApiKeyConfirmModalProps) {
-  // Universal Escape key dismissal with zero listener churn
-  useEscapeKey(isOpen && !isLoading, onClose);
-
-  if (!isOpen) return null;
-
   const isRegenerate = mode === "REGENERATE";
 
-  return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      className="animate-in fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm sm:p-6"
-    >
-      <div className="border-border bg-surface animate-in zoom-in-95 relative w-full max-w-lg space-y-6 overflow-hidden rounded-xl border p-6 shadow-2xl duration-150 sm:p-8 dark:bg-[#161715]">
-        {/* Header Icon & Close Button */}
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3.5">
-            <div
-              className={`flex size-11 shrink-0 items-center justify-center rounded-full border ${
-                isRegenerate
-                  ? "border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-400"
-                  : "border-rose-500/25 bg-rose-500/10 text-rose-700 dark:text-rose-400"
-              }`}
-            >
-              {isRegenerate ? (
-                <AlertTriangle className="size-5.5" />
-              ) : (
-                <ShieldAlert className="size-5.5" />
-              )}
-            </div>
-            <div>
-              <h2 className="text-foreground text-lg font-black tracking-tight sm:text-xl">
-                {isRegenerate ? "Buat Ulang API Key Fast-Path?" : "Cabut Akses API Key?"}
-              </h2>
-              <p className="text-foreground-secondary text-xs font-semibold">
-                {isRegenerate
-                  ? "Tindakan kritis rotasi kunci autentikasi sistem."
-                  : "Tindakan permanen penonaktifan akses otentikasi."}
-              </p>
-            </div>
-          </div>
+  const handleOpenChange = (open: boolean) => {
+    if (!open && !isLoading) {
+      onClose();
+    }
+  };
 
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={isLoading}
-            className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-8 cursor-pointer items-center justify-center rounded-full transition disabled:opacity-50"
-            aria-label="Tutup"
+  return (
+    <AlertDialog open={isOpen} onOpenChange={handleOpenChange}>
+      <AlertDialogContent className="border-border bg-surface max-w-lg gap-0 space-y-6 overflow-hidden p-6 sm:p-8 dark:bg-[#161715]">
+        {/* Header Icon & Title */}
+        <AlertDialogHeader className="flex flex-row items-center gap-3.5 text-left">
+          <div
+            className={`flex size-11 shrink-0 items-center justify-center rounded-full border ${
+              isRegenerate
+                ? "border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-400"
+                : "border-rose-500/25 bg-rose-500/10 text-rose-700 dark:text-rose-400"
+            }`}
           >
-            <X className="size-4" />
-          </button>
-        </div>
+            {isRegenerate ? (
+              <AlertTriangle className="size-5.5" />
+            ) : (
+              <ShieldAlert className="size-5.5" />
+            )}
+          </div>
+          <div>
+            <AlertDialogTitle className="text-foreground text-lg font-black tracking-tight sm:text-xl">
+              {isRegenerate ? "Buat Ulang API Key Fast-Path?" : "Cabut Akses API Key?"}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-foreground-secondary text-xs font-semibold">
+              {isRegenerate
+                ? "Tindakan kritis rotasi kunci autentikasi sistem."
+                : "Tindakan permanen penonaktifan akses otentikasi."}
+            </AlertDialogDescription>
+          </div>
+        </AlertDialogHeader>
 
         {/* Warning Callout Box */}
         <div
@@ -143,17 +136,13 @@ export function ApiKeyConfirmModal({
         </div>
 
         {/* Action Buttons */}
-        <div className="border-border flex items-center justify-end gap-3 border-t pt-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={onClose}
+        <AlertDialogFooter className="border-border m-0 flex flex-row items-center justify-end gap-3 rounded-none border-t bg-transparent p-0 pt-2">
+          <AlertDialogCancel
             disabled={isLoading}
             className="border-border hover:border-foreground-muted h-9 rounded-full px-5 text-xs font-bold"
           >
             Batal
-          </Button>
+          </AlertDialogCancel>
 
           {isRegenerate ? (
             <Button
@@ -197,8 +186,8 @@ export function ApiKeyConfirmModal({
               )}
             </Button>
           )}
-        </div>
-      </div>
-    </div>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

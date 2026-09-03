@@ -2,10 +2,11 @@
 
 import React, { useState, useRef, useMemo } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { Search, X, CheckCheck, Check, AlertCircle, RefreshCw, Loader2 } from "lucide-react";
+import { CheckCheck, Check, AlertCircle, RefreshCw, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty";
+import { SearchInput } from "@/components/ui/search-input";
 import { DataTablePagination } from "@/components/ui/pagination";
 import { useI18n } from "@/lib/i18n/context";
 import { useMessageLogs } from "../../hooks/useMessageLogs";
@@ -81,12 +82,6 @@ export function MessageLogsTable() {
     overscan: 5,
   });
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setActiveSearch(searchInput.trim());
-    setPage(1);
-  };
-
   const handleClearSearch = () => {
     setSearchInput("");
     setActiveSearch("");
@@ -139,38 +134,16 @@ export function MessageLogsTable() {
     <div className="space-y-4">
       {/* Search Form with Submit Button & Status Filter */}
       <div className="border-border bg-surface flex flex-col justify-between gap-3 rounded-md border p-3 sm:flex-row sm:items-center sm:p-4 dark:bg-[#161715]">
-        <form onSubmit={handleSearchSubmit} className="flex flex-1 items-center gap-2">
-          <div className="relative flex-1">
-            <Search className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
-            <input
-              type="text"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              placeholder={t("campaign.searchLogsPlaceholder")}
-              className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full rounded-full border pr-9 pl-10 text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
-            />
-            {(searchInput || activeSearch) && (
-              <button
-                type="button"
-                onClick={handleClearSearch}
-                className="text-foreground-muted hover:text-foreground hover:bg-muted absolute top-1/2 right-3 flex size-5 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full transition"
-                title="Hapus Pencarian"
-                aria-label="Hapus Pencarian"
-              >
-                <X className="size-3.5" />
-              </button>
-            )}
-          </div>
-          <Button
-            type="submit"
-            variant="primaryPill"
-            size="sm"
-            className="h-10 shrink-0 cursor-pointer px-4 text-xs font-bold shadow-xs"
-          >
-            <Search className="mr-1 size-3.5" />
-            <span>Cari</span>
-          </Button>
-        </form>
+        <SearchInput
+          value={searchInput}
+          onChange={setSearchInput}
+          onSearch={() => {
+            setActiveSearch(searchInput.trim());
+            setPage(1);
+          }}
+          onClear={handleClearSearch}
+          placeholder={t("campaign.searchLogsPlaceholder")}
+        />
 
         <div className="flex shrink-0 items-center gap-2">
           <Button

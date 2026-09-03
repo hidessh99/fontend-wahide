@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -19,10 +19,11 @@ export interface SearchInputProps {
 }
 
 /**
- * Reusable Unified Search Input Component with Auto-Clear Button and Search Action
+ * Reusable Unified Search Input Component with Auto-Clear Button and Search Action.
+ * Supports both controlled (via value prop) and uncontrolled state patterns cleanly.
  */
 export function SearchInput({
-  value: externalValue,
+  value,
   onChange,
   onSearch,
   onClear,
@@ -33,51 +34,48 @@ export function SearchInput({
   buttonText = "Cari",
   autoFocus = false,
 }: SearchInputProps) {
-  const [internalValue, setInternalValue] = useState(externalValue ?? "");
-
-  useEffect(() => {
-    if (externalValue !== undefined) {
-      setInternalValue(externalValue);
-    }
-  }, [externalValue]);
+  const isControlled = value !== undefined;
+  const [uncontrolledValue, setUncontrolledValue] = useState("");
+  const currentValue = isControlled ? value : uncontrolledValue;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
-    setInternalValue(val);
+    if (!isControlled) {
+      setUncontrolledValue(val);
+    }
     onChange?.(val);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSearch(internalValue);
+    onSearch(currentValue);
   };
 
   const handleClear = () => {
-    setInternalValue("");
+    if (!isControlled) {
+      setUncontrolledValue("");
+    }
     onChange?.("");
     onClear();
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className={cn("flex flex-1 items-center gap-2", className)}
-    >
+    <form onSubmit={handleSubmit} className={cn("flex flex-1 items-center gap-2", className)}>
       <div className="relative flex-1">
         <Search className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
         <input
           type="text"
-          value={internalValue}
+          value={currentValue}
           onChange={handleChange}
           placeholder={placeholder}
           disabled={disabled}
           autoFocus={autoFocus}
           className={cn(
-            "bg-surface text-foreground border-border hover:border-foreground-muted placeholder:text-muted-foreground h-10 w-full rounded-full border pr-9 pl-10 text-xs font-semibold outline-none transition focus:border-emerald-600 disabled:opacity-50 dark:bg-[#10110e] dark:focus:border-emerald-500",
+            "bg-surface text-foreground border-border hover:border-foreground-muted placeholder:text-muted-foreground h-10 w-full rounded-full border pr-9 pl-10 text-xs font-semibold transition outline-none focus:border-emerald-600 disabled:opacity-50 dark:bg-[#10110e] dark:focus:border-emerald-500",
             inputClassName
           )}
         />
-        {internalValue && !disabled && (
+        {currentValue && !disabled && (
           <button
             type="button"
             onClick={handleClear}

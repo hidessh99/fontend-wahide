@@ -1,8 +1,16 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useEscapeKey } from "@/hooks/useEscapeKey";
-import { X, AlertTriangle, Trash2, ShieldAlert, Loader2, Smartphone } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+} from "@/components/ui/alert-dialog";
+import { AlertTriangle, Trash2, ShieldAlert, Loader2, Smartphone } from "lucide-react";
 
 interface SessionConfirmModalProps {
   isOpen: boolean;
@@ -25,58 +33,43 @@ export function SessionConfirmModal({
   onClose,
   onConfirm,
 }: SessionConfirmModalProps) {
-  // Universal Escape key dismissal with zero listener churn
-  useEscapeKey(isOpen && !isLoading, onClose);
-
-  if (!isOpen) return null;
-
   const isLogoutAll = mode === "LOGOUT_ALL";
 
-  return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      className="animate-in fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm sm:p-6"
-    >
-      <div className="border-border bg-surface animate-in zoom-in-95 relative w-full max-w-lg space-y-6 overflow-hidden rounded-xl border p-6 shadow-2xl duration-150 sm:p-8 dark:bg-[#161715]">
-        {/* Header Icon & Close Button */}
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3.5">
-            <div
-              className={`flex size-11 shrink-0 items-center justify-center rounded-full border ${
-                isLogoutAll
-                  ? "border-rose-500/25 bg-rose-500/10 text-rose-700 dark:text-rose-400"
-                  : "border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-400"
-              }`}
-            >
-              {isLogoutAll ? (
-                <ShieldAlert className="size-5.5" />
-              ) : (
-                <AlertTriangle className="size-5.5" />
-              )}
-            </div>
-            <div>
-              <h2 className="text-foreground text-lg font-black tracking-tight sm:text-xl">
-                {isLogoutAll ? "Keluar dari Semua Perangkat?" : "Cabut Sesi Perangkat?"}
-              </h2>
-              <p className="text-foreground-secondary text-xs font-semibold">
-                {isLogoutAll
-                  ? "Tindakan keamanan pencabutan akses massal sesi akun."
-                  : "Konfirmasi pencabutan akses login perangkat tertentu."}
-              </p>
-            </div>
-          </div>
+  const handleOpenChange = (open: boolean) => {
+    if (!open && !isLoading) {
+      onClose();
+    }
+  };
 
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={isLoading}
-            className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-8 cursor-pointer items-center justify-center rounded-full transition disabled:opacity-50"
-            aria-label="Tutup"
+  return (
+    <AlertDialog open={isOpen} onOpenChange={handleOpenChange}>
+      <AlertDialogContent className="border-border bg-surface max-w-lg gap-0 space-y-6 overflow-hidden p-6 sm:p-8 dark:bg-[#161715]">
+        {/* Header Icon & Title */}
+        <AlertDialogHeader className="flex flex-row items-center gap-3.5 text-left">
+          <div
+            className={`flex size-11 shrink-0 items-center justify-center rounded-full border ${
+              isLogoutAll
+                ? "border-rose-500/25 bg-rose-500/10 text-rose-700 dark:text-rose-400"
+                : "border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-400"
+            }`}
           >
-            <X className="size-4" />
-          </button>
-        </div>
+            {isLogoutAll ? (
+              <ShieldAlert className="size-5.5" />
+            ) : (
+              <AlertTriangle className="size-5.5" />
+            )}
+          </div>
+          <div>
+            <AlertDialogTitle className="text-foreground text-lg font-black tracking-tight sm:text-xl">
+              {isLogoutAll ? "Keluar dari Semua Perangkat?" : "Cabut Sesi Perangkat?"}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-foreground-secondary text-xs font-semibold">
+              {isLogoutAll
+                ? "Tindakan keamanan pencabutan akses massal sesi akun."
+                : "Konfirmasi pencabutan akses login perangkat tertentu."}
+            </AlertDialogDescription>
+          </div>
+        </AlertDialogHeader>
 
         {/* Warning Callout Box */}
         <div
@@ -138,17 +131,13 @@ export function SessionConfirmModal({
         )}
 
         {/* Actions Button */}
-        <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:items-center sm:justify-end">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={onClose}
+        <AlertDialogFooter className="border-border m-0 flex flex-col-reverse gap-3 rounded-none border-t bg-transparent p-0 pt-2 sm:flex-row sm:items-center sm:justify-end">
+          <AlertDialogCancel
             disabled={isLoading}
             className="text-foreground border-border hover:bg-muted rounded-full text-xs font-bold"
           >
             Batalkan
-          </Button>
+          </AlertDialogCancel>
 
           <Button
             type="button"
@@ -175,8 +164,8 @@ export function SessionConfirmModal({
               </>
             )}
           </Button>
-        </div>
-      </div>
-    </div>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

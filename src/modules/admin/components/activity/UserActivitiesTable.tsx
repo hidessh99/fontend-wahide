@@ -6,10 +6,9 @@ import { DeleteActivityConfirmModal } from "./DeleteActivityConfirmModal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty";
+import { SearchInput } from "@/components/ui/search-input";
 import { DataTablePagination } from "@/components/ui/pagination";
 import {
-  Search,
-  X,
   RefreshCw,
   Activity,
   LogIn,
@@ -109,11 +108,6 @@ export function UserActivitiesTable({
 }: UserActivitiesTableProps) {
   const [searchInput, setSearchInput] = useState("");
   const [activityToDelete, setActivityToDelete] = useState<UserActivityItem | null>(null);
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSearch(searchInput);
-  };
 
   const handleClear = () => {
     setSearchInput("");
@@ -238,40 +232,14 @@ export function UserActivitiesTable({
       <div className="border-border bg-surface w-full min-w-0 space-y-3 overflow-hidden rounded-xl border p-3.5 shadow-xs sm:p-4 dark:bg-[#161715]">
         <div className="flex w-full min-w-0 flex-col justify-between gap-2.5 sm:flex-row sm:items-center sm:gap-3">
           {/* Search Form */}
-          <form
-            onSubmit={handleSearchSubmit}
-            className="flex w-full max-w-lg min-w-0 flex-1 items-center gap-2"
-          >
-            <div className="relative min-w-0 flex-1">
-              <Search className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
-              <input
-                type="text"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                placeholder="Cari nama, email, atau deskripsi aktivitas..."
-                className="bg-surface text-foreground border-border hover:border-foreground-muted h-9.5 w-full rounded-full border pr-9 pl-10 text-xs font-semibold transition outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 dark:bg-[#10110e]"
-              />
-              {(searchInput || activeSearch) && (
-                <button
-                  type="button"
-                  onClick={handleClear}
-                  className="text-foreground-muted hover:text-foreground hover:bg-muted absolute top-1/2 right-3 flex size-5 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full transition"
-                  title="Hapus Pencarian"
-                  aria-label="Hapus Pencarian"
-                >
-                  <X className="size-3.5" />
-                </button>
-              )}
-            </div>
-            <Button
-              type="submit"
-              variant="outline"
-              size="sm"
-              className="border-border hover:border-foreground-muted h-9.5 shrink-0 cursor-pointer rounded-full px-3.5 text-xs font-bold sm:px-4"
-            >
-              <Search className="size-3.5 sm:mr-1" />
-              <span className="hidden sm:inline">Cari</span>
-            </Button>
+          <div className="flex w-full max-w-lg min-w-0 flex-1 items-center gap-2">
+            <SearchInput
+              value={searchInput}
+              onChange={setSearchInput}
+              onSearch={() => onSearch(searchInput.trim())}
+              onClear={handleClear}
+              placeholder="Cari nama, email, atau deskripsi aktivitas..."
+            />
             {/* Refresh Button on Mobile (Inline inside form container row) */}
             <Button
               type="button"
@@ -279,12 +247,12 @@ export function UserActivitiesTable({
               size="sm"
               onClick={onRefresh}
               disabled={isLoading}
-              className="border-border hover:border-foreground-muted h-9.5 shrink-0 cursor-pointer gap-1 rounded-full px-3 text-xs font-bold sm:hidden"
+              className="border-border hover:border-foreground-muted h-10 shrink-0 cursor-pointer gap-1 rounded-full px-3 text-xs font-bold sm:hidden"
               title="Muat Ulang Data"
             >
               <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin text-rose-500" : ""}`} />
             </Button>
-          </form>
+          </div>
 
           {/* Refresh Button on Desktop */}
           <Button

@@ -8,6 +8,7 @@ import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { Contact, CreateContactInput } from "@/modules/contact/types/contact.types";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty";
+import { SearchInput } from "@/components/ui/search-input";
 import { useI18n } from "@/lib/i18n/context";
 
 const ContactModal = dynamic(
@@ -26,16 +27,7 @@ const DeleteContactModal = dynamic(
   { ssr: false }
 );
 
-import {
-  Users,
-  UserPlus,
-  FileSpreadsheet,
-  Download,
-  Trash2,
-  Search,
-  RefreshCw,
-  X,
-} from "lucide-react";
+import { Users, UserPlus, FileSpreadsheet, Download, Trash2, RefreshCw } from "lucide-react";
 
 export function ContactsView() {
   const { t } = useI18n();
@@ -191,47 +183,17 @@ export function ContactsView() {
       {/* Filter Toolbar & Actions */}
       <div className="border-border bg-surface flex flex-col justify-between gap-3 rounded-md border p-3 sm:flex-row sm:items-center sm:p-4 dark:bg-[#161715]">
         {/* Search Form with Submit Button */}
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            executeSearch(searchInput);
+        <SearchInput
+          value={searchInput}
+          onChange={setSearchInput}
+          onSearch={() => executeSearch(searchInput.trim())}
+          onClear={() => {
+            setSearchInput("");
+            clearSearch();
           }}
-          className="flex flex-1 items-center gap-2"
-        >
-          <div className="relative flex-1">
-            <Search className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
-            <input
-              type="text"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              placeholder={t("contact.searchPlaceholder")}
-              className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full rounded-full border pr-9 pl-10 text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
-            />
-            {(searchInput || activeSearch) && (
-              <button
-                type="button"
-                onClick={() => {
-                  setSearchInput("");
-                  clearSearch();
-                }}
-                className="text-foreground-muted hover:text-foreground hover:bg-muted absolute top-1/2 right-3 flex size-5 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full transition"
-                title="Hapus Pencarian"
-                aria-label="Hapus Pencarian"
-              >
-                <X className="size-3.5" />
-              </button>
-            )}
-          </div>
-          <Button
-            type="submit"
-            variant="primaryPill"
-            size="sm"
-            className="h-10 shrink-0 cursor-pointer px-4 text-xs font-bold shadow-xs"
-          >
-            <Search className="mr-1 size-3.5" />
-            <span>{t("contact.searchBtn")}</span>
-          </Button>
-        </form>
+          placeholder={t("contact.searchPlaceholder")}
+          buttonText={t("contact.searchBtn")}
+        />
 
         {/* Bulk Action & Refresh */}
         <div className="border-border/50 flex items-center justify-between gap-2 border-t pt-1 sm:justify-end sm:border-t-0 sm:pt-0">

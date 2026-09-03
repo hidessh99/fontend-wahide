@@ -2,9 +2,16 @@
 
 import { AdminQueueItem } from "@/modules/admin/types/admin.types";
 import { Button } from "@/components/ui/button";
-import { useEscapeKey } from "@/hooks/useEscapeKey";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { formatDateTime } from "@/lib/utils";
-import { X, Layers, AlertCircle, Clock, CheckCircle2, User, Mail } from "lucide-react";
+import { Layers, AlertCircle, Clock, CheckCircle2, User, Mail } from "lucide-react";
 
 interface QueueDetailModalProps {
   queue: AdminQueueItem | null;
@@ -13,46 +20,25 @@ interface QueueDetailModalProps {
 }
 
 export function QueueDetailModal({ queue, isOpen, onClose }: QueueDetailModalProps) {
-  // Universal Escape key dismissal with zero listener churn
-  useEscapeKey(isOpen, onClose);
-
-  if (!isOpen || !queue) return null;
+  if (!queue) return null;
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-      className="animate-in fade-in fixed inset-0 z-50 flex min-h-full items-center justify-center overflow-y-auto bg-black/75 p-3 backdrop-blur-sm sm:p-6"
-    >
-      <div className="border-border bg-surface animate-in zoom-in-95 relative flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-xl border shadow-2xl dark:bg-[#161715]">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="border-border bg-surface max-h-[90vh] max-w-lg gap-0 overflow-hidden p-0 dark:bg-[#161715]">
         {/* Header */}
-        <div className="border-border flex shrink-0 items-start justify-between border-b p-5 pb-4 sm:p-6">
-          <div className="flex items-center gap-3">
-            <div className="dark:text-wise-green flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600">
-              <Layers className="size-5" />
-            </div>
-            <div>
-              <h2 className="text-foreground text-lg font-black tracking-tight">
-                Detail Tugas Antrean
-              </h2>
-              <p className="text-foreground-secondary font-mono text-xs font-semibold">
-                ID: {queue.id}
-              </p>
-            </div>
+        <DialogHeader className="border-border flex flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
+          <div className="dark:text-wise-green flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600">
+            <Layers className="size-5" />
           </div>
-
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full transition"
-            aria-label="Tutup"
-          >
-            <X className="size-4" />
-          </button>
-        </div>
+          <div>
+            <DialogTitle className="text-foreground text-lg font-black tracking-tight">
+              Detail Tugas Antrean
+            </DialogTitle>
+            <DialogDescription className="text-foreground-secondary font-mono text-xs font-semibold">
+              ID: {queue.id}
+            </DialogDescription>
+          </div>
+        </DialogHeader>
 
         {/* Content Body */}
         <div className="flex-1 space-y-4 overflow-y-auto p-5 text-xs sm:p-6">
@@ -149,7 +135,7 @@ export function QueueDetailModal({ queue, isOpen, onClose }: QueueDetailModalPro
         </div>
 
         {/* Footer */}
-        <div className="border-border bg-muted/20 flex shrink-0 items-center justify-end border-t p-4">
+        <DialogFooter className="border-border bg-muted/20 m-0 flex shrink-0 flex-row items-center justify-end rounded-none border-t p-4">
           <Button
             type="button"
             variant="outline"
@@ -159,8 +145,8 @@ export function QueueDetailModal({ queue, isOpen, onClose }: QueueDetailModalPro
           >
             Tutup
           </Button>
-        </div>
-      </div>
-    </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

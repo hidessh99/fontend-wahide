@@ -5,11 +5,17 @@ import Image from "next/image";
 import { Device } from "@/modules/whatsapp/types/whatsapp.types";
 import { useQRPairing } from "@/modules/whatsapp/hooks/useQRPairing";
 import { useAuth } from "@/modules/iam/hooks/useAuth";
-import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { useI18n } from "@/lib/i18n/context";
 import {
-  X,
   RefreshCw,
   CheckCircle2,
   AlertCircle,
@@ -35,9 +41,6 @@ export function LiveQRModal({ device, isOpen, onClose, onSuccess }: LiveQRModalP
   const [customPhone, setCustomPhone] = useState<string | null>(null);
   const phoneNumber = customPhone !== null ? customPhone : authUserPhone;
   const [copied, setCopied] = useState<boolean>(false);
-
-  // Universal Escape key dismissal with zero listener churn
-  useEscapeKey(isOpen, onClose);
 
   const handlePairingSuccess = () => {
     if (device) {
@@ -69,60 +72,41 @@ export function LiveQRModal({ device, isOpen, onClose, onSuccess }: LiveQRModalP
 
   const handleRequestCode = async (e: React.FormEvent) => {
     e.preventDefault();
-    let raw = phoneNumber.trim().replace(/\D/g, "");
-    if (!raw) return;
-    if (raw.startsWith("0")) {
-      raw = "62" + raw.slice(1);
-    } else if (raw.startsWith("8")) {
-      raw = "62" + raw;
-    }
-    await requestPairingCode(raw);
+    if (!phoneNumber.trim()) return;
+    await requestPairingCode(phoneNumber);
   };
 
   const handleCopyCode = () => {
-    if (!pairingCode) return;
-    navigator.clipboard.writeText(pairingCode.replace(/-/g, ""));
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    if (pairingCode) {
+      navigator.clipboard.writeText(pairingCode);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
-  if (!isOpen || !device) return null;
+  if (!device) return null;
 
   return (
-    <div
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-      className="animate-in fade-in fixed inset-0 z-50 flex min-h-full items-center justify-center overflow-y-auto bg-black/75 p-3 backdrop-blur-sm sm:p-6"
-    >
-      <div className="border-border bg-surface animate-in zoom-in-95 relative flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-md border shadow-2xl dark:bg-[#161715]">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="border-border bg-surface max-h-[92vh] max-w-md gap-0 overflow-hidden p-0 dark:bg-[#161715]">
         {/* Sticky Header */}
-        <div className="border-border flex shrink-0 items-start justify-between border-b p-5 pb-4 sm:p-6">
+        <DialogHeader className="border-border flex flex-row items-start justify-between border-b p-5 pb-4 text-left sm:p-6">
           <div className="space-y-1">
             <div className="bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green border-wise-green/30 mb-1 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-bold">
               <ShieldCheck className="size-3.5" />
               <span>Multi-Device End-to-End Encrypted</span>
             </div>
-            <h2 className="text-foreground text-xl font-black tracking-tight sm:text-2xl">
+            <DialogTitle className="text-foreground text-xl font-black tracking-tight sm:text-2xl">
               Tautkan Perangkat WhatsApp
-            </h2>
-            <p className="text-foreground-secondary text-xs font-semibold">
+            </DialogTitle>
+            <DialogDescription className="text-foreground-secondary text-xs font-semibold">
               Slot:{" "}
               <span className="text-foreground font-bold">
                 {device.push_name || device.pushName || device.name || "WhatsApp Device"}
               </span>
-            </p>
+            </DialogDescription>
           </div>
-
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full transition"
-            aria-label="Tutup Modal"
-          >
-            <X className="size-5" />
-          </button>
-        </div>
+        </DialogHeader>
 
         {/* Tab Switcher: QR Code vs Phone Pairing Code */}
         {status !== "AUTHENTICATED" && (
@@ -185,36 +169,25 @@ export function LiveQRModal({ device, isOpen, onClose, onSuccess }: LiveQRModalP
                   variant="primaryPill"
                   size="sm"
                   onClick={retry}
-                  className="mt-2 gap-2 text-xs font-bold"
+                  className="cursor-pointer gap-2 rounded-full px-5 text-xs font-bold"
                 >
                   <RefreshCw className="size-3.5" />
-                  <span>{t("whatsapp.qrRetry")}</span>
+                  <span>Coba Hubungkan Ulang</span>
                 </Button>
               </div>
             ) : pairMode === "QR" ? (
-              /* TAB 1: QR CODE DISPLAY */
+              /* TAB 1: QR SCANNER */
               qrCode ? (
-                <div className="flex flex-col items-center space-y-3">
-                  <div className="relative rounded-md border border-zinc-200 bg-white p-2.5 shadow-md">
-                    {qrCode.startsWith("data:image") || qrCode.startsWith("http") ? (
-                      <Image
-                        src={qrCode}
-                        alt="WhatsApp QR Code"
-                        width={190}
-                        height={190}
-                        unoptimized
-                        className="size-44 object-contain sm:size-48"
-                      />
-                    ) : (
-                      <Image
-                        src={`data:image/png;base64,${qrCode}`}
-                        alt="WhatsApp QR Code"
-                        width={190}
-                        height={190}
-                        unoptimized
-                        className="size-44 object-contain sm:size-48"
-                      />
-                    )}
+                <div className="flex flex-col items-center space-y-3.5">
+                  <div className="border-border/80 flex size-52 items-center justify-center rounded-md border bg-white p-3 shadow-md sm:size-56">
+                    <Image
+                      src={qrCode}
+                      alt="WhatsApp QR Code"
+                      width={190}
+                      height={190}
+                      unoptimized
+                      className="size-44 object-contain sm:size-48"
+                    />
                   </div>
 
                   {/* Countdown Indicator or Expired Refresh */}
@@ -373,7 +346,7 @@ export function LiveQRModal({ device, isOpen, onClose, onSuccess }: LiveQRModalP
         </div>
 
         {/* Sticky Footer */}
-        <div className="border-border bg-surface/50 flex shrink-0 justify-end border-t p-4 sm:p-5">
+        <DialogFooter className="border-border bg-surface/50 m-0 flex shrink-0 flex-row justify-end rounded-none border-t p-4 sm:p-5">
           <Button
             variant="outline"
             size="sm"
@@ -382,8 +355,8 @@ export function LiveQRModal({ device, isOpen, onClose, onSuccess }: LiveQRModalP
           >
             {t("whatsapp.qrClose")}
           </Button>
-        </div>
-      </div>
-    </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
