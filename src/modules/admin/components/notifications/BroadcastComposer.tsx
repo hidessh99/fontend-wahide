@@ -4,7 +4,6 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import { UserItem } from "@/modules/admin/types/admin.types";
 import { adminApi } from "@/modules/admin/api/admin.api";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 import {
   Megaphone,
   Send,
@@ -37,6 +36,14 @@ export function BroadcastComposer({
   onSendBatch,
 }: BroadcastComposerProps) {
   const [broadcastTarget, setBroadcastTarget] = useState<"ALL" | "SPECIFIC">("ALL");
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
+  const [formErrors, setFormErrors] = useState<{
+    subject?: string;
+    message?: string;
+    email?: string;
+    target?: string;
+  }>({});
 
   // User Selection State
   const [users, setUsers] = useState<UserItem[]>([]);
@@ -50,10 +57,6 @@ export function BroadcastComposer({
   const [isManualMode, setIsManualMode] = useState(false);
   const [manualEmail, setManualEmail] = useState("");
   const [manualName, setManualName] = useState("");
-
-  // Email Content State
-  const [subject, setSubject] = useState("");
-  const [message, setMessage] = useState("");
 
   // Fetch users once when switching to SPECIFIC
   const hasLoadedUsersRef = useRef(false);
@@ -135,10 +138,33 @@ export function BroadcastComposer({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!subject.trim() || !message.trim()) {
-      toast.error("Subjek dan isi pesan siaran wajib diisi.");
+    const errors: { subject?: string; message?: string; email?: string; target?: string } = {};
+
+    if (!subject.trim()) {
+      errors.subject = "Subjek siaran wajib diisi.";
+    }
+    if (!message.trim()) {
+      errors.message = "Isi pesan siaran wajib diisi.";
+    }
+
+    if (broadcastTarget !== "ALL") {
+      if (isManualMode) {
+        if (!manualEmail.trim()) {
+          errors.email = "Alamat email penerima wajib diisi.";
+        }
+      } else {
+        if (selectedUsers.length === 0) {
+          errors.target = "Pilih minimal 1 pengguna penerima siaran.";
+        }
+      }
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
       return;
     }
+
+    setFormErrors({});
 
     if (broadcastTarget === "ALL") {
       await onSendAll(subject.trim(), message.trim());
@@ -146,21 +172,12 @@ export function BroadcastComposer({
       setMessage("");
     } else {
       if (isManualMode) {
-        if (!manualEmail.trim()) {
-          toast.error("Alamat email penerima wajib diisi.");
-          return;
-        }
         await onSendDirect(manualEmail.trim(), manualName.trim(), subject.trim(), message.trim());
         setSubject("");
         setMessage("");
         setManualEmail("");
         setManualName("");
       } else {
-        if (selectedUsers.length === 0) {
-          toast.error("Pilih minimal 1 pengguna penerima siaran.");
-          return;
-        }
-
         if (selectedUsers.length === 1) {
           const u = selectedUsers[0];
           await onSendDirect(u.email, u.name, subject.trim(), message.trim());
@@ -415,6 +432,9 @@ export function BroadcastComposer({
                     </div>
                   </div>
                 )}
+                {formErrors.target && (
+                  <p className="mt-1 text-xs font-semibold text-rose-500">{formErrors.target}</p>
+                )}
               </div>
             ) : (
               /* Manual Mode Form */
@@ -440,10 +460,19 @@ export function BroadcastComposer({
                     type="email"
                     required={isManualMode}
                     value={manualEmail}
-                    onChange={(e) => setManualEmail(e.target.value)}
+                    onChange={(e) => {
+                      setManualEmail(e.target.value);
+                      if (formErrors.email)
+                        setFormErrors((prev) => ({ ...prev, email: undefined }));
+                    }}
                     placeholder="contoh: user@tokoonline.com"
-                    className="bg-surface text-foreground border-border dark:focus:border-wise-green h-9 w-full rounded-lg border px-3 text-xs font-semibold outline-none focus:border-emerald-600 dark:bg-[#10110e]"
+                    className={`bg-surface text-foreground dark:focus:border-wise-green h-9 w-full rounded-lg border px-3 text-xs font-semibold outline-none focus:border-emerald-600 dark:bg-[#10110e] ${
+                      formErrors.email ? "border-rose-500" : "border-border"
+                    }`}
                   />
+                  {formErrors.email && (
+                    <p className="mt-1 text-xs font-semibold text-rose-500">{formErrors.email}</p>
+                  )}
                 </div>
 
                 <div>
@@ -472,10 +501,18 @@ export function BroadcastComposer({
             type="text"
             required
             value={subject}
-            onChange={(e) => setSubject(e.target.value)}
+            onChange={(e) => {
+              setSubject(e.target.value);
+              if (formErrors.subject) setFormErrors((prev) => ({ ...prev, subject: undefined }));
+            }}
             placeholder="contoh: Pengumuman Pemeliharaan Server & Fitur Baru"
-            className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-lg border px-3.5 text-xs font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e]"
+            className={`bg-surface text-foreground hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-lg border px-3.5 text-xs font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e] ${
+              formErrors.subject ? "border-rose-500" : "border-border"
+            }`}
           />
+          {formErrors.subject && (
+            <p className="mt-1 text-xs font-semibold text-rose-500">{formErrors.subject}</p>
+          )}
         </div>
 
         {/* Message Content */}
@@ -487,10 +524,18 @@ export function BroadcastComposer({
             rows={5}
             required
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={(e) => {
+              setMessage(e.target.value);
+              if (formErrors.message) setFormErrors((prev) => ({ ...prev, message: undefined }));
+            }}
             placeholder="Tuliskan pesan lengkap yang akan dikirimkan ke email penerima..."
-            className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 w-full rounded-lg border p-3 text-xs font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e]"
+            className={`bg-surface text-foreground hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 w-full rounded-lg border p-3 text-xs font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e] ${
+              formErrors.message ? "border-rose-500" : "border-border"
+            }`}
           />
+          {formErrors.message && (
+            <p className="mt-1 text-xs font-semibold text-rose-500">{formErrors.message}</p>
+          )}
         </div>
 
         {/* Action Button */}

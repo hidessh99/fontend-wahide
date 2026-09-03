@@ -15,6 +15,7 @@ interface ProfileInfoCardProps {
 export function ProfileInfoCard({ user, tenant, onSaveProfile }: ProfileInfoCardProps) {
   const [name, setName] = useState(user?.name || "");
   const [isSaving, setIsSaving] = useState(false);
+  const [nameError, setNameError] = useState<string | null>(null);
 
   const email = user?.email || "";
   const phone = user?.phone || "";
@@ -25,17 +26,18 @@ export function ProfileInfoCard({ user, tenant, onSaveProfile }: ProfileInfoCard
     e.preventDefault();
     const trimmedName = name.trim();
     if (!trimmedName) {
-      toast.error("Nama lengkap tidak boleh kosong.");
+      setNameError("Nama lengkap tidak boleh kosong.");
       return;
     }
 
+    setNameError(null);
     setIsSaving(true);
     try {
       await onSaveProfile(trimmedName);
-      toast.success("Nama profil berhasil diperbarui.");
+      toast.success("Nama profil berhasil diperbarui.", { id: "profile-save" });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal memperbarui nama profil.";
-      toast.error(msg);
+      toast.error(msg, { id: "profile-save" });
     } finally {
       setIsSaving(false);
     }
@@ -65,12 +67,20 @@ export function ProfileInfoCard({ user, tenant, onSaveProfile }: ProfileInfoCard
             <input
               type="text"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value);
+                if (nameError) setNameError(null);
+              }}
               placeholder="Nama Lengkap Anda"
               required
-              className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-full border pr-4 pl-10 text-xs font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e]"
+              className={`bg-surface text-foreground hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-full border pr-4 pl-10 text-xs font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e] ${
+                nameError ? "border-rose-500" : "border-border"
+              }`}
             />
           </div>
+          {nameError && (
+            <p className="mt-1.5 pl-3 text-xs font-semibold text-rose-500">{nameError}</p>
+          )}
         </div>
 
         <div>

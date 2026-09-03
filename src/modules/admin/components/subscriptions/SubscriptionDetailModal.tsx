@@ -83,10 +83,10 @@ export function SubscriptionDetailModal({
     try {
       await navigator.clipboard.writeText(text);
       setCopiedField(label);
-      toast.success(`${label} disalin ke clipboard`);
+      toast.success(`${label} disalin ke clipboard`, { id: "clipboard-copy" });
       setTimeout(() => setCopiedField(null), 2000);
     } catch {
-      toast.error("Gagal menyalin teks");
+      toast.error("Gagal menyalin teks", { id: "clipboard-copy" });
     }
   };
 

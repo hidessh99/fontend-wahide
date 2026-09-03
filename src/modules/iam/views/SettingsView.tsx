@@ -51,10 +51,15 @@ export function SettingsView() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSavingPassword, setIsSavingPassword] = useState(false);
+  const [passwordErrors, setPasswordErrors] = useState<{
+    current?: string;
+    new?: string;
+    confirm?: string;
+  }>({});
 
-  const handleCopyKey = () => {
-    navigator.clipboard.writeText(apiKey);
-    toast.success(t("settings.keyCopied"));
+  const handleCopyKey = async () => {
+    await navigator.clipboard.writeText(apiKey);
+    toast.success(t("settings.keyCopied"), { id: "apikey-copy" });
   };
 
   const handleOpenRegenerateModal = () => {
@@ -71,21 +76,16 @@ export function SettingsView() {
       if (confirmModal.mode === "REGENERATE") {
         const res = await authApi.generateApiKey();
         setApiKey(res.token || generateSecureRandomString("hide_live_", 24));
-        toast.success(t("settings.keyRegenerated"));
+        toast.success(t("settings.keyRegenerated"), { id: "apikey-action" });
       } else {
         await authApi.revokeApiKey();
         setApiKey("");
-        toast.success("API Key berhasil dicabut.");
+        toast.success("API Key berhasil dicabut.", { id: "apikey-action" });
       }
       setConfirmModal((prev) => ({ ...prev, isOpen: false }));
-    } catch {
-      if (confirmModal.mode === "REGENERATE") {
-        setApiKey(generateSecureRandomString("hide_live_", 24));
-        toast.success(t("settings.keyRegenerated"));
-      } else {
-        setApiKey("");
-        toast.success("API Key berhasil dicabut.");
-      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Gagal memproses aksi API Key.";
+      toast.error(msg, { id: "apikey-action" });
       setConfirmModal((prev) => ({ ...prev, isOpen: false }));
     } finally {
       setIsKeyLoading(false);
@@ -94,19 +94,24 @@ export function SettingsView() {
 
   const handleSavePassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    const errors: { current?: string; new?: string; confirm?: string } = {};
+
     if (!currentPassword) {
-      toast.error("Kata sandi saat ini wajib diisi.");
-      return;
+      errors.current = "Kata sandi saat ini wajib diisi.";
     }
     if (newPassword.length < 8) {
-      toast.error("Kata sandi baru minimal 8 karakter.");
-      return;
+      errors.new = "Kata sandi baru minimal 8 karakter.";
     }
     if (newPassword !== confirmPassword) {
-      toast.error("Konfirmasi kata sandi baru tidak cocok.");
+      errors.confirm = "Konfirmasi kata sandi baru tidak cocok.";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setPasswordErrors(errors);
       return;
     }
 
+    setPasswordErrors({});
     setIsSavingPassword(true);
     try {
       await userApi.changePassword({
@@ -116,13 +121,13 @@ export function SettingsView() {
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
-      toast.success("Kata sandi berhasil diperbarui.");
+      toast.success("Kata sandi berhasil diperbarui.", { id: "password-save" });
     } catch (err: unknown) {
       const msg =
         err instanceof Error
           ? err.message
           : "Gagal mengubah kata sandi. Pastikan kata sandi saat ini sesuai.";
-      toast.error(msg);
+      toast.error(msg, { id: "password-save" });
     } finally {
       setIsSavingPassword(false);
     }
@@ -285,10 +290,16 @@ export function SettingsView() {
                 <input
                   type={showCurrentPassword ? "text" : "password"}
                   value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  onChange={(e) => {
+                    setCurrentPassword(e.target.value);
+                    if (passwordErrors.current)
+                      setPasswordErrors((prev) => ({ ...prev, current: undefined }));
+                  }}
                   placeholder="••••••••"
                   required
-                  className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-full border pr-10 pl-4 text-xs font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e]"
+                  className={`bg-surface text-foreground hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-full border pr-10 pl-4 text-xs font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e] ${
+                    passwordErrors.current ? "border-rose-500" : "border-border"
+                  }`}
                 />
                 <button
                   type="button"
@@ -299,6 +310,11 @@ export function SettingsView() {
                   {showCurrentPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                 </button>
               </div>
+              {passwordErrors.current && (
+                <p className="mt-1.5 pl-3 text-xs font-semibold text-rose-500">
+                  {passwordErrors.current}
+                </p>
+              )}
             </div>
 
             <div>
@@ -309,10 +325,16 @@ export function SettingsView() {
                 <input
                   type={showNewPassword ? "text" : "password"}
                   value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
+                  onChange={(e) => {
+                    setNewPassword(e.target.value);
+                    if (passwordErrors.new)
+                      setPasswordErrors((prev) => ({ ...prev, new: undefined }));
+                  }}
                   placeholder="Minimal 8 karakter"
                   required
-                  className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-full border pr-10 pl-4 text-xs font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e]"
+                  className={`bg-surface text-foreground hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-full border pr-10 pl-4 text-xs font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e] ${
+                    passwordErrors.new ? "border-rose-500" : "border-border"
+                  }`}
                 />
                 <button
                   type="button"
@@ -323,6 +345,11 @@ export function SettingsView() {
                   {showNewPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                 </button>
               </div>
+              {passwordErrors.new && (
+                <p className="mt-1.5 pl-3 text-xs font-semibold text-rose-500">
+                  {passwordErrors.new}
+                </p>
+              )}
             </div>
 
             <div>
@@ -333,10 +360,16 @@ export function SettingsView() {
                 <input
                   type={showConfirmPassword ? "text" : "password"}
                   value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  onChange={(e) => {
+                    setConfirmPassword(e.target.value);
+                    if (passwordErrors.confirm)
+                      setPasswordErrors((prev) => ({ ...prev, confirm: undefined }));
+                  }}
                   placeholder="Ulangi kata sandi baru"
                   required
-                  className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-full border pr-10 pl-4 text-xs font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e]"
+                  className={`bg-surface text-foreground hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-full border pr-10 pl-4 text-xs font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e] ${
+                    passwordErrors.confirm ? "border-rose-500" : "border-border"
+                  }`}
                 />
                 <button
                   type="button"
@@ -347,6 +380,11 @@ export function SettingsView() {
                   {showConfirmPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                 </button>
               </div>
+              {passwordErrors.confirm && (
+                <p className="mt-1.5 pl-3 text-xs font-semibold text-rose-500">
+                  {passwordErrors.confirm}
+                </p>
+              )}
             </div>
 
             <div className="flex justify-end pt-2">

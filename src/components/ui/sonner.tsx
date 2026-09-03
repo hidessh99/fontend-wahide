@@ -13,6 +13,8 @@ export function Toaster({ ...props }: ToasterProps) {
       theme={theme as ToasterProps["theme"]}
       className="toaster group font-sans"
       position="top-right"
+      visibleToasts={3}
+      duration={3500}
       richColors
       closeButton
       toastOptions={{

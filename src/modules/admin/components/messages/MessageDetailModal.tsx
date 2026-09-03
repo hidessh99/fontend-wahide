@@ -40,10 +40,10 @@ export function MessageDetailModal({ message, isOpen, onClose }: MessageDetailMo
     try {
       await navigator.clipboard.writeText(message.messageBody);
       setHasCopied(true);
-      toast.success("Isi pesan disalin ke clipboard");
+      toast.success("Isi pesan disalin ke clipboard", { id: "clipboard-copy" });
       setTimeout(() => setHasCopied(false), 2000);
     } catch {
-      toast.error("Gagal menyalin teks");
+      toast.error("Gagal menyalin teks", { id: "clipboard-copy" });
     }
   };
 

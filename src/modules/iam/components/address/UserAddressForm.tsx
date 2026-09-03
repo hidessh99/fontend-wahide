@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useUserAddress } from "../../hooks/useUserAddress";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/context";
-import { toast } from "sonner";
 import {
   MapPin,
   Building,
@@ -49,13 +48,9 @@ export function UserAddressForm() {
     e.preventDefault();
     const success = await handleSubmit(e);
     if (success && from === "billing") {
-      toast.success(
-        t("address.saveAndReturnToast") ||
-          "Alamat berhasil disimpan! Mengalihkan ke transaksi Top-Up..."
-      );
       setTimeout(() => {
         router.push(`/billing${action ? `?action=${action}` : ""}`);
-      }, 500);
+      }, 400);
     }
   };
 

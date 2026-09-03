@@ -10,7 +10,6 @@ import { EmptyState } from "@/components/ui/empty";
 import { SearchInput } from "@/components/ui/search-input";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { useI18n } from "@/lib/i18n/context";
-import { toast } from "sonner";
 import {
   Users,
   Plus,
@@ -40,6 +39,7 @@ export function TeamView() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Delete Member Modal State
@@ -80,10 +80,11 @@ export function TeamView() {
     if (!name.trim() || !email.trim() || !phone.trim()) return;
 
     if (!password.trim() || password.trim().length < 6) {
-      toast.error("Password akun agen wajib diisi minimal 6 karakter");
+      setPasswordError("Password akun agen wajib diisi minimal 6 karakter");
       return;
     }
 
+    setPasswordError(null);
     setIsSubmitting(true);
     try {
       await createAgent({
@@ -462,10 +463,18 @@ export function TeamView() {
                   required
                   minLength={6}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (passwordError) setPasswordError(null);
+                  }}
                   placeholder={t("team.passwordPlaceholder")}
-                  className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full rounded-full border px-4 text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
+                  className={`bg-surface text-foreground hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full rounded-full border px-4 text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e] ${
+                    passwordError ? "border-rose-500" : "border-border"
+                  }`}
                 />
+                {passwordError && (
+                  <p className="mt-1.5 pl-3 text-xs font-semibold text-rose-500">{passwordError}</p>
+                )}
               </div>
 
               <div className="border-border/80 flex items-center justify-end gap-2.5 border-t pt-3">

@@ -117,16 +117,18 @@ export function ActiveSessionsCard() {
     try {
       if (confirmModal.mode === "LOGOUT_ALL") {
         await userApi.logoutAllSessions();
-        toast.success("Seluruh sesi login perangkat lain berhasil dicabut.");
+        toast.success("Seluruh sesi login perangkat lain berhasil dicabut.", {
+          id: "session-revoke",
+        });
       } else if (confirmModal.targetSession?.tokenId) {
         await userApi.revokeSession(confirmModal.targetSession.tokenId);
-        toast.success("Sesi perangkat terpilih berhasil dicabut.");
+        toast.success("Sesi perangkat terpilih berhasil dicabut.", { id: "session-revoke" });
       }
       setConfirmModal((prev) => ({ ...prev, isOpen: false }));
       await loadSessions();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal memproses pencabutan sesi.";
-      toast.error(msg);
+      toast.error(msg, { id: "session-revoke" });
     } finally {
       setIsActionLoading(false);
     }

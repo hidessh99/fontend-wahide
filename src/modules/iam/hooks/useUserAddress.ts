@@ -214,7 +214,7 @@ export function useUserAddress() {
         postal_code: formState.postal_code.trim(),
       });
 
-      toast.success(res.message || "Alamat berhasil disimpan!");
+      toast.success(res.message || "Alamat berhasil disimpan!", { id: "user-address-save" });
       setSavedAddress((prev) => ({
         id: prev?.id || "saved",
         userId: prev?.userId || "",
@@ -228,7 +228,7 @@ export function useUserAddress() {
       return true;
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Gagal menyimpan data alamat.";
-      toast.error(msg);
+      toast.error(msg, { id: "user-address-save" });
       return false;
     } finally {
       setIsSaving(false);

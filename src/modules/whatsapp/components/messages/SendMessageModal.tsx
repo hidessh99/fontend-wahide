@@ -55,13 +55,13 @@ export function SendMessageModal({ devices, isOpen, onClose }: SendMessageModalP
         phone: recipient.trim(),
         message: message.trim(),
       });
-      toast.success(t("whatsapp.sendSuccess"));
+      toast.success(t("whatsapp.sendSuccess"), { id: "whatsapp-fast-send" });
       setRecipient("");
       setMessage("");
       onClose();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : t("whatsapp.qrError");
-      toast.error(msg);
+      toast.error(msg, { id: "whatsapp-fast-send" });
     } finally {
       setIsSending(false);
     }
