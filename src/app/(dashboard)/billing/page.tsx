@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { BillingView } from "@/modules/finance/views/BillingView";
+import { SellerRouteGuard } from "@/components/layout/shared/SellerRouteGuard";
 
 export const metadata: Metadata = {
   title: "Faktur & Tagihan Pembayaran",
@@ -15,5 +16,9 @@ export const metadata: Metadata = {
 };
 
 export default function BillingPage() {
-  return <BillingView />;
+  return (
+    <SellerRouteGuard>
+      <BillingView />
+    </SellerRouteGuard>
+  );
 }

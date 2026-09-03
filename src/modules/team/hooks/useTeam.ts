@@ -46,11 +46,30 @@ export function useTeam() {
     try {
       const newAgent = await teamApi.createAgent(input);
       setAgents((prev) => [newAgent, ...prev]);
-      toast.success(t("team.toastAgentCreated"));
+      toast.success(t("team.toastAgentCreated") || "Anggota tim berhasil ditambahkan");
       return newAgent;
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal menambah agen";
-      toast.error(msg);
+      const msg = err instanceof Error ? err.message : "";
+      if (
+        msg.includes("MAX_AGENTS_LIMIT_REACHED") ||
+        msg.toLowerCase().includes("maximum agent limit reached") ||
+        msg.toLowerCase().includes("quota") ||
+        msg.toLowerCase().includes("upgrade")
+      ) {
+        toast.error(
+          "Batas kuota penambahan anggota tim untuk paket langganan Anda telah tercapai. Silakan upgrade ke paket Regular atau Enterprise di menu Subscription.",
+          { duration: 6000 }
+        );
+      } else if (
+        msg.toLowerCase().includes("email already registered") ||
+        msg.toLowerCase().includes("email already exists")
+      ) {
+        toast.error("Email tersebut sudah terdaftar di sistem. Gunakan email lain.");
+      } else if (msg.toLowerCase().includes("only seller")) {
+        toast.error("Hanya akun Seller yang dapat menambah anggota tim.");
+      } else {
+        toast.error(msg || "Gagal menambah anggota tim");
+      }
       throw err;
     }
   };

@@ -2,11 +2,12 @@
 
 import React, { useState, useMemo } from "react";
 import { useTeam } from "@/modules/team/hooks/useTeam";
-import { Agent, AgentRole } from "@/modules/team/types/team.types";
+import { Agent } from "@/modules/team/types/team.types";
 import { DeleteTeamMemberModal } from "@/modules/team/components/modals/DeleteTeamMemberModal";
 import { Button } from "@/components/ui/button";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { useI18n } from "@/lib/i18n/context";
+import { toast } from "sonner";
 import {
   Users,
   Plus,
@@ -36,7 +37,6 @@ export function TeamView() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [role, setRole] = useState<AgentRole>("AGENT");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -83,14 +83,19 @@ export function TeamView() {
     e.preventDefault();
     if (!name.trim() || !email.trim() || !phone.trim()) return;
 
+    if (!password.trim() || password.trim().length < 6) {
+      toast.error("Password akun agen wajib diisi minimal 6 karakter");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       await createAgent({
         name: name.trim(),
         email: email.trim(),
         phone: phone.trim(),
-        role,
-        password: password || undefined,
+        role: "AGENT",
+        password: password.trim(),
       });
       setName("");
       setEmail("");
@@ -199,16 +204,17 @@ export function TeamView() {
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2 min-w-0">
                         <span className="font-bold text-sm text-foreground truncate">{agt.name}</span>
-                        <span
-                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold shrink-0 ${
-                            agt.role === "SUPERVISOR"
-                              ? "bg-wise-green/15 text-dark-green dark:text-wise-green border border-wise-green/30"
-                              : "bg-muted text-foreground-secondary border border-border"
-                          }`}
-                        >
-                          <ShieldCheck className="size-2.5" />
-                          <span>{agt.role === "SUPERVISOR" ? "Supervisor" : "CS"}</span>
-                        </span>
+                        {agt.role === "SELLER" ? (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold shrink-0 bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                            <ShieldCheck className="size-2.5" />
+                            <span>{t("team.roleOwner")}</span>
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold shrink-0 bg-wise-green/15 text-dark-green dark:text-wise-green border border-wise-green/30">
+                            <ShieldCheck className="size-2.5" />
+                            <span>{t("team.roleAgent")}</span>
+                          </span>
+                        )}
                       </div>
 
                       <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 shrink-0">
@@ -228,15 +234,19 @@ export function TeamView() {
                         <span>{agt.assignedDevicesCount} Slot Device</span>
                       </div>
 
-                      <button
-                        type="button"
-                        onClick={() => setDeletingMember(agt)}
-                        className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"
-                        aria-label={`${t("actions.delete")} ${agt.name}`}
-                        title="Hapus Anggota Tim"
-                      >
-                        <Trash2 className="size-4" />
-                      </button>
+                      {agt.role === "SELLER" ? (
+                        <span className="text-xs text-foreground-muted select-none px-2" title="Akun Utama Pemilik">-</span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => setDeletingMember(agt)}
+                          className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"
+                          aria-label={`${t("actions.delete")} ${agt.name}`}
+                          title="Hapus Anggota Tim"
+                        >
+                          <Trash2 className="size-4" />
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -276,16 +286,17 @@ export function TeamView() {
 
                       {/* Role */}
                       <div className="col-span-2">
-                        <span
-                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                            agt.role === "SUPERVISOR"
-                              ? "bg-wise-green/15 text-dark-green dark:text-wise-green border border-wise-green/30"
-                              : "bg-muted text-foreground-secondary border border-border"
-                          }`}
-                        >
-                          <ShieldCheck className="size-3" />
-                          <span>{agt.role === "SUPERVISOR" ? "Supervisor" : "CS Agent"}</span>
-                        </span>
+                        {agt.role === "SELLER" ? (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                            <ShieldCheck className="size-3" />
+                            <span>{t("team.roleOwner")}</span>
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-wise-green/15 text-dark-green dark:text-wise-green border border-wise-green/30">
+                            <ShieldCheck className="size-3" />
+                            <span>{t("team.roleAgent")}</span>
+                          </span>
+                        )}
                       </div>
 
                       {/* Devices */}
@@ -304,15 +315,19 @@ export function TeamView() {
 
                       {/* Action */}
                       <div className="col-span-1 flex justify-end">
-                        <button
-                          type="button"
-                          onClick={() => setDeletingMember(agt)}
-                          className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"
-                          aria-label={`${t("actions.delete")} ${agt.name}`}
-                          title="Hapus Anggota Tim"
-                        >
-                          <Trash2 className="size-4" />
-                        </button>
+                        {agt.role === "SELLER" ? (
+                          <span className="text-xs text-foreground-muted select-none px-2" title="Akun Utama Pemilik">-</span>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => setDeletingMember(agt)}
+                            className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"
+                            aria-label={`${t("actions.delete")} ${agt.name}`}
+                            title="Hapus Anggota Tim"
+                          >
+                            <Trash2 className="size-4" />
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -435,22 +450,20 @@ export function TeamView() {
                 <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
                   {t("team.roleLabel")}
                 </label>
-                <select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value as AgentRole)}
-                  className="w-full h-10 px-3 rounded-md bg-surface dark:bg-[#10110e] text-foreground text-xs font-semibold border border-border outline-none focus:border-wise-green"
-                >
-                  <option value="AGENT">{t("team.roleAgent")}</option>
-                  <option value="SUPERVISOR">{t("team.roleSupervisor")}</option>
-                </select>
+                <div className="w-full h-10 px-4 rounded-full bg-muted/60 text-foreground text-xs font-bold border border-border flex items-center gap-2 select-none">
+                  <ShieldCheck className="size-4 text-wise-green" />
+                  <span>{t("team.roleAgent")}</span>
+                </div>
               </div>
 
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
-                  {t("team.passwordLabel")}
+                  {t("team.passwordLabel")} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="password"
+                  required
+                  minLength={6}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder={t("team.passwordPlaceholder")}

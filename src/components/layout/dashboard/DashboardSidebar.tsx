@@ -9,7 +9,6 @@ import {
   Smartphone,
   Send,
   Users,
-  UserCheck,
   CreditCard,
   Receipt,
   Activity,
@@ -34,6 +33,8 @@ export interface DashboardNavGroup {
   roles?: UserRole[];
   items: DashboardNavItem[];
 }
+
+const SELLER_ROLES: UserRole[] = ["admin", "seller", "SUPER_ADMIN", "SELLER"];
 
 export const DASHBOARD_NAV_GROUPS: DashboardNavGroup[] = [
   {
@@ -60,17 +61,12 @@ export const DASHBOARD_NAV_GROUPS: DashboardNavGroup[] = [
         key: "dashboardMenu.campaigns",
         href: "/campaigns",
         icon: Send,
+        roles: SELLER_ROLES,
       },
       {
         key: "dashboardMenu.contacts",
         href: "/contacts",
         icon: Users,
-      },
-      {
-        key: "dashboardMenu.team",
-        href: "/team",
-        icon: UserCheck,
-        roles: ["admin", "seller", "SUPER_ADMIN", "SELLER"],
       },
     ],
   },
@@ -82,13 +78,13 @@ export const DASHBOARD_NAV_GROUPS: DashboardNavGroup[] = [
         key: "dashboardMenu.subscription",
         href: "/subscription",
         icon: CreditCard,
-        roles: ["admin", "seller", "SUPER_ADMIN", "SELLER"],
+        roles: SELLER_ROLES,
       },
       {
         key: "dashboardMenu.billing",
         href: "/billing",
         icon: Receipt,
-        roles: ["admin", "seller", "SUPER_ADMIN", "SELLER"],
+        roles: SELLER_ROLES,
       },
       {
         key: "dashboardMenu.activities",
@@ -99,6 +95,7 @@ export const DASHBOARD_NAV_GROUPS: DashboardNavGroup[] = [
         key: "dashboardMenu.settings",
         href: "/settings",
         icon: Settings,
+        roles: SELLER_ROLES,
       },
     ],
   },

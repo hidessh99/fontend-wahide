@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { TeamView } from "@/modules/team/views/TeamView";
+import { SellerRouteGuard } from "@/components/layout/shared/SellerRouteGuard";
 
 export const metadata: Metadata = {
   title: "Manajemen Tim & Agen CS",
@@ -14,5 +15,9 @@ export const metadata: Metadata = {
 };
 
 export default function TeamPage() {
-  return <TeamView />;
+  return (
+    <SellerRouteGuard>
+      <TeamView />
+    </SellerRouteGuard>
+  );
 }

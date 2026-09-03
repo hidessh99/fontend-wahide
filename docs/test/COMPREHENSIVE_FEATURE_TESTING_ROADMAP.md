@@ -107,18 +107,18 @@
 
 ## 💎 8. Modul Langganan Paket & Webhook Gateway (`/subscription`)
 
-- [ ] **8.1 Katalog Pilihan Paket Langganan** — `/subscription` — Periksa kartu paket tier (**Starter**, **Pro**, **Enterprise**) → Rincian batas perangkat slot, kuota blast bulanan, dan fitur gateway tampil transparan.
-- [ ] **8.2 Status Paket Aktif Tenant Saya** — `/subscription` — Periksa kartu langganan aktif → Nama paket, masa berlaku (*Expires At*), dan bar persentase penggunaan kuota tampil akurat.
-- [ ] **8.3 Konfigurasi Webhook Event Inbound/Outbound** — `/subscription` — Masukkan URL Webhook endpoint (misal: `https://my-api.com/webhook`), centang toggle *Aktifkan Webhook* → Konfigurasi tersimpan sukses.
-- [ ] **8.4 Regenerasi Webhook Secret Kriptografi Aman (CSPRNG)** — `/subscription` — Klik tombol *Regenerate Secret* → Rahasia webhook baru terbentuk secara kriptografi aman (`whsec_live_...`), lolos uji GitHub CodeQL 0 warning.
-- [ ] **8.5 Tombol Test Ping Webhook** — `/subscription` — Klik *Kirim Ping Uji Coba* → Payload JSON simulasi terkirim ke URL webhook Anda, respon HTTP status code 200 OK tampil di popup notifikasi.
+- [x] **8.1 Katalog Pilihan Paket Langganan** — `/subscription` — Periksa kartu paket tier (**Starter**, **Pro**, **Enterprise**) → Rincian batas perangkat slot, kuota blast bulanan, dan fitur gateway tampil transparan.
+- [x] **8.2 Status Paket Aktif Tenant Saya** — `/subscription` — Periksa kartu langganan aktif → Nama paket, masa berlaku (*Expires At*), dan bar persentase penggunaan kuota tampil akurat.
+- [x] **8.3 Konfigurasi Webhook Event Inbound/Outbound** — `/subscription` — Masukkan URL Webhook endpoint (misal: `https://my-api.com/webhook`), centang toggle *Aktifkan Webhook* → Konfigurasi tersimpan sukses.
+- [x] **8.4 Regenerasi Webhook Secret Kriptografi Aman (CSPRNG)** — `/subscription` — Klik tombol *Regenerate Secret* → Rahasia webhook baru terbentuk secara kriptografi aman (`whsec_live_...`), lolos uji GitHub CodeQL 0 warning.
+- [x] **8.5 Tombol Test Ping Webhook** — `/subscription` — Klik *Kirim Ping Uji Coba* → Payload JSON simulasi terkirim ke URL webhook Anda, respon HTTP status code 200 OK tampil di popup notifikasi.
 
 ---
 
 ## 👥 9. Modul Manajemen Tim & Role-Based Access Control (`/team`)
 
-- [ ] **9.1 Daftar Anggota Tim Tenant** — `/team` — Buka daftar anggota tim → Nama, email, tanggal bergabung, badge role (*ADMIN, AGENT, OPERATOR*), dan status keaktifan tampil.
-- [ ] **9.2 Undang Anggota Tim Baru (Invite Modal)** — `/team` — Klik *Undang Anggota* → Masukkan email rekan kerja, pilih role hak akses, klik Kirim Undangan → Undangan terdaftar di tabel dengan status *PENDING*.
+- [x] **9.1 Daftar Anggota Tim Tenant** — `/team` — Buka daftar anggota tim → Nama, email, tanggal bergabung, badge role (*ADMIN, AGENT, OPERATOR*), dan status keaktifan tampil.
+- [x] **9.2 Undang Anggota Tim Baru (Invite Modal)** — `/team` — Klik *Undang Anggota* → Masukkan email rekan kerja, pilih role hak akses, klik Kirim Undangan → Undangan terdaftar di tabel dengan status *PENDING*.
 - [ ] **9.3 Perubahan Hak Akses Role Anggota** — `/team` — Ubah role salah satu anggota dari *AGENT* menjadi *ADMIN* → Konfirmasi simpan, hak akses pengguna langsung diperbarui.
 - [ ] **9.4 Cabut Akses / Hapus Anggota Tim** — `/team` — Klik *Hapus / Revoke Access* pada anggota tim → Konfirmasi dialog muncul, akses anggota dicabut permanen.
 
@@ -146,11 +146,11 @@
 ## 🛡️ 12. Modul Superadmin Control Panel & Audit Keamanan (`/admin/*`)
 
 - [ ] **12.1 Proteksi Rute Superadmin di Edge Runtime** — `/overview`, `/users`, `/plans`, `/logs` — Coba akses URL admin menggunakan akun dengan role *SELLER / AGENT* → Edge Proxy langsung menolak dan me-redirect ke `/dashboard` (Forbidden).
-- [ ] **12.2 Dashboard Overview Superadmin** — `/overview` — Login dengan akun `SUPERADMIN` → Metrik global sistem (Total Tenant Terdaftar, Total Pesan Terkirim Seluruh Server, Uptime Gateway, Revenue Bulanan) tampil akurat.
-- [ ] **12.3 Manajemen Pengguna & Penyesuaian Kuota Massal** — `/users` — Buka daftar seluruh pengguna tenant → Buka aksi *Adjust Quota*, tambah kuota pesan tenant → Kuota tenant bertambah seketika.
-- [ ] **12.4 Manajemen Master Paket Langganan Global** — `/plans` — Tambah/edit harga paket tier bulanan, limit slot perangkat, dan fitur watermark → Seluruh katalog harga sinkron.
+- [x] **12.2 Dashboard Overview Superadmin** — `/overview` — Login dengan akun `SUPERADMIN` → Metrik global sistem (Total Tenant Terdaftar, Total Pesan Terkirim Seluruh Server, Uptime Gateway, Revenue Bulanan) tampil akurat.
+- [x] **12.3 Manajemen Pengguna & Penyesuaian Kuota Massal** — `/users` — Buka daftar seluruh pengguna tenant → Buka aksi *Adjust Quota*, tambah kuota pesan tenant → Kuota tenant bertambah seketika.
+- [x] **12.4 Manajemen Master Paket Langganan Global** — `/plans` — Tambah/edit harga paket tier bulanan, limit slot perangkat, dan fitur watermark → Seluruh katalog harga sinkron.
 - [ ] **12.5 Virtual Scrolling Log Audit Sistem (AuditLogsTable)** — `/logs` — Buka tab *Log Autentikasi* & *Log Aktivitas Operasional* → Tabel virtual scrolling 60 FPS menampilkan ribuan catatan login IP, event timestamp, User Agent, dan indikator keamanan (*ShieldCheck / ShieldAlert*).
-- [ ] **12.6 Pusat Notifikasi & Broadcast Pengumuman Global** — `/notifications` — Kirim pesan banner pemeliharaan server (*Maintenance Alert*) ke seluruh tenant → Notifikasi muncul di header dashboard pengguna.
+- [x] **12.6 Pusat Notifikasi & Broadcast Pengumuman Global** — `/notifications` — Kirim pesan banner pemeliharaan server (*Maintenance Alert*) ke seluruh tenant → Notifikasi muncul di header dashboard pengguna.
 
 ---
 

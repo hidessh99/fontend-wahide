@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SubscriptionView } from "@/modules/subscription/views/SubscriptionView";
+import { SellerRouteGuard } from "@/components/layout/shared/SellerRouteGuard";
 
 export const metadata: Metadata = {
   title: "Paket Langganan | Wahide",
@@ -15,5 +16,9 @@ export const metadata: Metadata = {
 };
 
 export default function SubscriptionPage() {
-  return <SubscriptionView />;
+  return (
+    <SellerRouteGuard>
+      <SubscriptionView />
+    </SellerRouteGuard>
+  );
 }

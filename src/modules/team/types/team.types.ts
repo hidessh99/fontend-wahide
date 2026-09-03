@@ -1,4 +1,4 @@
-export type AgentRole = "AGENT" | "SUPERVISOR";
+export type AgentRole = "SELLER" | "AGENT" | "SUPERVISOR" | "USER";
 export type AgentStatus = "ACTIVE" | "INACTIVE";
 
 export interface TeamAgent {
@@ -19,6 +19,8 @@ export interface CreateAgentInput {
   name: string;
   email: string;
   phone: string;
-  role: AgentRole;
   password?: string;
+  role?: AgentRole;
 }
+
+export type CreateTeamMemberInput = CreateAgentInput;

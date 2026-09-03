@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SettingsView } from "@/modules/iam/views/SettingsView";
+import { SellerRouteGuard } from "@/components/layout/shared/SellerRouteGuard";
 
 export const metadata: Metadata = {
   title: "Pengaturan Profil & API Key",
@@ -15,5 +16,9 @@ export const metadata: Metadata = {
 };
 
 export default function SettingsPage() {
-  return <SettingsView />;
+  return (
+    <SellerRouteGuard>
+      <SettingsView />
+    </SellerRouteGuard>
+  );
 }
