@@ -36,7 +36,7 @@ export function DeviceMetricsCards({ metrics }: DeviceMetricsCardsProps) {
         <div className="dark:text-wise-green font-mono text-lg font-black text-emerald-700 sm:text-xl">
           {metrics.onlineCount.toLocaleString("id-ID")} Perangkat
         </div>
-        <span className="text-foreground-muted text-[10px]">Tersambung via whatsmeow socket</span>
+        <span className="text-foreground-muted text-[10px]">Tersambung via gateway socket</span>
       </div>
 
       <div className="border-border bg-surface rounded-xl border p-4 shadow-xs dark:bg-[#161715]">

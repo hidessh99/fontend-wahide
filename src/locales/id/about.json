@@ -13,7 +13,7 @@
   "statsMessages": "Pesan Terkirim per Hari",
   "statsTenants": "Bisnis & Tenant Aktif",
   "techArchitectureTitle": "Keunggulan Rekayasa Arsitektur Wahide",
-  "tech1Title": "Engine Multi-Device whatsmeow Terisolasi",
+  "tech1Title": "Engine Multi-Device Native Terisolasi",
   "tech1Desc": "Protokol koneksi langsung tingkat socket tanpa emulasi browser Chromium yang berat, menghemat 90% konsumsi CPU.",
   "tech2Title": "Zero-Heap Event Filtering & Hibernasi",
   "tech2Desc": "Menyaring jutaan event story update dan status read receipt di layer paling awal untuk menjaga stabilitas memori.",

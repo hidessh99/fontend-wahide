@@ -99,7 +99,7 @@ export function DeleteDeviceModal({ device, isOpen, onClose, onConfirm }: Delete
           <div className="flex items-start gap-2.5 rounded-xl border border-amber-500/20 bg-amber-500/10 p-3 text-xs text-amber-700 dark:text-amber-400">
             <AlertTriangle className="mt-0.5 size-4 shrink-0" />
             <span className="leading-relaxed font-semibold">
-              Tindakan ini akan secara permanen memutuskan koneksi WhatsApp aktif (*whatsmeow socket
+              Tindakan ini akan secara permanen memutuskan koneksi WhatsApp aktif (*gateway socket
               session*) dan menghapus data slot perangkat dari akun pengguna.
             </span>
           </div>

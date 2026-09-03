@@ -13,7 +13,7 @@
   "statsMessages": "Delivered Messages / Day",
   "statsTenants": "Active Business Tenants",
   "techArchitectureTitle": "Wahide Engineering Architecture Highlights",
-  "tech1Title": "Isolated whatsmeow Multi-Device Engine",
+  "tech1Title": "Isolated Native Multi-Device Engine",
   "tech1Desc": "Direct socket-level connection protocol without heavy Chromium browser emulation, saving 90% CPU overhead.",
   "tech2Title": "Zero-Heap Event Filtering & Hibernation",
   "tech2Desc": "Drops millions of story updates and read receipt events at line 1 to keep runtime RAM strictly stable.",
