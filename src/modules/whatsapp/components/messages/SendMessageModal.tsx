@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Device } from "@/modules/whatsapp/types/whatsapp.types";
+import { formatPhoneNumber } from "@/modules/whatsapp/components/devices/DeviceCard";
 import { whatsappApi } from "@/modules/whatsapp/api/whatsapp.api";
 import { Button } from "@/components/ui/button";
 import {
@@ -103,7 +104,8 @@ export function SendMessageModal({ devices, isOpen, onClose }: SendMessageModalP
                 ) : (
                   connectedDevices.map((d) => (
                     <option key={d.id} value={d.id}>
-                      {d.push_name || d.name} ({d.phone ? `+${d.phone}` : "Tanpa Nomor"})
+                      {d.push_name || d.name} (
+                      {d.phone ? formatPhoneNumber(d.phone) : "Nomor Belum Tertaut"})
                     </option>
                   ))
                 )}

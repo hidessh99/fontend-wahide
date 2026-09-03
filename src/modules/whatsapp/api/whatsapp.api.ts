@@ -23,10 +23,11 @@ const mapBackendDevice = (d: any): Device => {
   }
 
   // Extract clean phone number from JID (e.g., "6282151743688:80@s.whatsapp.net" -> "6282151743688")
-  let phone = d.phone || null;
+  let phone = d.phone || d.phone_number || d.phoneNumber || null;
   const rawJid = d.jid || d.j_id || "";
   if (!phone && rawJid) {
-    phone = rawJid.split(":")[0].split("@")[0] || null;
+    const userPart = rawJid.split("@")[0].split(":")[0];
+    phone = userPart.split(".")[0] || null;
   }
 
   const pushName = d.push_name || d.pushName || d.name || "WhatsApp Device";

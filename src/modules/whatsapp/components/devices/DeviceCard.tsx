@@ -14,6 +14,7 @@ import {
 import { useI18n } from "@/lib/i18n/context";
 import {
   Smartphone,
+  Phone,
   QrCode,
   Power,
   Moon,
@@ -26,6 +27,16 @@ import {
   Loader2,
   Clock,
 } from "lucide-react";
+
+export function formatPhoneNumber(phone: string | null | undefined): string {
+  if (!phone) return "";
+  const clean = phone.replace(/[^0-9]/g, "");
+  if (!clean) return phone;
+  if (clean.startsWith("62") && clean.length >= 10) {
+    return `+62 ${clean.slice(2, 5)}-${clean.slice(5, 9)}-${clean.slice(9)}`;
+  }
+  return `+${clean}`;
+}
 
 interface DeviceCardProps {
   device: Device;
@@ -126,9 +137,18 @@ export function DeviceCard({
             <h2 className="text-foreground line-clamp-1 text-base font-extrabold tracking-tight sm:text-lg">
               {device.push_name || device.pushName || device.name || "WhatsApp Device"}
             </h2>
-            <p className="text-foreground-secondary text-xs font-semibold">
-              {device.phone || device.push_name || device.pushName || "Nomor Belum Tertaut"}
-            </p>
+            <div className="text-foreground-secondary mt-0.5 flex items-center gap-1.5 text-xs font-semibold">
+              {device.phone ? (
+                <>
+                  <Phone className="text-foreground-muted size-3 shrink-0" />
+                  <span className="font-mono">{formatPhoneNumber(device.phone)}</span>
+                </>
+              ) : (
+                <span className="text-foreground-muted font-sans text-[11px] italic">
+                  {device.status === "PAIRING" ? "Menunggu Scan QR..." : "Nomor Belum Tertaut"}
+                </span>
+              )}
+            </div>
           </div>
         </div>
 

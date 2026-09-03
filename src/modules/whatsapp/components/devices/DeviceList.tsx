@@ -67,12 +67,14 @@ export function DeviceList() {
     setSelectedDeviceForQR(null);
   };
 
-  const handlePairingSuccess = (device: Device) => {
+  const handlePairingSuccess = async (device: Device) => {
     updateDeviceStatus(device.id, "CONNECTED", {
       phone: device.phone,
       pushName: device.pushName,
       lastSeenAt: new Date().toISOString(),
     });
+    // Immediately synchronize fresh device state from backend to populate extracted phone
+    await fetchDevices();
   };
 
   return (
