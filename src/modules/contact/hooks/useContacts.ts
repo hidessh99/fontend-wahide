@@ -20,13 +20,13 @@ export function useContacts() {
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   const fetchContacts = useCallback(
-    async (overrideSearch?: string, targetPage?: number) => {
+    async (overrideSearch?: string, targetPage?: number, signal?: AbortSignal) => {
       setIsLoading(true);
       setError(null);
       try {
         const search = overrideSearch !== undefined ? overrideSearch.trim() : activeSearch.trim();
         const p = targetPage !== undefined ? targetPage : page;
-        const res = await contactApi.getContacts({ search, page: p, pageSize });
+        const res = await contactApi.getContacts({ search, page: p, pageSize }, signal);
         setContacts(res.contacts);
         setTotal(res.total);
         setPage(res.page);
@@ -34,6 +34,7 @@ export function useContacts() {
           setActiveSearch(overrideSearch.trim());
         }
       } catch (err: unknown) {
+        if (err instanceof Error && err.name === "AbortError") return;
         const msg = err instanceof Error ? err.message : "Gagal memuat kontak";
         setError(msg);
       } finally {
@@ -70,26 +71,33 @@ export function useContacts() {
 
   useEffect(() => {
     let isMounted = true;
-    const init = async () => {
+    const controller = new AbortController();
+
+    const loadInitialContacts = async () => {
       try {
-        const res = await contactApi.getContacts({ page: 1, pageSize: 10 });
+        const res = await contactApi.getContacts({ search: "", page: 1, pageSize: 10 }, controller.signal);
         if (isMounted) {
           setContacts(res.contacts);
           setTotal(res.total);
           setPage(res.page);
-          setIsLoading(false);
         }
       } catch (err: unknown) {
+        if (err instanceof Error && err.name === "AbortError") return;
         if (isMounted) {
-          const msg = err instanceof Error ? err.message : "Gagal memuat kontak";
-          setError(msg);
+          setError(err instanceof Error ? err.message : "Gagal memuat kontak");
+        }
+      } finally {
+        if (isMounted) {
           setIsLoading(false);
         }
       }
     };
-    init();
+
+    loadInitialContacts();
+
     return () => {
       isMounted = false;
+      controller.abort();
     };
   }, []);
 

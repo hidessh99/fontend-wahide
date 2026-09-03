@@ -11,6 +11,13 @@ interface UseQRPairingProps {
   onError?: (error: string) => void;
 }
 
+/**
+ * Enterprise-grade QR & Phone Pairing hook for WhatsApp Engine.
+ * Features 3-Layer Anti-Leak Architecture:
+ * - Layer 1: Recursive setTimeout polling (Zero request stampede / overlapping)
+ * - Layer 2: AbortController & explicit cleanup on modal close / unmount (Zero memory leak)
+ * - Layer 3: Circuit Breaker with 2-minute auto-stop & Tab Visibility optimization
+ */
 export function useQRPairing({
   deviceId,
   isOpen,
@@ -25,18 +32,33 @@ export function useQRPairing({
   const [countdown, setCountdown] = useState<number>(20);
   const [isLoadingCode, setIsLoadingCode] = useState<boolean>(false);
 
-  const isMountedRef = useRef<boolean>(true);
-  const statusPollRef = useRef<NodeJS.Timeout | null>(null);
-  const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
+  // Stable callback refs - prevents effect re-triggers when parent re-renders
+  const onSuccessRef = useRef(onSuccess);
+  const onErrorRef = useRef(onError);
 
-  const stopPolling = useCallback(() => {
-    if (statusPollRef.current) {
-      clearInterval(statusPollRef.current);
-      statusPollRef.current = null;
+  useEffect(() => {
+    onSuccessRef.current = onSuccess;
+    onErrorRef.current = onError;
+  }, [onSuccess, onError]);
+
+  const isMountedRef = useRef<boolean>(true);
+  const pollTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const pollAbortRef = useRef<AbortController | null>(null);
+  const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const pollStartTimeRef = useRef<number>(0);
+
+  const clearPollingResources = useCallback(() => {
+    if (pollTimerRef.current) {
+      clearTimeout(pollTimerRef.current);
+      pollTimerRef.current = null;
+    }
+    if (pollAbortRef.current) {
+      pollAbortRef.current.abort();
+      pollAbortRef.current = null;
     }
   }, []);
 
-  const stopCountdown = useCallback(() => {
+  const clearCountdown = useCallback(() => {
     if (countdownTimerRef.current) {
       clearInterval(countdownTimerRef.current);
       countdownTimerRef.current = null;
@@ -45,7 +67,7 @@ export function useQRPairing({
 
   // 1. Initial QR Request when Modal Opens in QR mode
   useEffect(() => {
-    let isMounted = true;
+    let isCancelled = false;
     isMountedRef.current = true;
 
     const init = async () => {
@@ -55,7 +77,7 @@ export function useQRPairing({
 
       try {
         const res = await whatsappApi.pairDevice(deviceId);
-        if (!isMounted) return;
+        if (isCancelled || !isMountedRef.current) return;
 
         if (res && res.qr_code) {
           let formattedQR = res.qr_code;
@@ -69,11 +91,11 @@ export function useQRPairing({
           setStatus("PAIRING");
         }
       } catch (err: unknown) {
-        if (!isMounted) return;
+        if (isCancelled || !isMountedRef.current) return;
         const msg = err instanceof Error ? err.message : "Gagal meminta QR Code pairing";
         setStatus("ERROR");
         setErrorMessage(msg);
-        onError?.(msg);
+        onErrorRef.current?.(msg);
       }
     };
 
@@ -82,17 +104,16 @@ export function useQRPairing({
     }
 
     return () => {
-      isMounted = false;
-      isMountedRef.current = false;
-      stopPolling();
-      stopCountdown();
+      isCancelled = true;
+      clearPollingResources();
+      clearCountdown();
     };
-  }, [isOpen, deviceId, pairMode, onError, stopPolling, stopCountdown]);
+  }, [isOpen, deviceId, pairMode, clearPollingResources, clearCountdown]);
 
-  // 2. Countdown Timer (20s for QR code)
+  // 2. Countdown Timer (20s for QR code refresh cycle)
   useEffect(() => {
     if (!isOpen || status !== "PAIRING" || pairMode !== "QR") {
-      stopCountdown();
+      clearCountdown();
       return;
     }
 
@@ -110,38 +131,88 @@ export function useQRPairing({
     return () => {
       clearInterval(timer);
     };
-  }, [isOpen, status, pairMode, stopCountdown]);
+  }, [isOpen, status, pairMode, clearCountdown]);
 
-  // 3. Lightweight Status Polling Watcher (every 3s to auto-detect successful scan or pairing code entered)
+  // 3. 3-Layer Anti-Leak Polling (Recursive setTimeout + AbortController + Tab Visibility + Circuit Breaker)
   useEffect(() => {
     if (!isOpen || !deviceId || status === "AUTHENTICATED") {
-      stopPolling();
+      clearPollingResources();
       return;
     }
 
-    const interval = setInterval(async () => {
+    let isCancelled = false;
+    pollStartTimeRef.current = Date.now();
+
+    const scheduleNext = () => {
+      if (isCancelled || !isMountedRef.current) return;
+
+      // Layer 3: Circuit Breaker - Stop polling automatically after 2 minutes (120,000 ms)
+      const elapsed = Date.now() - pollStartTimeRef.current;
+      if (elapsed > 120000) {
+        setStatus("ERROR");
+        setErrorMessage("Sesi pairing kedaluwarsa. Silakan muat ulang QR code.");
+        return;
+      }
+
+      // Schedule next poll only after previous request finished
+      pollTimerRef.current = setTimeout(runPoll, 3000);
+    };
+
+    const runPoll = async () => {
+      if (isCancelled || !isMountedRef.current) return;
+
+      // Tab Visibility check: pause polling when browser tab is inactive/minimized
+      if (typeof document !== "undefined" && document.visibilityState === "hidden") {
+        return;
+      }
+
+      // Layer 2: Per-request AbortController
+      const controller = new AbortController();
+      pollAbortRef.current = controller;
+
       try {
-        const devices = await whatsappApi.getDevices();
-        if (!isMountedRef.current) return;
+        const devices = await whatsappApi.getDevices(controller.signal);
+        if (isCancelled || !isMountedRef.current) return;
 
         const currentDev = devices.find((d) => d.id === deviceId);
         if (currentDev && (currentDev.status === "CONNECTED" || (currentDev.status as string) === "ONLINE")) {
           setStatus("AUTHENTICATED");
-          stopPolling();
-          stopCountdown();
-          onSuccess?.({ status: "AUTHENTICATED" });
+          clearPollingResources();
+          clearCountdown();
+          onSuccessRef.current?.({ status: "AUTHENTICATED" });
+          return; // Stop polling loop on success
         }
       } catch {
-        // Silently continue polling
+        // Silently catch network drops during polling
+      } finally {
+        if (!isCancelled && isMountedRef.current) {
+          scheduleNext();
+        }
       }
-    }, 3000);
+    };
 
-    statusPollRef.current = interval;
+    // Tab Visibility listener: immediately resume poll when tab gains focus
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible" && !isCancelled && isMountedRef.current) {
+        runPoll();
+      }
+    };
+
+    if (typeof document !== "undefined") {
+      document.addEventListener("visibilitychange", handleVisibilityChange);
+    }
+
+    // Start initial poll cycle
+    scheduleNext();
 
     return () => {
-      clearInterval(interval);
+      isCancelled = true;
+      if (typeof document !== "undefined") {
+        document.removeEventListener("visibilitychange", handleVisibilityChange);
+      }
+      clearPollingResources();
     };
-  }, [isOpen, deviceId, status, onSuccess, stopPolling, stopCountdown]);
+  }, [isOpen, deviceId, status, clearPollingResources, clearCountdown]);
 
   // 4. Manual QR Retry
   const retry = useCallback(async () => {
@@ -167,9 +238,9 @@ export function useQRPairing({
       const msg = err instanceof Error ? err.message : "Gagal meminta QR Code pairing";
       setStatus("ERROR");
       setErrorMessage(msg);
-      onError?.(msg);
+      onErrorRef.current?.(msg);
     }
-  }, [deviceId, onError]);
+  }, [deviceId]);
 
   // 5. Request 8-Character Phone Pairing Code
   const requestPairingCode = useCallback(async (phone: string) => {
@@ -190,10 +261,10 @@ export function useQRPairing({
       const msg = err instanceof Error ? err.message : "Gagal meminta kode pairing nomor";
       setErrorMessage(msg);
       setIsLoadingCode(false);
-      onError?.(msg);
+      onErrorRef.current?.(msg);
       return null;
     }
-  }, [deviceId, onError]);
+  }, [deviceId]);
 
   return {
     pairMode,

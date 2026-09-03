@@ -226,7 +226,7 @@ export function DeviceList() {
           <Button
             variant="outline"
             size="sm"
-            onClick={fetchDevices}
+            onClick={() => fetchDevices()}
             disabled={isLoading}
             className="rounded-full size-8.5 p-0 border-border hover:border-foreground-muted cursor-pointer shrink-0"
             aria-label="Refresh Daftar"

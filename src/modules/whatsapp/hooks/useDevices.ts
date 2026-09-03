@@ -14,13 +14,15 @@ export function useDevices() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<DeviceStatus | "ALL">("ALL");
 
-  const fetchDevices = useCallback(async () => {
+  const fetchDevices = useCallback(async (signalOrEvent?: AbortSignal | unknown) => {
+    const signal = signalOrEvent instanceof AbortSignal ? signalOrEvent : undefined;
     setIsLoading(true);
     setError(null);
     try {
-      const data = await whatsappApi.getDevices();
+      const data = await whatsappApi.getDevices(signal);
       setDevices(data);
     } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") return;
       const msg = err instanceof Error ? err.message : "Gagal memuat daftar perangkat";
       setError(msg);
     } finally {
@@ -30,24 +32,31 @@ export function useDevices() {
 
   useEffect(() => {
     let isMounted = true;
-    const init = async () => {
+    const controller = new AbortController();
+
+    const loadInitialDevices = async () => {
       try {
-        const data = await whatsappApi.getDevices();
+        const data = await whatsappApi.getDevices(controller.signal);
         if (isMounted) {
           setDevices(data);
-          setIsLoading(false);
         }
       } catch (err: unknown) {
+        if (err instanceof Error && err.name === "AbortError") return;
         if (isMounted) {
-          const msg = err instanceof Error ? err.message : "Gagal memuat daftar perangkat";
-          setError(msg);
+          setError(err instanceof Error ? err.message : "Gagal memuat daftar perangkat");
+        }
+      } finally {
+        if (isMounted) {
           setIsLoading(false);
         }
       }
     };
-    init();
+
+    loadInitialDevices();
+
     return () => {
       isMounted = false;
+      controller.abort();
     };
   }, []);
 

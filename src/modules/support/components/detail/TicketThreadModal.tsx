@@ -4,6 +4,7 @@ import React, { useState, useRef } from "react";
 import { Ticket, TicketMessage } from "@/modules/support/types/support.types";
 import { supportApi } from "@/modules/support/api/support.api";
 import { Button } from "@/components/ui/button";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { useI18n } from "@/lib/i18n/context";
 import { X, Send, Loader2, User, ShieldCheck, ExternalLink, Paperclip } from "lucide-react";
 
@@ -34,15 +35,8 @@ export function TicketThreadModal({
   const [uploadError, setUploadError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Escape key to dismiss
-  React.useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
+  // Universal Escape key dismissal with zero listener churn
+  useEscapeKey(isOpen, onClose);
 
   // Initial message of the ticket (first message created by the user)
   const initialMessage: TicketMessage | null = React.useMemo(() => {
@@ -65,25 +59,32 @@ export function TicketThreadModal({
       return;
     }
 
-    let isMounted = true;
+    const controller = new AbortController();
+    let isCancelled = false;
+
+    // Asynchronous microtask avoids synchronous cascading render in effect body
+    queueMicrotask(() => {
+      if (!isCancelled) {
+        setIsFetchingReplies(true);
+      }
+    });
+
     supportApi
-      .getReplies(ticket.id)
+      .getReplies(ticket.id, controller.signal)
       .then((data) => {
-        if (isMounted) {
-          setReplies(data);
-        }
+        if (!isCancelled) setReplies(data);
       })
       .catch((err: unknown) => {
+        if (err instanceof Error && err.name === "AbortError") return;
         console.error("Gagal memuat balasan tiket:", err);
       })
       .finally(() => {
-        if (isMounted) {
-          setIsFetchingReplies(false);
-        }
+        if (!isCancelled) setIsFetchingReplies(false);
       });
 
     return () => {
-      isMounted = false;
+      isCancelled = true;
+      controller.abort();
     };
   }, [isOpen, ticket?.id]);
 

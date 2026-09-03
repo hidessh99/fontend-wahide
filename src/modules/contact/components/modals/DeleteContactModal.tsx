@@ -1,8 +1,9 @@
-﻿"use client";
+"use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Contact } from "@/modules/contact/types/contact.types";
 import { Button } from "@/components/ui/button";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { useI18n } from "@/lib/i18n/context";
 import { X, AlertTriangle, Loader2, Trash2 } from "lucide-react";
 
@@ -26,15 +27,8 @@ export function DeleteContactModal({
   const { t } = useI18n();
   const [isDeleting, setIsDeleting] = useState(false);
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen && !isDeleting) {
-        onClose();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, isDeleting, onClose]);
+  // Universal Escape key dismissal with zero listener churn
+  useEscapeKey(isOpen && !isDeleting, onClose);
 
   if (!isOpen) return null;
 

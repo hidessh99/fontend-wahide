@@ -131,10 +131,10 @@ export const supportApi = {
     return normalizeTicket(raw);
   },
 
-  getReplies: async (ticketId: string): Promise<TicketMessage[]> => {
+  getReplies: async (ticketId: string, signal?: AbortSignal): Promise<TicketMessage[]> => {
     if (!ticketId) return [];
     try {
-      const res = await httpClient.get<unknown>(`${SUPPORT_BASE}/support/tickets/${ticketId}/reply?page=1&page_size=100`);
+      const res = await httpClient.get<unknown>(`${SUPPORT_BASE}/support/tickets/${ticketId}/reply?page=1&page_size=100`, { signal });
       const rawList = res.payload || (Array.isArray(res) ? res : []);
       const rawArray = Array.isArray(rawList) ? (rawList as Record<string, unknown>[]) : [];
       return rawArray.map((r) => {
@@ -149,7 +149,8 @@ export const supportApi = {
           createdAt: String(r.created_at || r.createdAt || new Date().toISOString()),
         };
       });
-    } catch {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") throw err;
       return [];
     }
   },

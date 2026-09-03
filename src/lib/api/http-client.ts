@@ -141,13 +141,26 @@ class HttpClient {
 
     const fullUrl = this.buildUrl(endpoint, params);
 
-    // Timeout Abort Controller
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+    // Timeout Abort Controller combined with caller's custom signal
+    const timeoutController = new AbortController();
+    const timeoutId = setTimeout(() => timeoutController.abort(), timeoutMs);
+
+    let combinedSignal: AbortSignal = timeoutController.signal;
+    if (customConfig.signal) {
+      if (typeof AbortSignal !== "undefined" && typeof AbortSignal.any === "function") {
+        combinedSignal = AbortSignal.any([timeoutController.signal, customConfig.signal]);
+      } else {
+        const compositeController = new AbortController();
+        const onAbort = () => compositeController.abort();
+        timeoutController.signal.addEventListener("abort", onAbort, { once: true });
+        customConfig.signal.addEventListener("abort", onAbort, { once: true });
+        combinedSignal = compositeController.signal;
+      }
+    }
 
     const config: RequestInit = {
       ...customConfig,
-      signal: customConfig.signal || controller.signal,
+      signal: combinedSignal,
       headers: {
         ...defaultHeaders,
         ...(headers as Record<string, string>),
@@ -212,8 +225,13 @@ class HttpClient {
         throw err;
       }
       if (err instanceof Error) {
-        if (err.name === "AbortError") {
-          throw new ApiError("Batas waktu koneksi habis (Timeout 15 detik). Server tidak merespons.", 408);
+        if (err.name === "AbortError" || (err instanceof DOMException && err.name === "AbortError")) {
+          if (timeoutController.signal.aborted) {
+            throw new ApiError("Batas waktu koneksi habis (Timeout 15 detik). Server tidak merespons.", 408);
+          }
+          const abortErr = new Error("Permintaan dibatalkan.");
+          abortErr.name = "AbortError";
+          throw abortErr;
         }
         throw new ApiError(err.message, 500);
       }

@@ -142,7 +142,7 @@ function normalizeUserActivity(raw: Record<string, unknown>): UserActivityItem {
 }
 
 export const adminApi = {
-  getUsers: async (params?: GetUsersParams): Promise<UserListResponse> => {
+  getUsers: async (params?: GetUsersParams, signal?: AbortSignal): Promise<UserListResponse> => {
     try {
       const page = params?.page ?? 1;
       const pageSize = params?.pageSize ?? 10;
@@ -160,7 +160,8 @@ export const adminApi = {
       }
 
       const res = await httpClient.get<Record<string, unknown>[]>(
-        `${ADMIN_BASE}/admin/users?${query.toString()}`
+        `${ADMIN_BASE}/admin/users?${query.toString()}`,
+        { signal }
       );
 
       const rawUsers = Array.isArray(res.payload) ? res.payload : [];
@@ -176,7 +177,8 @@ export const adminApi = {
         page: resPage,
         pageSize: resSize,
       };
-    } catch {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") throw err;
       return {
         users: DEFAULT_USERS,
         total: DEFAULT_USERS.length,

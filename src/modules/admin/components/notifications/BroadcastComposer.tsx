@@ -51,9 +51,13 @@ export function BroadcastComposer({
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
 
-  // Fetch users when switching to SPECIFIC
+  // Fetch users once when switching to SPECIFIC
+  const hasLoadedUsersRef = useRef(false);
   useEffect(() => {
-    if (broadcastTarget === "SPECIFIC" && users.length === 0) {
+    if (broadcastTarget === "SPECIFIC" && !hasLoadedUsersRef.current) {
+      hasLoadedUsersRef.current = true;
+      const controller = new AbortController();
+
       const loadUsers = async () => {
         setIsLoadingUsers(true);
         try {
@@ -66,8 +70,12 @@ export function BroadcastComposer({
         }
       };
       loadUsers();
+
+      return () => {
+        controller.abort();
+      };
     }
-  }, [broadcastTarget, users.length]);
+  }, [broadcastTarget]);
 
   // Click outside listener for dropdown
   useEffect(() => {

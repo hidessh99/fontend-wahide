@@ -5,7 +5,7 @@ import { Contact, CreateContactInput, GetContactsParams, ContactListResponse } f
 const CONTACT_BASE = env.NEXT_PUBLIC_WHATSAPP_API_URL;
 
 export const contactApi = {
-  getContacts: async (params?: GetContactsParams): Promise<ContactListResponse> => {
+  getContacts: async (params?: GetContactsParams, signal?: AbortSignal): Promise<ContactListResponse> => {
     try {
       const page = params?.page ?? 1;
       const pageSize = params?.pageSize ?? 10;
@@ -16,7 +16,7 @@ export const contactApi = {
         query.set("search", params.search.trim());
       }
       const queryString = `?${query.toString()}`;
-      const res = await httpClient.get<Contact[]>(`${CONTACT_BASE}/contacts${queryString}`);
+      const res = await httpClient.get<Contact[]>(`${CONTACT_BASE}/contacts${queryString}`, { signal });
       const rawList = res.payload || (Array.isArray(res) ? res : []);
       const contacts = Array.isArray(rawList) ? rawList : [];
 
@@ -31,7 +31,8 @@ export const contactApi = {
         page: resPage,
         pageSize: resSize,
       };
-    } catch {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") throw err;
       return {
         contacts: [],
         total: 0,

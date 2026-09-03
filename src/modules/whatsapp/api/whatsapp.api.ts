@@ -37,13 +37,14 @@ const mapBackendDevice = (d: any): Device => {
 };
 
 export const whatsappApi = {
-  getDevices: async (): Promise<Device[]> => {
+  getDevices: async (signal?: AbortSignal): Promise<Device[]> => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const res = await httpClient.get<any>(`${WHATSAPP_BASE}/whatsapp/devices`);
+      const res = await httpClient.get<any>(`${WHATSAPP_BASE}/whatsapp/devices`, { signal });
       const data = res.payload || (Array.isArray(res) ? res : []);
       return data.map(mapBackendDevice);
-    } catch {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") throw err;
       // Fallback empty array on initial connection failure
       return [];
     }

@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { Device } from "@/modules/whatsapp/types/whatsapp.types";
 import { useQRPairing } from "@/modules/whatsapp/hooks/useQRPairing";
+import { useAuth } from "@/modules/iam/hooks/useAuth";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/context";
 import {
@@ -34,18 +36,13 @@ export function LiveQRModal({
   onSuccess,
 }: LiveQRModalProps) {
   const { t } = useI18n();
-  const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const authUserPhone = useAuth((s) => s.user?.phone || "");
+  const [customPhone, setCustomPhone] = useState<string | null>(null);
+  const phoneNumber = customPhone !== null ? customPhone : authUserPhone;
   const [copied, setCopied] = useState<boolean>(false);
 
-  // Escape key to dismiss
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
+  // Universal Escape key dismissal with zero listener churn
+  useEscapeKey(isOpen, onClose);
 
   const handlePairingSuccess = () => {
     if (device) {
@@ -313,7 +310,7 @@ export function LiveQRModal({
                           type="tel"
                           placeholder="81234567890"
                           value={phoneNumber}
-                          onChange={(e) => setPhoneNumber(e.target.value)}
+                          onChange={(e) => setCustomPhone(e.target.value)}
                           className="flex-1 px-3 py-2 text-xs font-semibold bg-transparent focus:outline-none text-foreground"
                           autoFocus
                           required
