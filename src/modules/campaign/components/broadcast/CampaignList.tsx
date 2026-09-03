@@ -268,7 +268,7 @@ export function CampaignList() {
                       </h3>
                       <ExternalLink className="text-foreground-muted size-3.5 opacity-0 transition group-hover:opacity-100" />
                     </div>
-                    <div className="text-foreground-muted flex items-center gap-2 text-xs font-semibold flex-wrap">
+                    <div className="text-foreground-muted flex flex-wrap items-center gap-2 text-xs font-semibold">
                       <div className="flex items-center gap-1">
                         <Smartphone className="size-3.5" />
                         <span>{campaign.deviceName || "Perangkat Utama"}</span>

@@ -21,6 +21,10 @@ const SendMessageModal = dynamic(
   () => import("../messages/SendMessageModal").then((m) => m.SendMessageModal),
   { ssr: false }
 );
+const DeviceDetailModal = dynamic(
+  () => import("./DeviceDetailModal").then((m) => m.DeviceDetailModal),
+  { ssr: false }
+);
 import {
   Smartphone,
   Plus,
@@ -56,6 +60,7 @@ export function DeviceList() {
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isSendModalOpen, setIsSendModalOpen] = useState(false);
+  const [selectedDeviceForDetail, setSelectedDeviceForDetail] = useState<Device | null>(null);
 
   const handleOpenQR = (device: Device) => {
     setSelectedDeviceForQR(device);
@@ -281,10 +286,22 @@ export function DeviceList() {
               onHibernate={hibernateDevice}
               onWake={wakeDevice}
               onDelete={deleteDevice}
+              onViewDetail={setSelectedDeviceForDetail}
             />
           ))}
         </div>
       )}
+
+      {/* Device Detail Modal */}
+      <DeviceDetailModal
+        device={selectedDeviceForDetail}
+        isOpen={Boolean(selectedDeviceForDetail)}
+        onClose={() => setSelectedDeviceForDetail(null)}
+        onScanQR={handleOpenQR}
+        onDisconnect={disconnectDevice}
+        onHibernate={hibernateDevice}
+        onWake={wakeDevice}
+      />
 
       {/* Live QR Modal */}
       <LiveQRModal

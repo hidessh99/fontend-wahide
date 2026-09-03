@@ -73,5 +73,22 @@
   "addSubmit": "Create Device Slot",
   "addSaving": "Saving...",
   "sendSuccess": "WhatsApp message delivered successfully!",
-  "noConnectedDevices": "No devices connected. Please link a WhatsApp device first."
+  "noConnectedDevices": "No devices connected. Please link a WhatsApp device first.",
+  "deviceId": "Device ID",
+  "copyDeviceId": "Copy Device ID",
+  "deviceIdCopied": "Device ID copied to clipboard!",
+  "viewDetail": "View Details",
+  "detailModalTitle": "WhatsApp Device Details",
+  "detailModalSubtitle": "Session telemetry, WhatsApp identity, and anti-ban reputation health.",
+  "jidLabel": "WhatsApp JID",
+  "trustScoreLabel": "Trust Score",
+  "warmupDayLabel": "Warmup Stage",
+  "dayUnit": "Day {day}",
+  "dailySentCountLabel": "Messages Sent Today",
+  "connectedAtLabel": "Linked Date",
+  "lastSeenLabel": "Last Active",
+  "engineProtocol": "Engine Protocol",
+  "multiDeviceEngine": "whatsmeow Multi-Device (MD)",
+  "btnTestMessage": "Send Test Message",
+  "btnClose": "Close"
 }

@@ -431,7 +431,7 @@ export function CampaignWizardModal({ isOpen, onClose, onSubmit }: CampaignWizar
                       {t("campaign.customNumbersHint")} (otomatis normalisasi 08xx → 628xx)
                     </span>
                     {parseCustomNumbers(customNumbersStr).length > 0 && (
-                      <span className="font-bold text-emerald-700 dark:text-wise-green">
+                      <span className="dark:text-wise-green font-bold text-emerald-700">
                         ✓ {parseCustomNumbers(customNumbersStr).length} nomor valid
                       </span>
                     )}

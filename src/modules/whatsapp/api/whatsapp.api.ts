@@ -37,11 +37,35 @@ const mapBackendDevice = (d: any): Device => {
 
   return {
     ...d,
+    id: String(d.id || ""),
+    tenantId: d.tenant_id || d.tenantId,
+    jid: rawJid || null,
     push_name: pushName,
     pushName: pushName,
     name: pushName,
     phone: phone,
     status: mappedStatus,
+    trustScore:
+      typeof d.trust_score === "number"
+        ? d.trust_score
+        : typeof d.trustScore === "number"
+          ? d.trustScore
+          : 10,
+    warmupDay:
+      typeof d.warmup_day === "number"
+        ? d.warmup_day
+        : typeof d.warmupDay === "number"
+          ? d.warmupDay
+          : 1,
+    dailySentCount:
+      typeof d.daily_sent_count === "number"
+        ? d.daily_sent_count
+        : typeof d.dailySentCount === "number"
+          ? d.dailySentCount
+          : 0,
+    lastSeenAt: d.last_seen_at || d.lastSeenAt || null,
+    createdAt: d.created_at || d.createdAt || new Date().toISOString(),
+    updatedAt: d.updated_at || d.updatedAt || undefined,
   };
 };
 
@@ -57,6 +81,13 @@ export const whatsappApi = {
       // Fallback empty array on initial connection failure
       return [];
     }
+  },
+
+  getDevice: async (id: string): Promise<Device> => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const res = await httpClient.get<any>(`${WHATSAPP_BASE}/whatsapp/devices/${id}`);
+    const data = res.payload || res;
+    return mapBackendDevice(data);
   },
 
   createDevice: async (payload: CreateDeviceInput): Promise<Device> => {

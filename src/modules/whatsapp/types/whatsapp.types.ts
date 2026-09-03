@@ -2,16 +2,23 @@ export type DeviceStatus = "CONNECTED" | "PAIRING" | "DISCONNECTED" | "HIBERNATE
 
 export interface Device {
   id: string;
+  tenant_id?: string;
+  tenantId?: string;
+  jid?: string | null;
   name?: string;
   push_name?: string | null;
   pushName?: string | null;
   phone: string | null;
   status: DeviceStatus;
-  batteryLevel: number | null;
-  isCharging: boolean;
-  platform: string | null;
-  lastSeenAt: string | null;
+  batteryLevel?: number | null;
+  isCharging?: boolean;
+  trustScore?: number;
+  warmupDay?: number;
+  dailySentCount?: number;
+  platform?: string | null;
+  lastSeenAt?: string | null;
   createdAt: string;
+  updatedAt?: string;
 }
 
 export interface QREventData {

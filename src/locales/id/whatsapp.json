@@ -73,5 +73,22 @@
   "addSubmit": "Buat Slot Perangkat",
   "addSaving": "Menyimpan...",
   "sendSuccess": "Pesan WhatsApp berhasil dikirim!",
-  "noConnectedDevices": "Tidak ada perangkat yang terhubung. Silakan hubungkan perangkat terlebih dahulu."
+  "noConnectedDevices": "Tidak ada perangkat yang terhubung. Silakan hubungkan perangkat terlebih dahulu.",
+  "deviceId": "Device ID",
+  "copyDeviceId": "Salin Device ID",
+  "deviceIdCopied": "Device ID berhasil disalin!",
+  "viewDetail": "Lihat Detail",
+  "detailModalTitle": "Detail Perangkat WhatsApp",
+  "detailModalSubtitle": "Informasi telemetri sesi, identitas WhatsApp, dan kesehatan reputasi anti-ban.",
+  "jidLabel": "WhatsApp JID",
+  "trustScoreLabel": "Skor Reputasi",
+  "warmupDayLabel": "Fase Pemanasan",
+  "dayUnit": "Hari ke-{day}",
+  "dailySentCountLabel": "Pesan Terkirim Hari Ini",
+  "connectedAtLabel": "Tanggal Ditautkan",
+  "lastSeenLabel": "Terakhir Aktif",
+  "engineProtocol": "Protokol Mesin",
+  "multiDeviceEngine": "whatsmeow Multi-Device (MD)",
+  "btnTestMessage": "Kirim Pesan Tes",
+  "btnClose": "Tutup"
 }
