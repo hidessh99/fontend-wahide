@@ -2,14 +2,23 @@
 
 import React, { useState, useRef, useMemo } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { CheckCheck, Check, AlertCircle, RefreshCw, Loader2 } from "lucide-react";
+import {
+  CheckCheck,
+  Check,
+  AlertCircle,
+  RefreshCw,
+  Loader2,
+  Phone,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty";
 import { SearchInput } from "@/components/ui/search-input";
-import { DataTablePagination } from "@/components/ui/pagination";
 import { useI18n } from "@/lib/i18n/context";
 import { useMessageLogs } from "../../hooks/useMessageLogs";
+import { MessageDetailModal } from "./MessageDetailModal";
 
 export interface MessageLogItem {
   id: string;
@@ -30,12 +39,14 @@ export function MessageLogsTable() {
     page,
     setPage,
     pageSize,
+    setPageSize,
     isLoading,
     fetchLogs,
   } = useMessageLogs(1, 20);
   const [searchInput, setSearchInput] = useState("");
   const [activeSearch, setActiveSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
+  const [selectedLogForDetail, setSelectedLogForDetail] = useState<MessageLogItem | null>(null);
   const parentRef = useRef<HTMLDivElement>(null);
 
   const mappedLogs = useMemo<MessageLogItem[]>(() => {
@@ -196,25 +207,36 @@ export function MessageLogsTable() {
             {/* Mobile View: Card-based Message Logs (Visible on < 768px) */}
             <div className="divide-border/50 divide-y md:hidden">
               {filteredLogs.map((log) => (
-                <div key={log.id} className="bg-surface space-y-2 p-3.5 sm:p-4 dark:bg-[#161715]">
+                <div
+                  key={log.id}
+                  onClick={() => setSelectedLogForDetail(log)}
+                  className="bg-surface hover:bg-muted/30 cursor-pointer space-y-2.5 p-3.5 transition-colors sm:p-4 dark:bg-[#161715]"
+                >
                   <div className="flex items-center justify-between gap-2">
-                    <div className="min-w-0">
-                      <span className="text-foreground block truncate text-sm font-bold">
-                        {log.recipientName || t("campaign.unnamedRecipient")}
-                      </span>
-                      <span className="text-foreground-secondary block font-mono text-xs">
-                        +{log.recipientPhone}
-                      </span>
+                    <div className="flex min-w-0 items-center gap-2">
+                      <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                        <Phone className="size-3.5" />
+                      </div>
+                      <div className="min-w-0">
+                        {log.recipientName && log.recipientName !== log.recipientPhone ? (
+                          <>
+                            <span className="text-foreground block truncate text-xs font-bold">
+                              {log.recipientName}
+                            </span>
+                            <span className="text-foreground-secondary block font-mono text-[11px]">
+                              +{log.recipientPhone}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-foreground block truncate font-mono text-xs font-bold">
+                            +{log.recipientPhone}
+                          </span>
+                        )}
+                      </div>
                     </div>
 
-                    <div className="flex shrink-0 flex-col items-end">
+                    <div className="flex shrink-0 items-center">
                       {renderStatusBadge(log.status)}
-                      <span className="text-foreground-muted mt-0.5 font-mono text-[11px]">
-                        {new Date(log.sentAt).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </span>
                     </div>
                   </div>
 
@@ -228,9 +250,16 @@ export function MessageLogsTable() {
                   </div>
 
                   <div className="text-foreground-muted flex items-center justify-between text-[11px]">
-                    <span className="truncate">{log.campaignName}</span>
+                    <span className="truncate font-medium">{log.campaignName}</span>
                     <span className="font-mono">
-                      {new Date(log.sentAt).toLocaleDateString("id-ID")}
+                      {log.sentAt
+                        ? new Date(log.sentAt).toLocaleString("id-ID", {
+                            day: "numeric",
+                            month: "short",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : "-"}
                     </span>
                   </div>
                 </div>
@@ -242,9 +271,10 @@ export function MessageLogsTable() {
               {/* Table Header */}
               <div className="bg-muted/60 border-border text-foreground-muted grid grid-cols-12 gap-3 border-b px-5 py-4 text-xs font-extrabold tracking-wider uppercase select-none">
                 <div className="col-span-3">{t("campaign.tableHeaderRecipient")}</div>
-                <div className="col-span-3">{t("campaign.tableHeaderCampaign")}</div>
-                <div className="col-span-4">{t("campaign.tableHeaderMessage")}</div>
-                <div className="col-span-2 text-right">{t("campaign.tableHeaderStatusTime")}</div>
+                <div className="col-span-2">{t("campaign.tableHeaderCampaign")}</div>
+                <div className="col-span-3">{t("campaign.tableHeaderMessage")}</div>
+                <div className="col-span-2 text-center">{t("campaign.tableHeaderStatus")}</div>
+                <div className="col-span-2 text-right">{t("campaign.tableHeaderSentAt")}</div>
               </div>
 
               {/* Table Body */}
@@ -263,9 +293,26 @@ export function MessageLogsTable() {
                     const log = filteredLogs[virtualRow.index];
                     if (!log) return null;
 
+                    const formattedDate = log.sentAt
+                      ? new Date(log.sentAt).toLocaleDateString("id-ID", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })
+                      : "-";
+
+                    const formattedTime = log.sentAt
+                      ? new Date(log.sentAt).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                        })
+                      : "";
+
                     return (
                       <div
                         key={log.id}
+                        onClick={() => setSelectedLogForDetail(log)}
                         style={{
                           position: "absolute",
                           top: 0,
@@ -274,41 +321,62 @@ export function MessageLogsTable() {
                           height: `${virtualRow.size}px`,
                           transform: `translateY(${virtualRow.start}px)`,
                         }}
-                        className="hover:bg-muted/40 grid min-h-14.5 grid-cols-12 items-center gap-3 px-5 py-3.5 transition-colors"
+                        className="hover:bg-muted/40 grid min-h-16 cursor-pointer grid-cols-12 items-center gap-3 px-5 py-3.5 transition-colors"
                       >
                         {/* Recipient */}
-                        <div className="col-span-3 space-y-0.5">
-                          <span className="text-foreground block truncate text-sm font-bold sm:text-base">
-                            {log.recipientName || t("campaign.unnamedRecipient")}
-                          </span>
-                          <span className="text-foreground-secondary block font-mono text-xs sm:text-sm">
-                            +{log.recipientPhone}
-                          </span>
+                        <div className="col-span-3 flex min-w-0 items-center gap-2.5">
+                          <div className="flex size-7.5 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                            <Phone className="size-3.5" />
+                          </div>
+                          <div className="min-w-0">
+                            {log.recipientName && log.recipientName !== log.recipientPhone ? (
+                              <>
+                                <span className="text-foreground block truncate text-xs font-bold sm:text-sm">
+                                  {log.recipientName}
+                                </span>
+                                <span className="text-foreground-secondary block font-mono text-xs">
+                                  +{log.recipientPhone}
+                                </span>
+                              </>
+                            ) : (
+                              <span className="text-foreground block truncate font-mono text-xs font-bold sm:text-sm">
+                                +{log.recipientPhone}
+                              </span>
+                            )}
+                          </div>
                         </div>
 
                         {/* Campaign */}
-                        <div className="text-foreground-secondary col-span-3 truncate text-sm font-semibold">
-                          {log.campaignName}
+                        <div className="col-span-2 truncate">
+                          <span className="bg-muted/60 text-foreground-secondary inline-block max-w-full truncate rounded px-2 py-0.5 text-[11px] font-medium">
+                            {log.campaignName}
+                          </span>
                         </div>
 
                         {/* Message Snippet */}
-                        <div className="text-foreground-secondary col-span-4 truncate text-xs sm:text-sm">
-                          <span className="block truncate">{log.messageSnippet}</span>
+                        <div className="text-foreground-secondary col-span-3 truncate text-xs leading-relaxed">
+                          <span className="text-foreground-secondary block truncate">
+                            {log.messageSnippet}
+                          </span>
                           {log.errorMessage && (
-                            <span className="mt-0.5 block truncate font-mono text-xs text-rose-500">
+                            <span className="mt-0.5 block truncate font-mono text-[11px] font-medium text-rose-500">
                               {log.errorMessage}
                             </span>
                           )}
                         </div>
 
-                        {/* Status & Time */}
-                        <div className="col-span-2 flex flex-col items-end justify-center space-y-0.5">
+                        {/* Status (Dedicated Column) */}
+                        <div className="col-span-2 flex items-center justify-center">
                           {renderStatusBadge(log.status)}
-                          <span className="text-foreground-muted font-mono text-xs">
-                            {new Date(log.sentAt).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
+                        </div>
+
+                        {/* Sent At (Dedicated Column) */}
+                        <div className="col-span-2 flex flex-col items-end justify-center space-y-0.5">
+                          <span className="text-foreground text-xs font-semibold">
+                            {formattedDate}
+                          </span>
+                          <span className="text-foreground-muted font-mono text-[11px]">
+                            {formattedTime}
                           </span>
                         </div>
                       </div>
@@ -323,25 +391,83 @@ export function MessageLogsTable() {
         {/* Pagination Footer */}
         {total > 0 && (
           <div className="border-border bg-muted/30 flex flex-col items-center justify-between gap-3 border-t p-3 sm:flex-row sm:px-5 sm:py-3.5">
-            {/* Item count summary */}
-            <div className="text-foreground-secondary text-xs font-semibold">
-              Menampilkan {startItem} - {endItem} dari {total} log pesan
+            {/* Left: Summary and Page Size Selector */}
+            <div className="text-foreground-secondary flex flex-wrap items-center gap-3 text-xs font-semibold">
+              <span>
+                {t("campaign.paginationShowing", {
+                  start: String(startItem),
+                  end: String(endItem),
+                  total: String(total),
+                }) || `Menampilkan ${startItem} - ${endItem} dari ${total} log pesan`}
+              </span>
+
+              <div className="border-border flex items-center gap-1.5 border-l pl-3">
+                <span className="text-foreground-muted text-[11px]">
+                  {t("campaign.rowsPerPage") || "Baris per halaman"}:
+                </span>
+                <select
+                  value={pageSize}
+                  onChange={(e) => {
+                    setPageSize(Number(e.target.value));
+                    setPage(1);
+                  }}
+                  className="bg-surface text-foreground border-border focus:border-wise-green h-7 cursor-pointer rounded-md border px-2 text-xs font-semibold outline-none dark:bg-[#10110e]"
+                >
+                  <option value={10}>10</option>
+                  <option value={20}>20</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </select>
+              </div>
             </div>
 
-            {/* Shadcn UI Pagination */}
-            {totalPages > 1 && (
-              <DataTablePagination
-                page={page}
-                totalPages={totalPages}
-                onPageChange={(p) => setPage(p)}
-                onPrevPage={() => setPage((prev) => Math.max(1, prev - 1))}
-                onNextPage={() => setPage((prev) => Math.min(totalPages, prev + 1))}
-                className="mx-0 w-auto"
-              />
-            )}
+            {/* Right: Always-Visible Interactive Pagination Controls */}
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={page <= 1}
+                onClick={() => setPage(Math.max(1, page - 1))}
+                className="border-border hover:border-foreground-muted h-8.5 cursor-pointer gap-1 rounded-full px-3.5 text-xs font-bold transition disabled:pointer-events-none disabled:opacity-40"
+              >
+                <ChevronLeft className="size-3.5" />
+                <span className="hidden sm:inline">{t("campaign.prevPage") || "Sebelumnya"}</span>
+              </Button>
+
+              <div className="bg-surface border-border text-foreground flex h-8.5 items-center rounded-full border px-3.5 text-xs font-bold select-none">
+                <span>
+                  {t("campaign.pageOf", {
+                    page: String(page),
+                    total: String(totalPages),
+                  }) || `Halaman ${page} dari ${totalPages}`}
+                </span>
+              </div>
+
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={page >= totalPages}
+                onClick={() => setPage(Math.min(totalPages, page + 1))}
+                className="border-border hover:border-foreground-muted h-8.5 cursor-pointer gap-1 rounded-full px-3.5 text-xs font-bold transition disabled:pointer-events-none disabled:opacity-40"
+              >
+                <span className="hidden sm:inline">{t("campaign.nextPage") || "Berikutnya"}</span>
+                <ChevronRight className="size-3.5" />
+              </Button>
+            </div>
           </div>
         )}
       </div>
+
+      {/* Message Log Detail Modal */}
+      {selectedLogForDetail && (
+        <MessageDetailModal
+          isOpen={Boolean(selectedLogForDetail)}
+          log={selectedLogForDetail}
+          onClose={() => setSelectedLogForDetail(null)}
+        />
+      )}
     </div>
   );
 }

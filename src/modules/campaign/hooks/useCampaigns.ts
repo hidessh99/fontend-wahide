@@ -98,7 +98,7 @@ export function useCampaigns() {
     try {
       await campaignApi.cancelCampaign(id);
       setCampaigns((prev) => prev.filter((c) => c.id !== id));
-      toast.success(t("campaign.toastCancelled"));
+      toast.success(t("campaign.toastDeleted") || t("campaign.toastCancelled"));
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal membatalkan kampanye";
       toast.error(msg);

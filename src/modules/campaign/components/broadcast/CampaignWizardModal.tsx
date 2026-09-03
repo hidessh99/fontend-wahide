@@ -60,6 +60,8 @@ export function CampaignWizardModal({ isOpen, onClose, onSubmit }: CampaignWizar
 
   const connectedDevices = devices.filter((d) => d.status === "CONNECTED");
 
+  if (!isOpen) return null;
+
   const handleNext = () => {
     setError(null);
     if (step === 1) {

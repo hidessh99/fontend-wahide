@@ -12,19 +12,22 @@ const WHATSAPP_BASE = env.NEXT_PUBLIC_WHATSAPP_API_URL;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mapBackendDevice = (d: any): Device => {
   let mappedStatus = d.status?.toUpperCase?.() || d.status;
+  const rawJid = d.jid || d.j_id || "";
+
   if (mappedStatus === "ONLINE" || mappedStatus === "CONNECTED") {
     mappedStatus = "CONNECTED";
   } else if (mappedStatus === "HIBERNATED") {
     mappedStatus = "HIBERNATED";
   } else if (mappedStatus === "PAIRING" || mappedStatus === "QR_PENDING") {
-    mappedStatus = d.jid ? "HIBERNATED" : "PAIRING";
+    mappedStatus = rawJid ? "HIBERNATED" : "PAIRING";
+  } else if (mappedStatus === "OFFLINE" || mappedStatus === "DISCONNECTED") {
+    mappedStatus = rawJid ? "HIBERNATED" : "DISCONNECTED";
   } else {
-    mappedStatus = "DISCONNECTED";
+    mappedStatus = rawJid ? "HIBERNATED" : "DISCONNECTED";
   }
 
   // Extract clean phone number from JID (e.g., "6282151743688:80@s.whatsapp.net" -> "6282151743688")
   let phone = d.phone || d.phone_number || d.phoneNumber || null;
-  const rawJid = d.jid || d.j_id || "";
   if (!phone && rawJid) {
     const userPart = rawJid.split("@")[0].split(":")[0];
     phone = userPart.split(".")[0] || null;

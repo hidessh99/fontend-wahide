@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
-import { CampaignStatus } from "@/modules/campaign/types/campaign.types";
+import { Campaign, CampaignStatus } from "@/modules/campaign/types/campaign.types";
 import { useCampaigns } from "@/modules/campaign/hooks/useCampaigns";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +15,14 @@ const CampaignWizardModal = dynamic(
   () => import("./CampaignWizardModal").then((m) => m.CampaignWizardModal),
   { ssr: false }
 );
+
+const DeleteCampaignModal = dynamic(
+  () => import("./DeleteCampaignModal").then((m) => m.DeleteCampaignModal),
+  { ssr: false }
+);
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { whatsappApi } from "@/modules/whatsapp/api/whatsapp.api";
 import {
   Send,
   Plus,
@@ -28,9 +36,11 @@ import {
   Smartphone,
   ShieldCheck,
   Zap,
+  Loader2,
 } from "lucide-react";
 
 export function CampaignList() {
+  const router = useRouter();
   const { t } = useI18n();
   const {
     campaigns,
@@ -43,6 +53,33 @@ export function CampaignList() {
   } = useCampaigns();
 
   const [isWizardOpen, setIsWizardOpen] = useState(false);
+  const [isCheckingDevices, setIsCheckingDevices] = useState(false);
+  const [campaignToDelete, setCampaignToDelete] = useState<Campaign | null>(null);
+
+  const handleCreateCampaignClick = async () => {
+    if (isCheckingDevices) return;
+    setIsCheckingDevices(true);
+    try {
+      const devices = await whatsappApi.getDevices();
+      const activeDevices = devices.filter(
+        (d) =>
+          d.status === "CONNECTED" || (d.status as string) === "ONLINE" || d.status === "HIBERNATED"
+      );
+
+      if (activeDevices.length === 0) {
+        toast.error(t("campaign.noActiveDeviceRedirect"));
+        router.push("/devices");
+        return;
+      }
+
+      setIsWizardOpen(true);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Gagal memeriksa status perangkat";
+      toast.error(msg);
+    } finally {
+      setIsCheckingDevices(false);
+    }
+  };
 
   const renderStatusBadge = (status: CampaignStatus) => {
     switch (status) {
@@ -124,10 +161,15 @@ export function CampaignList() {
           <Button
             variant="primaryPill"
             size="sm"
-            onClick={() => setIsWizardOpen(true)}
+            onClick={handleCreateCampaignClick}
+            disabled={isLoading || isCheckingDevices}
             className="h-9 gap-2 px-4 text-xs font-bold shadow-sm"
           >
-            <Plus className="size-4" />
+            {isCheckingDevices ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Plus className="size-4" />
+            )}
             <span>{t("campaign.createCampaign")}</span>
           </Button>
         </div>
@@ -149,10 +191,15 @@ export function CampaignList() {
             <Button
               variant="primaryPill"
               size="sm"
-              onClick={() => setIsWizardOpen(true)}
+              onClick={handleCreateCampaignClick}
+              disabled={isLoading || isCheckingDevices}
               className="mt-2 h-9 gap-2 px-4 text-xs font-bold shadow-sm"
             >
-              <Plus className="size-4" />
+              {isCheckingDevices ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <Plus className="size-4" />
+              )}
               <span>{t("campaign.createCampaign")}</span>
             </Button>
           }
@@ -160,10 +207,20 @@ export function CampaignList() {
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2">
           {campaigns.map((campaign) => {
+            const totalRecipients = campaign.totalRecipients ?? 0;
+            const sentCount = campaign.sentCount ?? 0;
             const percent =
-              campaign.totalRecipients > 0
-                ? Math.round((campaign.sentCount / campaign.totalRecipients) * 100)
+              totalRecipients > 0
+                ? Math.min(100, Math.round((sentCount / totalRecipients) * 100))
                 : 0;
+
+            const formattedDate = campaign.createdAt
+              ? new Date(campaign.createdAt).toLocaleDateString([], {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })
+              : "-";
 
             return (
               <div
@@ -174,14 +231,14 @@ export function CampaignList() {
                 <div className="flex items-start justify-between gap-3">
                   <div className="space-y-1">
                     <h3 className="text-foreground line-clamp-1 text-base font-extrabold">
-                      {campaign.name}
+                      {campaign.name || "Kampanye Siaran"}
                     </h3>
                     <div className="text-foreground-muted flex items-center gap-2 text-xs font-semibold">
                       <Smartphone className="size-3.5" />
                       <span>{campaign.deviceName || "Perangkat Utama"}</span>
                       <span>•</span>
                       <ShieldCheck className="dark:text-wise-green size-3.5 text-emerald-700" />
-                      <span>Jitter {campaign.jitterDelaySeconds}s</span>
+                      <span>Jitter {campaign.jitterDelaySeconds ?? 3}s</span>
                     </div>
                   </div>
                   {renderStatusBadge(campaign.status)}
@@ -189,7 +246,7 @@ export function CampaignList() {
 
                 {/* Template preview */}
                 <div className="bg-muted/40 border-border/50 text-foreground-secondary line-clamp-2 rounded-md border p-3 text-xs leading-relaxed font-semibold">
-                  {campaign.messageTemplate}
+                  {campaign.messageTemplate || "-"}
                 </div>
 
                 {/* Progress Bar */}
@@ -197,9 +254,9 @@ export function CampaignList() {
                   <div className="flex justify-between text-xs font-bold">
                     <span className="text-foreground">
                       {t("campaign.progressSent", {
-                        sent: campaign.sentCount.toString(),
-                        total: campaign.totalRecipients.toString(),
-                        percent: percent.toString(),
+                        sent: String(sentCount),
+                        total: String(totalRecipients),
+                        percent: String(percent),
                       })}
                     </span>
                     <span className="text-dark-green dark:text-wise-green font-mono">
@@ -212,11 +269,7 @@ export function CampaignList() {
                 {/* Action Footer */}
                 <div className="border-border/60 flex items-center justify-between border-t pt-2">
                   <span className="text-foreground-muted text-[11px] font-semibold">
-                    {new Date(campaign.createdAt).toLocaleDateString([], {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
+                    {formattedDate}
                   </span>
 
                   <div className="flex items-center gap-1.5">
@@ -247,9 +300,9 @@ export function CampaignList() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => cancelCampaign(campaign.id)}
+                      onClick={() => setCampaignToDelete(campaign)}
                       className="size-8 rounded-full border-rose-500/20 p-0 text-rose-500 hover:bg-rose-500/10"
-                      aria-label="Batalkan Kampanye"
+                      aria-label={t("campaign.deleteConfirmBtn") || "Hapus Kampanye"}
                     >
                       <Trash2 className="size-3.5" />
                     </Button>
@@ -262,11 +315,27 @@ export function CampaignList() {
       )}
 
       {/* Campaign Creation Wizard Modal */}
-      <CampaignWizardModal
-        isOpen={isWizardOpen}
-        onClose={() => setIsWizardOpen(false)}
-        onSubmit={createCampaign}
-      />
+      {isWizardOpen && (
+        <CampaignWizardModal
+          isOpen={isWizardOpen}
+          onClose={() => setIsWizardOpen(false)}
+          onSubmit={createCampaign}
+        />
+      )}
+
+      {/* Campaign Deletion Confirmation Modal */}
+      {campaignToDelete && (
+        <DeleteCampaignModal
+          isOpen={Boolean(campaignToDelete)}
+          campaign={campaignToDelete}
+          onClose={() => setCampaignToDelete(null)}
+          onConfirm={async () => {
+            if (campaignToDelete) {
+              await cancelCampaign(campaignToDelete.id);
+            }
+          }}
+        />
+      )}
     </div>
   );
 }
