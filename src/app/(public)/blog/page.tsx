@@ -8,6 +8,15 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/blog",
   },
+  openGraph: {
+    title: "Blog & Panduan Rekayasa WhatsApp Gateway",
+    description:
+      "Panduan arsitektur WhatsApp Multi-Device, integrasi Webhook HMAC, dan strategi anti-ban Spintax Engine.",
+    url: "/blog",
+    siteName: "Wahide",
+    locale: "id_ID",
+    type: "website",
+  },
 };
 
 export default function BlogPage() {

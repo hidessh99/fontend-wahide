@@ -78,6 +78,14 @@ export const metadata: Metadata = {
     locale: "id_ID",
     alternateLocale: ["en_US"],
     type: "website",
+    images: [
+      {
+        url: `${siteUrl}/icon.png`,
+        width: 512,
+        height: 512,
+        alt: "Wahide - Enterprise WhatsApp Multi-Tenant Gateway",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
@@ -85,6 +93,7 @@ export const metadata: Metadata = {
     description:
       "Platform SaaS WhatsApp Multi-Device Gateway berkinerja tinggi dengan 5 Lapis Anti-Ban & Go Microservices.",
     creator: "@wahide_app",
+    images: [`${siteUrl}/icon.png`],
   },
   robots: {
     index: true,
@@ -103,6 +112,13 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
     {
+      "@type": "WebSite",
+      name: "Wahide",
+      url: siteUrl,
+      description: "Platform Enterprise WhatsApp Multi-Tenant Gateway & SaaS berkinerja tinggi",
+      inLanguage: "id-ID",
+    },
+    {
       "@type": "SoftwareApplication",
       name: "Wahide WhatsApp Gateway",
       applicationCategory: "BusinessApplication",
@@ -117,9 +133,15 @@ const jsonLd = {
     },
     {
       "@type": "Organization",
-      name: "Hide Digital Security ",
+      name: "Hide Digital Security",
       url: siteUrl,
-      logo: `${siteUrl}/logo.png`,
+      logo: `${siteUrl}/icon.png`,
+      contactPoint: {
+        "@type": "ContactPoint",
+        telephone: "+62877111301818",
+        contactType: "customer service",
+        availableLanguage: ["Indonesian", "English"],
+      },
     },
   ],
 };

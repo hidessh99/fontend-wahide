@@ -1,4 +1,4 @@
-﻿import { MetadataRoute } from "next";
+import { MetadataRoute } from "next";
 import { env } from "@/lib/config/env";
 import { DEFAULT_POSTS } from "@/modules/content/api/content.api";
 
@@ -33,40 +33,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/pricing`,
-      lastModified: currentDate,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/privacy`,
-      lastModified: currentDate,
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    {
       url: `${baseUrl}/terms`,
       lastModified: currentDate,
       changeFrequency: "monthly",
       priority: 0.5,
     },
     {
-      url: `${baseUrl}/tos`,
+      url: `${baseUrl}/privacy`,
       lastModified: currentDate,
       changeFrequency: "monthly",
       priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/login`,
-      lastModified: currentDate,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/register`,
-      lastModified: currentDate,
-      changeFrequency: "monthly",
-      priority: 0.7,
     },
   ];
 
