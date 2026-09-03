@@ -7,7 +7,11 @@ import { Sun, Moon } from "lucide-react";
 
 function useIsMounted() {
   const subscribe = React.useCallback(() => () => {}, []);
-  return React.useSyncExternalStore(subscribe, () => true, () => false);
+  return React.useSyncExternalStore(
+    subscribe,
+    () => true,
+    () => false
+  );
 }
 
 export function ThemeToggle() {
@@ -16,7 +20,7 @@ export function ThemeToggle() {
 
   if (!mounted) {
     return (
-      <Button variant="secondaryPill" size="sm" className="opacity-0 w-24">
+      <Button variant="secondaryPill" size="sm" className="w-24 opacity-0">
         ...
       </Button>
     );
@@ -34,12 +38,12 @@ export function ThemeToggle() {
     >
       {isDark ? (
         <>
-          <Sun className="size-3.5 text-wise-green" />
+          <Sun className="text-wise-green size-3.5" />
           <span>Light</span>
         </>
       ) : (
         <>
-          <Moon className="size-3.5 text-dark-green" />
+          <Moon className="text-dark-green size-3.5" />
           <span>Dark</span>
         </>
       )}

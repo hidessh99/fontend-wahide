@@ -10,6 +10,7 @@ interface AuthLayoutProps {
   bannerBadge?: string;
   bannerHeadline?: string;
   bannerSubheadline?: string;
+  bannerScaleTag?: string;
   footerNote?: string;
 }
 
@@ -18,6 +19,7 @@ export function AuthLayout({
   bannerBadge,
   bannerHeadline,
   bannerSubheadline,
+  bannerScaleTag,
   footerNote,
 }: AuthLayoutProps) {
   const { t } = useI18n();
@@ -25,25 +27,24 @@ export function AuthLayout({
   const displayFooterNote = footerNote || t("auth.layout.footerNote");
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-2 bg-background">
+    <div className="bg-background grid min-h-screen lg:grid-cols-2">
       {/* Kolom Kiri: Visual Banner */}
       <AuthBanner
         badgeText={bannerBadge}
         headline={bannerHeadline}
         subheadline={bannerSubheadline}
+        scaleTag={bannerScaleTag}
       />
 
       {/* Kolom Kanan: Main Content Landmark Container */}
-      <main className="flex flex-col justify-between p-6 sm:p-12 lg:p-16 min-h-screen">
+      <main className="flex min-h-screen flex-col justify-between p-6 sm:p-12 lg:p-16">
         <div className="lg:hidden">
           <AuthHeader />
         </div>
 
-        <div className="my-auto py-8 max-w-md w-full mx-auto">
-          {children}
-        </div>
+        <div className="mx-auto my-auto w-full max-w-md py-8">{children}</div>
 
-        <footer className="text-center text-xs font-semibold text-foreground-muted pt-4">
+        <footer className="text-foreground-muted pt-4 text-center text-xs font-semibold">
           {displayFooterNote}
         </footer>
       </main>

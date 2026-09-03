@@ -1,6 +1,5 @@
 "use client";
 
-
 import { AdminQueueItem } from "@/modules/admin/types/admin.types";
 import { Button } from "@/components/ui/button";
 import { useEscapeKey } from "@/hooks/useEscapeKey";
@@ -26,20 +25,20 @@ export function QueueDetailModal({ queue, isOpen, onClose }: QueueDetailModalPro
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
-      className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-sm p-3 sm:p-6 flex min-h-full items-center justify-center animate-in fade-in"
+      className="animate-in fade-in fixed inset-0 z-50 flex min-h-full items-center justify-center overflow-y-auto bg-black/75 p-3 backdrop-blur-sm sm:p-6"
     >
-      <div className="relative w-full max-w-lg max-h-[90vh] flex flex-col rounded-xl border border-border bg-surface dark:bg-[#161715] shadow-2xl overflow-hidden animate-in zoom-in-95">
+      <div className="border-border bg-surface animate-in zoom-in-95 relative flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-xl border shadow-2xl dark:bg-[#161715]">
         {/* Header */}
-        <div className="p-5 sm:p-6 pb-4 border-b border-border flex items-start justify-between shrink-0">
+        <div className="border-border flex shrink-0 items-start justify-between border-b p-5 pb-4 sm:p-6">
           <div className="flex items-center gap-3">
-            <div className="size-10 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-wise-green flex items-center justify-center shrink-0">
+            <div className="dark:text-wise-green flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600">
               <Layers className="size-5" />
             </div>
             <div>
-              <h2 className="text-lg font-black text-foreground tracking-tight">
+              <h2 className="text-foreground text-lg font-black tracking-tight">
                 Detail Tugas Antrean
               </h2>
-              <p className="text-xs font-semibold text-foreground-secondary font-mono">
+              <p className="text-foreground-secondary font-mono text-xs font-semibold">
                 ID: {queue.id}
               </p>
             </div>
@@ -48,7 +47,7 @@ export function QueueDetailModal({ queue, isOpen, onClose }: QueueDetailModalPro
           <button
             type="button"
             onClick={onClose}
-            className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer shrink-0"
+            className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full transition"
             aria-label="Tutup"
           >
             <X className="size-4" />
@@ -56,24 +55,26 @@ export function QueueDetailModal({ queue, isOpen, onClose }: QueueDetailModalPro
         </div>
 
         {/* Content Body */}
-        <div className="p-5 sm:p-6 space-y-4 overflow-y-auto text-xs flex-1">
+        <div className="flex-1 space-y-4 overflow-y-auto p-5 text-xs sm:p-6">
           {/* Status & Task Type Card */}
-          <div className="grid grid-cols-2 gap-3 p-3 rounded-lg border border-border bg-muted/20">
+          <div className="border-border bg-muted/20 grid grid-cols-2 gap-3 rounded-lg border p-3">
             <div>
-              <span className="text-[10px] uppercase font-bold text-foreground-muted block mb-1">
+              <span className="text-foreground-muted mb-1 block text-[10px] font-bold uppercase">
                 Tipe Tugas
               </span>
-              <span className="px-2 py-1 rounded-md text-xs font-black font-mono bg-emerald-500/10 text-emerald-700 dark:text-wise-green border border-emerald-500/20 inline-block">
+              <span className="dark:text-wise-green inline-block rounded-md border border-emerald-500/20 bg-emerald-500/10 px-2 py-1 font-mono text-xs font-black text-emerald-700">
                 {queue.taskType}
               </span>
             </div>
 
             <div>
-              <span className="text-[10px] uppercase font-bold text-foreground-muted block mb-1">
+              <span className="text-foreground-muted mb-1 block text-[10px] font-bold uppercase">
                 Status Eksekusi
               </span>
-              <span className="font-bold text-foreground inline-flex items-center gap-1">
-                {queue.status === "COMPLETED" && <CheckCircle2 className="size-3.5 text-emerald-600" />}
+              <span className="text-foreground inline-flex items-center gap-1 font-bold">
+                {queue.status === "COMPLETED" && (
+                  <CheckCircle2 className="size-3.5 text-emerald-600" />
+                )}
                 {queue.status === "PENDING" && <Clock className="size-3.5 text-amber-500" />}
                 {queue.status === "FAILED" && <AlertCircle className="size-3.5 text-rose-500" />}
                 <span>{queue.status}</span>
@@ -82,20 +83,20 @@ export function QueueDetailModal({ queue, isOpen, onClose }: QueueDetailModalPro
           </div>
 
           {/* Target Recipient Card */}
-          <div className="p-3 rounded-lg border border-border bg-surface dark:bg-[#10110e] space-y-1.5 font-semibold text-xs">
-            <div className="flex items-center gap-2 text-foreground">
-              <Mail className="size-3.5 text-foreground-muted" />
-              <span className="font-bold text-foreground-secondary">Email Tujuan:</span>
+          <div className="border-border bg-surface space-y-1.5 rounded-lg border p-3 text-xs font-semibold dark:bg-[#10110e]">
+            <div className="text-foreground flex items-center gap-2">
+              <Mail className="text-foreground-muted size-3.5" />
+              <span className="text-foreground-secondary font-bold">Email Tujuan:</span>
               <span className="font-mono">{queue.targetEmail || "-"}</span>
             </div>
             {queue.targetName && (
-              <div className="flex items-center gap-2 text-foreground">
-                <User className="size-3.5 text-foreground-muted" />
-                <span className="font-bold text-foreground-secondary">Nama:</span>
+              <div className="text-foreground flex items-center gap-2">
+                <User className="text-foreground-muted size-3.5" />
+                <span className="text-foreground-secondary font-bold">Nama:</span>
                 <span>{queue.targetName}</span>
               </div>
             )}
-            <div className="flex items-center gap-2 text-foreground">
+            <div className="text-foreground flex items-center gap-2">
               <span className="text-foreground-secondary font-bold">Percobaan:</span>
               <span className="font-mono">
                 {queue.attempts} / {queue.maxAttempts} (Prioritas: {queue.priority})
@@ -104,31 +105,33 @@ export function QueueDetailModal({ queue, isOpen, onClose }: QueueDetailModalPro
           </div>
 
           {/* Timestamps */}
-          <div className="grid grid-cols-2 gap-2 text-[11px] text-foreground-secondary p-2.5 rounded-lg border border-border/60 bg-muted/10 font-mono">
+          <div className="text-foreground-secondary border-border/60 bg-muted/10 grid grid-cols-2 gap-2 rounded-lg border p-2.5 font-mono text-[11px]">
             <div>
-              <span className="text-[10px] uppercase text-foreground-muted block">Dibuat Pada</span>
+              <span className="text-foreground-muted block text-[10px] uppercase">Dibuat Pada</span>
               <span>{formatDateTime(queue.createdAt)}</span>
             </div>
             <div>
-              <span className="text-[10px] uppercase text-foreground-muted block">Jadwal / Selesai</span>
+              <span className="text-foreground-muted block text-[10px] uppercase">
+                Jadwal / Selesai
+              </span>
               <span>
                 {queue.finishedAt
                   ? formatDateTime(queue.finishedAt)
                   : queue.scheduledAt
-                  ? formatDateTime(queue.scheduledAt)
-                  : "-"}
+                    ? formatDateTime(queue.scheduledAt)
+                    : "-"}
               </span>
             </div>
           </div>
 
           {/* Error Details if any */}
           {queue.lastError && (
-            <div className="p-3 rounded-lg border border-rose-500/30 bg-rose-500/10 text-rose-700 dark:text-rose-400 space-y-1">
-              <span className="font-bold flex items-center gap-1.5 text-xs">
+            <div className="space-y-1 rounded-lg border border-rose-500/30 bg-rose-500/10 p-3 text-rose-700 dark:text-rose-400">
+              <span className="flex items-center gap-1.5 text-xs font-bold">
                 <AlertCircle className="size-3.5" />
                 <span>Pesan Kesalahan Terakhir (Last Error):</span>
               </span>
-              <pre className="text-[11px] font-mono whitespace-pre-wrap bg-rose-500/5 p-2 rounded border border-rose-500/20 max-h-32 overflow-y-auto">
+              <pre className="max-h-32 overflow-y-auto rounded border border-rose-500/20 bg-rose-500/5 p-2 font-mono text-[11px] whitespace-pre-wrap">
                 {queue.lastError}
               </pre>
             </div>
@@ -136,23 +139,23 @@ export function QueueDetailModal({ queue, isOpen, onClose }: QueueDetailModalPro
 
           {/* Payload JSON */}
           <div className="space-y-1.5">
-            <span className="font-bold text-xs uppercase tracking-wider text-foreground">
+            <span className="text-foreground text-xs font-bold tracking-wider uppercase">
               Payload Data (JSON):
             </span>
-            <pre className="text-[11px] font-mono bg-muted/40 p-3 rounded-lg border border-border max-h-48 overflow-y-auto text-foreground">
+            <pre className="bg-muted/40 border-border text-foreground max-h-48 overflow-y-auto rounded-lg border p-3 font-mono text-[11px]">
               {JSON.stringify(queue.payload, null, 2)}
             </pre>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-border flex items-center justify-end shrink-0 bg-muted/20">
+        <div className="border-border bg-muted/20 flex shrink-0 items-center justify-end border-t p-4">
           <Button
             type="button"
             variant="outline"
             size="sm"
             onClick={onClose}
-            className="rounded-full text-xs font-bold border-border hover:bg-muted"
+            className="border-border hover:bg-muted rounded-full text-xs font-bold"
           >
             Tutup
           </Button>

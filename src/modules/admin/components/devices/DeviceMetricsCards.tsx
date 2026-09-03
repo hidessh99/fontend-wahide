@@ -16,49 +16,51 @@ interface DeviceMetricsCardsProps {
 
 export function DeviceMetricsCards({ metrics }: DeviceMetricsCardsProps) {
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-      <div className="p-4 rounded-xl border border-border bg-surface dark:bg-[#161715] shadow-xs">
-        <div className="flex items-center justify-between text-foreground-muted mb-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider">Total Perangkat</span>
-          <Smartphone className="size-4 text-foreground-secondary" />
+    <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+      <div className="border-border bg-surface rounded-xl border p-4 shadow-xs dark:bg-[#161715]">
+        <div className="text-foreground-muted mb-1 flex items-center justify-between">
+          <span className="text-[11px] font-bold tracking-wider uppercase">Total Perangkat</span>
+          <Smartphone className="text-foreground-secondary size-4" />
         </div>
-        <div className="text-lg sm:text-xl font-black font-mono text-foreground">
+        <div className="text-foreground font-mono text-lg font-black sm:text-xl">
           {metrics.totalCount.toLocaleString("id-ID")} Slot
         </div>
-        <span className="text-[10px] text-foreground-muted">Terdaftar di platform</span>
+        <span className="text-foreground-muted text-[10px]">Terdaftar di platform</span>
       </div>
 
-      <div className="p-4 rounded-xl border border-border bg-surface dark:bg-[#161715] shadow-xs">
-        <div className="flex items-center justify-between text-foreground-muted mb-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider">Online Aktif</span>
-          <Wifi className="size-4 text-emerald-600 dark:text-wise-green" />
+      <div className="border-border bg-surface rounded-xl border p-4 shadow-xs dark:bg-[#161715]">
+        <div className="text-foreground-muted mb-1 flex items-center justify-between">
+          <span className="text-[11px] font-bold tracking-wider uppercase">Online Aktif</span>
+          <Wifi className="dark:text-wise-green size-4 text-emerald-600" />
         </div>
-        <div className="text-lg sm:text-xl font-black font-mono text-emerald-700 dark:text-wise-green">
+        <div className="dark:text-wise-green font-mono text-lg font-black text-emerald-700 sm:text-xl">
           {metrics.onlineCount.toLocaleString("id-ID")} Perangkat
         </div>
-        <span className="text-[10px] text-foreground-muted">Tersambung via whatsmeow socket</span>
+        <span className="text-foreground-muted text-[10px]">Tersambung via whatsmeow socket</span>
       </div>
 
-      <div className="p-4 rounded-xl border border-border bg-surface dark:bg-[#161715] shadow-xs">
-        <div className="flex items-center justify-between text-foreground-muted mb-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider">Offline / Terputus</span>
-          <WifiOff className="size-4 text-foreground-secondary" />
+      <div className="border-border bg-surface rounded-xl border p-4 shadow-xs dark:bg-[#161715]">
+        <div className="text-foreground-muted mb-1 flex items-center justify-between">
+          <span className="text-[11px] font-bold tracking-wider uppercase">Offline / Terputus</span>
+          <WifiOff className="text-foreground-secondary size-4" />
         </div>
-        <div className="text-lg sm:text-xl font-black font-mono text-foreground-secondary">
+        <div className="text-foreground-secondary font-mono text-lg font-black sm:text-xl">
           {metrics.offlineCount.toLocaleString("id-ID")} Perangkat
         </div>
-        <span className="text-[10px] text-foreground-muted">Perlu re-link / reconnect</span>
+        <span className="text-foreground-muted text-[10px]">Perlu re-link / reconnect</span>
       </div>
 
-      <div className="p-4 rounded-xl border border-border bg-surface dark:bg-[#161715] shadow-xs">
-        <div className="flex items-center justify-between text-foreground-muted mb-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider">Pending / Hibernasi</span>
+      <div className="border-border bg-surface rounded-xl border p-4 shadow-xs dark:bg-[#161715]">
+        <div className="text-foreground-muted mb-1 flex items-center justify-between">
+          <span className="text-[11px] font-bold tracking-wider uppercase">
+            Pending / Hibernasi
+          </span>
           <QrCode className="size-4 text-amber-500" />
         </div>
-        <div className="text-lg sm:text-xl font-black font-mono text-amber-600 dark:text-amber-400">
+        <div className="font-mono text-lg font-black text-amber-600 sm:text-xl dark:text-amber-400">
           {(metrics.qrPendingCount + metrics.hibernatedCount).toLocaleString("id-ID")} Perangkat
         </div>
-        <span className="text-[10px] text-foreground-muted">
+        <span className="text-foreground-muted text-[10px]">
           {metrics.qrPendingCount} Scan QR &bull; {metrics.hibernatedCount} Hibernasi
         </span>
       </div>

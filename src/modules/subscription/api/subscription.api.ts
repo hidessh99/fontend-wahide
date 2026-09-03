@@ -79,7 +79,9 @@ export const DEFAULT_PLANS: SubscriptionPlan[] = [
   },
 ];
 
-function normalizeSubscription(raw: Record<string, unknown> | null | undefined): TenantSubscription {
+function normalizeSubscription(
+  raw: Record<string, unknown> | null | undefined
+): TenantSubscription {
   if (!raw) {
     return {
       planId: "01JPLAN0000000000000000001",
@@ -96,60 +98,54 @@ function normalizeSubscription(raw: Record<string, unknown> | null | undefined):
     };
   }
 
-  const rawPlan = (raw.plan && typeof raw.plan === "object" ? raw.plan : {}) as Record<string, unknown>;
+  const rawPlan = (raw.plan && typeof raw.plan === "object" ? raw.plan : {}) as Record<
+    string,
+    unknown
+  >;
 
-  const planId = String(raw.plan_id || raw.planId || rawPlan.id || raw.id || "01JPLAN0000000000000000001");
+  const planId = String(
+    raw.plan_id || raw.planId || rawPlan.id || raw.id || "01JPLAN0000000000000000001"
+  );
   const planName = String(rawPlan.name || raw.plan_name || raw.planName || raw.name || "Starter");
   const planPrice = Number(rawPlan.price ?? raw.plan_price ?? 0);
 
   const quotaUsed = Number(
     raw.current_month_usage ??
-    raw.currentMonthUsage ??
-    raw.quota_used ??
-    raw.quotaUsed ??
-    raw.used_quota ??
-    0
+      raw.currentMonthUsage ??
+      raw.quota_used ??
+      raw.quotaUsed ??
+      raw.used_quota ??
+      0
   );
 
   const quotaTotal = Number(
     rawPlan.monthly_message_limit ??
-    rawPlan.monthlyMessageLimit ??
-    raw.monthly_message_limit ??
-    raw.quota_total ??
-    raw.quotaTotal ??
-    1500
+      rawPlan.monthlyMessageLimit ??
+      raw.monthly_message_limit ??
+      raw.quota_total ??
+      raw.quotaTotal ??
+      1500
   );
 
   const deviceSlotsUsed = Number(
-    raw.device_slots_used ??
-    raw.deviceSlotsUsed ??
-    raw.active_devices ??
-    0
+    raw.device_slots_used ?? raw.deviceSlotsUsed ?? raw.active_devices ?? 0
   );
 
   const deviceSlotsMax = Number(
     rawPlan.max_devices ??
-    rawPlan.maxDevices ??
-    raw.max_devices ??
-    raw.device_slots_max ??
-    raw.deviceSlotsMax ??
-    1
+      rawPlan.maxDevices ??
+      raw.max_devices ??
+      raw.device_slots_max ??
+      raw.deviceSlotsMax ??
+      1
   );
 
   const hasWatermark = Boolean(
-    rawPlan.has_watermark ??
-    rawPlan.hasWatermark ??
-    raw.has_watermark ??
-    raw.hasWatermark ??
-    false
+    rawPlan.has_watermark ?? rawPlan.hasWatermark ?? raw.has_watermark ?? raw.hasWatermark ?? false
   );
 
   const expiresAt = String(
-    raw.expired_at ||
-    raw.expiredAt ||
-    raw.expires_at ||
-    raw.expiresAt ||
-    ""
+    raw.expired_at || raw.expiredAt || raw.expires_at || raw.expiresAt || ""
   );
 
   const status = String(raw.status || "ACTIVE").toUpperCase();
@@ -174,8 +170,16 @@ function normalizePlan(raw: Record<string, unknown>): SubscriptionPlan {
   const id = String(raw.id || raw.plan_id || raw.planId || "plan_custom");
   const name = String(raw.name || raw.plan_name || raw.planName || "Paket Langganan");
   const priceMonthly = Number(raw.price ?? raw.price_monthly ?? raw.priceMonthly ?? 0);
-  const quotaMonthly = Number(raw.monthly_message_limit ?? raw.monthlyMessageLimit ?? raw.quota_monthly ?? raw.quotaMonthly ?? 1500);
-  const maxDeviceSlots = Number(raw.max_devices ?? raw.maxDevices ?? raw.max_device_slots ?? raw.maxDeviceSlots ?? 1);
+  const quotaMonthly = Number(
+    raw.monthly_message_limit ??
+      raw.monthlyMessageLimit ??
+      raw.quota_monthly ??
+      raw.quotaMonthly ??
+      1500
+  );
+  const maxDeviceSlots = Number(
+    raw.max_devices ?? raw.maxDevices ?? raw.max_device_slots ?? raw.maxDeviceSlots ?? 1
+  );
   const maxAgents = Number(raw.max_agents ?? raw.maxAgents ?? 0);
   const hasWatermark = Boolean(raw.has_watermark ?? raw.hasWatermark ?? false);
   const allowAttachment = Boolean(raw.allow_attachment ?? raw.allowAttachment ?? false);
@@ -238,7 +242,9 @@ function normalizePlan(raw: Record<string, unknown>): SubscriptionPlan {
 export const subscriptionApi = {
   getSubscription: async (): Promise<TenantSubscription> => {
     try {
-      const res = await httpClient.get<Record<string, unknown>>(`${SUBSCRIPTION_BASE}/subscription`);
+      const res = await httpClient.get<Record<string, unknown>>(
+        `${SUBSCRIPTION_BASE}/subscription`
+      );
       return normalizeSubscription(res.payload);
     } catch {
       return normalizeSubscription(null);
@@ -247,7 +253,9 @@ export const subscriptionApi = {
 
   getPlans: async (): Promise<SubscriptionPlan[]> => {
     try {
-      const res = await httpClient.get<Record<string, unknown>[]>(`${SUBSCRIPTION_BASE}/subscription/plans`);
+      const res = await httpClient.get<Record<string, unknown>[]>(
+        `${SUBSCRIPTION_BASE}/subscription/plans`
+      );
       if (Array.isArray(res.payload) && res.payload.length > 0) {
         return res.payload.map(normalizePlan);
       }
@@ -258,17 +266,28 @@ export const subscriptionApi = {
   },
 
   upgradePlan: async (planId: string): Promise<{ success: boolean; invoiceUrl?: string }> => {
-    const res = await httpClient.post<{ invoiceUrl?: string }>(`${SUBSCRIPTION_BASE}/subscription/upgrade`, { planId });
+    const res = await httpClient.post<{ invoiceUrl?: string }>(
+      `${SUBSCRIPTION_BASE}/subscription/upgrade`,
+      { planId }
+    );
     return { success: res.success, invoiceUrl: res.payload?.invoiceUrl };
   },
 
   getWebhookConfig: async (): Promise<WebhookConfig> => {
     try {
-      const res = await httpClient.get<Record<string, unknown>>(`${SUBSCRIPTION_BASE}/subscription/webhook`);
+      const res = await httpClient.get<Record<string, unknown>>(
+        `${SUBSCRIPTION_BASE}/subscription/webhook`
+      );
       const payload = res.payload;
       return {
-        url: String(payload?.url || payload?.webhook_url || "https://api.business.com/v1/whatsapp/webhook"),
-        secret: String(payload?.secret || payload?.webhook_secret || "whsec_live_9a7e60bd2c5a4fce87332185000bb181"),
+        url: String(
+          payload?.url || payload?.webhook_url || "https://api.business.com/v1/whatsapp/webhook"
+        ),
+        secret: String(
+          payload?.secret ||
+            payload?.webhook_secret ||
+            "whsec_live_9a7e60bd2c5a4fce87332185000bb181"
+        ),
         isEnabled: Boolean(payload?.isEnabled ?? payload?.is_enabled ?? true),
       };
     } catch {
@@ -280,8 +299,14 @@ export const subscriptionApi = {
     }
   },
 
-  updateWebhookConfig: async (payload: { url: string; isEnabled: boolean }): Promise<WebhookConfig> => {
-    const res = await httpClient.post<Record<string, unknown>>(`${SUBSCRIPTION_BASE}/subscription/webhook`, payload);
+  updateWebhookConfig: async (payload: {
+    url: string;
+    isEnabled: boolean;
+  }): Promise<WebhookConfig> => {
+    const res = await httpClient.post<Record<string, unknown>>(
+      `${SUBSCRIPTION_BASE}/subscription/webhook`,
+      payload
+    );
     const data = res.payload;
     return {
       url: String(data?.url || payload.url),

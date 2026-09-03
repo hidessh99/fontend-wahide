@@ -13,13 +13,13 @@ interface DashboardHeaderProps {
 
 export function DashboardHeader({ onOpenMobileNav }: DashboardHeaderProps) {
   return (
-    <header className="sticky top-0 z-40 h-18 border-b border-border bg-background/80 backdrop-blur-md px-4 sm:px-8 flex items-center justify-between">
+    <header className="border-border bg-background/80 sticky top-0 z-40 flex h-18 items-center justify-between border-b px-4 backdrop-blur-md sm:px-8">
       {/* Kiri: Mobile Nav Button & Breadcrumb */}
       <div className="flex items-center gap-3">
         {onOpenMobileNav && (
           <button
             onClick={onOpenMobileNav}
-            className="lg:hidden p-2 rounded-full hover:bg-muted text-foreground-secondary hover:text-foreground cursor-pointer"
+            className="hover:bg-muted text-foreground-secondary hover:text-foreground cursor-pointer rounded-full p-2 lg:hidden"
             aria-label="Buka Menu"
           >
             <Menu className="size-5" />
@@ -32,7 +32,7 @@ export function DashboardHeader({ onOpenMobileNav }: DashboardHeaderProps) {
       <div className="flex items-center gap-2.5">
         <LocaleSwitcher />
         <ThemeToggle />
-        <div className="h-6 w-px bg-border hidden sm:block" />
+        <div className="bg-border hidden h-6 w-px sm:block" />
         <DashboardUserNav />
       </div>
     </header>

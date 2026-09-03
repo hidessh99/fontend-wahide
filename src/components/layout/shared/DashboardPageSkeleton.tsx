@@ -19,19 +19,19 @@ export function DashboardPageSkeleton({
   rowCount = 6,
 }: DashboardPageSkeletonProps) {
   return (
-    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto p-3 sm:p-6 lg:p-8 animate-in fade-in duration-150">
+    <div className="animate-in fade-in mx-auto max-w-7xl space-y-6 p-3 duration-150 sm:space-y-8 sm:p-6 lg:p-8">
       {/* 1. Header Skeleton */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5 sm:pb-6">
+      <div className="border-border flex flex-col justify-between gap-4 border-b pb-5 sm:flex-row sm:items-center sm:pb-6">
         <div className="space-y-2">
           <div className="flex items-center gap-3">
-            <Skeleton className="h-7 sm:h-9 w-40 sm:w-56 rounded-md" />
+            <Skeleton className="h-7 w-40 rounded-md sm:h-9 sm:w-56" />
             <Skeleton className="h-5 w-12 rounded-full" />
           </div>
-          <Skeleton className="h-4 w-52 sm:w-80 rounded-md" />
+          <Skeleton className="h-4 w-52 rounded-md sm:w-80" />
         </div>
 
         {/* Top Action Buttons Skeleton */}
-        <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+        <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
           <Skeleton className="h-9 w-24 rounded-full" />
           <Skeleton className="h-9 w-28 rounded-full" />
           <Skeleton className="h-9 w-32 rounded-full" />
@@ -40,11 +40,11 @@ export function DashboardPageSkeleton({
 
       {/* 2. Metric Cards Grid Skeleton */}
       {showMetrics && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
           {Array.from({ length: metricCount }).map((_, i) => (
             <div
               key={i}
-              className="p-4 sm:p-5 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-3 shadow-xs"
+              className="border-border bg-surface space-y-3 rounded-md border p-4 shadow-xs sm:p-5 dark:bg-[#161715]"
             >
               <div className="flex items-center justify-between">
                 <Skeleton className="h-4 w-24 rounded-md" />
@@ -58,9 +58,9 @@ export function DashboardPageSkeleton({
       )}
 
       {/* 3. Filter / Search Toolbar Skeleton */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 sm:p-4 rounded-md border border-border bg-surface dark:bg-[#161715]">
-        <div className="flex-1 flex items-center gap-2">
-          <Skeleton className="h-9 flex-1 max-w-md rounded-md" />
+      <div className="border-border bg-surface flex flex-col justify-between gap-3 rounded-md border p-3 sm:flex-row sm:items-center sm:p-4 dark:bg-[#161715]">
+        <div className="flex flex-1 items-center gap-2">
+          <Skeleton className="h-9 max-w-md flex-1 rounded-md" />
           <Skeleton className="h-9 w-20 rounded-md" />
         </div>
         <div className="flex items-center gap-2 self-end sm:self-auto">
@@ -70,27 +70,24 @@ export function DashboardPageSkeleton({
       </div>
 
       {/* 4. Table / Content List Skeleton */}
-      <div className="rounded-md border border-border bg-surface dark:bg-[#161715] overflow-hidden shadow-xs divide-y divide-border/40">
+      <div className="border-border bg-surface divide-border/40 divide-y overflow-hidden rounded-md border shadow-xs dark:bg-[#161715]">
         {/* Table Header Bar */}
-        <div className="p-3 sm:p-4 bg-muted/20 flex items-center justify-between gap-4">
+        <div className="bg-muted/20 flex items-center justify-between gap-4 p-3 sm:p-4">
           <div className="flex items-center gap-3">
             <Skeleton className="size-4 rounded" />
             <Skeleton className="h-4 w-32 rounded-md" />
           </div>
-          <Skeleton className="h-4 w-20 rounded-md hidden sm:block" />
+          <Skeleton className="hidden h-4 w-20 rounded-md sm:block" />
           <Skeleton className="h-4 w-24 rounded-md" />
         </div>
 
         {/* Table Rows */}
         {Array.from({ length: rowCount }).map((_, i) => (
-          <div
-            key={i}
-            className="p-3.5 sm:p-4 flex items-center justify-between gap-4"
-          >
-            <div className="flex items-center gap-3 flex-1 min-w-0">
-              <Skeleton className="size-4 rounded shrink-0" />
-              <Skeleton className="size-9 rounded-full shrink-0" />
-              <div className="space-y-1.5 flex-1 min-w-0">
+          <div key={i} className="flex items-center justify-between gap-4 p-3.5 sm:p-4">
+            <div className="flex min-w-0 flex-1 items-center gap-3">
+              <Skeleton className="size-4 shrink-0 rounded" />
+              <Skeleton className="size-9 shrink-0 rounded-full" />
+              <div className="min-w-0 flex-1 space-y-1.5">
                 <Skeleton
                   className="h-4 rounded-md"
                   style={{ width: `${60 + (i % 3) * 15}%`, maxWidth: "240px" }}
@@ -99,8 +96,8 @@ export function DashboardPageSkeleton({
               </div>
             </div>
 
-            <Skeleton className="h-6 w-20 rounded-full shrink-0 hidden sm:block" />
-            <div className="flex items-center gap-2 shrink-0">
+            <Skeleton className="hidden h-6 w-20 shrink-0 rounded-full sm:block" />
+            <div className="flex shrink-0 items-center gap-2">
               <Skeleton className="size-8 rounded-md" />
               <Skeleton className="size-8 rounded-md" />
             </div>

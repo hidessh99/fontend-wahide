@@ -8,7 +8,11 @@ import { Globe } from "lucide-react";
 
 function useIsMounted() {
   const subscribe = useCallback(() => () => {}, []);
-  return useSyncExternalStore(subscribe, () => true, () => false);
+  return useSyncExternalStore(
+    subscribe,
+    () => true,
+    () => false
+  );
 }
 
 export function LocaleSwitcher() {
@@ -27,10 +31,10 @@ export function LocaleSwitcher() {
       variant="secondaryPill"
       size="sm"
       onClick={toggleLocale}
-      className="gap-1.5 text-xs font-bold uppercase tracking-wider"
+      className="gap-1.5 text-xs font-bold tracking-wider uppercase"
       aria-label="Switch Language"
     >
-      <Globe className="size-3.5 text-dark-green dark:text-wise-green" />
+      <Globe className="text-dark-green dark:text-wise-green size-3.5" />
       <span>{currentLocale.toUpperCase()}</span>
     </Button>
   );

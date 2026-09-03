@@ -7,7 +7,9 @@ const CAMPAIGN_BASE = env.NEXT_PUBLIC_CAMPAIGN_API_URL || env.NEXT_PUBLIC_API_BA
 export const campaignApi = {
   getCampaigns: async (page = 1, pageSize = 50): Promise<Campaign[]> => {
     try {
-      const res = await httpClient.get<Campaign[]>(`${CAMPAIGN_BASE}/campaigns?page=${page}&page_size=${pageSize}`);
+      const res = await httpClient.get<Campaign[]>(
+        `${CAMPAIGN_BASE}/campaigns?page=${page}&page_size=${pageSize}`
+      );
       return res.payload || (Array.isArray(res) ? res : []);
     } catch {
       return [];

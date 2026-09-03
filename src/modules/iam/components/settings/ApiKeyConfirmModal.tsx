@@ -1,17 +1,8 @@
 "use client";
 
-
 import { Button } from "@/components/ui/button";
 import { useEscapeKey } from "@/hooks/useEscapeKey";
-import {
-  X,
-  AlertTriangle,
-  RefreshCw,
-  Trash2,
-  ShieldAlert,
-  Loader2,
-  Zap,
-} from "lucide-react";
+import { X, AlertTriangle, RefreshCw, Trash2, ShieldAlert, Loader2, Zap } from "lucide-react";
 
 interface ApiKeyConfirmModalProps {
   isOpen: boolean;
@@ -41,17 +32,17 @@ export function ApiKeyConfirmModal({
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/70 backdrop-blur-sm animate-in fade-in"
+      className="animate-in fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm sm:p-6"
     >
-      <div className="relative w-full max-w-lg rounded-xl border border-border bg-surface dark:bg-[#161715] shadow-2xl overflow-hidden p-6 sm:p-8 space-y-6 animate-in zoom-in-95 duration-150">
+      <div className="border-border bg-surface animate-in zoom-in-95 relative w-full max-w-lg space-y-6 overflow-hidden rounded-xl border p-6 shadow-2xl duration-150 sm:p-8 dark:bg-[#161715]">
         {/* Header Icon & Close Button */}
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3.5">
             <div
-              className={`size-11 rounded-full flex items-center justify-center shrink-0 border ${
+              className={`flex size-11 shrink-0 items-center justify-center rounded-full border ${
                 isRegenerate
-                  ? "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/25"
-                  : "bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/25"
+                  ? "border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-400"
+                  : "border-rose-500/25 bg-rose-500/10 text-rose-700 dark:text-rose-400"
               }`}
             >
               {isRegenerate ? (
@@ -61,12 +52,10 @@ export function ApiKeyConfirmModal({
               )}
             </div>
             <div>
-              <h2 className="text-lg sm:text-xl font-black text-foreground tracking-tight">
-                {isRegenerate
-                  ? "Buat Ulang API Key Fast-Path?"
-                  : "Cabut Akses API Key?"}
+              <h2 className="text-foreground text-lg font-black tracking-tight sm:text-xl">
+                {isRegenerate ? "Buat Ulang API Key Fast-Path?" : "Cabut Akses API Key?"}
               </h2>
-              <p className="text-xs font-semibold text-foreground-secondary">
+              <p className="text-foreground-secondary text-xs font-semibold">
                 {isRegenerate
                   ? "Tindakan kritis rotasi kunci autentikasi sistem."
                   : "Tindakan permanen penonaktifan akses otentikasi."}
@@ -78,7 +67,7 @@ export function ApiKeyConfirmModal({
             type="button"
             onClick={onClose}
             disabled={isLoading}
-            className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer disabled:opacity-50"
+            className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-8 cursor-pointer items-center justify-center rounded-full transition disabled:opacity-50"
             aria-label="Tutup"
           >
             <X className="size-4" />
@@ -87,10 +76,10 @@ export function ApiKeyConfirmModal({
 
         {/* Warning Callout Box */}
         <div
-          className={`p-4 rounded-lg border space-y-2.5 ${
+          className={`space-y-2.5 rounded-lg border p-4 ${
             isRegenerate
-              ? "bg-amber-500/5 dark:bg-amber-500/10 border-amber-500/20"
-              : "bg-rose-500/5 dark:bg-rose-500/10 border-rose-500/20"
+              ? "border-amber-500/20 bg-amber-500/5 dark:bg-amber-500/10"
+              : "border-rose-500/20 bg-rose-500/5 dark:bg-rose-500/10"
           }`}
         >
           <div className="flex items-center gap-2 text-xs font-extrabold">
@@ -105,15 +94,15 @@ export function ApiKeyConfirmModal({
             </span>
           </div>
 
-          <p className="text-xs font-medium text-foreground-secondary leading-relaxed">
+          <p className="text-foreground-secondary text-xs leading-relaxed font-medium">
             {isRegenerate ? (
               <>
                 Kunci API saat ini akan{" "}
                 <strong className="text-foreground font-bold">
                   langsung dinonaktifkan secara permanen
                 </strong>
-                . Semua integrasi bot WhatsApp, backend microservice eksternal,
-                atau script otomatisasi yang menggunakan kunci lama akan{" "}
+                . Semua integrasi bot WhatsApp, backend microservice eksternal, atau script
+                otomatisasi yang menggunakan kunci lama akan{" "}
                 <strong className="text-foreground font-bold">
                   terputus seketika (HTTP 401 Unauthorized)
                 </strong>{" "}
@@ -125,18 +114,18 @@ export function ApiKeyConfirmModal({
                 <strong className="text-foreground font-bold">
                   dihapus dan dicabut dari server
                 </strong>
-                . Seluruh aplikasi eksternal tidak akan lagi dapat mengirim
-                pesan atau memanggil endpoint Wahide Fast-Path.
+                . Seluruh aplikasi eksternal tidak akan lagi dapat mengirim pesan atau memanggil
+                endpoint Wahide Fast-Path.
               </>
             )}
           </p>
 
           {currentKey && (
             <div className="pt-1.5">
-              <span className="text-[11px] font-bold text-foreground-muted block mb-1">
+              <span className="text-foreground-muted mb-1 block text-[11px] font-bold">
                 Kunci yang akan digantikan/dicabut:
               </span>
-              <div className="p-2 rounded bg-muted/70 dark:bg-black/40 border border-border/80 text-[11px] font-mono font-semibold text-foreground break-all">
+              <div className="bg-muted/70 border-border/80 text-foreground rounded border p-2 font-mono text-[11px] font-semibold break-all dark:bg-black/40">
                 {currentKey.slice(0, 12)}••••••••••••••••••••
               </div>
             </div>
@@ -144,8 +133,8 @@ export function ApiKeyConfirmModal({
         </div>
 
         {/* Informational Guidance */}
-        <div className="flex items-start gap-2 text-[11px] font-medium text-foreground-muted">
-          <Zap className="size-3.5 text-emerald-600 dark:text-wise-green shrink-0 mt-0.5" />
+        <div className="text-foreground-muted flex items-start gap-2 text-[11px] font-medium">
+          <Zap className="dark:text-wise-green mt-0.5 size-3.5 shrink-0 text-emerald-600" />
           <span>
             {isRegenerate
               ? "Kunci baru yang diterbitkan akan langsung aktif dalam hitungan milidetik di cluster gateway."
@@ -154,14 +143,14 @@ export function ApiKeyConfirmModal({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center justify-end gap-3 pt-2 border-t border-border">
+        <div className="border-border flex items-center justify-end gap-3 border-t pt-2">
           <Button
             type="button"
             variant="outline"
             size="sm"
             onClick={onClose}
             disabled={isLoading}
-            className="rounded-full text-xs font-bold px-5 h-9 border-border hover:border-foreground-muted"
+            className="border-border hover:border-foreground-muted h-9 rounded-full px-5 text-xs font-bold"
           >
             Batal
           </Button>
@@ -173,7 +162,7 @@ export function ApiKeyConfirmModal({
               size="sm"
               onClick={onConfirm}
               disabled={isLoading}
-              className="gap-2 text-xs font-bold px-5 h-9 shadow-sm"
+              className="h-9 gap-2 px-5 text-xs font-bold shadow-sm"
             >
               {isLoading ? (
                 <>
@@ -193,7 +182,7 @@ export function ApiKeyConfirmModal({
               size="sm"
               onClick={onConfirm}
               disabled={isLoading}
-              className="rounded-full gap-2 text-xs font-bold px-5 h-9 bg-rose-600 hover:bg-rose-700 text-white transition shadow-sm"
+              className="h-9 gap-2 rounded-full bg-rose-600 px-5 text-xs font-bold text-white shadow-sm transition hover:bg-rose-700"
             >
               {isLoading ? (
                 <>

@@ -44,35 +44,35 @@ export function CampaignList() {
     switch (status) {
       case "RUNNING":
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-            <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-600 dark:text-emerald-400">
+            <span className="size-2 animate-pulse rounded-full bg-emerald-500" />
             {t("campaign.statusRunning")}
           </span>
         );
       case "PAUSED":
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1 text-xs font-bold text-amber-600 dark:text-amber-400">
             <Pause className="size-3" />
             {t("campaign.statusPaused")}
           </span>
         );
       case "COMPLETED":
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green border border-emerald-500/20 dark:border-wise-green/20">
+          <span className="dark:bg-wise-green/15 dark:text-wise-green dark:border-wise-green/20 inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-700">
             <CheckCircle2 className="size-3" />
             {t("campaign.statusCompleted")}
           </span>
         );
       case "SCHEDULED":
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-500/20 bg-sky-500/10 px-3 py-1 text-xs font-bold text-sky-600 dark:text-sky-400">
             <Clock className="size-3" />
             {t("campaign.statusScheduled")}
           </span>
         );
       case "FAILED":
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-rose-500/20 bg-rose-500/10 px-3 py-1 text-xs font-bold text-rose-600 dark:text-rose-400">
             <AlertCircle className="size-3" />
             {t("campaign.statusFailed")}
           </span>
@@ -80,7 +80,7 @@ export function CampaignList() {
       case "DRAFT":
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-zinc-500/10 text-zinc-600 dark:text-zinc-400 border border-zinc-500/20">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-zinc-500/20 bg-zinc-500/10 px-3 py-1 text-xs font-bold text-zinc-600 dark:text-zinc-400">
             {t("campaign.statusDraft")}
           </span>
         );
@@ -90,28 +90,28 @@ export function CampaignList() {
   return (
     <div className="space-y-6">
       {/* Top Action Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 sm:p-4 rounded-md border border-border bg-surface dark:bg-[#161715]">
+      <div className="border-border bg-surface flex flex-col justify-between gap-3 rounded-md border p-3 sm:flex-row sm:items-center sm:p-4 dark:bg-[#161715]">
         <div className="flex items-center gap-3">
-          <div className="size-8 sm:size-10 rounded-full bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green flex items-center justify-center shrink-0">
+          <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-8 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700 sm:size-10">
             <Zap className="size-4 sm:size-5" />
           </div>
           <div>
-            <h2 className="text-sm sm:text-base font-extrabold text-foreground">
+            <h2 className="text-foreground text-sm font-extrabold sm:text-base">
               Anti-Ban Broadcast Dispatcher
             </h2>
-            <p className="text-[11px] sm:text-xs font-semibold text-foreground-secondary">
+            <p className="text-foreground-secondary text-[11px] font-semibold sm:text-xs">
               Total {campaigns.length} kampanye blast terdaftar di sistem.
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 justify-end">
+        <div className="flex items-center justify-end gap-2">
           <Button
             variant="outline"
             size="sm"
             onClick={fetchCampaigns}
             disabled={isLoading}
-            className="rounded-full size-9 p-0 border-border hover:border-foreground-muted"
+            className="border-border hover:border-foreground-muted size-9 rounded-full p-0"
             aria-label="Refresh Kampanye"
           >
             <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin" : ""}`} />
@@ -121,7 +121,7 @@ export function CampaignList() {
             variant="primaryPill"
             size="sm"
             onClick={() => setIsWizardOpen(true)}
-            className="gap-2 text-xs font-bold shadow-sm h-9 px-4"
+            className="h-9 gap-2 px-4 text-xs font-bold shadow-sm"
           >
             <Plus className="size-4" />
             <span>{t("campaign.createCampaign")}</span>
@@ -131,24 +131,24 @@ export function CampaignList() {
 
       {/* Campaign List Grid */}
       {isLoading && campaigns.length === 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+        <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2">
           {[1, 2].map((i) => (
             <div
               key={i}
-              className="h-56 rounded-md border border-border bg-surface dark:bg-[#161715] animate-pulse p-4 sm:p-6"
+              className="border-border bg-surface h-56 animate-pulse rounded-md border p-4 sm:p-6 dark:bg-[#161715]"
             />
           ))}
         </div>
       ) : campaigns.length === 0 ? (
-        <div className="flex flex-col items-center justify-center p-6 sm:p-10 text-center rounded-md border border-dashed border-border bg-surface dark:bg-[#161715]/50 space-y-3">
-          <div className="size-12 rounded-full bg-emerald-500/10 dark:bg-wise-green/10 text-emerald-700 dark:text-wise-green flex items-center justify-center">
+        <div className="border-border bg-surface flex flex-col items-center justify-center space-y-3 rounded-md border border-dashed p-6 text-center sm:p-10 dark:bg-[#161715]/50">
+          <div className="dark:bg-wise-green/10 dark:text-wise-green flex size-12 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
             <Send className="size-6" />
           </div>
-          <div className="space-y-1 max-w-sm">
-            <h3 className="font-extrabold text-base sm:text-lg text-foreground">
+          <div className="max-w-sm space-y-1">
+            <h3 className="text-foreground text-base font-extrabold sm:text-lg">
               {t("campaign.noCampaigns")}
             </h3>
-            <p className="text-xs font-semibold text-foreground-secondary">
+            <p className="text-foreground-secondary text-xs font-semibold">
               {t("campaign.noCampaignsDesc")}
             </p>
           </div>
@@ -156,14 +156,14 @@ export function CampaignList() {
             variant="primaryPill"
             size="sm"
             onClick={() => setIsWizardOpen(true)}
-            className="gap-2 text-xs font-bold mt-2 shadow-sm h-9 px-4"
+            className="mt-2 h-9 gap-2 px-4 text-xs font-bold shadow-sm"
           >
             <Plus className="size-4" />
             <span>{t("campaign.createCampaign")}</span>
           </Button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+        <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2">
           {campaigns.map((campaign) => {
             const percent =
               campaign.totalRecipients > 0
@@ -173,19 +173,19 @@ export function CampaignList() {
             return (
               <div
                 key={campaign.id}
-                className="rounded-md border border-border bg-surface dark:bg-[#161715] p-5 sm:p-6 space-y-4 hover:border-foreground-muted/40 transition flex flex-col justify-between"
+                className="border-border bg-surface hover:border-foreground-muted/40 flex flex-col justify-between space-y-4 rounded-md border p-5 transition sm:p-6 dark:bg-[#161715]"
               >
                 {/* Header */}
                 <div className="flex items-start justify-between gap-3">
                   <div className="space-y-1">
-                    <h3 className="font-extrabold text-base text-foreground line-clamp-1">
+                    <h3 className="text-foreground line-clamp-1 text-base font-extrabold">
                       {campaign.name}
                     </h3>
-                    <div className="flex items-center gap-2 text-xs font-semibold text-foreground-muted">
+                    <div className="text-foreground-muted flex items-center gap-2 text-xs font-semibold">
                       <Smartphone className="size-3.5" />
                       <span>{campaign.deviceName || "Perangkat Utama"}</span>
                       <span>•</span>
-                      <ShieldCheck className="size-3.5 text-emerald-700 dark:text-wise-green" />
+                      <ShieldCheck className="dark:text-wise-green size-3.5 text-emerald-700" />
                       <span>Jitter {campaign.jitterDelaySeconds}s</span>
                     </div>
                   </div>
@@ -193,7 +193,7 @@ export function CampaignList() {
                 </div>
 
                 {/* Template preview */}
-                <div className="p-3 rounded-md bg-muted/40 border border-border/50 text-xs font-semibold text-foreground-secondary line-clamp-2 leading-relaxed">
+                <div className="bg-muted/40 border-border/50 text-foreground-secondary line-clamp-2 rounded-md border p-3 text-xs leading-relaxed font-semibold">
                   {campaign.messageTemplate}
                 </div>
 
@@ -207,19 +207,21 @@ export function CampaignList() {
                         percent: percent.toString(),
                       })}
                     </span>
-                    <span className="text-dark-green dark:text-wise-green font-mono">{percent}%</span>
+                    <span className="text-dark-green dark:text-wise-green font-mono">
+                      {percent}%
+                    </span>
                   </div>
-                  <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
+                  <div className="bg-muted h-2 w-full overflow-hidden rounded-full">
                     <div
-                      className="h-full bg-wise-green rounded-full transition-all duration-300"
+                      className="bg-wise-green h-full rounded-full transition-all duration-300"
                       style={{ width: `${percent}%` }}
                     />
                   </div>
                 </div>
 
                 {/* Action Footer */}
-                <div className="flex items-center justify-between pt-2 border-t border-border/60">
-                  <span className="text-[11px] font-semibold text-foreground-muted">
+                <div className="border-border/60 flex items-center justify-between border-t pt-2">
+                  <span className="text-foreground-muted text-[11px] font-semibold">
                     {new Date(campaign.createdAt).toLocaleDateString([], {
                       month: "short",
                       day: "numeric",
@@ -233,7 +235,7 @@ export function CampaignList() {
                         variant="outline"
                         size="sm"
                         onClick={() => pauseCampaign(campaign.id)}
-                        className="rounded-full text-xs font-bold gap-1.5 border-border"
+                        className="border-border gap-1.5 rounded-full text-xs font-bold"
                       >
                         <Pause className="size-3" />
                         <span>{t("campaign.pauseCampaign")}</span>
@@ -245,7 +247,7 @@ export function CampaignList() {
                         variant="primaryPill"
                         size="sm"
                         onClick={() => resumeCampaign(campaign.id)}
-                        className="text-xs font-bold gap-1.5"
+                        className="gap-1.5 text-xs font-bold"
                       >
                         <Play className="size-3" />
                         <span>{t("campaign.resumeCampaign")}</span>
@@ -256,7 +258,7 @@ export function CampaignList() {
                       variant="outline"
                       size="sm"
                       onClick={() => cancelCampaign(campaign.id)}
-                      className="rounded-full size-8 p-0 text-rose-500 hover:bg-rose-500/10 border-rose-500/20"
+                      className="size-8 rounded-full border-rose-500/20 p-0 text-rose-500 hover:bg-rose-500/10"
                       aria-label="Batalkan Kampanye"
                     >
                       <Trash2 className="size-3.5" />

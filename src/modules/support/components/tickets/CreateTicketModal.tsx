@@ -1,12 +1,25 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { CreateTicketInput, TicketCategory, TicketPriority } from "@/modules/support/types/support.types";
+import {
+  CreateTicketInput,
+  TicketCategory,
+  TicketPriority,
+} from "@/modules/support/types/support.types";
 import { supportApi } from "@/modules/support/api/support.api";
 import { Button } from "@/components/ui/button";
 import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { useI18n } from "@/lib/i18n/context";
-import { X, LifeBuoy, Send, Loader2, Paperclip, Trash2, CheckCircle2, Image as ImageIcon } from "lucide-react";
+import {
+  X,
+  LifeBuoy,
+  Send,
+  Loader2,
+  Paperclip,
+  Trash2,
+  CheckCircle2,
+  Image as ImageIcon,
+} from "lucide-react";
 
 interface CreateTicketModalProps {
   isOpen: boolean;
@@ -14,11 +27,7 @@ interface CreateTicketModalProps {
   onSubmit: (data: CreateTicketInput) => Promise<unknown>;
 }
 
-export function CreateTicketModal({
-  isOpen,
-  onClose,
-  onSubmit,
-}: CreateTicketModalProps) {
+export function CreateTicketModal({ isOpen, onClose, onSubmit }: CreateTicketModalProps) {
   const { t } = useI18n();
   const [subject, setSubject] = useState("");
   const [category, setCategory] = useState<TicketCategory>("WHATSAPP");
@@ -120,20 +129,20 @@ export function CreateTicketModal({
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
-      className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-sm p-3 sm:p-6 flex min-h-full items-center justify-center animate-in fade-in"
+      className="animate-in fade-in fixed inset-0 z-50 flex min-h-full items-center justify-center overflow-y-auto bg-black/75 p-3 backdrop-blur-sm sm:p-6"
     >
-      <div className="relative w-full max-w-lg max-h-[90vh] flex flex-col rounded-md border border-border bg-surface dark:bg-[#161715] shadow-2xl overflow-hidden animate-in zoom-in-95">
+      <div className="border-border bg-surface animate-in zoom-in-95 relative flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-md border shadow-2xl dark:bg-[#161715]">
         {/* Sticky Header */}
-        <div className="p-5 sm:p-6 pb-4 border-b border-border/80 flex items-start justify-between shrink-0">
+        <div className="border-border/80 flex shrink-0 items-start justify-between border-b p-5 pb-4 sm:p-6">
           <div className="flex items-center gap-3">
-            <div className="size-10 rounded-full bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green flex items-center justify-center">
+            <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-10 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
               <LifeBuoy className="size-5" />
             </div>
             <div>
-              <h2 className="text-lg sm:text-xl font-black text-foreground tracking-tight">
+              <h2 className="text-foreground text-lg font-black tracking-tight sm:text-xl">
                 {t("support.createModalTitle")}
               </h2>
-              <p className="text-xs font-semibold text-foreground-secondary">
+              <p className="text-foreground-secondary text-xs font-semibold">
                 {t("support.createModalSubtitle")}
               </p>
             </div>
@@ -142,7 +151,7 @@ export function CreateTicketModal({
           <button
             type="button"
             onClick={onClose}
-            className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
+            className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-8 cursor-pointer items-center justify-center rounded-full transition"
             aria-label="Tutup"
           >
             <X className="size-4" />
@@ -150,17 +159,17 @@ export function CreateTicketModal({
         </div>
 
         {/* Scrollable Form Body */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto flex flex-col min-h-0">
-          <div className="p-5 sm:p-6 space-y-4 flex-1">
+        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+          <div className="flex-1 space-y-4 p-5 sm:p-6">
             {error && (
-              <div className="p-3 rounded-md bg-rose-500/10 border border-rose-500/20 text-xs font-semibold text-rose-600 dark:text-rose-400">
+              <div className="rounded-md border border-rose-500/20 bg-rose-500/10 p-3 text-xs font-semibold text-rose-600 dark:text-rose-400">
                 {error}
               </div>
             )}
 
             {/* Subject */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                 {t("support.subjectLabel")}
               </label>
               <input
@@ -169,21 +178,21 @@ export function CreateTicketModal({
                 onChange={(e) => setSubject(e.target.value)}
                 placeholder={t("support.subjectPlaceholder")}
                 disabled={isLoading}
-                className="w-full h-11 px-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs"
+                className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-11 w-full rounded-full border px-4 text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
                 autoFocus
               />
             </div>
 
             {/* Category & Priority */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+                <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                   {t("support.categoryLabel")}
                 </label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value as TicketCategory)}
-                  className="w-full h-10 px-3 rounded-md bg-surface dark:bg-[#10110e] text-foreground text-xs font-semibold border border-border outline-none focus:border-wise-green"
+                  className="bg-surface text-foreground border-border focus:border-wise-green h-10 w-full rounded-md border px-3 text-xs font-semibold outline-none dark:bg-[#10110e]"
                 >
                   <option value="WHATSAPP">{t("support.categoryWhatsapp")}</option>
                   <option value="BILLING">{t("support.categoryBilling")}</option>
@@ -193,13 +202,13 @@ export function CreateTicketModal({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+                <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                   {t("support.priorityLabel")}
                 </label>
                 <select
                   value={priority}
                   onChange={(e) => setPriority(e.target.value as TicketPriority)}
-                  className="w-full h-10 px-3 rounded-md bg-surface dark:bg-[#10110e] text-foreground text-xs font-semibold border border-border outline-none focus:border-wise-green"
+                  className="bg-surface text-foreground border-border focus:border-wise-green h-10 w-full rounded-md border px-3 text-xs font-semibold outline-none dark:bg-[#10110e]"
                 >
                   <option value="LOW">{t("support.priorityLow")}</option>
                   <option value="MEDIUM">{t("support.priorityMedium")}</option>
@@ -210,7 +219,7 @@ export function CreateTicketModal({
 
             {/* Detailed Message */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                 {t("support.messageLabel")}
               </label>
               <textarea
@@ -219,17 +228,17 @@ export function CreateTicketModal({
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder={t("support.messagePlaceholder")}
                 disabled={isLoading}
-                className="w-full p-3 rounded-md bg-surface dark:bg-[#10110e] text-foreground font-semibold text-xs border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition leading-relaxed"
+                className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green w-full rounded-md border p-3 text-xs leading-relaxed font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
               />
             </div>
 
             {/* Screenshot Attachment */}
             <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary">
+              <div className="mb-1.5 flex items-center justify-between">
+                <label className="text-foreground-secondary block text-xs font-semibold tracking-wider uppercase">
                   {t("support.attachmentLabel")}
                 </label>
-                <span className="text-[11px] font-semibold text-foreground-muted">
+                <span className="text-foreground-muted text-[11px] font-semibold">
                   {t("support.attachmentHint")}
                 </span>
               </div>
@@ -247,24 +256,24 @@ export function CreateTicketModal({
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isLoading}
-                  className="w-full py-2.5 px-4 rounded-md border border-dashed border-border hover:border-wise-green bg-surface/50 dark:bg-[#10110e]/50 hover:bg-wise-green/5 text-foreground-secondary hover:text-foreground flex items-center justify-center gap-2 text-xs font-semibold transition cursor-pointer"
+                  className="border-border hover:border-wise-green bg-surface/50 hover:bg-wise-green/5 text-foreground-secondary hover:text-foreground flex w-full cursor-pointer items-center justify-center gap-2 rounded-md border border-dashed px-4 py-2.5 text-xs font-semibold transition dark:bg-[#10110e]/50"
                 >
-                  <Paperclip className="size-3.5 text-emerald-700 dark:text-wise-green" />
+                  <Paperclip className="dark:text-wise-green size-3.5 text-emerald-700" />
                   <span>{t("support.selectScreenshot")}</span>
                 </button>
               )}
 
               {isUploading && (
-                <div className="w-full py-3 px-4 rounded-md border border-border bg-surface dark:bg-[#10110e] flex items-center justify-center gap-2 text-xs font-semibold text-foreground-secondary">
-                  <Loader2 className="size-4 animate-spin text-emerald-700 dark:text-wise-green" />
+                <div className="border-border bg-surface text-foreground-secondary flex w-full items-center justify-center gap-2 rounded-md border px-4 py-3 text-xs font-semibold dark:bg-[#10110e]">
+                  <Loader2 className="dark:text-wise-green size-4 animate-spin text-emerald-700" />
                   <span>{t("support.uploadingImage")}</span>
                 </div>
               )}
 
               {(previewUrl || attachmentUrl) && !isUploading && (
-                <div className="p-2.5 rounded-md border border-wise-green/30 bg-wise-green/5 dark:bg-wise-green/10 flex items-center justify-between gap-3">
+                <div className="border-wise-green/30 bg-wise-green/5 dark:bg-wise-green/10 flex items-center justify-between gap-3 rounded-md border p-2.5">
                   <div className="flex items-center gap-2.5 overflow-hidden">
-                    <div className="size-10 rounded bg-surface dark:bg-black/40 border border-border flex items-center justify-center shrink-0 overflow-hidden">
+                    <div className="bg-surface border-border flex size-10 shrink-0 items-center justify-center overflow-hidden rounded border dark:bg-black/40">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={previewUrl || attachmentUrl}
@@ -274,8 +283,8 @@ export function CreateTicketModal({
                     </div>
                     <div className="overflow-hidden">
                       <div className="flex items-center gap-1.5">
-                        <CheckCircle2 className="size-3 text-emerald-700 dark:text-wise-green shrink-0" />
-                        <p className="text-xs font-bold text-foreground truncate">
+                        <CheckCircle2 className="dark:text-wise-green size-3 shrink-0 text-emerald-700" />
+                        <p className="text-foreground truncate text-xs font-bold">
                           {attachmentFileName || t("support.screenshotUploaded")}
                         </p>
                       </div>
@@ -284,7 +293,7 @@ export function CreateTicketModal({
                           href={attachmentUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[11px] font-semibold text-emerald-700 dark:text-wise-green hover:underline inline-flex items-center gap-1 mt-0.5"
+                          className="dark:text-wise-green mt-0.5 inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 hover:underline"
                         >
                           <ImageIcon className="size-3" />
                           <span>{t("support.viewAttachment")} ↗</span>
@@ -297,7 +306,7 @@ export function CreateTicketModal({
                     type="button"
                     onClick={handleRemoveAttachment}
                     disabled={isLoading}
-                    className="size-7 rounded-full flex items-center justify-center text-foreground-muted hover:text-rose-500 hover:bg-rose-500/10 transition cursor-pointer shrink-0"
+                    className="text-foreground-muted flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-full transition hover:bg-rose-500/10 hover:text-rose-500"
                     title={t("support.removeAttachment")}
                   >
                     <Trash2 className="size-3.5" />
@@ -308,14 +317,14 @@ export function CreateTicketModal({
           </div>
 
           {/* Sticky Modal Footer */}
-          <div className="p-4 sm:p-6 pt-3 border-t border-border/80 bg-surface/90 dark:bg-[#161715]/90 backdrop-blur-sm flex items-center justify-end gap-2.5 shrink-0">
+          <div className="border-border/80 bg-surface/90 flex shrink-0 items-center justify-end gap-2.5 border-t p-4 pt-3 backdrop-blur-sm sm:p-6 dark:bg-[#161715]/90">
             <Button
               type="button"
               variant="outline"
               size="sm"
               onClick={onClose}
               disabled={isLoading}
-              className="rounded-full text-xs font-bold px-4 border-border hover:border-foreground-muted"
+              className="border-border hover:border-foreground-muted rounded-full px-4 text-xs font-bold"
             >
               {t("support.cancel")}
             </Button>
@@ -324,7 +333,7 @@ export function CreateTicketModal({
               variant="primaryPill"
               size="sm"
               disabled={isLoading}
-              className="text-xs font-bold gap-1.5 px-6 shadow-sm"
+              className="gap-1.5 px-6 text-xs font-bold shadow-sm"
             >
               {isLoading ? (
                 <>

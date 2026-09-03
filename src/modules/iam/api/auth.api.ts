@@ -1,9 +1,6 @@
 import { httpClient } from "@/lib/api/http-client";
 import { env } from "@/lib/config/env";
-import {
-  BackendLoginPayload,
-  ApiKeyInfo,
-} from "../types/auth.types";
+import { BackendLoginPayload, ApiKeyInfo } from "../types/auth.types";
 import {
   LoginInput,
   RegisterInput,

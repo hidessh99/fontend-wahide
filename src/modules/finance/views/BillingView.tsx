@@ -20,7 +20,10 @@ const TopUpModal = dynamic(
 );
 
 const InvoiceReceiptModal = dynamic(
-  () => import("@/modules/finance/components/invoices/InvoiceReceiptModal").then((m) => m.InvoiceReceiptModal),
+  () =>
+    import("@/modules/finance/components/invoices/InvoiceReceiptModal").then(
+      (m) => m.InvoiceReceiptModal
+    ),
   { ssr: false }
 );
 
@@ -87,19 +90,19 @@ export function BillingView() {
   ];
 
   return (
-    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto p-3 sm:p-6 lg:p-8">
+    <div className="mx-auto max-w-7xl space-y-6 p-3 sm:space-y-8 sm:p-6 lg:p-8">
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5 sm:pb-6">
+      <div className="border-border flex flex-col justify-between gap-4 border-b pb-5 sm:flex-row sm:items-center sm:pb-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
-            <div className="size-8 sm:size-9 rounded-full bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center shrink-0">
+            <div className="bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex size-8 shrink-0 items-center justify-center rounded-full sm:size-9">
               <Receipt className="size-4 sm:size-5" />
             </div>
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-foreground tracking-tight">
+            <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl lg:text-3xl">
               {t("billing.title")}
             </h1>
           </div>
-          <p className="text-xs sm:text-sm font-semibold text-foreground-secondary max-w-2xl">
+          <p className="text-foreground-secondary max-w-2xl text-xs font-semibold sm:text-sm">
             {t("billing.subtitle")}
           </p>
         </div>
@@ -107,34 +110,31 @@ export function BillingView() {
 
       {/* Balance Card with Error Boundary & JIT Address Guard */}
       <ErrorBoundary fallbackTitle="Gagal Memuat Saldo Deposit">
-        <BalanceCard
-          balance={balance}
-          onOpenTopUp={handleOpenTopUp}
-        />
+        <BalanceCard balance={balance} onOpenTopUp={handleOpenTopUp} />
       </ErrorBoundary>
 
       {/* Invoice Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2">
+      <div className="flex flex-col justify-between gap-2 pt-2 sm:flex-row sm:items-center">
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
-            <div className="size-7 rounded-full bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green flex items-center justify-center shrink-0">
+            <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-7 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
               <Receipt className="size-3.5" />
             </div>
-            <h2 className="text-lg sm:text-xl font-black text-foreground tracking-tight">
+            <h2 className="text-foreground text-lg font-black tracking-tight sm:text-xl">
               {t("billing.invoicesTitle")}
             </h2>
-            <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-muted border border-border text-foreground-muted">
+            <span className="bg-muted border-border text-foreground-muted rounded-full border px-2.5 py-0.5 text-[11px] font-bold">
               {total} {t("billing.invoicesCountLabel")}
             </span>
           </div>
-          <p className="text-xs font-semibold text-foreground-secondary">
+          <p className="text-foreground-secondary text-xs font-semibold">
             {t("billing.invoicesSubtitle")}
           </p>
         </div>
       </div>
 
       {/* Filter Toolbar (Search Submit & Horizontal Scrollable Status Filters) */}
-      <div className="space-y-3 sm:space-y-4 p-3 sm:p-4 rounded-md border border-border bg-surface dark:bg-[#161715]">
+      <div className="border-border bg-surface space-y-3 rounded-md border p-3 sm:space-y-4 sm:p-4 dark:bg-[#161715]">
         {/* Search Form with Submit Button */}
         <form
           onSubmit={(e) => {
@@ -144,13 +144,13 @@ export function BillingView() {
           className="flex items-center gap-2"
         >
           <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted pointer-events-none" />
+            <Search className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
             <input
               type="text"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Cari nomor faktur atau deskripsi..."
-              className="w-full h-10 pl-10 pr-9 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs"
+              className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full rounded-full border pr-9 pl-10 text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
             />
             {(searchInput || activeSearch) && (
               <button
@@ -159,7 +159,7 @@ export function BillingView() {
                   setSearchInput("");
                   clearSearch();
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 size-5 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
+                className="text-foreground-muted hover:text-foreground hover:bg-muted absolute top-1/2 right-3 flex size-5 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full transition"
                 title="Hapus Pencarian"
                 aria-label="Hapus Pencarian"
               >
@@ -171,15 +171,15 @@ export function BillingView() {
             type="submit"
             variant="primaryPill"
             size="sm"
-            className="h-10 px-4 text-xs font-bold shadow-xs shrink-0 cursor-pointer"
+            className="h-10 shrink-0 cursor-pointer px-4 text-xs font-bold shadow-xs"
           >
-            <Search className="size-3.5 mr-1" />
+            <Search className="mr-1 size-3.5" />
             <span>Cari</span>
           </Button>
         </form>
 
         {/* Status Filter Chips (Horizontal Scrollable) */}
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 scroll-smooth">
+        <div className="no-scrollbar flex items-center gap-1.5 overflow-x-auto scroll-smooth py-1">
           {statusOptions.map((opt) => {
             const isActive = statusFilter === opt.value;
             return (
@@ -187,10 +187,10 @@ export function BillingView() {
                 key={opt.value}
                 type="button"
                 onClick={() => setStatusFilter(opt.value)}
-                className={`px-3.5 py-1.5 rounded-full text-xs transition cursor-pointer whitespace-nowrap shrink-0 ${
+                className={`shrink-0 cursor-pointer rounded-full px-3.5 py-1.5 text-xs whitespace-nowrap transition ${
                   isActive
-                    ? "bg-dark-green dark:bg-wise-green text-white dark:text-black font-extrabold shadow-xs"
-                    : "bg-muted/70 hover:bg-muted text-foreground-secondary hover:text-foreground font-semibold border border-border/60"
+                    ? "bg-dark-green dark:bg-wise-green font-extrabold text-white shadow-xs dark:text-black"
+                    : "bg-muted/70 hover:bg-muted text-foreground-secondary hover:text-foreground border-border/60 border font-semibold"
                 }`}
               >
                 {opt.label}

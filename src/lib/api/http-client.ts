@@ -3,21 +3,22 @@
 // Matches Go Backend: github.com/hidessh99/wahide/internal/shared/response
 // ==============================================================================
 
-import { getCookie,  clearAllAuthStorage } from "@/lib/storage/cookies";
-
+import { getCookie, clearAllAuthStorage } from "@/lib/storage/cookies";
 
 export interface GlobalResponse<T = unknown> {
   success: boolean;
   message: string;
   payload?: T;
   error?: unknown;
-  additional_info?: {
-    code?: string;
-    page?: number;
-    size?: number;
-    total?: number;
-    [key: string]: unknown;
-  } | unknown;
+  additional_info?:
+    | {
+        code?: string;
+        page?: number;
+        size?: number;
+        total?: number;
+        [key: string]: unknown;
+      }
+    | unknown;
   pagination?: {
     page: number;
     page_size: number;
@@ -32,10 +33,13 @@ export interface ApiErrorPayload {
   success?: boolean;
   message?: string;
   error?: string;
-  additional_info?: {
-    code?: string;
-    [key: string]: unknown;
-  } | Array<{ field: string; message: string }> | unknown;
+  additional_info?:
+    | {
+        code?: string;
+        [key: string]: unknown;
+      }
+    | Array<{ field: string; message: string }>
+    | unknown;
   field_errors?: Record<string, string[]>;
 }
 
@@ -97,7 +101,10 @@ class HttpClient {
     return null;
   }
 
-  private buildUrl(url: string, params?: Record<string, string | number | boolean | undefined>): string {
+  private buildUrl(
+    url: string,
+    params?: Record<string, string | number | boolean | undefined>
+  ): string {
     if (!params) return url;
     const searchParams = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
@@ -109,7 +116,10 @@ class HttpClient {
     return queryString ? `${url}?${queryString}` : url;
   }
 
-  public async request<T = unknown>(endpoint: string, options: RequestOptions = {}): Promise<ApiResponse<T>> {
+  public async request<T = unknown>(
+    endpoint: string,
+    options: RequestOptions = {}
+  ): Promise<ApiResponse<T>> {
     const {
       params,
       token,
@@ -204,7 +214,6 @@ class HttpClient {
           }
         }
 
-
         let errorMessage = `HTTP Error ${response.status}: ${response.statusText}`;
         if (typeof data?.message === "string" && data.message) {
           errorMessage = data.message;
@@ -216,7 +225,6 @@ class HttpClient {
         throw new ApiError(errorMessage, response.status, data);
       }
 
-
       return data as ApiResponse<T>;
     } catch (err: unknown) {
       clearTimeout(timeoutId);
@@ -225,9 +233,15 @@ class HttpClient {
         throw err;
       }
       if (err instanceof Error) {
-        if (err.name === "AbortError" || (err instanceof DOMException && err.name === "AbortError")) {
+        if (
+          err.name === "AbortError" ||
+          (err instanceof DOMException && err.name === "AbortError")
+        ) {
           if (timeoutController.signal.aborted) {
-            throw new ApiError("Batas waktu koneksi habis (Timeout 15 detik). Server tidak merespons.", 408);
+            throw new ApiError(
+              "Batas waktu koneksi habis (Timeout 15 detik). Server tidak merespons.",
+              408
+            );
           }
           const abortErr = new Error("Permintaan dibatalkan.");
           abortErr.name = "AbortError";
@@ -243,7 +257,11 @@ class HttpClient {
     return this.request<T>(endpoint, { ...options, method: "GET", retries: options?.retries ?? 1 });
   }
 
-  public post<T = unknown>(endpoint: string, body?: unknown, options?: RequestOptions): Promise<ApiResponse<T>> {
+  public post<T = unknown>(
+    endpoint: string,
+    body?: unknown,
+    options?: RequestOptions
+  ): Promise<ApiResponse<T>> {
     const isFormData = typeof FormData !== "undefined" && body instanceof FormData;
     return this.request<T>(endpoint, {
       ...options,
@@ -252,7 +270,11 @@ class HttpClient {
     });
   }
 
-  public put<T = unknown>(endpoint: string, body?: unknown, options?: RequestOptions): Promise<ApiResponse<T>> {
+  public put<T = unknown>(
+    endpoint: string,
+    body?: unknown,
+    options?: RequestOptions
+  ): Promise<ApiResponse<T>> {
     const isFormData = typeof FormData !== "undefined" && body instanceof FormData;
     return this.request<T>(endpoint, {
       ...options,
@@ -261,7 +283,11 @@ class HttpClient {
     });
   }
 
-  public patch<T = unknown>(endpoint: string, body?: unknown, options?: RequestOptions): Promise<ApiResponse<T>> {
+  public patch<T = unknown>(
+    endpoint: string,
+    body?: unknown,
+    options?: RequestOptions
+  ): Promise<ApiResponse<T>> {
     const isFormData = typeof FormData !== "undefined" && body instanceof FormData;
     return this.request<T>(endpoint, {
       ...options,

@@ -14,7 +14,7 @@ export const userApi = {
       id: p.id || "",
       name: p.name || "",
       email: p.email || "",
-      role: (p.role_name?.toUpperCase() || "SELLER"),
+      role: p.role_name?.toUpperCase() || "SELLER",
       phone: p.phone_number,
       balance: p.balance,
       incomePending: p.income,
@@ -38,10 +38,22 @@ export const userApi = {
   },
 
   changePassword: async (
-    payload: ChangePasswordInput | { oldPassword: string; newPassword: string; old_password?: string; new_password?: string }
+    payload:
+      | ChangePasswordInput
+      | { oldPassword: string; newPassword: string; old_password?: string; new_password?: string }
   ): Promise<{ success: boolean; message: string }> => {
-    const old_password = "old_password" in payload && payload.old_password ? payload.old_password : "oldPassword" in payload ? payload.oldPassword : "";
-    const new_password = "new_password" in payload && payload.new_password ? payload.new_password : "newPassword" in payload ? payload.newPassword : "";
+    const old_password =
+      "old_password" in payload && payload.old_password
+        ? payload.old_password
+        : "oldPassword" in payload
+          ? payload.oldPassword
+          : "";
+    const new_password =
+      "new_password" in payload && payload.new_password
+        ? payload.new_password
+        : "newPassword" in payload
+          ? payload.newPassword
+          : "";
 
     const res = await httpClient.put<{ success: boolean; message: string }>(
       `${IAM_BASE}/users/change-password`,
@@ -79,10 +91,13 @@ export const userApi = {
   },
 
   getActiveSessions: async (): Promise<import("../types/auth.types").ActiveSession[]> => {
-    const res = await httpClient.get<{ sessions: import("../types/auth.types").ActiveSession[]; count: number }>(
-      `${IAM_BASE}/users/sessions`
-    );
-    const payload = res.payload || (res as unknown as { sessions: import("../types/auth.types").ActiveSession[] });
+    const res = await httpClient.get<{
+      sessions: import("../types/auth.types").ActiveSession[];
+      count: number;
+    }>(`${IAM_BASE}/users/sessions`);
+    const payload =
+      res.payload ||
+      (res as unknown as { sessions: import("../types/auth.types").ActiveSession[] });
     return payload?.sessions || [];
   },
 
@@ -106,4 +121,3 @@ export const userApi = {
     };
   },
 };
-

@@ -67,7 +67,6 @@ export function useDevices() {
       toast.success(t("whatsapp.toastCreated"));
       return newDevice;
     } catch (err: unknown) {
-
       const msg = err instanceof Error ? err.message : "Gagal membuat slot perangkat";
       toast.error(msg);
       throw err;
@@ -89,9 +88,7 @@ export function useDevices() {
   const disconnectDevice = async (id: string): Promise<void> => {
     try {
       await whatsappApi.disconnectDevice(id);
-      setDevices((prev) =>
-        prev.map((d) => (d.id === id ? { ...d, status: "DISCONNECTED" } : d))
-      );
+      setDevices((prev) => prev.map((d) => (d.id === id ? { ...d, status: "DISCONNECTED" } : d)));
       toast.success(t("whatsapp.toastDisconnected"));
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal memutuskan koneksi";
@@ -103,9 +100,7 @@ export function useDevices() {
   const hibernateDevice = async (id: string): Promise<void> => {
     try {
       await whatsappApi.hibernateDevice(id);
-      setDevices((prev) =>
-        prev.map((d) => (d.id === id ? { ...d, status: "HIBERNATED" } : d))
-      );
+      setDevices((prev) => prev.map((d) => (d.id === id ? { ...d, status: "HIBERNATED" } : d)));
       toast.success(t("whatsapp.toastHibernated"));
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal menghibernasi sesi";
@@ -117,9 +112,7 @@ export function useDevices() {
   const wakeDevice = async (id: string): Promise<void> => {
     try {
       await whatsappApi.wakeDevice(id);
-      setDevices((prev) =>
-        prev.map((d) => (d.id === id ? { ...d, status: "CONNECTED" } : d))
-      );
+      setDevices((prev) => prev.map((d) => (d.id === id ? { ...d, status: "CONNECTED" } : d)));
       toast.success(t("whatsapp.toastWoken"));
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal membangunkan sesi";
@@ -128,11 +121,12 @@ export function useDevices() {
     }
   };
 
-  const updateDeviceStatus = useCallback((id: string, status: DeviceStatus, extra?: Partial<Device>) => {
-    setDevices((prev) =>
-      prev.map((d) => (d.id === id ? { ...d, status, ...extra } : d))
-    );
-  }, []);
+  const updateDeviceStatus = useCallback(
+    (id: string, status: DeviceStatus, extra?: Partial<Device>) => {
+      setDevices((prev) => prev.map((d) => (d.id === id ? { ...d, status, ...extra } : d)));
+    },
+    []
+  );
 
   const filteredDevices = useMemo(() => {
     return devices.filter((device) => {
@@ -142,13 +136,11 @@ export function useDevices() {
         devName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         Boolean(device.phone && device.phone.includes(searchQuery));
 
-      const matchesStatus =
-        statusFilter === "ALL" || device.status === statusFilter;
+      const matchesStatus = statusFilter === "ALL" || device.status === statusFilter;
 
       return matchesSearch && matchesStatus;
     });
   }, [devices, searchQuery, statusFilter]);
-
 
   const stats: DeviceStats = useMemo(() => {
     return {

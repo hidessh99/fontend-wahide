@@ -4,15 +4,7 @@ import React, { useState } from "react";
 import { User, Tenant } from "@/modules/iam/types/auth.types";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import {
-  User as UserIcon,
-  Mail,
-  Smartphone,
-  Building,
-  Lock,
-  Save,
-  Loader2,
-} from "lucide-react";
+import { User as UserIcon, Mail, Smartphone, Building, Lock, Save, Loader2 } from "lucide-react";
 
 interface ProfileInfoCardProps {
   user: User | null;
@@ -20,11 +12,7 @@ interface ProfileInfoCardProps {
   onSaveProfile: (name: string) => Promise<void>;
 }
 
-export function ProfileInfoCard({
-  user,
-  tenant,
-  onSaveProfile,
-}: ProfileInfoCardProps) {
+export function ProfileInfoCard({ user, tenant, onSaveProfile }: ProfileInfoCardProps) {
   const [name, setName] = useState(user?.name || "");
   const [isSaving, setIsSaving] = useState(false);
 
@@ -54,14 +42,14 @@ export function ProfileInfoCard({
   };
 
   return (
-    <div className="rounded-md border border-border bg-surface dark:bg-[#161715] p-6 sm:p-8 space-y-5 shadow-sm">
-      <div className="flex items-center gap-3 border-b border-border pb-4">
-        <div className="size-9 rounded-full bg-muted flex items-center justify-center text-foreground-secondary">
+    <div className="border-border bg-surface space-y-5 rounded-md border p-6 shadow-sm sm:p-8 dark:bg-[#161715]">
+      <div className="border-border flex items-center gap-3 border-b pb-4">
+        <div className="bg-muted text-foreground-secondary flex size-9 items-center justify-center rounded-full">
           <UserIcon className="size-4" />
         </div>
         <div>
-          <h2 className="text-lg font-black text-foreground">Informasi Profil</h2>
-          <p className="text-xs font-semibold text-foreground-secondary">
+          <h2 className="text-foreground text-lg font-black">Informasi Profil</h2>
+          <p className="text-foreground-secondary text-xs font-semibold">
             Nama bisnis dan kontak akun admin utama.
           </p>
         </div>
@@ -69,78 +57,78 @@ export function ProfileInfoCard({
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+          <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
             Nama Lengkap
           </label>
           <div className="relative">
-            <UserIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted" />
+            <UserIcon className="text-foreground-muted absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Nama Lengkap Anda"
               required
-              className="w-full h-10 pl-10 pr-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-emerald-600 dark:focus:border-wise-green focus:ring-2 focus:ring-emerald-500/20 dark:focus:ring-wise-green/20 outline-none transition text-xs"
+              className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-full border pr-4 pl-10 text-xs font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e]"
             />
           </div>
         </div>
 
         <div>
-          <div className="flex items-center justify-between mb-1.5">
-            <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary">
+          <div className="mb-1.5 flex items-center justify-between">
+            <label className="text-foreground-secondary block text-xs font-semibold tracking-wider uppercase">
               Alamat Email
             </label>
-            <span className="text-[10px] font-semibold text-foreground-muted inline-flex items-center gap-1">
+            <span className="text-foreground-muted inline-flex items-center gap-1 text-[10px] font-semibold">
               <Lock className="size-2.5" />
               Terkunci
             </span>
           </div>
           <div className="relative">
-            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted" />
+            <Mail className="text-foreground-muted absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
             <input
               type="email"
               disabled
               readOnly
               value={email}
-              className="w-full h-10 pl-10 pr-4 rounded-full bg-muted/60 text-foreground-muted font-semibold border border-border text-xs cursor-not-allowed select-none"
+              className="bg-muted/60 text-foreground-muted border-border h-10 w-full cursor-not-allowed rounded-full border pr-4 pl-10 text-xs font-semibold select-none"
             />
           </div>
         </div>
 
         <div>
-          <div className="flex items-center justify-between mb-1.5">
-            <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary">
+          <div className="mb-1.5 flex items-center justify-between">
+            <label className="text-foreground-secondary block text-xs font-semibold tracking-wider uppercase">
               Nomor WhatsApp Admin
             </label>
-            <span className="text-[10px] font-semibold text-foreground-muted inline-flex items-center gap-1">
+            <span className="text-foreground-muted inline-flex items-center gap-1 text-[10px] font-semibold">
               <Lock className="size-2.5" />
               Terkunci
             </span>
           </div>
           <div className="relative">
-            <Smartphone className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted" />
+            <Smartphone className="text-foreground-muted absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
             <input
               type="text"
               disabled
               readOnly
               value={phone}
-              className="w-full h-10 pl-10 pr-4 rounded-full bg-muted/60 text-foreground-muted font-semibold border border-border text-xs font-mono cursor-not-allowed select-none"
+              className="bg-muted/60 text-foreground-muted border-border h-10 w-full cursor-not-allowed rounded-full border pr-4 pl-10 font-mono text-xs font-semibold select-none"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+          <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
             Nama Perusahaan / Tenant
           </label>
           <div className="relative">
-            <Building className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted" />
+            <Building className="text-foreground-muted absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
             <input
               type="text"
               disabled
               readOnly
               value={tenantName}
-              className="w-full h-10 pl-10 pr-4 rounded-full bg-muted/60 text-foreground-muted font-semibold border border-border text-xs cursor-not-allowed select-none"
+              className="bg-muted/60 text-foreground-muted border-border h-10 w-full cursor-not-allowed rounded-full border pr-4 pl-10 text-xs font-semibold select-none"
             />
           </div>
         </div>
@@ -151,7 +139,7 @@ export function ProfileInfoCard({
             variant="primaryPill"
             size="sm"
             disabled={isSaving}
-            className="text-xs font-bold gap-1.5 px-5 shadow-sm"
+            className="gap-1.5 px-5 text-xs font-bold shadow-sm"
           >
             {isSaving ? (
               <>

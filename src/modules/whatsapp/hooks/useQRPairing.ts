@@ -18,16 +18,13 @@ interface UseQRPairingProps {
  * - Layer 2: AbortController & explicit cleanup on modal close / unmount (Zero memory leak)
  * - Layer 3: Circuit Breaker with 2-minute auto-stop & Tab Visibility optimization
  */
-export function useQRPairing({
-  deviceId,
-  isOpen,
-  onSuccess,
-  onError,
-}: UseQRPairingProps) {
+export function useQRPairing({ deviceId, isOpen, onSuccess, onError }: UseQRPairingProps) {
   const [pairMode, setPairMode] = useState<"QR" | "PHONE">("QR");
   const [qrCode, setQrCode] = useState<string | null>(null);
   const [pairingCode, setPairingCode] = useState<string | null>(null);
-  const [status, setStatus] = useState<DeviceStatus | "LOADING" | "ERROR" | "AUTHENTICATED">("LOADING");
+  const [status, setStatus] = useState<DeviceStatus | "LOADING" | "ERROR" | "AUTHENTICATED">(
+    "LOADING"
+  );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [countdown, setCountdown] = useState<number>(20);
   const [isLoadingCode, setIsLoadingCode] = useState<boolean>(false);
@@ -175,7 +172,10 @@ export function useQRPairing({
         if (isCancelled || !isMountedRef.current) return;
 
         const currentDev = devices.find((d) => d.id === deviceId);
-        if (currentDev && (currentDev.status === "CONNECTED" || (currentDev.status as string) === "ONLINE")) {
+        if (
+          currentDev &&
+          (currentDev.status === "CONNECTED" || (currentDev.status as string) === "ONLINE")
+        ) {
           setStatus("AUTHENTICATED");
           clearPollingResources();
           clearCountdown();
@@ -243,28 +243,31 @@ export function useQRPairing({
   }, [deviceId]);
 
   // 5. Request 8-Character Phone Pairing Code
-  const requestPairingCode = useCallback(async (phone: string) => {
-    if (!deviceId) return null;
-    setIsLoadingCode(true);
-    setErrorMessage(null);
+  const requestPairingCode = useCallback(
+    async (phone: string) => {
+      if (!deviceId) return null;
+      setIsLoadingCode(true);
+      setErrorMessage(null);
 
-    try {
-      const res = await whatsappApi.pairPhone(deviceId, phone);
-      if (!isMountedRef.current) return null;
+      try {
+        const res = await whatsappApi.pairPhone(deviceId, phone);
+        if (!isMountedRef.current) return null;
 
-      setPairingCode(res.pairing_code);
-      setStatus("PAIRING");
-      setIsLoadingCode(false);
-      return res.pairing_code;
-    } catch (err: unknown) {
-      if (!isMountedRef.current) return null;
-      const msg = err instanceof Error ? err.message : "Gagal meminta kode pairing nomor";
-      setErrorMessage(msg);
-      setIsLoadingCode(false);
-      onErrorRef.current?.(msg);
-      return null;
-    }
-  }, [deviceId]);
+        setPairingCode(res.pairing_code);
+        setStatus("PAIRING");
+        setIsLoadingCode(false);
+        return res.pairing_code;
+      } catch (err: unknown) {
+        if (!isMountedRef.current) return null;
+        const msg = err instanceof Error ? err.message : "Gagal meminta kode pairing nomor";
+        setErrorMessage(msg);
+        setIsLoadingCode(false);
+        onErrorRef.current?.(msg);
+        return null;
+      }
+    },
+    [deviceId]
+  );
 
   return {
     pairMode,

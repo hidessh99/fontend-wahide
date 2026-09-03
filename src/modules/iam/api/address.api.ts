@@ -1,12 +1,6 @@
 import { httpClient } from "@/lib/api/http-client";
 import { env } from "@/lib/config/env";
-import {
-  Province,
-  City,
-  District,
-  UserAddress,
-  UpsertAddressInput,
-} from "../types/address.types";
+import { Province, City, District, UserAddress, UpsertAddressInput } from "../types/address.types";
 
 const IAM_BASE = env.NEXT_PUBLIC_IAM_API_URL;
 const CODEPOS_BASE = "https://apicodepos.hidessh.com/api";
@@ -40,7 +34,9 @@ export const addressApi = {
     }
   },
 
-  upsertUserAddress: async (payload: UpsertAddressInput): Promise<{ success: boolean; message: string }> => {
+  upsertUserAddress: async (
+    payload: UpsertAddressInput
+  ): Promise<{ success: boolean; message: string }> => {
     const res = await httpClient.post(`${IAM_BASE}/users/address/upsert`, payload);
     return {
       success: res.success,

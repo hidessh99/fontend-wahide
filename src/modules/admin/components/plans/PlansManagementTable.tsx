@@ -109,24 +109,24 @@ export function PlansManagementTable() {
   return (
     <div className="space-y-5">
       {/* Search & Action Toolbar */}
-      <div className="p-3.5 sm:p-4 rounded-xl border border-border bg-surface dark:bg-[#161715] shadow-xs space-y-3">
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+      <div className="border-border bg-surface space-y-3 rounded-xl border p-3.5 shadow-xs sm:p-4 dark:bg-[#161715]">
+        <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
           {/* Search Form */}
-          <form onSubmit={handleSearchSubmit} className="flex-1 flex items-center gap-2">
+          <form onSubmit={handleSearchSubmit} className="flex flex-1 items-center gap-2">
             <div className="relative flex-1">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted pointer-events-none" />
+              <Search className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
               <input
                 type="text"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="Cari berdasarkan nama paket langganan..."
-                className="w-full h-10 pl-10 pr-9 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-emerald-600 dark:focus:border-wise-green focus:ring-2 focus:ring-emerald-500/20 dark:focus:ring-wise-green/20 outline-none transition text-xs"
+                className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-full border pr-9 pl-10 text-xs font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e]"
               />
               {(searchInput || searchQuery) && (
                 <button
                   type="button"
                   onClick={handleResetSearch}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 size-5 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
+                  className="text-foreground-muted hover:text-foreground hover:bg-muted absolute top-1/2 right-3 flex size-5 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full transition"
                   title="Hapus Pencarian"
                   aria-label="Hapus Pencarian"
                 >
@@ -138,21 +138,21 @@ export function PlansManagementTable() {
               type="submit"
               variant="primaryPill"
               size="sm"
-              className="h-10 px-4 text-xs font-bold shadow-xs shrink-0 cursor-pointer"
+              className="h-10 shrink-0 cursor-pointer px-4 text-xs font-bold shadow-xs"
             >
-              <Search className="size-3.5 mr-1" />
+              <Search className="mr-1 size-3.5" />
               <span>Cari</span>
             </Button>
           </form>
 
           {/* Action Buttons: Add Plan & Refresh */}
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex shrink-0 items-center gap-2">
             <Button
               variant="outline"
               size="sm"
               onClick={fetchPlans}
               disabled={isLoading}
-              className="rounded-full size-10 p-0 border-border hover:border-foreground-muted cursor-pointer shrink-0"
+              className="border-border hover:border-foreground-muted size-10 shrink-0 cursor-pointer rounded-full p-0"
               aria-label="Refresh Data Paket"
             >
               <RefreshCw className={`size-4 ${isLoading ? "animate-spin" : ""}`} />
@@ -162,7 +162,7 @@ export function PlansManagementTable() {
               variant="primaryPill"
               size="sm"
               onClick={handleOpenCreate}
-              className="h-10 px-4 text-xs font-extrabold gap-1.5 shadow-sm cursor-pointer"
+              className="h-10 cursor-pointer gap-1.5 px-4 text-xs font-extrabold shadow-sm"
             >
               <Plus className="size-4" />
               <span>Tambah Paket Baru</span>
@@ -172,17 +172,17 @@ export function PlansManagementTable() {
       </div>
 
       {/* Plans Data Table & Mobile View */}
-      <div className="rounded-xl border border-border bg-surface dark:bg-[#161715] overflow-hidden shadow-xs">
+      <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs dark:bg-[#161715]">
         {isLoading ? (
-          <div className="py-16 flex flex-col items-center justify-center space-y-3 text-foreground-muted">
-            <Loader2 className="size-7 animate-spin text-emerald-600 dark:text-wise-green" />
+          <div className="text-foreground-muted flex flex-col items-center justify-center space-y-3 py-16">
+            <Loader2 className="dark:text-wise-green size-7 animate-spin text-emerald-600" />
             <span className="text-xs font-bold">Memuat daftar paket langganan...</span>
           </div>
         ) : paginatedPlans.length === 0 ? (
-          <div className="p-10 text-center space-y-2">
-            <Layers className="size-8 mx-auto text-foreground-muted" />
-            <div className="text-xs font-bold text-foreground">Tidak Ada Paket Ditemukan</div>
-            <p className="text-[11px] text-foreground-muted max-w-sm mx-auto">
+          <div className="space-y-2 p-10 text-center">
+            <Layers className="text-foreground-muted mx-auto size-8" />
+            <div className="text-foreground text-xs font-bold">Tidak Ada Paket Ditemukan</div>
+            <p className="text-foreground-muted mx-auto max-w-sm text-[11px]">
               {searchQuery
                 ? `Tidak ditemukan hasil yang cocok dengan kata kunci "${searchQuery}".`
                 : "Belum ada paket langganan yang dikonfigurasi pada sistem."}
@@ -191,34 +191,37 @@ export function PlansManagementTable() {
         ) : (
           <div>
             {/* Mobile View: Cards (< 1024px) */}
-            <div className="lg:hidden divide-y divide-border/60">
+            <div className="divide-border/60 divide-y lg:hidden">
               {paginatedPlans.map((p) => {
                 const isFree = p.price === 0;
 
                 return (
-                  <div key={p.id} className="p-4 space-y-3 bg-surface dark:bg-[#161715]">
+                  <div key={p.id} className="bg-surface space-y-3 p-4 dark:bg-[#161715]">
                     {/* Header */}
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center gap-2.5">
-                        <div className="size-9 rounded-full bg-muted flex items-center justify-center font-black text-xs text-foreground shrink-0 border border-border">
+                        <div className="bg-muted text-foreground border-border flex size-9 shrink-0 items-center justify-center rounded-full border text-xs font-black">
                           <Layers className="size-4" />
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="font-bold text-sm text-foreground">{p.name}</span>
+                            <span className="text-foreground text-sm font-bold">{p.name}</span>
                             {isFree ? (
-                              <span className="px-1.5 py-0.5 rounded text-[10px] font-extrabold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                              <span className="rounded border border-blue-500/20 bg-blue-500/10 px-1.5 py-0.5 text-[10px] font-extrabold text-blue-600 dark:text-blue-400">
                                 Free Tier
                               </span>
                             ) : (
-                              <span className="px-1.5 py-0.5 rounded text-[10px] font-extrabold bg-emerald-500/10 text-emerald-700 dark:text-wise-green border border-emerald-500/20">
+                              <span className="dark:text-wise-green rounded border border-emerald-500/20 bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-extrabold text-emerald-700">
                                 Paid Tier
                               </span>
                             )}
                           </div>
-                          <span className="text-xs font-bold font-mono text-emerald-700 dark:text-wise-green">
+                          <span className="dark:text-wise-green font-mono text-xs font-bold text-emerald-700">
                             Rp {p.price.toLocaleString("id-ID")}
-                            <span className="text-[10px] font-normal text-foreground-muted"> / bulan</span>
+                            <span className="text-foreground-muted text-[10px] font-normal">
+                              {" "}
+                              / bulan
+                            </span>
                           </span>
                         </div>
                       </div>
@@ -228,16 +231,16 @@ export function PlansManagementTable() {
                           variant="outline"
                           size="sm"
                           onClick={() => handleOpenEdit(p)}
-                          className="size-8 rounded-full p-0 border-border"
+                          className="border-border size-8 rounded-full p-0"
                           title="Ubah Paket"
                         >
-                          <Edit2 className="size-3.5 text-emerald-600 dark:text-wise-green" />
+                          <Edit2 className="dark:text-wise-green size-3.5 text-emerald-600" />
                         </Button>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => handleOpenDelete(p)}
-                          className="size-8 rounded-full p-0 border-border text-rose-600 hover:bg-rose-500/10"
+                          className="border-border size-8 rounded-full p-0 text-rose-600 hover:bg-rose-500/10"
                           title="Hapus Paket"
                         >
                           <Trash2 className="size-3.5" />
@@ -246,28 +249,28 @@ export function PlansManagementTable() {
                     </div>
 
                     {/* Quotas & Limits */}
-                    <div className="grid grid-cols-3 gap-2 p-2.5 rounded-lg bg-muted/20 border border-border/50 text-xs">
+                    <div className="bg-muted/20 border-border/50 grid grid-cols-3 gap-2 rounded-lg border p-2.5 text-xs">
                       <div>
-                        <span className="text-[10px] uppercase font-bold text-foreground-muted block">
+                        <span className="text-foreground-muted block text-[10px] font-bold uppercase">
                           Kuota Pesan
                         </span>
-                        <span className="font-mono font-bold text-foreground">
+                        <span className="text-foreground font-mono font-bold">
                           {p.monthly_message_limit.toLocaleString("id-ID")}
                         </span>
                       </div>
                       <div>
-                        <span className="text-[10px] uppercase font-bold text-foreground-muted block">
+                        <span className="text-foreground-muted block text-[10px] font-bold uppercase">
                           Slot WA
                         </span>
-                        <span className="font-mono font-bold text-foreground">
+                        <span className="text-foreground font-mono font-bold">
                           {p.max_devices} Device
                         </span>
                       </div>
                       <div>
-                        <span className="text-[10px] uppercase font-bold text-foreground-muted block">
+                        <span className="text-foreground-muted block text-[10px] font-bold uppercase">
                           CS Agent
                         </span>
-                        <span className="font-mono font-bold text-foreground">
+                        <span className="text-foreground font-mono font-bold">
                           {p.max_agents} Agent
                         </span>
                       </div>
@@ -276,36 +279,36 @@ export function PlansManagementTable() {
                     {/* Capabilities Badges */}
                     <div className="flex flex-wrap gap-1.5 pt-1">
                       {p.allow_attachment && (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-muted text-foreground-secondary border border-border">
+                        <span className="bg-muted text-foreground-secondary border-border inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold">
                           <Paperclip className="size-2.5" />
                           <span>Lampiran</span>
                         </span>
                       )}
                       {p.allow_campaign && (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-muted text-foreground-secondary border border-border">
+                        <span className="bg-muted text-foreground-secondary border-border inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold">
                           <Send className="size-2.5" />
                           <span>Broadcast</span>
                         </span>
                       )}
                       {p.allow_autoreply && (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-muted text-foreground-secondary border border-border">
+                        <span className="bg-muted text-foreground-secondary border-border inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold">
                           <Bot className="size-2.5" />
                           <span>Bot / Auto-Reply</span>
                         </span>
                       )}
                       {p.allow_schedule && (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-muted text-foreground-secondary border border-border">
+                        <span className="bg-muted text-foreground-secondary border-border inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold">
                           <Clock className="size-2.5" />
                           <span>Jadwal</span>
                         </span>
                       )}
                       {p.has_watermark ? (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20">
+                        <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:text-amber-400">
                           <Tag className="size-2.5" />
                           <span>Watermark</span>
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-wise-green border border-emerald-500/20">
+                        <span className="dark:text-wise-green inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
                           <Sparkles className="size-2.5" />
                           <span>No Watermark</span>
                         </span>
@@ -317,45 +320,40 @@ export function PlansManagementTable() {
             </div>
 
             {/* Desktop Table View (>= 1024px) */}
-            <div className="hidden lg:block overflow-x-auto">
-              <table className="w-full text-left border-collapse">
+            <div className="hidden overflow-x-auto lg:block">
+              <table className="w-full border-collapse text-left">
                 <thead>
-                  <tr className="border-b border-border bg-muted/50 text-[11px] font-extrabold uppercase tracking-wider text-foreground-muted select-none">
-                    <th className="py-3.5 px-5 font-extrabold">Nama Paket</th>
-                    <th className="py-3.5 px-4 font-extrabold text-right">Harga / Bulan</th>
-                    <th className="py-3.5 px-4 font-extrabold text-right">Batas Kuota Pesan</th>
-                    <th className="py-3.5 px-3 font-extrabold text-center">Slot WhatsApp</th>
-                    <th className="py-3.5 px-3 font-extrabold text-center">Batas CS Agent</th>
-                    <th className="py-3.5 px-4 font-extrabold">Fitur &amp; Kemampuan</th>
-                    <th className="py-3.5 px-5 font-extrabold text-right">Aksi</th>
+                  <tr className="border-border bg-muted/50 text-foreground-muted border-b text-[11px] font-extrabold tracking-wider uppercase select-none">
+                    <th className="px-5 py-3.5 font-extrabold">Nama Paket</th>
+                    <th className="px-4 py-3.5 text-right font-extrabold">Harga / Bulan</th>
+                    <th className="px-4 py-3.5 text-right font-extrabold">Batas Kuota Pesan</th>
+                    <th className="px-3 py-3.5 text-center font-extrabold">Slot WhatsApp</th>
+                    <th className="px-3 py-3.5 text-center font-extrabold">Batas CS Agent</th>
+                    <th className="px-4 py-3.5 font-extrabold">Fitur &amp; Kemampuan</th>
+                    <th className="px-5 py-3.5 text-right font-extrabold">Aksi</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border/50 text-xs font-semibold">
+                <tbody className="divide-border/50 divide-y text-xs font-semibold">
                   {paginatedPlans.map((p) => {
                     const isFree = p.price === 0;
 
                     return (
-                      <tr
-                        key={p.id}
-                        className="hover:bg-muted/30 transition-colors group"
-                      >
+                      <tr key={p.id} className="hover:bg-muted/30 group transition-colors">
                         {/* 1. Nama Paket */}
-                        <td className="py-3.5 px-5">
+                        <td className="px-5 py-3.5">
                           <div className="flex items-center gap-2.5">
-                            <div className="size-8 rounded-full bg-muted flex items-center justify-center font-black text-xs text-foreground shrink-0 border border-border">
+                            <div className="bg-muted text-foreground border-border flex size-8 shrink-0 items-center justify-center rounded-full border text-xs font-black">
                               <Layers className="size-4" />
                             </div>
                             <div>
                               <div className="flex items-center gap-1.5">
-                                <span className="font-bold text-foreground text-sm">
-                                  {p.name}
-                                </span>
+                                <span className="text-foreground text-sm font-bold">{p.name}</span>
                                 {isFree ? (
-                                  <span className="px-1.5 py-0.2 rounded text-[10px] font-extrabold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                                  <span className="py-0.2 rounded border border-blue-500/20 bg-blue-500/10 px-1.5 text-[10px] font-extrabold text-blue-600 dark:text-blue-400">
                                     Free
                                   </span>
                                 ) : (
-                                  <span className="px-1.5 py-0.2 rounded text-[10px] font-extrabold bg-emerald-500/10 text-emerald-700 dark:text-wise-green border border-emerald-500/20">
+                                  <span className="py-0.2 dark:text-wise-green rounded border border-emerald-500/20 bg-emerald-500/10 px-1.5 text-[10px] font-extrabold text-emerald-700">
                                     Pro
                                   </span>
                                 )}
@@ -365,39 +363,39 @@ export function PlansManagementTable() {
                         </td>
 
                         {/* 2. Harga / Bulan */}
-                        <td className="py-3.5 px-4 text-right font-mono font-bold">
-                          <span className="text-emerald-700 dark:text-wise-green text-sm">
+                        <td className="px-4 py-3.5 text-right font-mono font-bold">
+                          <span className="dark:text-wise-green text-sm text-emerald-700">
                             Rp {p.price.toLocaleString("id-ID")}
                           </span>
-                          <span className="text-[10px] text-foreground-muted block font-normal">
+                          <span className="text-foreground-muted block text-[10px] font-normal">
                             / bulan
                           </span>
                         </td>
 
                         {/* 3. Batas Kuota Pesan */}
-                        <td className="py-3.5 px-4 text-right font-mono font-bold text-foreground">
+                        <td className="text-foreground px-4 py-3.5 text-right font-mono font-bold">
                           <span>{p.monthly_message_limit.toLocaleString("id-ID")}</span>
-                          <span className="text-[10px] text-foreground-muted block font-normal">
+                          <span className="text-foreground-muted block text-[10px] font-normal">
                             Pesan / bln
                           </span>
                         </td>
 
                         {/* 4. Slot WhatsApp */}
-                        <td className="py-3.5 px-3 text-center font-mono font-bold text-foreground">
+                        <td className="text-foreground px-3 py-3.5 text-center font-mono font-bold">
                           <span>{p.max_devices} Device</span>
                         </td>
 
                         {/* 5. Batas CS Agent */}
-                        <td className="py-3.5 px-3 text-center font-mono font-bold text-foreground">
+                        <td className="text-foreground px-3 py-3.5 text-center font-mono font-bold">
                           <span>{p.max_agents} Agent</span>
                         </td>
 
                         {/* 6. Fitur & Kemampuan */}
-                        <td className="py-3.5 px-4">
-                          <div className="flex flex-wrap items-center gap-1 max-w-70">
+                        <td className="px-4 py-3.5">
+                          <div className="flex max-w-70 flex-wrap items-center gap-1">
                             {p.allow_attachment && (
                               <span
-                                className="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded bg-muted text-foreground-secondary border border-border"
+                                className="bg-muted text-foreground-secondary border-border inline-flex items-center gap-0.5 rounded border px-1.5 py-0.5 text-[10px] font-bold"
                                 title="Izinkan Kirim Dokumen & Media"
                               >
                                 <Paperclip className="size-2.5" />
@@ -406,7 +404,7 @@ export function PlansManagementTable() {
                             )}
                             {p.allow_campaign && (
                               <span
-                                className="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded bg-muted text-foreground-secondary border border-border"
+                                className="bg-muted text-foreground-secondary border-border inline-flex items-center gap-0.5 rounded border px-1.5 py-0.5 text-[10px] font-bold"
                                 title="Izinkan Broadcast & Campaign"
                               >
                                 <Send className="size-2.5" />
@@ -415,7 +413,7 @@ export function PlansManagementTable() {
                             )}
                             {p.allow_autoreply && (
                               <span
-                                className="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded bg-muted text-foreground-secondary border border-border"
+                                className="bg-muted text-foreground-secondary border-border inline-flex items-center gap-0.5 rounded border px-1.5 py-0.5 text-[10px] font-bold"
                                 title="Izinkan Auto-Reply & Bot"
                               >
                                 <Bot className="size-2.5" />
@@ -424,7 +422,7 @@ export function PlansManagementTable() {
                             )}
                             {p.allow_schedule && (
                               <span
-                                className="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded bg-muted text-foreground-secondary border border-border"
+                                className="bg-muted text-foreground-secondary border-border inline-flex items-center gap-0.5 rounded border px-1.5 py-0.5 text-[10px] font-bold"
                                 title="Izinkan Pesan Terjadwal"
                               >
                                 <Clock className="size-2.5" />
@@ -433,7 +431,7 @@ export function PlansManagementTable() {
                             )}
                             {p.has_watermark ? (
                               <span
-                                className="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20"
+                                className="inline-flex items-center gap-0.5 rounded border border-amber-500/20 bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-bold text-amber-700 dark:text-amber-400"
                                 title="Dengan Watermark Broadcast"
                               >
                                 <Tag className="size-2.5" />
@@ -441,7 +439,7 @@ export function PlansManagementTable() {
                               </span>
                             ) : (
                               <span
-                                className="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-700 dark:text-wise-green border border-emerald-500/20"
+                                className="dark:text-wise-green inline-flex items-center gap-0.5 rounded border border-emerald-500/20 bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-bold text-emerald-700"
                                 title="100% Bebas Watermark"
                               >
                                 <Sparkles className="size-2.5" />
@@ -452,17 +450,17 @@ export function PlansManagementTable() {
                         </td>
 
                         {/* 7. Aksi */}
-                        <td className="py-3.5 px-5 text-right">
+                        <td className="px-5 py-3.5 text-right">
                           <div className="flex items-center justify-end gap-1.5">
                             <Button
                               type="button"
                               variant="outline"
                               size="sm"
                               onClick={() => handleOpenEdit(p)}
-                              className="h-8 px-2.5 rounded-full text-xs font-bold gap-1 border-border hover:border-foreground-muted hover:bg-muted"
+                              className="border-border hover:border-foreground-muted hover:bg-muted h-8 gap-1 rounded-full px-2.5 text-xs font-bold"
                               title="Ubah Konfigurasi Paket"
                             >
-                              <Edit2 className="size-3.5 text-emerald-600 dark:text-wise-green" />
+                              <Edit2 className="dark:text-wise-green size-3.5 text-emerald-600" />
                               <span>Ubah</span>
                             </Button>
 
@@ -471,7 +469,7 @@ export function PlansManagementTable() {
                               variant="outline"
                               size="sm"
                               onClick={() => handleOpenDelete(p)}
-                              className="h-8 px-2.5 rounded-full text-xs font-bold gap-1 border-border hover:border-rose-500/50 hover:bg-rose-500/10 text-rose-600"
+                              className="border-border h-8 gap-1 rounded-full px-2.5 text-xs font-bold text-rose-600 hover:border-rose-500/50 hover:bg-rose-500/10"
                               title="Hapus Paket"
                             >
                               <Trash2 className="size-3.5" />
@@ -490,20 +488,23 @@ export function PlansManagementTable() {
 
         {/* Responsive Pagination Footer */}
         {total > 0 && (
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 sm:px-5 sm:py-3.5 border-t border-border bg-muted/20">
+          <div className="border-border bg-muted/20 flex flex-col items-center justify-between gap-3 border-t p-3.5 sm:flex-row sm:px-5 sm:py-3.5">
             {/* Item count summary & Page size selector */}
-            <div className="flex items-center gap-3 text-xs font-semibold text-foreground-secondary">
+            <div className="text-foreground-secondary flex items-center gap-3 text-xs font-semibold">
               <span>
-                Menampilkan <strong className="text-foreground">{startItem} - {endItem}</strong> dari{" "}
-                <strong className="text-foreground">{total}</strong> paket langganan
+                Menampilkan{" "}
+                <strong className="text-foreground">
+                  {startItem} - {endItem}
+                </strong>{" "}
+                dari <strong className="text-foreground">{total}</strong> paket langganan
               </span>
 
-              <div className="flex items-center gap-1.5 text-xs text-foreground-muted">
+              <div className="text-foreground-muted flex items-center gap-1.5 text-xs">
                 <span>| Baris:</span>
                 <select
                   value={pageSize}
                   onChange={(e) => setPageSize(Number(e.target.value))}
-                  className="h-7 px-2 rounded-md bg-surface dark:bg-[#10110e] border border-border text-foreground font-bold text-xs outline-none cursor-pointer"
+                  className="bg-surface border-border text-foreground h-7 cursor-pointer rounded-md border px-2 text-xs font-bold outline-none dark:bg-[#10110e]"
                 >
                   <option value={10}>10</option>
                   <option value={25}>25</option>
@@ -520,7 +521,7 @@ export function PlansManagementTable() {
                 size="sm"
                 onClick={prevPage}
                 disabled={page <= 1}
-                className="h-8 px-2.5 rounded-full text-xs font-bold gap-1 border-border hover:border-foreground-muted cursor-pointer disabled:opacity-40"
+                className="border-border hover:border-foreground-muted h-8 cursor-pointer gap-1 rounded-full px-2.5 text-xs font-bold disabled:opacity-40"
               >
                 <ChevronLeft className="size-3.5" />
                 <span className="hidden sm:inline">Sebelumnya</span>
@@ -532,10 +533,10 @@ export function PlansManagementTable() {
                   key={p}
                   type="button"
                   onClick={() => setPage(p)}
-                  className={`size-8 rounded-full text-xs font-bold transition cursor-pointer flex items-center justify-center ${
+                  className={`flex size-8 cursor-pointer items-center justify-center rounded-full text-xs font-bold transition ${
                     page === p
-                      ? "bg-emerald-600 dark:bg-wise-green text-white dark:text-black font-black shadow-xs"
-                      : "text-foreground-secondary hover:bg-muted border border-border"
+                      ? "dark:bg-wise-green bg-emerald-600 font-black text-white shadow-xs dark:text-black"
+                      : "text-foreground-secondary hover:bg-muted border-border border"
                   }`}
                 >
                   {p}
@@ -548,7 +549,7 @@ export function PlansManagementTable() {
                 size="sm"
                 onClick={nextPage}
                 disabled={page >= totalPages}
-                className="h-8 px-2.5 rounded-full text-xs font-bold gap-1 border-border hover:border-foreground-muted cursor-pointer disabled:opacity-40"
+                className="border-border hover:border-foreground-muted h-8 cursor-pointer gap-1 rounded-full px-2.5 text-xs font-bold disabled:opacity-40"
               >
                 <span className="hidden sm:inline">Berikutnya</span>
                 <ChevronRight className="size-3.5" />

@@ -12,31 +12,31 @@ export function CampaignsView() {
   const [activeTab, setActiveTab] = useState<"campaigns" | "logs">("campaigns");
 
   return (
-    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto p-3 sm:p-6 lg:p-8">
+    <div className="mx-auto max-w-7xl space-y-6 p-3 sm:space-y-8 sm:p-6 lg:p-8">
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5 sm:pb-6">
+      <div className="border-border flex flex-col justify-between gap-4 border-b pb-5 sm:flex-row sm:items-center sm:pb-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
-            <div className="size-8 sm:size-9 rounded-full bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green flex items-center justify-center shrink-0">
+            <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-8 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700 sm:size-9">
               <Send className="size-4 sm:size-5" />
             </div>
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-foreground tracking-tight">
+            <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl lg:text-3xl">
               {t("campaign.title")}
             </h1>
           </div>
-          <p className="text-xs sm:text-sm font-semibold text-foreground-secondary max-w-2xl">
+          <p className="text-foreground-secondary max-w-2xl text-xs font-semibold sm:text-sm">
             {t("campaign.subtitle")}
           </p>
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex items-center p-1 rounded-full bg-muted border border-border text-xs font-bold self-start sm:self-auto">
+        <div className="bg-muted border-border flex items-center self-start rounded-full border p-1 text-xs font-bold sm:self-auto">
           <button
             type="button"
             onClick={() => setActiveTab("campaigns")}
-            className={`px-4 py-1.5 rounded-full transition cursor-pointer flex items-center gap-1.5 ${
+            className={`flex cursor-pointer items-center gap-1.5 rounded-full px-4 py-1.5 transition ${
               activeTab === "campaigns"
-                ? "bg-surface dark:bg-[#161715] text-foreground shadow-sm font-extrabold"
+                ? "bg-surface text-foreground font-extrabold shadow-sm dark:bg-[#161715]"
                 : "text-foreground-secondary hover:text-foreground"
             }`}
           >
@@ -46,9 +46,9 @@ export function CampaignsView() {
           <button
             type="button"
             onClick={() => setActiveTab("logs")}
-            className={`px-4 py-1.5 rounded-full transition cursor-pointer flex items-center gap-1.5 ${
+            className={`flex cursor-pointer items-center gap-1.5 rounded-full px-4 py-1.5 transition ${
               activeTab === "logs"
-                ? "bg-surface dark:bg-[#161715] text-foreground shadow-sm font-extrabold"
+                ? "bg-surface text-foreground font-extrabold shadow-sm dark:bg-[#161715]"
                 : "text-foreground-secondary hover:text-foreground"
             }`}
           >

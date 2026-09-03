@@ -98,23 +98,21 @@ export function SubscriptionDetailModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity animate-in fade-in"
+        className="animate-in fade-in fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
         onClick={onClose}
       />
 
       {/* Dialog */}
-      <div className="relative z-10 w-full max-w-lg rounded-2xl border border-border bg-surface dark:bg-[#161715] shadow-2xl p-5 sm:p-6 space-y-4 animate-in fade-in zoom-in-95 max-h-[90vh] flex flex-col">
+      <div className="border-border bg-surface animate-in fade-in zoom-in-95 relative z-10 flex max-h-[90vh] w-full max-w-lg flex-col space-y-4 rounded-2xl border p-5 shadow-2xl sm:p-6 dark:bg-[#161715]">
         {/* Header */}
-        <div className="flex items-start justify-between gap-3 border-b border-border pb-3.5 shrink-0">
+        <div className="border-border flex shrink-0 items-start justify-between gap-3 border-b pb-3.5">
           <div className="flex items-center gap-2.5">
-            <div className="size-9 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-wise-green flex items-center justify-center shrink-0">
+            <div className="dark:text-wise-green flex size-9 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600">
               <CreditCard className="size-4.5" />
             </div>
             <div>
-              <h2 className="text-base font-black text-foreground tracking-tight">
-                {planName}
-              </h2>
-              <span className="font-mono text-[11px] text-foreground-muted block">
+              <h2 className="text-foreground text-base font-black tracking-tight">{planName}</h2>
+              <span className="text-foreground-muted block font-mono text-[11px]">
                 ID: {subscription.id}
               </span>
             </div>
@@ -123,7 +121,7 @@ export function SubscriptionDetailModal({
           <button
             type="button"
             onClick={onClose}
-            className="size-7 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
+            className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-7 cursor-pointer items-center justify-center rounded-full transition"
             aria-label="Tutup"
           >
             <X className="size-4" />
@@ -131,19 +129,19 @@ export function SubscriptionDetailModal({
         </div>
 
         {/* Scrollable Content */}
-        <div className="space-y-4 overflow-y-auto flex-1 pr-1 text-xs">
+        <div className="flex-1 space-y-4 overflow-y-auto pr-1 text-xs">
           {/* Status & Plan Info Bar */}
-          <div className="p-3 rounded-xl border border-border bg-muted/20 flex items-center justify-between">
+          <div className="border-border bg-muted/20 flex items-center justify-between rounded-xl border p-3">
             <div>
-              <span className="text-[10px] text-foreground-muted font-bold uppercase block">
+              <span className="text-foreground-muted block text-[10px] font-bold uppercase">
                 Harga Langganan
               </span>
-              <span className="text-sm font-black font-mono text-foreground">
+              <span className="text-foreground font-mono text-sm font-black">
                 {formatCurrency(plan?.price ?? 0)} / bulan
               </span>
             </div>
             <span
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-black uppercase tracking-wider border ${statusVisual.color}`}
+              className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-black tracking-wider uppercase ${statusVisual.color}`}
             >
               {statusVisual.icon}
               <span>{statusVisual.label}</span>
@@ -151,25 +149,26 @@ export function SubscriptionDetailModal({
           </div>
 
           {/* Monthly Quota Progress Box */}
-          <div className="p-3.5 rounded-xl border border-border bg-surface dark:bg-[#10110e] space-y-2">
+          <div className="border-border bg-surface space-y-2 rounded-xl border p-3.5 dark:bg-[#10110e]">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-foreground-secondary">
+              <span className="text-foreground-secondary text-[11px] font-bold tracking-wider uppercase">
                 Penggunaan Kuota Pesan Bulanan
               </span>
-              <span className="font-mono font-bold text-foreground">
-                {quotaUsed.toLocaleString("id-ID")} / {quotaLimit.toLocaleString("id-ID")} ({usagePercentage}%)
+              <span className="text-foreground font-mono font-bold">
+                {quotaUsed.toLocaleString("id-ID")} / {quotaLimit.toLocaleString("id-ID")} (
+                {usagePercentage}%)
               </span>
             </div>
 
             {/* Progress bar */}
-            <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
+            <div className="bg-muted h-2 w-full overflow-hidden rounded-full">
               <div
                 className={`h-full rounded-full transition-all duration-300 ${
                   usagePercentage >= 90
                     ? "bg-rose-500"
                     : usagePercentage >= 70
-                    ? "bg-amber-500"
-                    : "bg-emerald-600 dark:bg-wise-green"
+                      ? "bg-amber-500"
+                      : "dark:bg-wise-green bg-emerald-600"
                 }`}
                 style={{ width: `${usagePercentage}%` }}
               />
@@ -178,25 +177,25 @@ export function SubscriptionDetailModal({
 
           {/* Limits & Capability Strip */}
           <div className="grid grid-cols-2 gap-2">
-            <div className="p-2.5 rounded-lg border border-border bg-muted/20 flex items-center gap-2">
-              <Smartphone className="size-4 text-emerald-600 dark:text-wise-green shrink-0" />
+            <div className="border-border bg-muted/20 flex items-center gap-2 rounded-lg border p-2.5">
+              <Smartphone className="dark:text-wise-green size-4 shrink-0 text-emerald-600" />
               <div>
-                <span className="text-[10px] text-foreground-muted font-bold uppercase block">
+                <span className="text-foreground-muted block text-[10px] font-bold uppercase">
                   Maks. Perangkat WA
                 </span>
-                <span className="font-mono font-bold text-foreground">
+                <span className="text-foreground font-mono font-bold">
                   {plan?.max_devices ?? 1} Slot
                 </span>
               </div>
             </div>
 
-            <div className="p-2.5 rounded-lg border border-border bg-muted/20 flex items-center gap-2">
-              <Users className="size-4 text-blue-500 shrink-0" />
+            <div className="border-border bg-muted/20 flex items-center gap-2 rounded-lg border p-2.5">
+              <Users className="size-4 shrink-0 text-blue-500" />
               <div>
-                <span className="text-[10px] text-foreground-muted font-bold uppercase block">
+                <span className="text-foreground-muted block text-[10px] font-bold uppercase">
                   Maks. Agen CS
                 </span>
-                <span className="font-mono font-bold text-foreground">
+                <span className="text-foreground font-mono font-bold">
                   {plan?.max_agents ?? 0} Agen
                 </span>
               </div>
@@ -204,19 +203,19 @@ export function SubscriptionDetailModal({
           </div>
 
           {/* Technical Metadata Grid */}
-          <div className="p-3.5 rounded-xl border border-border bg-muted/20 space-y-2.5 text-xs">
+          <div className="border-border bg-muted/20 space-y-2.5 rounded-xl border p-3.5 text-xs">
             {/* Tenant Info */}
             <div className="flex items-center justify-between">
-              <span className="text-foreground-secondary font-semibold flex items-center gap-1.5">
-                <Building2 className="size-3.5 text-foreground-muted" />
+              <span className="text-foreground-secondary flex items-center gap-1.5 font-semibold">
+                <Building2 className="text-foreground-muted size-3.5" />
                 <span>Tenant / Organisasi:</span>
               </span>
               <div className="flex items-center gap-1.5">
-                <span className="font-bold text-foreground">{tenantName}</span>
+                <span className="text-foreground font-bold">{tenantName}</span>
                 <button
                   type="button"
                   onClick={() => handleCopy(subscription.tenantId, "Tenant ID")}
-                  className="p-1 hover:bg-muted rounded text-foreground-muted hover:text-foreground cursor-pointer"
+                  className="hover:bg-muted text-foreground-muted hover:text-foreground cursor-pointer rounded p-1"
                   title="Salin Tenant ID"
                 >
                   {copiedField === "Tenant ID" ? (
@@ -229,16 +228,16 @@ export function SubscriptionDetailModal({
             </div>
 
             {/* Plan ID */}
-            <div className="flex items-center justify-between pt-2 border-t border-border/50">
+            <div className="border-border/50 flex items-center justify-between border-t pt-2">
               <span className="text-foreground-secondary font-semibold">Plan ID:</span>
               <div className="flex items-center gap-1.5">
-                <span className="font-mono text-[11px] text-foreground-muted select-text">
+                <span className="text-foreground-muted font-mono text-[11px] select-text">
                   {subscription.planId}
                 </span>
                 <button
                   type="button"
                   onClick={() => handleCopy(subscription.planId, "Plan ID")}
-                  className="p-1 hover:bg-muted rounded text-foreground-muted hover:text-foreground cursor-pointer"
+                  className="hover:bg-muted text-foreground-muted hover:text-foreground cursor-pointer rounded p-1"
                   title="Salin Plan ID"
                 >
                   {copiedField === "Plan ID" ? (
@@ -251,20 +250,20 @@ export function SubscriptionDetailModal({
             </div>
 
             {/* Started At */}
-            <div className="flex items-center justify-between pt-2 border-t border-border/50">
-              <span className="text-foreground-secondary font-semibold flex items-center gap-1.5">
-                <Calendar className="size-3.5 text-foreground-muted" />
+            <div className="border-border/50 flex items-center justify-between border-t pt-2">
+              <span className="text-foreground-secondary flex items-center gap-1.5 font-semibold">
+                <Calendar className="text-foreground-muted size-3.5" />
                 <span>Mulai Aktif:</span>
               </span>
-              <span className="font-mono text-[11px] text-foreground font-semibold">
+              <span className="text-foreground font-mono text-[11px] font-semibold">
                 {formatDateTime(subscription.startedAt)}
               </span>
             </div>
 
             {/* Expired At */}
-            <div className="flex items-center justify-between pt-2 border-t border-border/50">
-              <span className="text-foreground-secondary font-semibold flex items-center gap-1.5">
-                <Clock className="size-3.5 text-foreground-muted" />
+            <div className="border-border/50 flex items-center justify-between border-t pt-2">
+              <span className="text-foreground-secondary flex items-center gap-1.5 font-semibold">
+                <Clock className="text-foreground-muted size-3.5" />
                 <span>Batas Waktu (Expired At):</span>
               </span>
               <span
@@ -277,9 +276,9 @@ export function SubscriptionDetailModal({
             </div>
 
             {/* Created At */}
-            <div className="flex items-center justify-between pt-2 border-t border-border/50">
+            <div className="border-border/50 flex items-center justify-between border-t pt-2">
               <span className="text-foreground-secondary font-semibold">Dibuat Pada:</span>
-              <span className="font-mono text-[11px] text-foreground-secondary">
+              <span className="text-foreground-secondary font-mono text-[11px]">
                 {formatDateTime(subscription.createdAt)}
               </span>
             </div>
@@ -287,13 +286,13 @@ export function SubscriptionDetailModal({
         </div>
 
         {/* Footer */}
-        <div className="pt-2 border-t border-border flex justify-end shrink-0">
+        <div className="border-border flex shrink-0 justify-end border-t pt-2">
           <Button
             type="button"
             variant="outline"
             size="sm"
             onClick={onClose}
-            className="h-8.5 px-4 text-xs font-bold rounded-full border-border hover:bg-muted cursor-pointer"
+            className="border-border hover:bg-muted h-8.5 cursor-pointer rounded-full px-4 text-xs font-bold"
           >
             Tutup
           </Button>

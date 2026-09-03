@@ -48,19 +48,15 @@ export function DeleteContactModal({
     ? t("contact.deleteBulkTitle", { count: String(bulkCount) })
     : t("contact.deleteConfirmTitle");
 
-  const desc = isBulk
-    ? t("contact.deleteBulkDesc")
-    : t("contact.deleteConfirmDesc");
+  const desc = isBulk ? t("contact.deleteBulkDesc") : t("contact.deleteConfirmDesc");
 
-  const confirmText = isBulk
-    ? t("contact.confirmBulkDelete")
-    : t("contact.confirmDelete");
+  const confirmText = isBulk ? t("contact.confirmBulkDelete") : t("contact.confirmDelete");
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity animate-in fade-in"
+        className="animate-in fade-in fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
         onClick={!isDeleting ? onClose : undefined}
       />
 
@@ -69,16 +65,19 @@ export function DeleteContactModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="delete-dialog-title"
-        className="relative z-10 w-full max-w-md bg-surface dark:bg-[#161715] border border-border rounded-xl shadow-2xl overflow-hidden animate-in zoom-in-95"
+        className="bg-surface border-border animate-in zoom-in-95 relative z-10 w-full max-w-md overflow-hidden rounded-xl border shadow-2xl dark:bg-[#161715]"
       >
         {/* Header */}
-        <div className="flex items-start justify-between p-6 pb-4 border-b border-border/60">
+        <div className="border-border/60 flex items-start justify-between border-b p-6 pb-4">
           <div className="flex items-center gap-3.5">
-            <div className="size-10 rounded-full bg-rose-500/10 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-rose-500/10 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400">
               <AlertTriangle className="size-5" />
             </div>
             <div>
-              <h3 id="delete-dialog-title" className="text-base sm:text-lg font-bold text-foreground tracking-tight">
+              <h3
+                id="delete-dialog-title"
+                className="text-foreground text-base font-bold tracking-tight sm:text-lg"
+              >
                 {title}
               </h3>
             </div>
@@ -87,7 +86,7 @@ export function DeleteContactModal({
             type="button"
             onClick={onClose}
             disabled={isDeleting}
-            className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer disabled:opacity-50"
+            className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-8 cursor-pointer items-center justify-center rounded-full transition disabled:opacity-50"
             aria-label={t("contact.cancel")}
           >
             <X className="size-4" />
@@ -95,38 +94,34 @@ export function DeleteContactModal({
         </div>
 
         {/* Body Content */}
-        <div className="p-6 space-y-4 text-sm text-foreground-secondary">
+        <div className="text-foreground-secondary space-y-4 p-6 text-sm">
           {/* Target Identity Highlight */}
           {!isBulk && contact && (
-            <div className="p-3.5 rounded-lg bg-muted/40 border border-border/80 space-y-1">
-              <div className="font-bold text-foreground text-sm sm:text-base">
-                {contact.name}
-              </div>
-              <div className="font-mono text-xs sm:text-sm text-foreground-secondary">
+            <div className="bg-muted/40 border-border/80 space-y-1 rounded-lg border p-3.5">
+              <div className="text-foreground text-sm font-bold sm:text-base">{contact.name}</div>
+              <div className="text-foreground-secondary font-mono text-xs sm:text-sm">
                 +{contact.phone}
               </div>
             </div>
           )}
 
           {isBulk && (
-            <div className="p-3.5 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-700 dark:text-rose-300 font-bold text-sm">
+            <div className="rounded-lg border border-rose-500/20 bg-rose-500/10 p-3.5 text-sm font-bold text-rose-700 dark:text-rose-300">
               {bulkCount} kontak terpilih akan dihapus permanen.
             </div>
           )}
 
-          <p className="leading-relaxed text-xs sm:text-sm text-foreground-muted">
-            {desc}
-          </p>
+          <p className="text-foreground-muted text-xs leading-relaxed sm:text-sm">{desc}</p>
         </div>
 
         {/* Footer Actions */}
-        <div className="flex items-center justify-end gap-2.5 p-6 pt-4 border-t border-border/60 bg-muted/20">
+        <div className="border-border/60 bg-muted/20 flex items-center justify-end gap-2.5 border-t p-6 pt-4">
           <Button
             type="button"
             variant="outline"
             onClick={onClose}
             disabled={isDeleting}
-            className="h-10 px-4 rounded-full text-xs sm:text-sm font-bold border-border cursor-pointer"
+            className="border-border h-10 cursor-pointer rounded-full px-4 text-xs font-bold sm:text-sm"
           >
             {t("contact.cancel")}
           </Button>
@@ -135,7 +130,7 @@ export function DeleteContactModal({
             type="button"
             onClick={handleConfirm}
             disabled={isDeleting}
-            className="h-10 px-5 rounded-full text-xs sm:text-sm font-bold bg-rose-600 hover:bg-rose-700 text-white shadow-sm gap-2 cursor-pointer disabled:opacity-50"
+            className="h-10 cursor-pointer gap-2 rounded-full bg-rose-600 px-5 text-xs font-bold text-white shadow-sm hover:bg-rose-700 disabled:opacity-50 sm:text-sm"
           >
             {isDeleting ? (
               <>

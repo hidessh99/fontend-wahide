@@ -48,42 +48,42 @@ function getDeviceStatusBadge(status: string) {
   switch (upper) {
     case "ONLINE":
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/10 text-emerald-700 dark:text-wise-green border border-emerald-500/20">
+        <span className="dark:text-wise-green inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-black tracking-wider text-emerald-700 uppercase">
           <Wifi className="size-3" />
           <span>Online</span>
         </span>
       );
     case "OFFLINE":
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-muted text-foreground-secondary border border-border">
+        <span className="bg-muted text-foreground-secondary border-border inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase">
           <WifiOff className="size-3" />
           <span>Offline</span>
         </span>
       );
     case "QR_PENDING":
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20">
+        <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-[10px] font-black tracking-wider text-amber-700 uppercase dark:text-amber-400">
           <QrCode className="size-3" />
           <span>Scan QR</span>
         </span>
       );
     case "HIBERNATED":
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+        <span className="inline-flex items-center gap-1 rounded-full border border-blue-500/20 bg-blue-500/10 px-2 py-0.5 text-[10px] font-black tracking-wider text-blue-600 uppercase dark:text-blue-400">
           <Moon className="size-3" />
           <span>Hibernasi</span>
         </span>
       );
     case "BANNED":
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+        <span className="inline-flex items-center gap-1 rounded-full border border-rose-500/20 bg-rose-500/10 px-2 py-0.5 text-[10px] font-black tracking-wider text-rose-600 uppercase dark:text-rose-400">
           <Ban className="size-3" />
           <span>Banned</span>
         </span>
       );
     default:
       return (
-        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-muted text-foreground-secondary border border-border">
+        <span className="bg-muted text-foreground-secondary border-border rounded-full border px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase">
           {status}
         </span>
       );
@@ -110,8 +110,12 @@ export function DevicesManagementTable({
   onPrevPage,
 }: DevicesManagementTableProps) {
   const [searchInput, setSearchInput] = useState("");
-  const [selectedDeviceForDelete, setSelectedDeviceForDelete] = useState<AdminDeviceItem | null>(null);
-  const [selectedDeviceForDetail, setSelectedDeviceForDetail] = useState<AdminDeviceItem | null>(null);
+  const [selectedDeviceForDelete, setSelectedDeviceForDelete] = useState<AdminDeviceItem | null>(
+    null
+  );
+  const [selectedDeviceForDetail, setSelectedDeviceForDetail] = useState<AdminDeviceItem | null>(
+    null
+  );
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
@@ -153,24 +157,24 @@ export function DevicesManagementTable({
   return (
     <div className="space-y-4">
       {/* Search & Filter Toolbar */}
-      <div className="p-3.5 sm:p-4 rounded-xl border border-border bg-surface dark:bg-[#161715] shadow-xs">
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+      <div className="border-border bg-surface rounded-xl border p-3.5 shadow-xs sm:p-4 dark:bg-[#161715]">
+        <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
           {/* Search Form */}
-          <form onSubmit={handleSearchSubmit} className="flex-1 flex items-center gap-2">
+          <form onSubmit={handleSearchSubmit} className="flex flex-1 items-center gap-2">
             <div className="relative flex-1">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted pointer-events-none" />
+              <Search className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
               <input
                 type="text"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="Cari berdasarkan nama perangkat, nomor WhatsApp, ID, atau Tenant..."
-                className="w-full h-10 pl-10 pr-9 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-emerald-600 dark:focus:border-wise-green focus:ring-2 focus:ring-emerald-500/20 dark:focus:ring-wise-green/20 outline-none transition text-xs"
+                className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-full border pr-9 pl-10 text-xs font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e]"
               />
               {(searchInput || searchQuery) && (
                 <button
                   type="button"
                   onClick={handleResetSearch}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 size-5 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
+                  className="text-foreground-muted hover:text-foreground hover:bg-muted absolute top-1/2 right-3 flex size-5 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full transition"
                   title="Hapus Pencarian"
                   aria-label="Hapus Pencarian"
                 >
@@ -182,19 +186,19 @@ export function DevicesManagementTable({
               type="submit"
               variant="primaryPill"
               size="sm"
-              className="h-10 px-4 text-xs font-bold shadow-xs shrink-0 cursor-pointer"
+              className="h-10 shrink-0 cursor-pointer px-4 text-xs font-bold shadow-xs"
             >
-              <Search className="size-3.5 mr-1" />
+              <Search className="mr-1 size-3.5" />
               <span>Cari</span>
             </Button>
           </form>
 
           {/* Filter Status & Refresh */}
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex shrink-0 items-center gap-2">
             <select
               value={statusFilter}
               onChange={(e) => onStatusFilterChange(e.target.value)}
-              className="h-10 px-3.5 rounded-full bg-surface dark:bg-[#10110e] text-foreground text-xs font-semibold border border-border outline-none focus:border-emerald-600 dark:focus:border-wise-green cursor-pointer"
+              className="bg-surface text-foreground border-border dark:focus:border-wise-green h-10 cursor-pointer rounded-full border px-3.5 text-xs font-semibold outline-none focus:border-emerald-600 dark:bg-[#10110e]"
             >
               <option value="ALL">Semua Status</option>
               <option value="ONLINE">🟢 Online (Tersambung)</option>
@@ -209,7 +213,7 @@ export function DevicesManagementTable({
               size="sm"
               onClick={onRefresh}
               disabled={isLoading}
-              className="rounded-full size-10 p-0 border-border hover:border-foreground-muted cursor-pointer shrink-0"
+              className="border-border hover:border-foreground-muted size-10 shrink-0 cursor-pointer rounded-full p-0"
               aria-label="Refresh Data Perangkat"
             >
               <RefreshCw className={`size-4 ${isLoading ? "animate-spin" : ""}`} />
@@ -219,17 +223,17 @@ export function DevicesManagementTable({
       </div>
 
       {/* Devices Table & Mobile View */}
-      <div className="rounded-xl border border-border bg-surface dark:bg-[#161715] overflow-hidden shadow-xs">
+      <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs dark:bg-[#161715]">
         {isLoading ? (
-          <div className="py-16 flex flex-col items-center justify-center space-y-3 text-foreground-muted">
-            <Loader2 className="size-7 animate-spin text-emerald-600 dark:text-wise-green" />
+          <div className="text-foreground-muted flex flex-col items-center justify-center space-y-3 py-16">
+            <Loader2 className="dark:text-wise-green size-7 animate-spin text-emerald-600" />
             <span className="text-xs font-bold">Memuat data perangkat WhatsApp...</span>
           </div>
         ) : devices.length === 0 ? (
-          <div className="p-10 text-center space-y-2">
-            <Smartphone className="size-8 mx-auto text-foreground-muted" />
-            <div className="text-xs font-bold text-foreground">Tidak Ada Perangkat Ditemukan</div>
-            <p className="text-[11px] text-foreground-muted max-w-sm mx-auto">
+          <div className="space-y-2 p-10 text-center">
+            <Smartphone className="text-foreground-muted mx-auto size-8" />
+            <div className="text-foreground text-xs font-bold">Tidak Ada Perangkat Ditemukan</div>
+            <p className="text-foreground-muted mx-auto max-w-sm text-[11px]">
               {searchQuery
                 ? `Tidak ditemukan perangkat dengan kata kunci "${searchQuery}".`
                 : "Saat ini belum ada perangkat WhatsApp yang terdaftar di sistem."}
@@ -238,15 +242,15 @@ export function DevicesManagementTable({
         ) : (
           <div>
             {/* Mobile View: Cards (< 1024px) */}
-            <div className="lg:hidden divide-y divide-border/60">
+            <div className="divide-border/60 divide-y lg:hidden">
               {devices.map((d) => (
-                <div key={d.id} className="p-4 space-y-3 bg-surface dark:bg-[#161715]">
+                <div key={d.id} className="bg-surface space-y-3 p-4 dark:bg-[#161715]">
                   <div className="flex items-start justify-between gap-2">
                     <div className="space-y-0.5">
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-sm text-foreground">{d.pushName}</span>
+                        <span className="text-foreground text-sm font-bold">{d.pushName}</span>
                       </div>
-                      <span className="font-mono text-xs text-foreground-secondary font-bold block">
+                      <span className="text-foreground-secondary block font-mono text-xs font-bold">
                         {d.jid || "(Belum terhubung)"}
                       </span>
                     </div>
@@ -255,33 +259,45 @@ export function DevicesManagementTable({
                   </div>
 
                   {/* Metrics Bar */}
-                  <div className="grid grid-cols-3 gap-2 p-2.5 rounded-lg border border-border bg-muted/20 text-center text-xs">
+                  <div className="border-border bg-muted/20 grid grid-cols-3 gap-2 rounded-lg border p-2.5 text-center text-xs">
                     <div>
-                      <span className="text-[10px] text-foreground-muted uppercase font-bold block">Trust</span>
-                      <span className="font-mono font-bold text-foreground">{d.trustScore}/100</span>
+                      <span className="text-foreground-muted block text-[10px] font-bold uppercase">
+                        Trust
+                      </span>
+                      <span className="text-foreground font-mono font-bold">
+                        {d.trustScore}/100
+                      </span>
                     </div>
                     <div>
-                      <span className="text-[10px] text-foreground-muted uppercase font-bold block">Warmup</span>
-                      <span className="font-mono font-bold text-foreground">H-{d.warmupDay}</span>
+                      <span className="text-foreground-muted block text-[10px] font-bold uppercase">
+                        Warmup
+                      </span>
+                      <span className="text-foreground font-mono font-bold">H-{d.warmupDay}</span>
                     </div>
                     <div>
-                      <span className="text-[10px] text-foreground-muted uppercase font-bold block">Terkirim</span>
-                      <span className="font-mono font-bold text-teal-600 dark:text-teal-400">{d.dailySentCount}</span>
+                      <span className="text-foreground-muted block text-[10px] font-bold uppercase">
+                        Terkirim
+                      </span>
+                      <span className="font-mono font-bold text-teal-600 dark:text-teal-400">
+                        {d.dailySentCount}
+                      </span>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between text-[11px] text-foreground-muted pt-1">
-                    <span className="font-mono text-[10px] truncate max-w-30">Ten: {d.tenantId.slice(0, 10)}...</span>
+                  <div className="text-foreground-muted flex items-center justify-between pt-1 text-[11px]">
+                    <span className="max-w-30 truncate font-mono text-[10px]">
+                      Ten: {d.tenantId.slice(0, 10)}...
+                    </span>
                     <span>{formatDateTime(d.createdAt)}</span>
                   </div>
 
                   {/* Actions */}
-                  <div className="pt-2 border-t border-border/50 flex items-center justify-end gap-2">
+                  <div className="border-border/50 flex items-center justify-end gap-2 border-t pt-2">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => handleOpenDetail(d)}
-                      className="h-8 px-2.5 rounded-full text-xs font-bold gap-1 border-border hover:bg-muted cursor-pointer"
+                      className="border-border hover:bg-muted h-8 cursor-pointer gap-1 rounded-full px-2.5 text-xs font-bold"
                     >
                       <Eye className="size-3.5" />
                       <span>Detail</span>
@@ -291,7 +307,7 @@ export function DevicesManagementTable({
                       variant="outline"
                       size="sm"
                       onClick={() => handleOpenDelete(d)}
-                      className="h-8 size-8 p-0 rounded-full border-border hover:border-rose-500/50 hover:bg-rose-500/10 text-rose-600 cursor-pointer"
+                      className="border-border size-8 h-8 cursor-pointer rounded-full p-0 text-rose-600 hover:border-rose-500/50 hover:bg-rose-500/10"
                       title="Hapus Perangkat"
                     >
                       <Trash2 className="size-3.5" />
@@ -302,53 +318,53 @@ export function DevicesManagementTable({
             </div>
 
             {/* Desktop Table View (>= 1024px) */}
-            <div className="hidden lg:block overflow-x-auto">
-              <table className="w-full text-left border-collapse">
+            <div className="hidden overflow-x-auto lg:block">
+              <table className="w-full border-collapse text-left">
                 <thead>
-                  <tr className="border-b border-border bg-muted/50 text-[11px] font-extrabold uppercase tracking-wider text-foreground-muted select-none">
-                    <th className="py-3.5 px-5 font-extrabold">Nama &amp; ID Perangkat</th>
-                    <th className="py-3.5 px-4 font-extrabold">Nomor WhatsApp (JID)</th>
-                    <th className="py-3.5 px-3 font-extrabold">Tenant ID</th>
-                    <th className="py-3.5 px-3 font-extrabold text-center">Trust &amp; Warmup</th>
-                    <th className="py-3.5 px-3 font-extrabold text-center">Kirim Hari Ini</th>
-                    <th className="py-3.5 px-3 font-extrabold text-center">Status Live</th>
-                    <th className="py-3.5 px-5 font-extrabold text-right">Aksi</th>
+                  <tr className="border-border bg-muted/50 text-foreground-muted border-b text-[11px] font-extrabold tracking-wider uppercase select-none">
+                    <th className="px-5 py-3.5 font-extrabold">Nama &amp; ID Perangkat</th>
+                    <th className="px-4 py-3.5 font-extrabold">Nomor WhatsApp (JID)</th>
+                    <th className="px-3 py-3.5 font-extrabold">Tenant ID</th>
+                    <th className="px-3 py-3.5 text-center font-extrabold">Trust &amp; Warmup</th>
+                    <th className="px-3 py-3.5 text-center font-extrabold">Kirim Hari Ini</th>
+                    <th className="px-3 py-3.5 text-center font-extrabold">Status Live</th>
+                    <th className="px-5 py-3.5 text-right font-extrabold">Aksi</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border/50 text-xs font-semibold">
+                <tbody className="divide-border/50 divide-y text-xs font-semibold">
                   {devices.map((d) => (
-                    <tr key={d.id} className="hover:bg-muted/30 transition-colors group">
+                    <tr key={d.id} className="hover:bg-muted/30 group transition-colors">
                       {/* 1. Nama & ID */}
-                      <td className="py-3.5 px-5">
+                      <td className="px-5 py-3.5">
                         <div className="space-y-0.5">
-                          <span className="font-bold text-foreground text-xs block">
+                          <span className="text-foreground block text-xs font-bold">
                             {d.pushName}
                           </span>
-                          <span className="font-mono text-[10px] text-foreground-muted block">
+                          <span className="text-foreground-muted block font-mono text-[10px]">
                             {d.id.slice(0, 16)}...
                           </span>
                         </div>
                       </td>
 
                       {/* 2. Nomor / WhatsApp JID */}
-                      <td className="py-3.5 px-4">
-                        <div className="flex items-center gap-1.5 font-mono text-xs text-foreground font-bold">
-                          <Smartphone className="size-3 text-foreground-muted shrink-0" />
-                          <span className="truncate max-w-45">{d.jid || "(Belum terhubung)"}</span>
+                      <td className="px-4 py-3.5">
+                        <div className="text-foreground flex items-center gap-1.5 font-mono text-xs font-bold">
+                          <Smartphone className="text-foreground-muted size-3 shrink-0" />
+                          <span className="max-w-45 truncate">{d.jid || "(Belum terhubung)"}</span>
                         </div>
                       </td>
 
                       {/* 3. Tenant ID */}
-                      <td className="py-3.5 px-3">
-                        <span className="font-mono text-[11px] text-foreground-secondary block truncate max-w-28">
+                      <td className="px-3 py-3.5">
+                        <span className="text-foreground-secondary block max-w-28 truncate font-mono text-[11px]">
                           {d.tenantId}
                         </span>
                       </td>
 
                       {/* 4. Trust & Warmup */}
-                      <td className="py-3.5 px-3 text-center">
+                      <td className="px-3 py-3.5 text-center">
                         <div className="inline-flex items-center gap-2 font-mono text-[11px]">
-                          <span className="px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-700 dark:text-wise-green font-bold">
+                          <span className="dark:text-wise-green rounded bg-emerald-500/10 px-1.5 py-0.5 font-bold text-emerald-700">
                             {d.trustScore}/100
                           </span>
                           <span className="text-foreground-muted font-semibold">
@@ -358,27 +374,27 @@ export function DevicesManagementTable({
                       </td>
 
                       {/* 5. Kirim Hari Ini */}
-                      <td className="py-3.5 px-3 text-center">
+                      <td className="px-3 py-3.5 text-center">
                         <span className="font-mono font-bold text-teal-600 dark:text-teal-400">
                           {d.dailySentCount}
                         </span>
                       </td>
 
                       {/* 6. Status Live */}
-                      <td className="py-3.5 px-3 text-center">{getDeviceStatusBadge(d.status)}</td>
+                      <td className="px-3 py-3.5 text-center">{getDeviceStatusBadge(d.status)}</td>
 
                       {/* 7. Aksi */}
-                      <td className="py-3.5 px-5 text-right">
+                      <td className="px-5 py-3.5 text-right">
                         <div className="flex items-center justify-end gap-1.5">
                           <Button
                             type="button"
                             variant="outline"
                             size="sm"
                             onClick={() => handleOpenDetail(d)}
-                            className="h-8 px-2.5 rounded-full text-xs font-bold gap-1 border-border hover:bg-muted cursor-pointer"
+                            className="border-border hover:bg-muted h-8 cursor-pointer gap-1 rounded-full px-2.5 text-xs font-bold"
                             title="Lihat Detail Perangkat"
                           >
-                            <Eye className="size-3.5 text-foreground-secondary" />
+                            <Eye className="text-foreground-secondary size-3.5" />
                             <span>Detail</span>
                           </Button>
 
@@ -387,7 +403,7 @@ export function DevicesManagementTable({
                             variant="outline"
                             size="sm"
                             onClick={() => handleOpenDelete(d)}
-                            className="h-8 size-8 p-0 rounded-full border-border hover:border-rose-500/50 hover:bg-rose-500/10 text-rose-600 cursor-pointer"
+                            className="border-border size-8 h-8 cursor-pointer rounded-full p-0 text-rose-600 hover:border-rose-500/50 hover:bg-rose-500/10"
                             title="Hapus Perangkat"
                           >
                             <Trash2 className="size-3.5" />
@@ -404,19 +420,22 @@ export function DevicesManagementTable({
 
         {/* Responsive Pagination Footer */}
         {total > 0 && (
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 sm:px-5 sm:py-3.5 border-t border-border bg-muted/20">
-            <div className="flex items-center gap-3 text-xs font-semibold text-foreground-secondary">
+          <div className="border-border bg-muted/20 flex flex-col items-center justify-between gap-3 border-t p-3.5 sm:flex-row sm:px-5 sm:py-3.5">
+            <div className="text-foreground-secondary flex items-center gap-3 text-xs font-semibold">
               <span>
-                Menampilkan <strong className="text-foreground">{startItem} - {endItem}</strong> dari{" "}
-                <strong className="text-foreground">{total}</strong> perangkat
+                Menampilkan{" "}
+                <strong className="text-foreground">
+                  {startItem} - {endItem}
+                </strong>{" "}
+                dari <strong className="text-foreground">{total}</strong> perangkat
               </span>
 
-              <div className="flex items-center gap-1.5 text-xs text-foreground-muted">
+              <div className="text-foreground-muted flex items-center gap-1.5 text-xs">
                 <span>| Baris:</span>
                 <select
                   value={pageSize}
                   onChange={(e) => onPageSizeChange(Number(e.target.value))}
-                  className="h-7 px-2 rounded-md bg-surface dark:bg-[#10110e] border border-border text-foreground font-bold text-xs outline-none cursor-pointer"
+                  className="bg-surface border-border text-foreground h-7 cursor-pointer rounded-md border px-2 text-xs font-bold outline-none dark:bg-[#10110e]"
                 >
                   <option value={10}>10</option>
                   <option value={15}>15</option>
@@ -434,7 +453,7 @@ export function DevicesManagementTable({
                 size="sm"
                 onClick={onPrevPage}
                 disabled={page <= 1}
-                className="h-8 px-2.5 rounded-full text-xs font-bold gap-1 border-border hover:border-foreground-muted cursor-pointer disabled:opacity-40"
+                className="border-border hover:border-foreground-muted h-8 cursor-pointer gap-1 rounded-full px-2.5 text-xs font-bold disabled:opacity-40"
               >
                 <ChevronLeft className="size-3.5" />
                 <span className="hidden sm:inline">Sebelumnya</span>
@@ -445,10 +464,10 @@ export function DevicesManagementTable({
                   key={p}
                   type="button"
                   onClick={() => onPageChange(p)}
-                  className={`size-8 rounded-full text-xs font-bold transition cursor-pointer flex items-center justify-center ${
+                  className={`flex size-8 cursor-pointer items-center justify-center rounded-full text-xs font-bold transition ${
                     page === p
-                      ? "bg-emerald-600 dark:bg-wise-green text-white dark:text-black font-black shadow-xs"
-                      : "text-foreground-secondary hover:bg-muted border border-border"
+                      ? "dark:bg-wise-green bg-emerald-600 font-black text-white shadow-xs dark:text-black"
+                      : "text-foreground-secondary hover:bg-muted border-border border"
                   }`}
                 >
                   {p}
@@ -461,7 +480,7 @@ export function DevicesManagementTable({
                 size="sm"
                 onClick={onNextPage}
                 disabled={page >= totalPages}
-                className="h-8 px-2.5 rounded-full text-xs font-bold gap-1 border-border hover:border-foreground-muted cursor-pointer disabled:opacity-40"
+                className="border-border hover:border-foreground-muted h-8 cursor-pointer gap-1 rounded-full px-2.5 text-xs font-bold disabled:opacity-40"
               >
                 <span className="hidden sm:inline">Berikutnya</span>
                 <ChevronRight className="size-3.5" />

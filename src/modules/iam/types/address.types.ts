@@ -36,9 +36,9 @@ export interface UpsertAddressInput {
 
 export interface AddressFormState {
   address: string;
-  state: string;     // Province Name
-  city: string;      // City/Regency Name
-  district: string;  // District Name (UI helper)
+  state: string; // Province Name
+  city: string; // City/Regency Name
+  district: string; // District Name (UI helper)
   postal_code: string;
   country: string;
 }

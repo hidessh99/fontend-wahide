@@ -25,29 +25,27 @@ export function SellerRouteGuard({
 
   if (!hasAccess) {
     return (
-      <div className="p-4 sm:p-6 lg:p-8 flex items-center justify-center min-h-[70vh]">
-        <div className="max-w-md w-full p-6 sm:p-8 rounded-3xl bg-surface dark:bg-[#161715] border border-border shadow-lg text-center space-y-5">
-          <div className="size-14 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 flex items-center justify-center mx-auto">
+      <div className="flex min-h-[70vh] items-center justify-center p-4 sm:p-6 lg:p-8">
+        <div className="bg-surface border-border w-full max-w-md space-y-5 rounded-3xl border p-6 text-center shadow-lg sm:p-8 dark:bg-[#161715]">
+          <div className="mx-auto flex size-14 items-center justify-center rounded-2xl border border-amber-500/20 bg-amber-500/10 text-amber-600 dark:text-amber-400">
             <ShieldAlert className="size-7" />
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-lg sm:text-xl font-bold text-foreground">
-              {fallbackTitle}
-            </h2>
-            <p className="text-xs sm:text-sm text-foreground-secondary leading-relaxed">
+            <h2 className="text-foreground text-lg font-bold sm:text-xl">{fallbackTitle}</h2>
+            <p className="text-foreground-secondary text-xs leading-relaxed sm:text-sm">
               {fallbackDescription}
             </p>
           </div>
 
-          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <div className="flex flex-col items-center justify-center gap-3 pt-2 sm:flex-row">
             <Link href="/dashboard" className="w-full sm:w-auto">
               <Button
                 variant="default"
                 size="sm"
-                className="w-full rounded-full bg-wise-green text-dark-green font-bold text-xs px-5 h-10 hover:bg-wise-green/90"
+                className="bg-wise-green text-dark-green hover:bg-wise-green/90 h-10 w-full rounded-full px-5 text-xs font-bold"
               >
-                <LayoutDashboard className="size-4 mr-2" />
+                <LayoutDashboard className="mr-2 size-4" />
                 Kembali ke Dasbor
               </Button>
             </Link>
@@ -55,9 +53,9 @@ export function SellerRouteGuard({
               <Button
                 variant="outline"
                 size="sm"
-                className="w-full rounded-full text-xs font-bold px-5 h-10 border-border hover:border-foreground-muted"
+                className="border-border hover:border-foreground-muted h-10 w-full rounded-full px-5 text-xs font-bold"
               >
-                <ArrowLeft className="size-4 mr-2" />
+                <ArrowLeft className="mr-2 size-4" />
                 Buku Kontak
               </Button>
             </Link>

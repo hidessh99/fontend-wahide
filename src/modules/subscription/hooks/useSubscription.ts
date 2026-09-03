@@ -1,11 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import {
-  SubscriptionPlan,
-  TenantSubscription,
-  WebhookConfig,
-} from "../types/subscription.types";
+import { SubscriptionPlan, TenantSubscription, WebhookConfig } from "../types/subscription.types";
 import { subscriptionApi } from "../api/subscription.api";
 import { userApi } from "@/modules/iam/api/user.api";
 import { toast } from "sonner";
@@ -69,13 +65,20 @@ export function useSubscription() {
   const upgradePlan = async (planId: string) => {
     try {
       const res = await subscriptionApi.upgradePlan(planId);
-      toast.success("Paket langganan berhasil diaktifkan! Invoice tagihan lunas telah diterbitkan.");
+      toast.success(
+        "Paket langganan berhasil diaktifkan! Invoice tagihan lunas telah diterbitkan."
+      );
       await fetchSubscriptionData();
       return res;
     } catch (err: unknown) {
       let msg = err instanceof Error ? err.message : "Gagal upgrade paket";
-      if (msg.toLowerCase().includes("insufficient") || msg.toLowerCase().includes("balance") || msg.toLowerCase().includes("saldo")) {
-        msg = "Saldo wallet Anda tidak mencukupi. Silakan lakukan Top-Up di menu Billing terlebih dahulu.";
+      if (
+        msg.toLowerCase().includes("insufficient") ||
+        msg.toLowerCase().includes("balance") ||
+        msg.toLowerCase().includes("saldo")
+      ) {
+        msg =
+          "Saldo wallet Anda tidak mencukupi. Silakan lakukan Top-Up di menu Billing terlebih dahulu.";
       }
       toast.error(msg);
       throw err;

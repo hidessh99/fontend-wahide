@@ -1,6 +1,5 @@
 "use client";
 
-
 import { Agent } from "@/modules/team/types/team.types";
 import { Button } from "@/components/ui/button";
 import { useEscapeKey } from "@/hooks/useEscapeKey";
@@ -33,25 +32,25 @@ export function DeleteTeamMemberModal({
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200"
+      className="animate-in fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs duration-200"
       onClick={(e) => {
         if (e.target === e.currentTarget && !isDeleting) {
           onClose();
         }
       }}
     >
-      <div className="relative w-full max-w-md bg-surface dark:bg-[#161715] border border-border rounded-xl shadow-2xl overflow-hidden flex flex-col scale-in-95 duration-150">
+      <div className="bg-surface border-border scale-in-95 relative flex w-full max-w-md flex-col overflow-hidden rounded-xl border shadow-2xl duration-150 dark:bg-[#161715]">
         {/* Header with Warning Accent */}
-        <div className="flex items-start justify-between p-5 border-b border-border/80 bg-rose-500/5">
+        <div className="border-border/80 flex items-start justify-between border-b bg-rose-500/5 p-5">
           <div className="flex items-center gap-3">
-            <div className="size-10 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0 border border-rose-500/20">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-full border border-rose-500/20 bg-rose-500/10 text-rose-600 dark:text-rose-400">
               <AlertTriangle className="size-5" />
             </div>
             <div>
-              <h3 className="text-base font-extrabold text-foreground tracking-tight">
+              <h3 className="text-foreground text-base font-extrabold tracking-tight">
                 Hapus Anggota Tim
               </h3>
-              <p className="text-xs font-semibold text-foreground-secondary mt-0.5">
+              <p className="text-foreground-secondary mt-0.5 text-xs font-semibold">
                 Konfirmasi penghapusan akses staf agen.
               </p>
             </div>
@@ -60,7 +59,7 @@ export function DeleteTeamMemberModal({
             type="button"
             onClick={onClose}
             disabled={isDeleting}
-            className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer disabled:opacity-50"
+            className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-8 cursor-pointer items-center justify-center rounded-full transition disabled:opacity-50"
             aria-label="Tutup Dialog"
           >
             <X className="size-4" />
@@ -68,37 +67,34 @@ export function DeleteTeamMemberModal({
         </div>
 
         {/* Modal Body with Member Context */}
-        <div className="p-5 space-y-4 text-xs font-semibold text-foreground-secondary">
+        <div className="text-foreground-secondary space-y-4 p-5 text-xs font-semibold">
           <p className="leading-relaxed">
             Apakah Anda yakin ingin menghapus akses anggota tim ini secara permanen dari akun Anda?
           </p>
 
-          <div className="p-3.5 rounded-lg border border-border bg-muted/40 space-y-1">
-            <div className="font-bold text-sm text-foreground">
-              {targetMember.name}
-            </div>
-            <div className="text-xs text-foreground-secondary">
-              {targetMember.email}
-            </div>
-            <div className="text-xs font-mono text-foreground-muted">
+          <div className="border-border bg-muted/40 space-y-1 rounded-lg border p-3.5">
+            <div className="text-foreground text-sm font-bold">{targetMember.name}</div>
+            <div className="text-foreground-secondary text-xs">{targetMember.email}</div>
+            <div className="text-foreground-muted font-mono text-xs">
               +{targetMember.phone} • {targetMember.role}
             </div>
           </div>
 
-          <p className="text-[11px] text-rose-500 font-medium">
-            ⚠️ Tindakan ini tidak dapat dibatalkan. Staf tidak akan lagi dapat mengelola chat pelanggan atau membalas pesan.
+          <p className="text-[11px] font-medium text-rose-500">
+            ⚠️ Tindakan ini tidak dapat dibatalkan. Staf tidak akan lagi dapat mengelola chat
+            pelanggan atau membalas pesan.
           </p>
         </div>
 
         {/* Footer Actions */}
-        <div className="flex items-center justify-end gap-2.5 px-5 py-4 border-t border-border bg-muted/30">
+        <div className="border-border bg-muted/30 flex items-center justify-end gap-2.5 border-t px-5 py-4">
           <Button
             type="button"
             variant="outline"
             size="sm"
             onClick={onClose}
             disabled={isDeleting}
-            className="h-9 px-4 rounded-full text-xs font-bold border-border hover:border-foreground-muted cursor-pointer"
+            className="border-border hover:border-foreground-muted h-9 cursor-pointer rounded-full px-4 text-xs font-bold"
           >
             {t("common.cancel") || "Batal"}
           </Button>
@@ -109,7 +105,7 @@ export function DeleteTeamMemberModal({
             size="sm"
             onClick={onConfirm}
             disabled={isDeleting}
-            className="h-9 px-4.5 rounded-full text-xs font-bold gap-1.5 shadow-sm cursor-pointer"
+            className="h-9 cursor-pointer gap-1.5 rounded-full px-4.5 text-xs font-bold shadow-sm"
           >
             {isDeleting ? (
               <>

@@ -119,19 +119,19 @@ export function TeamView() {
   };
 
   return (
-    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto p-3 sm:p-6 lg:p-8">
+    <div className="mx-auto max-w-7xl space-y-6 p-3 sm:space-y-8 sm:p-6 lg:p-8">
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5 sm:pb-6">
+      <div className="border-border flex flex-col justify-between gap-4 border-b pb-5 sm:flex-row sm:items-center sm:pb-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
-            <div className="size-8 sm:size-9 rounded-full bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green flex items-center justify-center shrink-0">
+            <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-8 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700 sm:size-9">
               <Users className="size-4 sm:size-5" />
             </div>
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-foreground tracking-tight">
+            <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl lg:text-3xl">
               {t("team.title")}
             </h1>
           </div>
-          <p className="text-xs sm:text-sm font-semibold text-foreground-secondary max-w-2xl">
+          <p className="text-foreground-secondary max-w-2xl text-xs font-semibold sm:text-sm">
             {t("team.subtitle")}
           </p>
         </div>
@@ -139,7 +139,7 @@ export function TeamView() {
         <Button
           variant="primaryPill"
           onClick={() => setIsModalOpen(true)}
-          className="gap-2 text-xs font-bold shadow-sm cursor-pointer h-10 px-4 shrink-0"
+          className="h-10 shrink-0 cursor-pointer gap-2 px-4 text-xs font-bold shadow-sm"
         >
           <Plus className="size-4" />
           <span>{t("team.addAgent")}</span>
@@ -147,22 +147,22 @@ export function TeamView() {
       </div>
 
       {/* Filter Toolbar (Search Submit Form) */}
-      <div className="p-3 sm:p-4 rounded-md border border-border bg-surface dark:bg-[#161715]">
+      <div className="border-border bg-surface rounded-md border p-3 sm:p-4 dark:bg-[#161715]">
         <form onSubmit={handleSearchSubmit} className="flex items-center gap-2">
           <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted pointer-events-none" />
+            <Search className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
             <input
               type="text"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Cari nama, email, atau nomor staf..."
-              className="w-full h-10 pl-10 pr-9 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs"
+              className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full rounded-full border pr-9 pl-10 text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
             />
             {(searchInput || activeSearch) && (
               <button
                 type="button"
                 onClick={handleClearSearch}
-                className="absolute right-3 top-1/2 -translate-y-1/2 size-5 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
+                className="text-foreground-muted hover:text-foreground hover:bg-muted absolute top-1/2 right-3 flex size-5 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full transition"
                 title="Hapus Pencarian"
                 aria-label="Hapus Pencarian"
               >
@@ -174,9 +174,9 @@ export function TeamView() {
             type="submit"
             variant="primaryPill"
             size="sm"
-            className="h-10 px-4 text-xs font-bold shadow-xs shrink-0 cursor-pointer"
+            className="h-10 shrink-0 cursor-pointer px-4 text-xs font-bold shadow-xs"
           >
-            <Search className="size-3.5 mr-1" />
+            <Search className="mr-1 size-3.5" />
             <span>Cari</span>
           </Button>
         </form>
@@ -184,12 +184,12 @@ export function TeamView() {
 
       {/* Agents Table with Error Boundary */}
       <ErrorBoundary fallbackTitle="Gagal Memuat Daftar Tim Staf Agen">
-        <div className="rounded-md border border-border bg-surface dark:bg-[#161715] overflow-hidden shadow-xs">
+        <div className="border-border bg-surface overflow-hidden rounded-md border shadow-xs dark:bg-[#161715]">
           {paginatedAgents.length === 0 ? (
-            <div className="p-6 sm:p-10 text-center space-y-2">
-              <Users className="size-10 text-foreground-muted mx-auto" />
-              <h3 className="font-bold text-sm text-foreground">{t("team.noAgents")}</h3>
-              <p className="text-xs text-foreground-secondary">
+            <div className="space-y-2 p-6 text-center sm:p-10">
+              <Users className="text-foreground-muted mx-auto size-10" />
+              <h3 className="text-foreground text-sm font-bold">{t("team.noAgents")}</h3>
+              <p className="text-foreground-secondary text-xs">
                 {activeSearch
                   ? `Tidak ditemukan staf dengan kata kunci "${activeSearch}".`
                   : t("team.noAgentsDesc")}
@@ -198,49 +198,61 @@ export function TeamView() {
           ) : (
             <div>
               {/* Mobile View: Card-based Agent List (Visible on < 768px) */}
-              <div className="md:hidden divide-y divide-border/50">
+              <div className="divide-border/50 divide-y md:hidden">
                 {paginatedAgents.map((agt) => (
-                  <div key={agt.id} className="p-3.5 sm:p-4 space-y-2.5 bg-surface dark:bg-[#161715]">
+                  <div
+                    key={agt.id}
+                    className="bg-surface space-y-2.5 p-3.5 sm:p-4 dark:bg-[#161715]"
+                  >
                     <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span className="font-bold text-sm text-foreground truncate">{agt.name}</span>
+                      <div className="flex min-w-0 items-center gap-2">
+                        <span className="text-foreground truncate text-sm font-bold">
+                          {agt.name}
+                        </span>
                         {agt.role === "SELLER" ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold shrink-0 bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                          <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/15 px-2 py-0.5 text-[9px] font-bold text-amber-600 dark:text-amber-400">
                             <ShieldCheck className="size-2.5" />
                             <span>{t("team.roleOwner")}</span>
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold shrink-0 bg-wise-green/15 text-dark-green dark:text-wise-green border border-wise-green/30">
+                          <span className="bg-wise-green/15 text-dark-green dark:text-wise-green border-wise-green/30 inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[9px] font-bold">
                             <ShieldCheck className="size-2.5" />
                             <span>{t("team.roleAgent")}</span>
                           </span>
                         )}
                       </div>
 
-                      <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 shrink-0">
+                      <span className="inline-flex shrink-0 items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
                         <CheckCircle2 className="size-3" />
                         <span>{t("team.statusActive")}</span>
                       </span>
                     </div>
 
-                    <div className="space-y-0.5 text-xs text-foreground-secondary">
-                      <span className="block font-mono text-foreground-muted text-[11px] truncate">{agt.email}</span>
+                    <div className="text-foreground-secondary space-y-0.5 text-xs">
+                      <span className="text-foreground-muted block truncate font-mono text-[11px]">
+                        {agt.email}
+                      </span>
                       <span className="block font-mono font-medium">+{agt.phone}</span>
                     </div>
 
-                    <div className="flex items-center justify-between gap-2 pt-2 border-t border-border/50 text-xs">
-                      <div className="flex items-center gap-1 font-mono text-xs text-foreground-secondary">
-                        <Smartphone className="size-3.5 text-foreground-muted" />
+                    <div className="border-border/50 flex items-center justify-between gap-2 border-t pt-2 text-xs">
+                      <div className="text-foreground-secondary flex items-center gap-1 font-mono text-xs">
+                        <Smartphone className="text-foreground-muted size-3.5" />
                         <span>{agt.assignedDevicesCount} Slot Device</span>
                       </div>
 
                       {agt.role === "SELLER" ? (
-                        <span className="text-xs text-foreground-muted select-none px-2" title="Akun Utama Pemilik">-</span>
+                        <span
+                          className="text-foreground-muted px-2 text-xs select-none"
+                          title="Akun Utama Pemilik"
+                        >
+                          -
+                        </span>
                       ) : (
                         <button
                           type="button"
                           onClick={() => setDeletingMember(agt)}
-                          className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"
+                          className="text-foreground-muted flex size-8 cursor-pointer items-center justify-center rounded-full transition hover:bg-rose-500/10 hover:text-rose-500"
                           aria-label={`${t("actions.delete")} ${agt.name}`}
                           title="Hapus Anggota Tim"
                         >
@@ -255,7 +267,7 @@ export function TeamView() {
               {/* Desktop View: Tabular Grid (Visible on >= 768px) */}
               <div className="hidden md:block">
                 {/* Table Header */}
-                <div className="grid grid-cols-12 gap-3 px-5 py-4 bg-muted/60 border-b border-border text-xs font-extrabold uppercase tracking-wider text-foreground-muted select-none">
+                <div className="bg-muted/60 border-border text-foreground-muted grid grid-cols-12 gap-3 border-b px-5 py-4 text-xs font-extrabold tracking-wider uppercase select-none">
                   <div className="col-span-3">{t("team.tableHeaderName")}</div>
                   <div className="col-span-3">{t("team.tableHeaderPhone")}</div>
                   <div className="col-span-2">{t("team.tableHeaderRole")}</div>
@@ -265,34 +277,36 @@ export function TeamView() {
                 </div>
 
                 {/* Table Body */}
-                <div className="divide-y divide-border/50 text-xs font-semibold">
+                <div className="divide-border/50 divide-y text-xs font-semibold">
                   {paginatedAgents.map((agt) => (
                     <div
                       key={agt.id}
-                      className="grid grid-cols-12 gap-3 px-5 py-3.5 items-center hover:bg-muted/40 transition-colors min-h-14.5"
+                      className="hover:bg-muted/40 grid min-h-14.5 grid-cols-12 items-center gap-3 px-5 py-3.5 transition-colors"
                     >
                       {/* Name & Email */}
                       <div className="col-span-3 space-y-0.5">
-                        <span className="font-bold text-sm sm:text-base text-foreground block truncate">{agt.name}</span>
-                        <span className="text-xs text-foreground-muted block truncate font-mono">
+                        <span className="text-foreground block truncate text-sm font-bold sm:text-base">
+                          {agt.name}
+                        </span>
+                        <span className="text-foreground-muted block truncate font-mono text-xs">
                           {agt.email}
                         </span>
                       </div>
 
                       {/* Phone */}
-                      <div className="col-span-3 font-mono text-foreground-secondary text-xs sm:text-sm truncate">
+                      <div className="text-foreground-secondary col-span-3 truncate font-mono text-xs sm:text-sm">
                         +{agt.phone}
                       </div>
 
                       {/* Role */}
                       <div className="col-span-2">
                         {agt.role === "SELLER" ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                          <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/15 px-2.5 py-0.5 text-[10px] font-bold text-amber-600 dark:text-amber-400">
                             <ShieldCheck className="size-3" />
                             <span>{t("team.roleOwner")}</span>
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-wise-green/15 text-dark-green dark:text-wise-green border border-wise-green/30">
+                          <span className="bg-wise-green/15 text-dark-green dark:text-wise-green border-wise-green/30 inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[10px] font-bold">
                             <ShieldCheck className="size-3" />
                             <span>{t("team.roleAgent")}</span>
                           </span>
@@ -300,8 +314,8 @@ export function TeamView() {
                       </div>
 
                       {/* Devices */}
-                      <div className="col-span-2 flex items-center justify-center gap-1 font-mono text-xs sm:text-sm text-foreground-secondary">
-                        <Smartphone className="size-3.5 text-foreground-muted" />
+                      <div className="text-foreground-secondary col-span-2 flex items-center justify-center gap-1 font-mono text-xs sm:text-sm">
+                        <Smartphone className="text-foreground-muted size-3.5" />
                         <span>{agt.assignedDevicesCount} Slot</span>
                       </div>
 
@@ -316,12 +330,17 @@ export function TeamView() {
                       {/* Action */}
                       <div className="col-span-1 flex justify-end">
                         {agt.role === "SELLER" ? (
-                          <span className="text-xs text-foreground-muted select-none px-2" title="Akun Utama Pemilik">-</span>
+                          <span
+                            className="text-foreground-muted px-2 text-xs select-none"
+                            title="Akun Utama Pemilik"
+                          >
+                            -
+                          </span>
                         ) : (
                           <button
                             type="button"
                             onClick={() => setDeletingMember(agt)}
-                            className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"
+                            className="text-foreground-muted flex size-8 cursor-pointer items-center justify-center rounded-full transition hover:bg-rose-500/10 hover:text-rose-500"
                             aria-label={`${t("actions.delete")} ${agt.name}`}
                             title="Hapus Anggota Tim"
                           >
@@ -338,16 +357,16 @@ export function TeamView() {
 
           {/* Pagination Footer */}
           {total > 0 && (
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 sm:px-5 sm:py-3.5 border-t border-border bg-muted/30">
+            <div className="border-border bg-muted/30 flex flex-col items-center justify-between gap-3 border-t p-3 sm:flex-row sm:px-5 sm:py-3.5">
               {/* Item count summary */}
-              <div className="text-xs font-semibold text-foreground-secondary">
+              <div className="text-foreground-secondary text-xs font-semibold">
                 Menampilkan {startItem} - {endItem} dari {total} anggota tim
               </div>
 
               {/* Page navigation: Previous, Page Indicator, Next */}
               {totalPages > 1 && (
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-foreground-muted px-1.5 select-none">
+                  <span className="text-foreground-muted px-1.5 text-xs font-bold select-none">
                     Halaman {page} dari {totalPages}
                   </span>
 
@@ -356,7 +375,7 @@ export function TeamView() {
                     size="sm"
                     onClick={() => setPage((prev) => Math.max(1, prev - 1))}
                     disabled={page <= 1}
-                    className="h-8.5 px-3.5 rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted cursor-pointer disabled:opacity-40"
+                    className="border-border hover:border-foreground-muted h-8.5 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold disabled:opacity-40"
                   >
                     <ChevronLeft className="size-3.5" />
                     <span>Sebelumnya</span>
@@ -367,7 +386,7 @@ export function TeamView() {
                     size="sm"
                     onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
                     disabled={page >= totalPages}
-                    className="h-8.5 px-3.5 rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted cursor-pointer disabled:opacity-40"
+                    className="border-border hover:border-foreground-muted h-8.5 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold disabled:opacity-40"
                   >
                     <span>Berikutnya</span>
                     <ChevronRight className="size-3.5" />
@@ -381,22 +400,24 @@ export function TeamView() {
 
       {/* Modal Add Agent */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/70 backdrop-blur-sm animate-in fade-in">
-          <div className="relative w-full max-w-md rounded-md border border-border bg-surface dark:bg-[#161715] shadow-2xl overflow-hidden p-6 sm:p-8 space-y-5">
+        <div className="animate-in fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm sm:p-6">
+          <div className="border-border bg-surface relative w-full max-w-md space-y-5 overflow-hidden rounded-md border p-6 shadow-2xl sm:p-8 dark:bg-[#161715]">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
-                <div className="size-10 rounded-full bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green flex items-center justify-center">
+                <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-10 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
                   <Users className="size-5" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-black text-foreground">{t("team.modalTitle")}</h2>
-                  <p className="text-xs font-semibold text-foreground-secondary">{t("team.modalSubtitle")}</p>
+                  <h2 className="text-foreground text-lg font-black">{t("team.modalTitle")}</h2>
+                  <p className="text-foreground-secondary text-xs font-semibold">
+                    {t("team.modalSubtitle")}
+                  </p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
+                className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-8 cursor-pointer items-center justify-center rounded-full transition"
                 aria-label="Tutup"
               >
                 <X className="size-4" />
@@ -405,7 +426,7 @@ export function TeamView() {
 
             <form onSubmit={handleCreate} className="space-y-4 pt-1">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+                <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                   {t("team.nameLabel")}
                 </label>
                 <input
@@ -414,12 +435,12 @@ export function TeamView() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder={t("team.namePlaceholder")}
-                  className="w-full h-10 px-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs"
+                  className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full rounded-full border px-4 text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+                <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                   {t("team.emailLabel")}
                 </label>
                 <input
@@ -428,12 +449,12 @@ export function TeamView() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={t("team.emailPlaceholder")}
-                  className="w-full h-10 px-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs"
+                  className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full rounded-full border px-4 text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+                <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                   {t("team.phoneLabel")}
                 </label>
                 <input
@@ -442,22 +463,22 @@ export function TeamView() {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder={t("team.phonePlaceholder")}
-                  className="w-full h-10 px-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs font-mono"
+                  className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full rounded-full border px-4 font-mono text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+                <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                   {t("team.roleLabel")}
                 </label>
-                <div className="w-full h-10 px-4 rounded-full bg-muted/60 text-foreground text-xs font-bold border border-border flex items-center gap-2 select-none">
-                  <ShieldCheck className="size-4 text-wise-green" />
+                <div className="bg-muted/60 text-foreground border-border flex h-10 w-full items-center gap-2 rounded-full border px-4 text-xs font-bold select-none">
+                  <ShieldCheck className="text-wise-green size-4" />
                   <span>{t("team.roleAgent")}</span>
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+                <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                   {t("team.passwordLabel")} <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -467,18 +488,18 @@ export function TeamView() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder={t("team.passwordPlaceholder")}
-                  className="w-full h-10 px-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs"
+                  className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full rounded-full border px-4 text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-border/80">
+              <div className="border-border/80 flex items-center justify-end gap-2.5 border-t pt-3">
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
                   onClick={() => setIsModalOpen(false)}
                   disabled={isSubmitting}
-                  className="rounded-full text-xs font-bold px-4 border-border hover:border-foreground-muted"
+                  className="border-border hover:border-foreground-muted rounded-full px-4 text-xs font-bold"
                 >
                   {t("team.cancel")}
                 </Button>
@@ -487,7 +508,7 @@ export function TeamView() {
                   variant="primaryPill"
                   size="sm"
                   disabled={isSubmitting}
-                  className="text-xs font-bold gap-1.5 px-6 shadow-sm"
+                  className="gap-1.5 px-6 text-xs font-bold shadow-sm"
                 >
                   {isSubmitting ? (
                     <>

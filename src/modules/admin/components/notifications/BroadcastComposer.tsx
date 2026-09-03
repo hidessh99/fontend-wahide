@@ -23,7 +23,11 @@ interface BroadcastComposerProps {
   isSending: boolean;
   onSendAll: (subject: string, message: string) => Promise<unknown>;
   onSendDirect: (email: string, name: string, subject: string, message: string) => Promise<unknown>;
-  onSendBatch?: (targets: { email: string; name?: string }[], subject: string, message: string) => Promise<unknown>;
+  onSendBatch?: (
+    targets: { email: string; name?: string }[],
+    subject: string,
+    message: string
+  ) => Promise<unknown>;
 }
 
 export function BroadcastComposer({
@@ -186,18 +190,18 @@ export function BroadcastComposer({
   };
 
   return (
-    <div className="p-5 sm:p-6 rounded-xl border border-border bg-surface dark:bg-[#161715] space-y-4 shadow-xs">
+    <div className="border-border bg-surface space-y-4 rounded-xl border p-5 shadow-xs sm:p-6 dark:bg-[#161715]">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-border pb-3.5">
+      <div className="border-border flex items-center justify-between border-b pb-3.5">
         <div className="flex items-center gap-2.5">
-          <div className="size-8 rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
+          <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400">
             <Megaphone className="size-4" />
           </div>
           <div>
-            <h2 className="text-base font-black text-foreground tracking-tight">
+            <h2 className="text-foreground text-base font-black tracking-tight">
               Kirim Siaran &amp; Email
             </h2>
-            <p className="text-[11px] font-semibold text-foreground-secondary">
+            <p className="text-foreground-secondary text-[11px] font-semibold">
               Broadcast massal ke seluruh member atau pilih pengguna terdaftar.
             </p>
           </div>
@@ -206,7 +210,7 @@ export function BroadcastComposer({
         <button
           type="button"
           onClick={handleReset}
-          className="size-7 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
+          className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-7 cursor-pointer items-center justify-center rounded-full transition"
           title="Reset Form"
           aria-label="Reset Form"
         >
@@ -217,17 +221,17 @@ export function BroadcastComposer({
       <form onSubmit={handleSubmit} className="space-y-4 text-xs font-semibold">
         {/* Target Switcher */}
         <div className="space-y-1.5">
-          <label className="block text-[11px] font-bold uppercase tracking-wider text-foreground-secondary">
+          <label className="text-foreground-secondary block text-[11px] font-bold tracking-wider uppercase">
             Target Penerima Siaran:
           </label>
           <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
               onClick={() => setBroadcastTarget("ALL")}
-              className={`p-2.5 rounded-lg border flex items-center justify-center gap-2 font-bold text-xs transition cursor-pointer ${
+              className={`flex cursor-pointer items-center justify-center gap-2 rounded-lg border p-2.5 text-xs font-bold transition ${
                 broadcastTarget === "ALL"
-                  ? "border-emerald-600 bg-emerald-500/10 text-emerald-700 dark:text-wise-green dark:border-wise-green"
-                  : "border-border bg-surface dark:bg-[#10110e] text-foreground-secondary hover:border-foreground-muted"
+                  ? "dark:text-wise-green dark:border-wise-green border-emerald-600 bg-emerald-500/10 text-emerald-700"
+                  : "border-border bg-surface text-foreground-secondary hover:border-foreground-muted dark:bg-[#10110e]"
               }`}
             >
               <Users className="size-3.5" />
@@ -237,10 +241,10 @@ export function BroadcastComposer({
             <button
               type="button"
               onClick={() => setBroadcastTarget("SPECIFIC")}
-              className={`p-2.5 rounded-lg border flex items-center justify-center gap-2 font-bold text-xs transition cursor-pointer ${
+              className={`flex cursor-pointer items-center justify-center gap-2 rounded-lg border p-2.5 text-xs font-bold transition ${
                 broadcastTarget === "SPECIFIC"
-                  ? "border-emerald-600 bg-emerald-500/10 text-emerald-700 dark:text-wise-green dark:border-wise-green"
-                  : "border-border bg-surface dark:bg-[#10110e] text-foreground-secondary hover:border-foreground-muted"
+                  ? "dark:text-wise-green dark:border-wise-green border-emerald-600 bg-emerald-500/10 text-emerald-700"
+                  : "border-border bg-surface text-foreground-secondary hover:border-foreground-muted dark:bg-[#10110e]"
               }`}
             >
               <Mail className="size-3.5" />
@@ -251,19 +255,19 @@ export function BroadcastComposer({
 
         {/* Specific Target Mode: Searchable Combobox & Selected Users */}
         {broadcastTarget === "SPECIFIC" && (
-          <div className="p-3.5 rounded-xl border border-border bg-muted/20 space-y-3 animate-in fade-in">
+          <div className="border-border bg-muted/20 animate-in fade-in space-y-3 rounded-xl border p-3.5">
             {!isManualMode ? (
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-[11px] font-bold text-foreground flex items-center gap-1.5">
-                    <UserCheck className="size-3.5 text-emerald-600 dark:text-wise-green" />
+                  <label className="text-foreground flex items-center gap-1.5 text-[11px] font-bold">
+                    <UserCheck className="dark:text-wise-green size-3.5 text-emerald-600" />
                     <span>Cari &amp; Pilih Pengguna Terdaftar:</span>
                   </label>
 
                   <button
                     type="button"
                     onClick={() => setIsManualMode(true)}
-                    className="text-[10px] font-bold text-emerald-700 dark:text-wise-green hover:underline cursor-pointer"
+                    className="dark:text-wise-green cursor-pointer text-[10px] font-bold text-emerald-700 hover:underline"
                   >
                     + Input Email Manual
                   </button>
@@ -272,7 +276,7 @@ export function BroadcastComposer({
                 {/* Combobox Search Input & Dropdown */}
                 <div className="relative" ref={dropdownRef}>
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-foreground-muted pointer-events-none" />
+                    <Search className="text-foreground-muted pointer-events-none absolute top-1/2 left-3 size-3.5 -translate-y-1/2" />
                     <input
                       type="text"
                       value={userSearchQuery}
@@ -282,13 +286,13 @@ export function BroadcastComposer({
                       }}
                       onFocus={() => setIsDropdownOpen(true)}
                       placeholder="Ketik nama atau email pengguna untuk mencari..."
-                      className="w-full h-9 pl-9 pr-8 rounded-lg bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-emerald-600 dark:focus:border-wise-green outline-none text-xs"
+                      className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green h-9 w-full rounded-lg border pr-8 pl-9 text-xs font-semibold outline-none focus:border-emerald-600 dark:bg-[#10110e]"
                     />
                     {userSearchQuery && (
                       <button
                         type="button"
                         onClick={() => setUserSearchQuery("")}
-                        className="absolute right-2.5 top-1/2 -translate-y-1/2 size-4 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground"
+                        className="text-foreground-muted hover:text-foreground absolute top-1/2 right-2.5 flex size-4 -translate-y-1/2 items-center justify-center rounded-full"
                       >
                         <X className="size-3" />
                       </button>
@@ -297,24 +301,24 @@ export function BroadcastComposer({
 
                   {/* Dropdown Menu */}
                   {isDropdownOpen && (
-                    <div className="absolute left-0 right-0 top-full mt-1 z-30 max-h-56 overflow-y-auto rounded-xl border border-border bg-surface dark:bg-[#161715] shadow-xl p-1.5 space-y-1 animate-in fade-in zoom-in-95">
+                    <div className="border-border bg-surface animate-in fade-in zoom-in-95 absolute top-full right-0 left-0 z-30 mt-1 max-h-56 space-y-1 overflow-y-auto rounded-xl border p-1.5 shadow-xl dark:bg-[#161715]">
                       {isLoadingUsers ? (
-                        <div className="p-4 text-center text-foreground-muted flex items-center justify-center gap-2 text-xs">
+                        <div className="text-foreground-muted flex items-center justify-center gap-2 p-4 text-center text-xs">
                           <Loader2 className="size-3.5 animate-spin text-emerald-600" />
                           <span>Memuat daftar pengguna...</span>
                         </div>
                       ) : filteredUsers.length === 0 ? (
-                        <div className="p-4 text-center text-foreground-muted text-xs">
+                        <div className="text-foreground-muted p-4 text-center text-xs">
                           Tidak ditemukan pengguna dengan kata kunci &quot;{userSearchQuery}&quot;
                         </div>
                       ) : (
                         <div>
-                          <div className="flex items-center justify-between px-2 py-1 border-b border-border/50 text-[10px] text-foreground-muted mb-1">
+                          <div className="border-border/50 text-foreground-muted mb-1 flex items-center justify-between border-b px-2 py-1 text-[10px]">
                             <span>Ditemukan {filteredUsers.length} pengguna</span>
                             <button
                               type="button"
                               onClick={handleSelectAllFiltered}
-                              className="text-emerald-700 dark:text-wise-green font-bold hover:underline"
+                              className="dark:text-wise-green font-bold text-emerald-700 hover:underline"
                             >
                               Pilih Semua
                             </button>
@@ -327,36 +331,36 @@ export function BroadcastComposer({
                                 key={u.id}
                                 type="button"
                                 onClick={() => handleToggleUser(u)}
-                                className={`w-full p-2 rounded-lg flex items-center justify-between text-left transition cursor-pointer ${
+                                className={`flex w-full cursor-pointer items-center justify-between rounded-lg p-2 text-left transition ${
                                   isSelected
-                                    ? "bg-emerald-500/10 border border-emerald-500/30 text-foreground"
+                                    ? "text-foreground border border-emerald-500/30 bg-emerald-500/10"
                                     : "hover:bg-muted/50 text-foreground-secondary"
                                 }`}
                               >
-                                <div className="flex items-center gap-2.5 min-w-0">
-                                  <div className="size-7 rounded-full bg-muted flex items-center justify-center font-bold text-[10px] text-foreground shrink-0 uppercase border border-border">
+                                <div className="flex min-w-0 items-center gap-2.5">
+                                  <div className="bg-muted text-foreground border-border flex size-7 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold uppercase">
                                     {u.name ? u.name.charAt(0) : "U"}
                                   </div>
                                   <div className="min-w-0">
-                                    <span className="font-bold text-xs text-foreground block truncate">
+                                    <span className="text-foreground block truncate text-xs font-bold">
                                       {u.name}
                                     </span>
-                                    <span className="text-[11px] text-foreground-muted font-mono block truncate">
+                                    <span className="text-foreground-muted block truncate font-mono text-[11px]">
                                       {u.email}
                                     </span>
                                   </div>
                                 </div>
 
-                                <div className="flex items-center gap-1.5 shrink-0">
+                                <div className="flex shrink-0 items-center gap-1.5">
                                   {u.role && (
-                                    <span className="px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase bg-muted text-foreground-muted border border-border">
+                                    <span className="bg-muted text-foreground-muted border-border rounded border px-1.5 py-0.5 text-[9px] font-extrabold uppercase">
                                       {u.role}
                                     </span>
                                   )}
                                   <div
-                                    className={`size-4 rounded-md flex items-center justify-center border ${
+                                    className={`flex size-4 items-center justify-center rounded-md border ${
                                       isSelected
-                                        ? "bg-emerald-600 text-white border-emerald-600 dark:bg-wise-green dark:text-black dark:border-wise-green"
+                                        ? "dark:bg-wise-green dark:border-wise-green border-emerald-600 bg-emerald-600 text-white dark:text-black"
                                         : "border-border"
                                     }`}
                                   >
@@ -375,33 +379,34 @@ export function BroadcastComposer({
                 {/* Selected Users Chips */}
                 {selectedUsers.length > 0 && (
                   <div className="space-y-1.5 pt-1">
-                    <div className="flex items-center justify-between text-[11px] text-foreground-muted">
+                    <div className="text-foreground-muted flex items-center justify-between text-[11px]">
                       <span>
-                        Penerima Terpilih: <strong className="text-foreground">{selectedUsers.length} Pengguna</strong>
+                        Penerima Terpilih:{" "}
+                        <strong className="text-foreground">{selectedUsers.length} Pengguna</strong>
                       </span>
                       <button
                         type="button"
                         onClick={handleClearSelectedUsers}
-                        className="text-rose-500 font-bold hover:underline cursor-pointer"
+                        className="cursor-pointer font-bold text-rose-500 hover:underline"
                       >
                         Hapus Semua
                       </button>
                     </div>
 
-                    <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto p-1.5 rounded-lg border border-border bg-surface dark:bg-[#10110e]">
+                    <div className="border-border bg-surface flex max-h-32 flex-wrap gap-1.5 overflow-y-auto rounded-lg border p-1.5 dark:bg-[#10110e]">
                       {selectedUsers.map((u) => (
                         <span
                           key={u.id}
-                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-800 dark:text-wise-green border border-emerald-500/30"
+                          className="dark:text-wise-green inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-800"
                         >
-                          <span className="truncate max-w-35 font-bold">{u.name}</span>
-                          <span className="text-[10px] text-foreground-muted font-mono truncate max-w-30">
+                          <span className="max-w-35 truncate font-bold">{u.name}</span>
+                          <span className="text-foreground-muted max-w-30 truncate font-mono text-[10px]">
                             ({u.email})
                           </span>
                           <button
                             type="button"
                             onClick={() => handleRemoveUser(u.id)}
-                            className="size-3.5 rounded-full flex items-center justify-center hover:bg-rose-500/20 text-foreground-muted hover:text-rose-600 transition ml-0.5"
+                            className="text-foreground-muted ml-0.5 flex size-3.5 items-center justify-center rounded-full transition hover:bg-rose-500/20 hover:text-rose-600"
                           >
                             <X className="size-2.5" />
                           </button>
@@ -413,22 +418,22 @@ export function BroadcastComposer({
               </div>
             ) : (
               /* Manual Mode Form */
-              <div className="space-y-2.5 animate-in fade-in">
+              <div className="animate-in fade-in space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-foreground">
+                  <span className="text-foreground text-[11px] font-bold">
                     Input Email Manual / Kustom:
                   </span>
                   <button
                     type="button"
                     onClick={() => setIsManualMode(false)}
-                    className="text-[10px] font-bold text-emerald-700 dark:text-wise-green hover:underline cursor-pointer"
+                    className="dark:text-wise-green cursor-pointer text-[10px] font-bold text-emerald-700 hover:underline"
                   >
                     ← Kembali ke Pilih Pengguna
                   </button>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-foreground-secondary mb-1">
+                  <label className="text-foreground-secondary mb-1 block text-[11px] font-bold">
                     Alamat Email: <span className="text-rose-500">*</span>
                   </label>
                   <input
@@ -437,12 +442,12 @@ export function BroadcastComposer({
                     value={manualEmail}
                     onChange={(e) => setManualEmail(e.target.value)}
                     placeholder="contoh: user@tokoonline.com"
-                    className="w-full h-9 px-3 rounded-lg bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border focus:border-emerald-600 dark:focus:border-wise-green outline-none text-xs"
+                    className="bg-surface text-foreground border-border dark:focus:border-wise-green h-9 w-full rounded-lg border px-3 text-xs font-semibold outline-none focus:border-emerald-600 dark:bg-[#10110e]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-foreground-secondary mb-1">
+                  <label className="text-foreground-secondary mb-1 block text-[11px] font-bold">
                     Nama Penerima (Opsional):
                   </label>
                   <input
@@ -450,7 +455,7 @@ export function BroadcastComposer({
                     value={manualName}
                     onChange={(e) => setManualName(e.target.value)}
                     placeholder="contoh: Budi Santoso"
-                    className="w-full h-9 px-3 rounded-lg bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border focus:border-emerald-600 dark:focus:border-wise-green outline-none text-xs"
+                    className="bg-surface text-foreground border-border dark:focus:border-wise-green h-9 w-full rounded-lg border px-3 text-xs font-semibold outline-none focus:border-emerald-600 dark:bg-[#10110e]"
                   />
                 </div>
               </div>
@@ -460,7 +465,7 @@ export function BroadcastComposer({
 
         {/* Subject */}
         <div>
-          <label className="block text-[11px] font-bold uppercase tracking-wider text-foreground-secondary mb-1">
+          <label className="text-foreground-secondary mb-1 block text-[11px] font-bold tracking-wider uppercase">
             Subjek Email: <span className="text-rose-500">*</span>
           </label>
           <input
@@ -469,13 +474,13 @@ export function BroadcastComposer({
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
             placeholder="contoh: Pengumuman Pemeliharaan Server & Fitur Baru"
-            className="w-full h-10 px-3.5 rounded-lg bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-emerald-600 dark:focus:border-wise-green focus:ring-2 focus:ring-emerald-500/20 dark:focus:ring-wise-green/20 outline-none transition text-xs"
+            className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-lg border px-3.5 text-xs font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e]"
           />
         </div>
 
         {/* Message Content */}
         <div>
-          <label className="block text-[11px] font-bold uppercase tracking-wider text-foreground-secondary mb-1">
+          <label className="text-foreground-secondary mb-1 block text-[11px] font-bold tracking-wider uppercase">
             Isi Pesan Siaran: <span className="text-rose-500">*</span>
           </label>
           <textarea
@@ -484,7 +489,7 @@ export function BroadcastComposer({
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Tuliskan pesan lengkap yang akan dikirimkan ke email penerima..."
-            className="w-full p-3 rounded-lg bg-surface dark:bg-[#10110e] text-foreground font-semibold text-xs border border-border hover:border-foreground-muted focus:border-emerald-600 dark:focus:border-wise-green focus:ring-2 focus:ring-emerald-500/20 dark:focus:ring-wise-green/20 outline-none transition"
+            className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 w-full rounded-lg border p-3 text-xs font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e]"
           />
         </div>
 
@@ -494,7 +499,7 @@ export function BroadcastComposer({
           variant="primaryPill"
           size="sm"
           disabled={isSending}
-          className="w-full h-10 text-xs font-extrabold gap-2 shadow-xs cursor-pointer"
+          className="h-10 w-full cursor-pointer gap-2 text-xs font-extrabold shadow-xs"
         >
           {isSending ? (
             <>
@@ -508,16 +513,16 @@ export function BroadcastComposer({
                 {broadcastTarget === "ALL"
                   ? "Kirim Siaran ke Semua Pengguna"
                   : isManualMode
-                  ? "Kirim Email ke Antrean"
-                  : selectedUsers.length > 1
-                  ? `Kirim ke ${selectedUsers.length} Pengguna Terpilih`
-                  : "Kirim Email ke Antrean"}
+                    ? "Kirim Email ke Antrean"
+                    : selectedUsers.length > 1
+                      ? `Kirim ke ${selectedUsers.length} Pengguna Terpilih`
+                      : "Kirim Email ke Antrean"}
               </span>
             </>
           )}
         </Button>
 
-        <div className="flex items-center gap-1.5 text-[11px] text-foreground-muted pt-1 justify-center">
+        <div className="text-foreground-muted flex items-center justify-center gap-1.5 pt-1 text-[11px]">
           <Sparkles className="size-3 text-amber-500" />
           <span>Diproses di latar belakang via SumoPod &amp; Mailketing.</span>
         </div>

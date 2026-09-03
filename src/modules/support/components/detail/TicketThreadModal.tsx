@@ -99,7 +99,8 @@ export function TicketThreadModal({
       if (
         initialMessage &&
         r.content === initialMessage.content &&
-        Math.abs(new Date(r.createdAt).getTime() - new Date(initialMessage.createdAt).getTime()) < 3000
+        Math.abs(new Date(r.createdAt).getTime() - new Date(initialMessage.createdAt).getTime()) <
+          3000
       ) {
         return;
       }
@@ -197,21 +198,19 @@ export function TicketThreadModal({
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
-      className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-sm p-3 sm:p-6 flex min-h-full items-center justify-center animate-in fade-in"
+      className="animate-in fade-in fixed inset-0 z-50 flex min-h-full items-center justify-center overflow-y-auto bg-black/75 p-3 backdrop-blur-sm sm:p-6"
     >
-      <div className="relative w-full max-w-2xl max-h-[90vh] flex flex-col rounded-md border border-border bg-surface dark:bg-[#161715] shadow-2xl overflow-hidden animate-in zoom-in-95">
+      <div className="border-border bg-surface animate-in zoom-in-95 relative flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-md border shadow-2xl dark:bg-[#161715]">
         {/* Sticky Header */}
-        <div className="p-5 sm:p-6 pb-4 border-b border-border flex items-start justify-between shrink-0">
+        <div className="border-border flex shrink-0 items-start justify-between border-b p-5 pb-4 sm:p-6">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="font-mono text-xs font-bold text-dark-green dark:text-wise-green bg-light-mint dark:bg-wise-green/15 px-2.5 py-0.5 rounded-full border border-wise-green/30">
+              <span className="text-dark-green dark:text-wise-green bg-light-mint dark:bg-wise-green/15 border-wise-green/30 rounded-full border px-2.5 py-0.5 font-mono text-xs font-bold">
                 {ticket.ticketNumber}
               </span>
-              <span className="text-xs font-semibold text-foreground-muted">
-                {ticket.category}
-              </span>
+              <span className="text-foreground-muted text-xs font-semibold">{ticket.category}</span>
             </div>
-            <h2 className="text-lg sm:text-xl font-black text-foreground tracking-tight">
+            <h2 className="text-foreground text-lg font-black tracking-tight sm:text-xl">
               {ticket.subject}
             </h2>
           </div>
@@ -219,7 +218,7 @@ export function TicketThreadModal({
           <button
             type="button"
             onClick={onClose}
-            className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer shrink-0"
+            className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full transition"
             aria-label="Tutup"
           >
             <X className="size-4" />
@@ -227,12 +226,12 @@ export function TicketThreadModal({
         </div>
 
         {/* Scrollable Body: Attachment & Messages */}
-        <div className="flex-1 overflow-y-auto min-h-0 p-5 sm:p-6 space-y-4">
+        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-5 sm:p-6">
           {/* Top Initial Attachment preview if exists */}
           {ticket.attachment && (
-            <div className="p-3 rounded-md bg-muted/50 border border-border flex items-center justify-between gap-3 text-xs">
+            <div className="bg-muted/50 border-border flex items-center justify-between gap-3 rounded-md border p-3 text-xs">
               <div className="flex items-center gap-2.5 overflow-hidden">
-                <div className="size-10 rounded bg-surface dark:bg-black/40 border border-border flex items-center justify-center shrink-0 overflow-hidden">
+                <div className="bg-surface border-border flex size-10 shrink-0 items-center justify-center overflow-hidden rounded border dark:bg-black/40">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={ticket.attachment}
@@ -241,17 +240,17 @@ export function TicketThreadModal({
                   />
                 </div>
                 <div className="overflow-hidden">
-                  <span className="font-bold text-foreground block truncate">
+                  <span className="text-foreground block truncate font-bold">
                     {t("support.attachmentLabel")} (Awal)
                   </span>
-                  <span className="text-[11px] text-foreground-muted">Cloudflare R2 Storage</span>
+                  <span className="text-foreground-muted text-[11px]">Cloudflare R2 Storage</span>
                 </div>
               </div>
               <a
                 href={ticket.attachment}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 dark:text-wise-green hover:underline px-3 py-1.5 rounded-full bg-emerald-500/10 dark:bg-wise-green/10 border border-emerald-500/20 dark:border-wise-green/20 shrink-0"
+                className="dark:text-wise-green dark:bg-wise-green/10 dark:border-wise-green/20 inline-flex shrink-0 items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-xs font-bold text-emerald-700 hover:underline"
               >
                 <span>{t("support.viewAttachment")}</span>
                 <ExternalLink className="size-3" />
@@ -261,30 +260,30 @@ export function TicketThreadModal({
 
           {/* Loading Indicator for replies */}
           {isFetchingReplies && replies.length === 0 && (
-            <div className="flex items-center justify-center py-3 text-foreground-muted gap-2 text-xs font-semibold">
-              <Loader2 className="size-3.5 animate-spin text-emerald-700 dark:text-wise-green" />
+            <div className="text-foreground-muted flex items-center justify-center gap-2 py-3 text-xs font-semibold">
+              <Loader2 className="dark:text-wise-green size-3.5 animate-spin text-emerald-700" />
               <span>Memuat riwayat balasan...</span>
             </div>
           )}
 
           {/* Message Thread History */}
-          <div className="space-y-4 py-1 divide-y divide-transparent">
+          <div className="space-y-4 divide-y divide-transparent py-1">
             {allMessages.map((msg) => (
               <div
                 key={msg.id}
-                className={`flex flex-col space-y-1 ${
-                  msg.isStaff ? "items-start" : "items-end"
-                }`}
+                className={`flex flex-col space-y-1 ${msg.isStaff ? "items-start" : "items-end"}`}
               >
-                <div className="flex items-center gap-1.5 text-[11px] font-bold text-foreground-muted px-1">
+                <div className="text-foreground-muted flex items-center gap-1.5 px-1 text-[11px] font-bold">
                   {msg.isStaff ? (
                     <>
-                      <ShieldCheck className="size-3.5 text-dark-green dark:text-wise-green" />
-                      <span className="text-dark-green dark:text-wise-green font-extrabold">{msg.senderName}</span>
+                      <ShieldCheck className="text-dark-green dark:text-wise-green size-3.5" />
+                      <span className="text-dark-green dark:text-wise-green font-extrabold">
+                        {msg.senderName}
+                      </span>
                     </>
                   ) : (
                     <>
-                      <User className="size-3 text-foreground-muted" />
+                      <User className="text-foreground-muted size-3" />
                       <span>{msg.senderName}</span>
                     </>
                   )}
@@ -298,28 +297,28 @@ export function TicketThreadModal({
                 </div>
 
                 <div
-                  className={`p-3.5 sm:p-4 rounded-lg max-w-[85%] text-xs font-semibold leading-relaxed shadow-sm space-y-2.5 ${
+                  className={`max-w-[85%] space-y-2.5 rounded-lg p-3.5 text-xs leading-relaxed font-semibold shadow-sm sm:p-4 ${
                     msg.isStaff
-                      ? "bg-muted/80 text-foreground border border-border"
-                      : "bg-[#e2f7cb] dark:bg-[#005c4b]/50 text-foreground border border-[#c4e8a5] dark:border-[#005c4b]"
+                      ? "bg-muted/80 text-foreground border-border border"
+                      : "text-foreground border border-[#c4e8a5] bg-[#e2f7cb] dark:border-[#005c4b] dark:bg-[#005c4b]/50"
                   }`}
                 >
                   {/* Inline Image Attachment in Bubble */}
                   {msg.attachment && (
-                    <div className="rounded overflow-hidden border border-border/50 bg-black/5 dark:bg-black/30 max-w-sm">
+                    <div className="border-border/50 max-w-sm overflow-hidden rounded border bg-black/5 dark:bg-black/30">
                       <a
                         href={msg.attachment}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block group relative overflow-hidden cursor-pointer"
+                        className="group relative block cursor-pointer overflow-hidden"
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={msg.attachment}
                           alt="Lampiran Screenshot"
-                          className="max-h-56 w-full object-cover group-hover:scale-105 transition duration-200"
+                          className="max-h-56 w-full object-cover transition duration-200 group-hover:scale-105"
                         />
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition text-white text-[11px] font-bold gap-1">
+                        <div className="absolute inset-0 flex items-center justify-center gap-1 bg-black/40 text-[11px] font-bold text-white opacity-0 transition group-hover:opacity-100">
                           <span>Buka Ukuran Penuh</span>
                           <ExternalLink className="size-3" />
                         </div>
@@ -335,12 +334,15 @@ export function TicketThreadModal({
         </div>
 
         {/* Sticky Reply Composer Footer */}
-        <form onSubmit={handleSend} className="p-4 sm:p-6 pt-3 border-t border-border bg-surface/90 dark:bg-[#161715]/90 backdrop-blur-sm shrink-0 space-y-2.5">
+        <form
+          onSubmit={handleSend}
+          className="border-border bg-surface/90 shrink-0 space-y-2.5 border-t p-4 pt-3 backdrop-blur-sm sm:p-6 dark:bg-[#161715]/90"
+        >
           {/* File Attachment Preview Chip */}
           {(previewUrl || isUploading || uploadError) && (
             <div>
               {uploadError ? (
-                <div className="flex items-center justify-between gap-2 p-2 px-3 rounded-md bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-semibold">
+                <div className="flex items-center justify-between gap-2 rounded-md border border-rose-500/20 bg-rose-500/10 p-2 px-3 text-xs font-semibold text-rose-600 dark:text-rose-400">
                   <span>{uploadError}</span>
                   <button
                     type="button"
@@ -351,28 +353,32 @@ export function TicketThreadModal({
                   </button>
                 </div>
               ) : previewUrl ? (
-                <div className="flex items-center justify-between gap-3 p-2 px-3 rounded-md bg-muted/60 border border-border text-xs">
+                <div className="bg-muted/60 border-border flex items-center justify-between gap-3 rounded-md border p-2 px-3 text-xs">
                   <div className="flex items-center gap-2.5 overflow-hidden">
-                    <div className="size-10 rounded bg-surface border border-border overflow-hidden shrink-0 flex items-center justify-center">
+                    <div className="bg-surface border-border flex size-10 shrink-0 items-center justify-center overflow-hidden rounded border">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={previewUrl} alt="Preview Lampiran" className="size-full object-cover" />
+                      <img
+                        src={previewUrl}
+                        alt="Preview Lampiran"
+                        className="size-full object-cover"
+                      />
                     </div>
                     <div className="overflow-hidden">
-                      <span className="font-bold text-foreground block truncate">
+                      <span className="text-foreground block truncate font-bold">
                         {attachmentFile?.name || "Lampiran Gambar"}
                       </span>
-                      <span className="text-[11px] text-foreground-muted">
+                      <span className="text-foreground-muted text-[11px]">
                         {isUploading ? "Mengunggah ke Cloudflare R2..." : "Siap dilampirkan"}
                       </span>
                     </div>
                   </div>
                   {isUploading ? (
-                    <Loader2 className="size-4 animate-spin text-emerald-700 dark:text-wise-green shrink-0" />
+                    <Loader2 className="dark:text-wise-green size-4 shrink-0 animate-spin text-emerald-700" />
                   ) : (
                     <button
                       type="button"
                       onClick={handleRemoveAttachment}
-                      className="size-6 rounded-full flex items-center justify-center text-foreground-muted hover:text-rose-500 hover:bg-rose-500/10 transition cursor-pointer shrink-0"
+                      className="text-foreground-muted flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-full transition hover:bg-rose-500/10 hover:text-rose-500"
                       title="Hapus Lampiran"
                     >
                       <X className="size-3.5" />
@@ -399,7 +405,7 @@ export function TicketThreadModal({
               onChange={(e) => setReplyText(e.target.value)}
               placeholder={t("support.replyPlaceholder")}
               disabled={isLoading}
-              className="w-full p-3 rounded-md bg-surface dark:bg-[#10110e] text-foreground font-semibold text-xs border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition"
+              className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green w-full rounded-md border p-3 text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
             />
 
             <div className="flex items-center justify-between gap-2">
@@ -407,10 +413,10 @@ export function TicketThreadModal({
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isLoading || isUploading}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-foreground-secondary hover:text-foreground hover:bg-muted border border-border transition cursor-pointer disabled:opacity-50"
+                className="text-foreground-secondary hover:text-foreground hover:bg-muted border-border inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition disabled:opacity-50"
                 title="Unggah Gambar / Screenshot"
               >
-                <Paperclip className="size-3.5 text-emerald-700 dark:text-wise-green" />
+                <Paperclip className="dark:text-wise-green size-3.5 text-emerald-700" />
                 <span>Lampirkan Gambar</span>
               </button>
 
@@ -418,8 +424,12 @@ export function TicketThreadModal({
                 type="submit"
                 variant="primaryPill"
                 size="sm"
-                disabled={isLoading || isUploading || (!replyText.trim() && !attachmentUrl && !attachmentFile)}
-                className="text-xs font-bold gap-1.5 shadow-sm h-8 px-4 cursor-pointer"
+                disabled={
+                  isLoading ||
+                  isUploading ||
+                  (!replyText.trim() && !attachmentUrl && !attachmentFile)
+                }
+                className="h-8 cursor-pointer gap-1.5 px-4 text-xs font-bold shadow-sm"
               >
                 {isLoading || isUploading ? (
                   <Loader2 className="size-3.5 animate-spin" />

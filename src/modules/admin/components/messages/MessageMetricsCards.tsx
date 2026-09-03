@@ -17,51 +17,51 @@ interface MessageMetricsCardsProps {
 
 export function MessageMetricsCards({ metrics }: MessageMetricsCardsProps) {
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-      <div className="p-4 rounded-xl border border-border bg-surface dark:bg-[#161715] shadow-xs">
-        <div className="flex items-center justify-between text-foreground-muted mb-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider">Total Pesan</span>
-          <MessageSquare className="size-4 text-foreground-secondary" />
+    <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+      <div className="border-border bg-surface rounded-xl border p-4 shadow-xs dark:bg-[#161715]">
+        <div className="text-foreground-muted mb-1 flex items-center justify-between">
+          <span className="text-[11px] font-bold tracking-wider uppercase">Total Pesan</span>
+          <MessageSquare className="text-foreground-secondary size-4" />
         </div>
-        <div className="text-lg sm:text-xl font-black font-mono text-foreground">
+        <div className="text-foreground font-mono text-lg font-black sm:text-xl">
           {metrics.totalCount.toLocaleString("id-ID")} Pesan
         </div>
-        <span className="text-[10px] text-foreground-muted">
+        <span className="text-foreground-muted text-[10px]">
           {metrics.outboundCount} Keluar &bull; {metrics.inboundCount} Masuk
         </span>
       </div>
 
-      <div className="p-4 rounded-xl border border-border bg-surface dark:bg-[#161715] shadow-xs">
-        <div className="flex items-center justify-between text-foreground-muted mb-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider">Tersampaikan</span>
-          <CheckCircle2 className="size-4 text-emerald-600 dark:text-wise-green" />
+      <div className="border-border bg-surface rounded-xl border p-4 shadow-xs dark:bg-[#161715]">
+        <div className="text-foreground-muted mb-1 flex items-center justify-between">
+          <span className="text-[11px] font-bold tracking-wider uppercase">Tersampaikan</span>
+          <CheckCircle2 className="dark:text-wise-green size-4 text-emerald-600" />
         </div>
-        <div className="text-lg sm:text-xl font-black font-mono text-emerald-700 dark:text-wise-green">
+        <div className="dark:text-wise-green font-mono text-lg font-black text-emerald-700 sm:text-xl">
           {(metrics.deliveredCount + metrics.sentCount).toLocaleString("id-ID")} Pesan
         </div>
-        <span className="text-[10px] text-foreground-muted">Berhasil terkirim ke WhatsApp</span>
+        <span className="text-foreground-muted text-[10px]">Berhasil terkirim ke WhatsApp</span>
       </div>
 
-      <div className="p-4 rounded-xl border border-border bg-surface dark:bg-[#161715] shadow-xs">
-        <div className="flex items-center justify-between text-foreground-muted mb-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider">Terbaca</span>
+      <div className="border-border bg-surface rounded-xl border p-4 shadow-xs dark:bg-[#161715]">
+        <div className="text-foreground-muted mb-1 flex items-center justify-between">
+          <span className="text-[11px] font-bold tracking-wider uppercase">Terbaca</span>
           <CheckCheck className="size-4 text-blue-500" />
         </div>
-        <div className="text-lg sm:text-xl font-black font-mono text-blue-600 dark:text-blue-400">
+        <div className="font-mono text-lg font-black text-blue-600 sm:text-xl dark:text-blue-400">
           {metrics.readCount.toLocaleString("id-ID")} Pesan
         </div>
-        <span className="text-[10px] text-foreground-muted">Centang biru (dibaca penerima)</span>
+        <span className="text-foreground-muted text-[10px]">Centang biru (dibaca penerima)</span>
       </div>
 
-      <div className="p-4 rounded-xl border border-border bg-surface dark:bg-[#161715] shadow-xs">
-        <div className="flex items-center justify-between text-foreground-muted mb-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider">Gagal Terkirim</span>
+      <div className="border-border bg-surface rounded-xl border p-4 shadow-xs dark:bg-[#161715]">
+        <div className="text-foreground-muted mb-1 flex items-center justify-between">
+          <span className="text-[11px] font-bold tracking-wider uppercase">Gagal Terkirim</span>
           <AlertCircle className="size-4 text-rose-500" />
         </div>
-        <div className="text-lg sm:text-xl font-black font-mono text-rose-600 dark:text-rose-400">
+        <div className="font-mono text-lg font-black text-rose-600 sm:text-xl dark:text-rose-400">
           {metrics.failedCount.toLocaleString("id-ID")} Pesan
         </div>
-        <span className="text-[10px] text-foreground-muted">Perlu investigasi nomor/koneksi</span>
+        <span className="text-foreground-muted text-[10px]">Perlu investigasi nomor/koneksi</span>
       </div>
     </div>
   );

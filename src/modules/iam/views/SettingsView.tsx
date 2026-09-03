@@ -129,36 +129,36 @@ export function SettingsView() {
   };
 
   return (
-    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto p-3 sm:p-6 lg:p-8">
+    <div className="mx-auto max-w-7xl space-y-6 p-3 sm:space-y-8 sm:p-6 lg:p-8">
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5 sm:pb-6">
+      <div className="border-border flex flex-col justify-between gap-4 border-b pb-5 sm:flex-row sm:items-center sm:pb-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
-            <div className="size-8 sm:size-9 rounded-full bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green flex items-center justify-center shrink-0">
+            <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-8 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700 sm:size-9">
               <Settings className="size-4 sm:size-5" />
             </div>
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-foreground tracking-tight">
+            <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl lg:text-3xl">
               Pengaturan &amp; API Key
             </h1>
           </div>
-          <p className="text-xs sm:text-sm font-semibold text-foreground-secondary max-w-2xl">
+          <p className="text-foreground-secondary max-w-2xl text-xs font-semibold sm:text-sm">
             Kelola profil bisnis, kata sandi akun, dan kunci akses otentikasi API Fast-Path.
           </p>
         </div>
       </div>
 
       {/* API Key Fast-Path Card */}
-      <div className="rounded-md border border-border bg-surface dark:bg-[#161715] p-6 sm:p-8 space-y-6 shadow-sm">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-4">
+      <div className="border-border bg-surface space-y-6 rounded-md border p-6 shadow-sm sm:p-8 dark:bg-[#161715]">
+        <div className="border-border flex flex-col justify-between gap-3 border-b pb-4 sm:flex-row sm:items-center">
           <div className="flex items-center gap-3">
-            <div className="size-10 rounded-full bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green flex items-center justify-center">
+            <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-10 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
               <Key className="size-5" />
             </div>
             <div>
-              <h2 className="text-xl font-black text-foreground tracking-tight">
+              <h2 className="text-foreground text-xl font-black tracking-tight">
                 API Key Fast-Path
               </h2>
-              <p className="text-xs font-semibold text-foreground-secondary">
+              <p className="text-foreground-secondary text-xs font-semibold">
                 Gunakan token ini untuk otentikasi REST API dan bot otomasi eksternal.
               </p>
             </div>
@@ -170,7 +170,7 @@ export function SettingsView() {
               size="sm"
               disabled={isKeyLoading || !apiKey}
               onClick={handleOpenRegenerateModal}
-              className="rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted"
+              className="border-border hover:border-foreground-muted gap-1.5 rounded-full text-xs font-bold"
             >
               <RefreshCw className={`size-3.5 ${isKeyLoading ? "animate-spin" : ""}`} />
               <span>Buat Ulang Kunci</span>
@@ -181,7 +181,7 @@ export function SettingsView() {
                 size="sm"
                 disabled={isKeyLoading}
                 onClick={handleOpenRevokeModal}
-                className="rounded-full text-xs font-bold gap-1.5 text-rose-600 dark:text-rose-400 border-rose-500/20 hover:bg-rose-500/10"
+                className="gap-1.5 rounded-full border-rose-500/20 text-xs font-bold text-rose-600 hover:bg-rose-500/10 dark:text-rose-400"
               >
                 <Trash2 className="size-3.5" />
                 <span>Cabut</span>
@@ -191,11 +191,11 @@ export function SettingsView() {
         </div>
 
         {apiKey ? (
-          <div className="p-4 rounded-md border border-border bg-muted/30 space-y-3">
+          <div className="border-border bg-muted/30 space-y-3 rounded-md border p-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-foreground">
+              <span className="text-foreground text-xs font-bold">
                 Token Aktif (Header:{" "}
-                <code className="px-1.5 py-0.5 rounded font-mono font-bold text-xs bg-emerald-500/10 dark:bg-wise-green/10 text-emerald-700 dark:text-wise-green border border-emerald-500/25 dark:border-wise-green/20">
+                <code className="dark:bg-wise-green/10 dark:text-wise-green dark:border-wise-green/20 rounded border border-emerald-500/25 bg-emerald-500/10 px-1.5 py-0.5 font-mono text-xs font-bold text-emerald-700">
                   X-Wahide-API-Key
                 </code>
                 )
@@ -205,7 +205,7 @@ export function SettingsView() {
                   variant="outline"
                   size="sm"
                   onClick={() => setShowKey(!showKey)}
-                  className="size-7 rounded-full p-0 border-border"
+                  className="border-border size-7 rounded-full p-0"
                   aria-label={showKey ? "Sembunyikan Kunci" : "Tampilkan Kunci"}
                 >
                   {showKey ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
@@ -214,7 +214,7 @@ export function SettingsView() {
                   variant="outline"
                   size="sm"
                   onClick={handleCopyKey}
-                  className="size-7 rounded-full p-0 border-border"
+                  className="border-border size-7 rounded-full p-0"
                   aria-label="Salin Kunci"
                 >
                   <Copy className="size-3.5" />
@@ -222,25 +222,28 @@ export function SettingsView() {
               </div>
             </div>
 
-            <div className="p-3 rounded bg-surface dark:bg-[#10110e] border border-border text-xs font-mono font-semibold break-all text-foreground">
+            <div className="bg-surface border-border text-foreground rounded border p-3 font-mono text-xs font-semibold break-all dark:bg-[#10110e]">
               {showKey ? apiKey : "hide_live_••••••••••••••••••••••••••••••••"}
             </div>
 
-            <div className="flex items-center gap-1.5 text-[11px] font-semibold text-foreground-muted">
-              <ShieldCheck className="size-3.5 text-emerald-600 dark:text-wise-green shrink-0" />
-              <span>Jangan pernah membagikan API Key Anda di repositori publik atau aplikasi client-side.</span>
+            <div className="text-foreground-muted flex items-center gap-1.5 text-[11px] font-semibold">
+              <ShieldCheck className="dark:text-wise-green size-3.5 shrink-0 text-emerald-600" />
+              <span>
+                Jangan pernah membagikan API Key Anda di repositori publik atau aplikasi
+                client-side.
+              </span>
             </div>
           </div>
         ) : (
-          <div className="p-6 text-center space-y-2 rounded-md border border-dashed border-border bg-muted/20">
-            <p className="text-xs font-semibold text-foreground-secondary">
+          <div className="border-border bg-muted/20 space-y-2 rounded-md border border-dashed p-6 text-center">
+            <p className="text-foreground-secondary text-xs font-semibold">
               Belum ada API Key aktif. Buat kunci baru untuk mulai menghubungkan aplikasi eksternal.
             </p>
             <Button
               variant="primaryPill"
               size="sm"
               onClick={handleOpenRegenerateModal}
-              className="text-xs font-bold gap-1.5 mt-2"
+              className="mt-2 gap-1.5 text-xs font-bold"
             >
               <Key className="size-3.5" />
               <span>Terbitkan API Key Baru</span>
@@ -250,7 +253,7 @@ export function SettingsView() {
       </div>
 
       {/* Profile & Business Details */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
         {/* Profile Information Form */}
         <ProfileInfoCard
           key={user?.id ? `${user.id}-${user.name}` : "profile-form-unloaded"}
@@ -260,14 +263,14 @@ export function SettingsView() {
         />
 
         {/* Security & Password Form */}
-        <div className="rounded-md border border-border bg-surface dark:bg-[#161715] p-6 sm:p-8 space-y-5 shadow-sm">
-          <div className="flex items-center gap-3 border-b border-border pb-4">
-            <div className="size-9 rounded-full bg-muted flex items-center justify-center text-foreground-secondary">
+        <div className="border-border bg-surface space-y-5 rounded-md border p-6 shadow-sm sm:p-8 dark:bg-[#161715]">
+          <div className="border-border flex items-center gap-3 border-b pb-4">
+            <div className="bg-muted text-foreground-secondary flex size-9 items-center justify-center rounded-full">
               <Lock className="size-4" />
             </div>
             <div>
-              <h2 className="text-lg font-black text-foreground">Keamanan &amp; Kata Sandi</h2>
-              <p className="text-xs font-semibold text-foreground-secondary">
+              <h2 className="text-foreground text-lg font-black">Keamanan &amp; Kata Sandi</h2>
+              <p className="text-foreground-secondary text-xs font-semibold">
                 Perbarui kata sandi untuk mengamankan akses dasbor.
               </p>
             </div>
@@ -275,7 +278,7 @@ export function SettingsView() {
 
           <form onSubmit={handleSavePassword} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                 Kata Sandi Saat Ini
               </label>
               <div className="relative">
@@ -285,12 +288,12 @@ export function SettingsView() {
                   onChange={(e) => setCurrentPassword(e.target.value)}
                   placeholder="••••••••"
                   required
-                  className="w-full h-10 pl-4 pr-10 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-emerald-600 dark:focus:border-wise-green focus:ring-2 focus:ring-emerald-500/20 dark:focus:ring-wise-green/20 outline-none transition text-xs"
+                  className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-full border pr-10 pl-4 text-xs font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e]"
                 />
                 <button
                   type="button"
                   onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground transition cursor-pointer"
+                  className="text-foreground-muted hover:text-foreground absolute top-1/2 right-3.5 -translate-y-1/2 cursor-pointer transition"
                   aria-label={showCurrentPassword ? "Sembunyikan Kata Sandi" : "Lihat Kata Sandi"}
                 >
                   {showCurrentPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
@@ -299,7 +302,7 @@ export function SettingsView() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                 Kata Sandi Baru
               </label>
               <div className="relative">
@@ -309,12 +312,12 @@ export function SettingsView() {
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="Minimal 8 karakter"
                   required
-                  className="w-full h-10 pl-4 pr-10 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-emerald-600 dark:focus:border-wise-green focus:ring-2 focus:ring-emerald-500/20 dark:focus:ring-wise-green/20 outline-none transition text-xs"
+                  className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-full border pr-10 pl-4 text-xs font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e]"
                 />
                 <button
                   type="button"
                   onClick={() => setShowNewPassword(!showNewPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground transition cursor-pointer"
+                  className="text-foreground-muted hover:text-foreground absolute top-1/2 right-3.5 -translate-y-1/2 cursor-pointer transition"
                   aria-label={showNewPassword ? "Sembunyikan Kata Sandi" : "Lihat Kata Sandi"}
                 >
                   {showNewPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
@@ -323,7 +326,7 @@ export function SettingsView() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                 Konfirmasi Kata Sandi Baru
               </label>
               <div className="relative">
@@ -333,12 +336,12 @@ export function SettingsView() {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Ulangi kata sandi baru"
                   required
-                  className="w-full h-10 pl-4 pr-10 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-emerald-600 dark:focus:border-wise-green focus:ring-2 focus:ring-emerald-500/20 dark:focus:ring-wise-green/20 outline-none transition text-xs"
+                  className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-full border pr-10 pl-4 text-xs font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e]"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground transition cursor-pointer"
+                  className="text-foreground-muted hover:text-foreground absolute top-1/2 right-3.5 -translate-y-1/2 cursor-pointer transition"
                   aria-label={showConfirmPassword ? "Sembunyikan Kata Sandi" : "Lihat Kata Sandi"}
                 >
                   {showConfirmPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
@@ -352,7 +355,7 @@ export function SettingsView() {
                 variant="primaryPill"
                 size="sm"
                 disabled={isSavingPassword || !newPassword}
-                className="text-xs font-bold gap-1.5 px-5 shadow-sm"
+                className="gap-1.5 px-5 text-xs font-bold shadow-sm"
               >
                 {isSavingPassword ? (
                   <>

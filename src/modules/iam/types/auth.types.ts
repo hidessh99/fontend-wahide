@@ -1,5 +1,6 @@
 // Canonical Backend Role Constants (matching G:\WEB2026\wahide\internal\modules\iam\domain\entity\role.go)
-export type UserRole = "admin" | "seller" | "user" | "reseller" | "SUPER_ADMIN" | "SELLER" | "AGENT" | string;
+export type UserRole =
+  "admin" | "seller" | "user" | "reseller" | "SUPER_ADMIN" | "SELLER" | "AGENT" | string;
 
 export function isAdmin(role?: string): boolean {
   if (!role) return false;

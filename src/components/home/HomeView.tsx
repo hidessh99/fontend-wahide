@@ -30,20 +30,20 @@ export function HomeView() {
   const { t } = useI18n();
 
   return (
-    <div className="space-y-20 sm:space-y-28 py-6 sm:py-10">
+    <div className="space-y-20 py-6 sm:space-y-28 sm:py-10">
       {/* 1. Hero Section */}
-      <section className="px-4 sm:px-6 max-w-5xl mx-auto">
+      <section className="mx-auto max-w-5xl px-4 sm:px-6">
         <div className="space-y-6 sm:space-y-8">
-          <div className="inline-flex items-center gap-2 rounded-full bg-surface dark:bg-[#161715] px-3.5 py-1.5 border border-border text-xs font-bold shadow-xs">
-            <span className="h-2 w-2 rounded-full bg-wise-green animate-pulse" />
+          <div className="bg-surface border-border inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-bold shadow-xs dark:bg-[#161715]">
+            <span className="bg-wise-green h-2 w-2 animate-pulse rounded-full" />
             <span>{t("common.hero.badge")}</span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.04] text-foreground max-w-3xl">
+          <h1 className="text-foreground max-w-3xl text-3xl leading-[1.04] font-black tracking-tight sm:text-5xl lg:text-6xl">
             {t("common.hero.title")}
           </h1>
 
-          <p className="text-sm sm:text-base lg:text-lg font-semibold text-foreground-secondary leading-relaxed max-w-2xl">
+          <p className="text-foreground-secondary max-w-2xl text-sm leading-relaxed font-semibold sm:text-base lg:text-lg">
             {t("common.hero.subtitle")}
           </p>
 
@@ -52,7 +52,7 @@ export function HomeView() {
               href="/register"
               className={cn(
                 buttonVariants({ variant: "primaryPill", size: "default" }),
-                "text-sm sm:text-base font-bold gap-2.5 px-6 sm:px-7 py-5 sm:py-6 shadow-sm min-h-12"
+                "min-h-12 gap-2.5 px-6 py-5 text-sm font-bold shadow-sm sm:px-7 sm:py-6 sm:text-base"
               )}
             >
               <span>{t("common.hero.ctaTrial")}</span>
@@ -62,133 +62,199 @@ export function HomeView() {
               href="/login"
               className={cn(
                 buttonVariants({ variant: "outline", size: "default" }),
-                "rounded-full text-sm sm:text-base font-bold px-6 sm:px-7 py-5 sm:py-6 border-border hover:border-foreground-muted min-h-12"
+                "border-border hover:border-foreground-muted min-h-12 rounded-full px-6 py-5 text-sm font-bold sm:px-7 sm:py-6 sm:text-base"
               )}
             >
               {t("common.hero.ctaLogin")}
             </Link>
           </div>
 
-          <div className="flex items-center gap-2 text-xs font-semibold text-foreground-muted pt-1">
-            <CheckCircle2 className="size-3.5 text-dark-green dark:text-wise-green" />
+          <div className="text-foreground-muted flex items-center gap-2 pt-1 text-xs font-semibold">
+            <CheckCircle2 className="text-dark-green dark:text-wise-green size-3.5" />
             <span>{t("common.hero.trustBadge")}</span>
           </div>
         </div>
 
         {/* Key Metrics Bento Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 mt-12 pt-8 border-t border-border/80">
-          <div className="rounded-lg bg-surface dark:bg-[#161715] p-4 sm:p-5 border border-border shadow-xs space-y-1">
-            <p className="text-[11px] font-bold text-foreground-muted uppercase tracking-wider">{t("common.metrics.deviceScale")}</p>
-            <p className="text-2xl sm:text-3xl font-black text-foreground font-mono">10.000+</p>
-            <p className="text-xs font-semibold text-foreground-secondary">{t("common.metrics.deviceScaleDesc")}</p>
+        <div className="border-border/80 mt-12 grid grid-cols-2 gap-3.5 border-t pt-8 sm:gap-4 lg:grid-cols-4">
+          <div className="bg-surface border-border space-y-1 rounded-lg border p-4 shadow-xs sm:p-5 dark:bg-[#161715]">
+            <p className="text-foreground-muted text-[11px] font-bold tracking-wider uppercase">
+              {t("common.metrics.deviceScale")}
+            </p>
+            <p className="text-foreground font-mono text-2xl font-black sm:text-3xl">10.000+</p>
+            <p className="text-foreground-secondary text-xs font-semibold">
+              {t("common.metrics.deviceScaleDesc")}
+            </p>
           </div>
 
-          <div className="rounded-lg bg-surface dark:bg-[#161715] p-4 sm:p-5 border border-border shadow-xs space-y-1">
-            <p className="text-[11px] font-bold text-foreground-muted uppercase tracking-wider">{t("common.metrics.ramSavings")}</p>
-            <p className="text-2xl sm:text-3xl font-black text-dark-green dark:text-wise-green font-mono">95%</p>
-            <p className="text-xs font-semibold text-foreground-secondary">{t("common.metrics.ramSavingsDesc")}</p>
+          <div className="bg-surface border-border space-y-1 rounded-lg border p-4 shadow-xs sm:p-5 dark:bg-[#161715]">
+            <p className="text-foreground-muted text-[11px] font-bold tracking-wider uppercase">
+              {t("common.metrics.ramSavings")}
+            </p>
+            <p className="text-dark-green dark:text-wise-green font-mono text-2xl font-black sm:text-3xl">
+              95%
+            </p>
+            <p className="text-foreground-secondary text-xs font-semibold">
+              {t("common.metrics.ramSavingsDesc")}
+            </p>
           </div>
 
-          <div className="rounded-lg bg-surface dark:bg-[#161715] p-4 sm:p-5 border border-border shadow-xs space-y-1">
-            <p className="text-[11px] font-bold text-foreground-muted uppercase tracking-wider">{t("common.metrics.wakeupLatency")}</p>
-            <p className="text-2xl sm:text-3xl font-black text-foreground font-mono">&lt; 0.3s</p>
-            <p className="text-xs font-semibold text-foreground-secondary">{t("common.metrics.wakeupLatencyDesc")}</p>
+          <div className="bg-surface border-border space-y-1 rounded-lg border p-4 shadow-xs sm:p-5 dark:bg-[#161715]">
+            <p className="text-foreground-muted text-[11px] font-bold tracking-wider uppercase">
+              {t("common.metrics.wakeupLatency")}
+            </p>
+            <p className="text-foreground font-mono text-2xl font-black sm:text-3xl">&lt; 0.3s</p>
+            <p className="text-foreground-secondary text-xs font-semibold">
+              {t("common.metrics.wakeupLatencyDesc")}
+            </p>
           </div>
 
-          <div className="rounded-lg bg-surface dark:bg-[#161715] p-4 sm:p-5 border border-border shadow-xs space-y-1">
-            <p className="text-[11px] font-bold text-foreground-muted uppercase tracking-wider">{t("common.metrics.antiBan")}</p>
-            <p className="text-2xl sm:text-3xl font-black text-dark-green dark:text-wise-green font-mono">5-Layer</p>
-            <p className="text-xs font-semibold text-foreground-secondary">{t("common.metrics.antiBanDesc")}</p>
+          <div className="bg-surface border-border space-y-1 rounded-lg border p-4 shadow-xs sm:p-5 dark:bg-[#161715]">
+            <p className="text-foreground-muted text-[11px] font-bold tracking-wider uppercase">
+              {t("common.metrics.antiBan")}
+            </p>
+            <p className="text-dark-green dark:text-wise-green font-mono text-2xl font-black sm:text-3xl">
+              5-Layer
+            </p>
+            <p className="text-foreground-secondary text-xs font-semibold">
+              {t("common.metrics.antiBanDesc")}
+            </p>
           </div>
         </div>
       </section>
 
       {/* 2. Interactive WhatsApp Simulator Showcase */}
-      <section className="px-4 sm:px-6 max-w-4xl mx-auto">
+      <section className="mx-auto max-w-4xl px-4 sm:px-6">
         <MessageSimulator />
       </section>
 
       {/* 3. Spintax Anti-Ban Engine Section */}
-      <section id="spintax" className="px-4 sm:px-6 max-w-4xl mx-auto">
+      <section id="spintax" className="mx-auto max-w-4xl px-4 sm:px-6">
         <SpintaxSandbox />
       </section>
 
       {/* 4. Developer REST API & Webhooks Code Sandbox */}
-      <section className="px-4 sm:px-6 max-w-4xl mx-auto">
+      <section className="mx-auto max-w-4xl px-4 sm:px-6">
         <ApiCodeSandbox />
       </section>
 
       {/* 5. 9 Core Enterprise Features Grid */}
-      <section id="features" className="px-4 sm:px-6 max-w-6xl mx-auto space-y-10">
-        <div className="text-center space-y-2.5 max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green">
+      <section id="features" className="mx-auto max-w-6xl space-y-10 px-4 sm:px-6">
+        <div className="mx-auto max-w-2xl space-y-2.5 text-center">
+          <div className="bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold">
             <Zap className="size-3.5" />
             <span>{t("common.landing.features.badge")}</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-foreground tracking-tight">
+          <h2 className="text-foreground text-2xl font-black tracking-tight sm:text-3xl lg:text-4xl">
             {t("common.landing.features.title")}
           </h2>
-          <p className="text-xs sm:text-sm font-semibold text-foreground-secondary leading-relaxed">
+          <p className="text-foreground-secondary text-xs leading-relaxed font-semibold sm:text-sm">
             {t("common.landing.features.subtitle")}
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3">
           {[
-            { icon: Cpu, title: t("common.landing.features.f1Title"), desc: t("common.landing.features.f1Desc") },
-            { icon: RefreshCw, title: t("common.landing.features.f2Title"), desc: t("common.landing.features.f2Desc") },
-            { icon: Activity, title: t("common.landing.features.f3Title"), desc: t("common.landing.features.f3Desc") },
-            { icon: Bot, title: t("common.landing.features.f4Title"), desc: t("common.landing.features.f4Desc") },
-            { icon: FileSpreadsheet, title: t("common.landing.features.f5Title"), desc: t("common.landing.features.f5Desc") },
-            { icon: Clock, title: t("common.landing.features.f6Title"), desc: t("common.landing.features.f6Desc") },
-            { icon: Users, title: t("common.landing.features.f7Title"), desc: t("common.landing.features.f7Desc") },
-            { icon: Layers, title: t("common.landing.features.f8Title"), desc: t("common.landing.features.f8Desc") },
-            { icon: Sliders, title: t("common.landing.features.f9Title"), desc: t("common.landing.features.f9Desc") },
+            {
+              icon: Cpu,
+              title: t("common.landing.features.f1Title"),
+              desc: t("common.landing.features.f1Desc"),
+            },
+            {
+              icon: RefreshCw,
+              title: t("common.landing.features.f2Title"),
+              desc: t("common.landing.features.f2Desc"),
+            },
+            {
+              icon: Activity,
+              title: t("common.landing.features.f3Title"),
+              desc: t("common.landing.features.f3Desc"),
+            },
+            {
+              icon: Bot,
+              title: t("common.landing.features.f4Title"),
+              desc: t("common.landing.features.f4Desc"),
+            },
+            {
+              icon: FileSpreadsheet,
+              title: t("common.landing.features.f5Title"),
+              desc: t("common.landing.features.f5Desc"),
+            },
+            {
+              icon: Clock,
+              title: t("common.landing.features.f6Title"),
+              desc: t("common.landing.features.f6Desc"),
+            },
+            {
+              icon: Users,
+              title: t("common.landing.features.f7Title"),
+              desc: t("common.landing.features.f7Desc"),
+            },
+            {
+              icon: Layers,
+              title: t("common.landing.features.f8Title"),
+              desc: t("common.landing.features.f8Desc"),
+            },
+            {
+              icon: Sliders,
+              title: t("common.landing.features.f9Title"),
+              desc: t("common.landing.features.f9Desc"),
+            },
           ].map((feat, i) => (
             <div
               key={i}
-              className="p-5 sm:p-6 rounded-lg border border-border bg-surface dark:bg-[#161715] space-y-2.5 hover:border-wise-green/50 transition duration-150 shadow-xs"
+              className="border-border bg-surface hover:border-wise-green/50 space-y-2.5 rounded-lg border p-5 shadow-xs transition duration-150 sm:p-6 dark:bg-[#161715]"
             >
-              <div className="size-9 rounded-full bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center">
+              <div className="bg-wise-green/15 text-dark-green dark:text-wise-green flex size-9 items-center justify-center rounded-full">
                 <feat.icon className="size-4.5" />
               </div>
-              <h3 className="text-sm sm:text-base font-bold text-foreground">{feat.title}</h3>
-              <p className="text-xs font-semibold text-foreground-secondary leading-relaxed">{feat.desc}</p>
+              <h3 className="text-foreground text-sm font-bold sm:text-base">{feat.title}</h3>
+              <p className="text-foreground-secondary text-xs leading-relaxed font-semibold">
+                {feat.desc}
+              </p>
             </div>
           ))}
         </div>
       </section>
 
       {/* 6. Transparent 3-Tier Pricing Grid */}
-      <section id="pricing" className="px-4 sm:px-6 max-w-5xl mx-auto space-y-10">
-        <div className="text-center space-y-2.5 max-w-xl mx-auto">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green">
+      <section id="pricing" className="mx-auto max-w-5xl space-y-10 px-4 sm:px-6">
+        <div className="mx-auto max-w-xl space-y-2.5 text-center">
+          <div className="bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold">
             <CreditCard className="size-3.5" />
             <span>{t("common.landing.pricing.badge")}</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
+          <h2 className="text-foreground text-2xl font-black tracking-tight sm:text-3xl">
             {t("common.landing.pricing.title")}
           </h2>
-          <p className="text-xs sm:text-sm font-semibold text-foreground-secondary leading-relaxed">
+          <p className="text-foreground-secondary text-xs leading-relaxed font-semibold sm:text-sm">
             {t("common.landing.pricing.subtitle")}
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+        <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-3">
           {/* Plan 1: Starter Free Trial */}
-          <div className="p-6 sm:p-7 rounded-lg border border-border bg-surface dark:bg-[#161715] flex flex-col justify-between space-y-6 shadow-xs">
+          <div className="border-border bg-surface flex flex-col justify-between space-y-6 rounded-lg border p-6 shadow-xs sm:p-7 dark:bg-[#161715]">
             <div className="space-y-4">
               <div>
-                <h3 className="text-base sm:text-lg font-black text-foreground">{t("common.landing.pricing.p1Name")}</h3>
-                <p className="text-xs font-semibold text-foreground-secondary mt-1">{t("common.landing.pricing.p1Desc")}</p>
+                <h3 className="text-foreground text-base font-black sm:text-lg">
+                  {t("common.landing.pricing.p1Name")}
+                </h3>
+                <p className="text-foreground-secondary mt-1 text-xs font-semibold">
+                  {t("common.landing.pricing.p1Desc")}
+                </p>
               </div>
 
               <div className="flex items-baseline gap-1 pt-1">
-                <span className="text-3xl sm:text-4xl font-black text-foreground font-mono">{t("common.landing.pricing.p1Price")}</span>
-                <span className="text-xs font-semibold text-foreground-muted">{t("common.landing.pricing.p1Period")}</span>
+                <span className="text-foreground font-mono text-3xl font-black sm:text-4xl">
+                  {t("common.landing.pricing.p1Price")}
+                </span>
+                <span className="text-foreground-muted text-xs font-semibold">
+                  {t("common.landing.pricing.p1Period")}
+                </span>
               </div>
 
-              <ul className="space-y-2.5 text-xs font-semibold text-foreground-secondary pt-4 border-t border-border">
+              <ul className="text-foreground-secondary border-border space-y-2.5 border-t pt-4 text-xs font-semibold">
                 {[
                   t("common.landing.pricing.p1F1"),
                   t("common.landing.pricing.p1F2"),
@@ -197,7 +263,7 @@ export function HomeView() {
                   t("common.landing.pricing.p1F5"),
                 ].map((f, i) => (
                   <li key={i} className="flex items-center gap-2">
-                    <Check className="size-3.5 text-dark-green dark:text-wise-green shrink-0" />
+                    <Check className="text-dark-green dark:text-wise-green size-3.5 shrink-0" />
                     <span>{f}</span>
                   </li>
                 ))}
@@ -209,7 +275,7 @@ export function HomeView() {
                 href="/register"
                 className={cn(
                   buttonVariants({ variant: "outline", size: "default" }),
-                  "w-full text-xs font-bold border-border hover:border-foreground-muted min-h-11"
+                  "border-border hover:border-foreground-muted min-h-11 w-full text-xs font-bold"
                 )}
               >
                 {t("common.landing.pricing.p1Btn")}
@@ -218,23 +284,31 @@ export function HomeView() {
           </div>
 
           {/* Plan 2: Pro Merchant (Highlighted) */}
-          <div className="p-6 sm:p-7 rounded-lg border-2 border-wise-green bg-wise-green/5 dark:bg-wise-green/10 flex flex-col justify-between space-y-6 shadow-md relative">
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-wise-green text-near-black text-[10px] font-black uppercase tracking-wider shadow-xs">
+          <div className="border-wise-green bg-wise-green/5 dark:bg-wise-green/10 relative flex flex-col justify-between space-y-6 rounded-lg border-2 p-6 shadow-md sm:p-7">
+            <div className="bg-wise-green text-near-black absolute -top-3 left-1/2 -translate-x-1/2 rounded-full px-3 py-0.5 text-[10px] font-black tracking-wider uppercase shadow-xs">
               {t("common.landing.pricing.p2Badge")}
             </div>
 
             <div className="space-y-4">
               <div>
-                <h3 className="text-base sm:text-lg font-black text-foreground">{t("common.landing.pricing.p2Name")}</h3>
-                <p className="text-xs font-semibold text-foreground-secondary mt-1">{t("common.landing.pricing.p2Desc")}</p>
+                <h3 className="text-foreground text-base font-black sm:text-lg">
+                  {t("common.landing.pricing.p2Name")}
+                </h3>
+                <p className="text-foreground-secondary mt-1 text-xs font-semibold">
+                  {t("common.landing.pricing.p2Desc")}
+                </p>
               </div>
 
               <div className="flex items-baseline gap-1 pt-1">
-                <span className="text-3xl sm:text-4xl font-black text-foreground font-mono">{t("common.landing.pricing.p2Price")}</span>
-                <span className="text-xs font-semibold text-foreground-muted">{t("common.landing.pricing.p2Period")}</span>
+                <span className="text-foreground font-mono text-3xl font-black sm:text-4xl">
+                  {t("common.landing.pricing.p2Price")}
+                </span>
+                <span className="text-foreground-muted text-xs font-semibold">
+                  {t("common.landing.pricing.p2Period")}
+                </span>
               </div>
 
-              <ul className="space-y-2.5 text-xs font-semibold text-foreground-secondary pt-4 border-t border-wise-green/20">
+              <ul className="text-foreground-secondary border-wise-green/20 space-y-2.5 border-t pt-4 text-xs font-semibold">
                 {[
                   t("common.landing.pricing.p2F1"),
                   t("common.landing.pricing.p2F2"),
@@ -244,7 +318,7 @@ export function HomeView() {
                   t("common.landing.pricing.p2F6"),
                 ].map((f, i) => (
                   <li key={i} className="flex items-center gap-2">
-                    <Check className="size-3.5 text-dark-green dark:text-wise-green shrink-0" />
+                    <Check className="text-dark-green dark:text-wise-green size-3.5 shrink-0" />
                     <span className="text-foreground font-bold">{f}</span>
                   </li>
                 ))}
@@ -256,7 +330,7 @@ export function HomeView() {
                 href="/register"
                 className={cn(
                   buttonVariants({ variant: "primaryPill", size: "default" }),
-                  "w-full text-xs font-bold shadow-sm min-h-11"
+                  "min-h-11 w-full text-xs font-bold shadow-sm"
                 )}
               >
                 {t("common.landing.pricing.p2Btn")}
@@ -265,19 +339,27 @@ export function HomeView() {
           </div>
 
           {/* Plan 3: Enterprise Gateway */}
-          <div className="p-6 sm:p-7 rounded-lg border border-border bg-surface dark:bg-[#161715] flex flex-col justify-between space-y-6 shadow-xs">
+          <div className="border-border bg-surface flex flex-col justify-between space-y-6 rounded-lg border p-6 shadow-xs sm:p-7 dark:bg-[#161715]">
             <div className="space-y-4">
               <div>
-                <h3 className="text-base sm:text-lg font-black text-foreground">{t("common.landing.pricing.p3Name")}</h3>
-                <p className="text-xs font-semibold text-foreground-secondary mt-1">{t("common.landing.pricing.p3Desc")}</p>
+                <h3 className="text-foreground text-base font-black sm:text-lg">
+                  {t("common.landing.pricing.p3Name")}
+                </h3>
+                <p className="text-foreground-secondary mt-1 text-xs font-semibold">
+                  {t("common.landing.pricing.p3Desc")}
+                </p>
               </div>
 
               <div className="flex items-baseline gap-1 pt-1">
-                <span className="text-3xl sm:text-4xl font-black text-foreground font-mono">{t("common.landing.pricing.p3Price")}</span>
-                <span className="text-xs font-semibold text-foreground-muted">{t("common.landing.pricing.p3Period")}</span>
+                <span className="text-foreground font-mono text-3xl font-black sm:text-4xl">
+                  {t("common.landing.pricing.p3Price")}
+                </span>
+                <span className="text-foreground-muted text-xs font-semibold">
+                  {t("common.landing.pricing.p3Period")}
+                </span>
               </div>
 
-              <ul className="space-y-2.5 text-xs font-semibold text-foreground-secondary pt-4 border-t border-border">
+              <ul className="text-foreground-secondary border-border space-y-2.5 border-t pt-4 text-xs font-semibold">
                 {[
                   t("common.landing.pricing.p3F1"),
                   t("common.landing.pricing.p3F2"),
@@ -287,7 +369,7 @@ export function HomeView() {
                   t("common.landing.pricing.p3F6"),
                 ].map((f, i) => (
                   <li key={i} className="flex items-center gap-2">
-                    <Check className="size-3.5 text-dark-green dark:text-wise-green shrink-0" />
+                    <Check className="text-dark-green dark:text-wise-green size-3.5 shrink-0" />
                     <span>{f}</span>
                   </li>
                 ))}
@@ -299,7 +381,7 @@ export function HomeView() {
                 href="/contact"
                 className={cn(
                   buttonVariants({ variant: "outline", size: "default" }),
-                  "w-full text-xs font-bold border-border hover:border-foreground-muted min-h-11"
+                  "border-border hover:border-foreground-muted min-h-11 w-full text-xs font-bold"
                 )}
               >
                 {t("common.landing.pricing.p3Btn")}
@@ -310,18 +392,18 @@ export function HomeView() {
       </section>
 
       {/* 7. FAQ Accordion */}
-      <section id="faq" className="px-4 sm:px-6 max-w-3xl mx-auto">
+      <section id="faq" className="mx-auto max-w-3xl px-4 sm:px-6">
         <FaqAccordion />
       </section>
 
       {/* 8. Final High-Impact CTA Banner */}
-      <section className="px-4 sm:px-6 max-w-4xl mx-auto">
-        <div className="p-8 sm:p-12 rounded-lg border border-wise-green/40 bg-wise-green/10 dark:bg-wise-green/5 text-center space-y-6 shadow-sm">
-          <div className="space-y-2 max-w-xl mx-auto">
-            <h2 className="text-2xl sm:text-4xl font-black text-foreground tracking-tight leading-tight">
+      <section className="mx-auto max-w-4xl px-4 sm:px-6">
+        <div className="border-wise-green/40 bg-wise-green/10 dark:bg-wise-green/5 space-y-6 rounded-lg border p-8 text-center shadow-sm sm:p-12">
+          <div className="mx-auto max-w-xl space-y-2">
+            <h2 className="text-foreground text-2xl leading-tight font-black tracking-tight sm:text-4xl">
               {t("common.landing.cta.title")}
             </h2>
-            <p className="text-xs sm:text-sm font-semibold text-foreground-secondary leading-relaxed">
+            <p className="text-foreground-secondary text-xs leading-relaxed font-semibold sm:text-sm">
               {t("common.landing.cta.subtitle")}
             </p>
           </div>
@@ -331,7 +413,7 @@ export function HomeView() {
               href="/register"
               className={cn(
                 buttonVariants({ variant: "primaryPill", size: "default" }),
-                "gap-2 px-7 py-5 font-bold text-sm sm:text-base shadow-sm min-h-12"
+                "min-h-12 gap-2 px-7 py-5 text-sm font-bold shadow-sm sm:text-base"
               )}
             >
               <span>{t("common.landing.cta.btnTrial")}</span>
@@ -341,7 +423,7 @@ export function HomeView() {
               href="/contact"
               className={cn(
                 buttonVariants({ variant: "secondaryPill", size: "default" }),
-                "px-7 py-5 font-bold text-sm sm:text-base min-h-12"
+                "min-h-12 px-7 py-5 text-sm font-bold sm:text-base"
               )}
             >
               <span>{t("common.landing.cta.btnContact")}</span>

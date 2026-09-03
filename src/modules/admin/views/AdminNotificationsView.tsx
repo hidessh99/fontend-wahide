@@ -34,20 +34,21 @@ export function AdminNotificationsView() {
   } = useAdminNotifications();
 
   return (
-    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto p-3 sm:p-6 lg:p-8">
+    <div className="mx-auto max-w-7xl space-y-6 p-3 sm:space-y-8 sm:p-6 lg:p-8">
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5 sm:pb-6">
+      <div className="border-border flex flex-col justify-between gap-4 border-b pb-5 sm:flex-row sm:items-center sm:pb-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
-            <div className="size-8 sm:size-9 rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-rose-500/15 text-rose-600 sm:size-9 dark:text-rose-400">
               <Bell className="size-4 sm:size-5" />
             </div>
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-foreground tracking-tight">
+            <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl lg:text-3xl">
               Siaran &amp; Antrean Notifikasi
             </h1>
           </div>
-          <p className="text-xs sm:text-sm font-semibold text-foreground-secondary max-w-2xl">
-            Kirim pengumuman siaran email massal, kelola pesan ke email tertentu, dan pantau status antrean worker.
+          <p className="text-foreground-secondary max-w-2xl text-xs font-semibold sm:text-sm">
+            Kirim pengumuman siaran email massal, kelola pesan ke email tertentu, dan pantau status
+            antrean worker.
           </p>
         </div>
       </div>
@@ -56,7 +57,7 @@ export function AdminNotificationsView() {
       <NotificationMetricsCards metrics={metrics} />
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 items-start">
+      <div className="grid grid-cols-1 items-start gap-6 sm:gap-8 lg:grid-cols-3">
         {/* Left: Broadcast Form */}
         <div className="lg:col-span-1">
           <BroadcastComposer

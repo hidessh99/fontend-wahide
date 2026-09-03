@@ -23,7 +23,7 @@ export function NetworkStatusBanner() {
       <div
         role="status"
         aria-live="polite"
-        className="fixed top-0 inset-x-0 z-100 flex items-center justify-center gap-2.5 px-4 py-2 bg-emerald-600 dark:bg-emerald-800 text-white text-xs sm:text-sm font-bold shadow-lg border-b border-emerald-500/40 animate-in slide-in-from-top duration-200"
+        className="animate-in slide-in-from-top fixed inset-x-0 top-0 z-100 flex items-center justify-center gap-2.5 border-b border-emerald-500/40 bg-emerald-600 px-4 py-2 text-xs font-bold text-white shadow-lg duration-200 sm:text-sm dark:bg-emerald-800"
       >
         <Wifi className="size-4 shrink-0 animate-bounce" />
         <span>Koneksi internet pulih. Sistem kembali online.</span>
@@ -36,13 +36,11 @@ export function NetworkStatusBanner() {
     <div
       role="alert"
       aria-live="assertive"
-      className="fixed top-0 inset-x-0 z-100 flex items-center justify-center gap-2.5 px-4 py-2.5 bg-amber-600 dark:bg-rose-900 text-white text-xs sm:text-sm font-bold shadow-xl border-b border-amber-500/40 animate-in slide-in-from-top duration-200"
+      className="animate-in slide-in-from-top fixed inset-x-0 top-0 z-100 flex items-center justify-center gap-2.5 border-b border-amber-500/40 bg-amber-600 px-4 py-2.5 text-xs font-bold text-white shadow-xl duration-200 sm:text-sm dark:bg-rose-900"
     >
       <WifiOff className="size-4 shrink-0 animate-pulse" />
-      <span>
-        Koneksi internet terputus. Harap periksa jaringan Wi-Fi atau paket data Anda.
-      </span>
-      <span className="hidden sm:inline-flex items-center gap-1 opacity-80 text-xs font-normal">
+      <span>Koneksi internet terputus. Harap periksa jaringan Wi-Fi atau paket data Anda.</span>
+      <span className="hidden items-center gap-1 text-xs font-normal opacity-80 sm:inline-flex">
         <RefreshCw className="size-3 animate-spin" /> Menghubungkan otomatis...
       </span>
     </div>

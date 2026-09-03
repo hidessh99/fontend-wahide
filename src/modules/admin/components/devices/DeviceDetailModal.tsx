@@ -71,11 +71,7 @@ function getDeviceStatusVisual(status: string) {
   }
 }
 
-export function DeviceDetailModal({
-  device,
-  isOpen,
-  onClose,
-}: DeviceDetailModalProps) {
+export function DeviceDetailModal({ device, isOpen, onClose }: DeviceDetailModalProps) {
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
   if (!isOpen || !device) return null;
@@ -97,23 +93,23 @@ export function DeviceDetailModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity animate-in fade-in"
+        className="animate-in fade-in fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
         onClick={onClose}
       />
 
       {/* Dialog */}
-      <div className="relative z-10 w-full max-w-lg rounded-2xl border border-border bg-surface dark:bg-[#161715] shadow-2xl p-5 sm:p-6 space-y-4 animate-in fade-in zoom-in-95 max-h-[90vh] flex flex-col">
+      <div className="border-border bg-surface animate-in fade-in zoom-in-95 relative z-10 flex max-h-[90vh] w-full max-w-lg flex-col space-y-4 rounded-2xl border p-5 shadow-2xl sm:p-6 dark:bg-[#161715]">
         {/* Header */}
-        <div className="flex items-start justify-between gap-3 border-b border-border pb-3.5 shrink-0">
+        <div className="border-border flex shrink-0 items-start justify-between gap-3 border-b pb-3.5">
           <div className="flex items-center gap-2.5">
-            <div className="size-9 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-wise-green flex items-center justify-center shrink-0">
+            <div className="dark:text-wise-green flex size-9 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600">
               <Smartphone className="size-4.5" />
             </div>
             <div>
-              <h2 className="text-base font-black text-foreground tracking-tight">
+              <h2 className="text-foreground text-base font-black tracking-tight">
                 {device.pushName}
               </h2>
-              <span className="font-mono text-[11px] text-foreground-muted block">
+              <span className="text-foreground-muted block font-mono text-[11px]">
                 ID: {device.id}
               </span>
             </div>
@@ -122,7 +118,7 @@ export function DeviceDetailModal({
           <button
             type="button"
             onClick={onClose}
-            className="size-7 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
+            className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-7 cursor-pointer items-center justify-center rounded-full transition"
             aria-label="Tutup"
           >
             <X className="size-4" />
@@ -130,14 +126,14 @@ export function DeviceDetailModal({
         </div>
 
         {/* Scrollable Content */}
-        <div className="space-y-4 overflow-y-auto flex-1 pr-1 text-xs">
+        <div className="flex-1 space-y-4 overflow-y-auto pr-1 text-xs">
           {/* Status Badge */}
-          <div className="p-3 rounded-xl border border-border bg-muted/20 flex items-center justify-between">
-            <span className="text-[11px] font-bold text-foreground-secondary uppercase tracking-wider">
+          <div className="border-border bg-muted/20 flex items-center justify-between rounded-xl border p-3">
+            <span className="text-foreground-secondary text-[11px] font-bold tracking-wider uppercase">
               Status Koneksi Live:
             </span>
             <span
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-black uppercase tracking-wider border ${statusVisual.color}`}
+              className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-black tracking-wider uppercase ${statusVisual.color}`}
             >
               {statusVisual.icon}
               <span>{statusVisual.label}</span>
@@ -146,54 +142,54 @@ export function DeviceDetailModal({
 
           {/* Key Metrics Strip */}
           <div className="grid grid-cols-3 gap-2">
-            <div className="p-3 rounded-xl border border-border bg-muted/20 text-center space-y-1">
-              <div className="flex items-center justify-center gap-1 text-emerald-600 dark:text-wise-green">
+            <div className="border-border bg-muted/20 space-y-1 rounded-xl border p-3 text-center">
+              <div className="dark:text-wise-green flex items-center justify-center gap-1 text-emerald-600">
                 <ShieldCheck className="size-3.5" />
                 <span className="text-[10px] font-bold uppercase">Trust Score</span>
               </div>
-              <div className="text-base font-black font-mono text-foreground">
+              <div className="text-foreground font-mono text-base font-black">
                 {device.trustScore} / 100
               </div>
             </div>
 
-            <div className="p-3 rounded-xl border border-border bg-muted/20 text-center space-y-1">
+            <div className="border-border bg-muted/20 space-y-1 rounded-xl border p-3 text-center">
               <div className="flex items-center justify-center gap-1 text-amber-600 dark:text-amber-400">
                 <Flame className="size-3.5" />
                 <span className="text-[10px] font-bold uppercase">Warmup</span>
               </div>
-              <div className="text-base font-black font-mono text-foreground">
+              <div className="text-foreground font-mono text-base font-black">
                 Hari {device.warmupDay}
               </div>
             </div>
 
-            <div className="p-3 rounded-xl border border-border bg-muted/20 text-center space-y-1">
+            <div className="border-border bg-muted/20 space-y-1 rounded-xl border p-3 text-center">
               <div className="flex items-center justify-center gap-1 text-teal-600 dark:text-teal-400">
                 <Send className="size-3.5" />
                 <span className="text-[10px] font-bold uppercase">Kirim Hari Ini</span>
               </div>
-              <div className="text-base font-black font-mono text-foreground">
+              <div className="text-foreground font-mono text-base font-black">
                 {device.dailySentCount}
               </div>
             </div>
           </div>
 
           {/* Technical Metadata Grid */}
-          <div className="p-3.5 rounded-xl border border-border bg-muted/20 space-y-2.5 text-xs">
+          <div className="border-border bg-muted/20 space-y-2.5 rounded-xl border p-3.5 text-xs">
             {/* WhatsApp JID */}
             <div className="flex items-center justify-between">
-              <span className="text-foreground-secondary font-semibold flex items-center gap-1.5">
-                <Smartphone className="size-3.5 text-foreground-muted" />
+              <span className="text-foreground-secondary flex items-center gap-1.5 font-semibold">
+                <Smartphone className="text-foreground-muted size-3.5" />
                 <span>Nomor WhatsApp / JID:</span>
               </span>
               <div className="flex items-center gap-1.5">
-                <span className="font-mono font-bold text-foreground select-text">
+                <span className="text-foreground font-mono font-bold select-text">
                   {device.jid || "(Belum terhubung)"}
                 </span>
                 {device.jid && (
                   <button
                     type="button"
                     onClick={() => handleCopy(device.jid, "Nomor JID")}
-                    className="p-1 hover:bg-muted rounded text-foreground-muted hover:text-foreground cursor-pointer"
+                    className="hover:bg-muted text-foreground-muted hover:text-foreground cursor-pointer rounded p-1"
                     title="Salin JID"
                   >
                     {copiedField === "Nomor JID" ? (
@@ -207,19 +203,19 @@ export function DeviceDetailModal({
             </div>
 
             {/* Tenant ID */}
-            <div className="flex items-center justify-between pt-2 border-t border-border/50">
-              <span className="text-foreground-secondary font-semibold flex items-center gap-1.5">
-                <Building2 className="size-3.5 text-foreground-muted" />
+            <div className="border-border/50 flex items-center justify-between border-t pt-2">
+              <span className="text-foreground-secondary flex items-center gap-1.5 font-semibold">
+                <Building2 className="text-foreground-muted size-3.5" />
                 <span>Tenant ID:</span>
               </span>
               <div className="flex items-center gap-1.5">
-                <span className="font-mono text-[11px] text-foreground font-bold select-text">
+                <span className="text-foreground font-mono text-[11px] font-bold select-text">
                   {device.tenantId}
                 </span>
                 <button
                   type="button"
                   onClick={() => handleCopy(device.tenantId, "Tenant ID")}
-                  className="p-1 hover:bg-muted rounded text-foreground-muted hover:text-foreground cursor-pointer"
+                  className="hover:bg-muted text-foreground-muted hover:text-foreground cursor-pointer rounded p-1"
                   title="Salin Tenant ID"
                 >
                   {copiedField === "Tenant ID" ? (
@@ -232,16 +228,16 @@ export function DeviceDetailModal({
             </div>
 
             {/* Device ID */}
-            <div className="flex items-center justify-between pt-2 border-t border-border/50">
+            <div className="border-border/50 flex items-center justify-between border-t pt-2">
               <span className="text-foreground-secondary font-semibold">Device ID (ULID):</span>
               <div className="flex items-center gap-1.5">
-                <span className="font-mono text-[11px] text-foreground-muted select-text">
+                <span className="text-foreground-muted font-mono text-[11px] select-text">
                   {device.id}
                 </span>
                 <button
                   type="button"
                   onClick={() => handleCopy(device.id, "Device ID")}
-                  className="p-1 hover:bg-muted rounded text-foreground-muted hover:text-foreground cursor-pointer"
+                  className="hover:bg-muted text-foreground-muted hover:text-foreground cursor-pointer rounded p-1"
                   title="Salin Device ID"
                 >
                   {copiedField === "Device ID" ? (
@@ -254,20 +250,20 @@ export function DeviceDetailModal({
             </div>
 
             {/* Last Seen At */}
-            <div className="flex items-center justify-between pt-2 border-t border-border/50">
-              <span className="text-foreground-secondary font-semibold flex items-center gap-1.5">
-                <Clock className="size-3.5 text-foreground-muted" />
+            <div className="border-border/50 flex items-center justify-between border-t pt-2">
+              <span className="text-foreground-secondary flex items-center gap-1.5 font-semibold">
+                <Clock className="text-foreground-muted size-3.5" />
                 <span>Terakhir Aktif (Last Seen):</span>
               </span>
-              <span className="font-mono text-[11px] text-foreground font-semibold">
+              <span className="text-foreground font-mono text-[11px] font-semibold">
                 {device.lastSeenAt ? formatDateTime(device.lastSeenAt) : "(Belum pernah online)"}
               </span>
             </div>
 
             {/* Created At */}
-            <div className="flex items-center justify-between pt-2 border-t border-border/50">
+            <div className="border-border/50 flex items-center justify-between border-t pt-2">
               <span className="text-foreground-secondary font-semibold">Dibuat Pada:</span>
-              <span className="font-mono text-[11px] text-foreground-secondary">
+              <span className="text-foreground-secondary font-mono text-[11px]">
                 {formatDateTime(device.createdAt)}
               </span>
             </div>
@@ -275,13 +271,13 @@ export function DeviceDetailModal({
         </div>
 
         {/* Footer */}
-        <div className="pt-2 border-t border-border flex justify-end shrink-0">
+        <div className="border-border flex shrink-0 justify-end border-t pt-2">
           <Button
             type="button"
             variant="outline"
             size="sm"
             onClick={onClose}
-            className="h-8.5 px-4 text-xs font-bold rounded-full border-border hover:bg-muted cursor-pointer"
+            className="border-border hover:bg-muted h-8.5 cursor-pointer rounded-full px-4 text-xs font-bold"
           >
             Tutup
           </Button>

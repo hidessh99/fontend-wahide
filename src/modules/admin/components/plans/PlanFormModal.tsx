@@ -35,11 +35,7 @@ interface PlanFormModalContentProps {
   onSubmit: (data: CreatePlanInput) => Promise<unknown>;
 }
 
-function PlanFormModalContent({
-  plan,
-  onClose,
-  onSubmit,
-}: PlanFormModalContentProps) {
+function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentProps) {
   const isEdit = Boolean(plan);
 
   const [name, setName] = useState(plan?.name || "");
@@ -49,24 +45,14 @@ function PlanFormModalContent({
   );
   const [maxDevices, setMaxDevices] = useState<number>(plan?.max_devices ?? 5);
   const [maxAgents, setMaxAgents] = useState<number>(plan?.max_agents ?? 2);
-  const [hasWatermark, setHasWatermark] = useState<boolean>(
-    plan?.has_watermark ?? false
-  );
+  const [hasWatermark, setHasWatermark] = useState<boolean>(plan?.has_watermark ?? false);
   const [watermarkText, setWatermarkText] = useState<string>(
     plan?.watermark_text || "\n\n_Sent via Wahide WhatsApp Gateway_"
   );
-  const [allowAttachment, setAllowAttachment] = useState<boolean>(
-    plan?.allow_attachment ?? true
-  );
-  const [allowCampaign, setAllowCampaign] = useState<boolean>(
-    plan?.allow_campaign ?? true
-  );
-  const [allowAutoreply, setAllowAutoreply] = useState<boolean>(
-    plan?.allow_autoreply ?? true
-  );
-  const [allowSchedule, setAllowSchedule] = useState<boolean>(
-    plan?.allow_schedule ?? true
-  );
+  const [allowAttachment, setAllowAttachment] = useState<boolean>(plan?.allow_attachment ?? true);
+  const [allowCampaign, setAllowCampaign] = useState<boolean>(plan?.allow_campaign ?? true);
+  const [allowAutoreply, setAllowAutoreply] = useState<boolean>(plan?.allow_autoreply ?? true);
+  const [allowSchedule, setAllowSchedule] = useState<boolean>(plan?.allow_schedule ?? true);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -97,18 +83,18 @@ function PlanFormModalContent({
   };
 
   return (
-    <div className="relative w-full max-w-xl max-h-[92vh] flex flex-col rounded-xl border border-border bg-surface dark:bg-[#161715] shadow-2xl overflow-hidden animate-in zoom-in-95">
+    <div className="border-border bg-surface animate-in zoom-in-95 relative flex max-h-[92vh] w-full max-w-xl flex-col overflow-hidden rounded-xl border shadow-2xl dark:bg-[#161715]">
       {/* Header */}
-      <div className="p-5 sm:p-6 pb-4 border-b border-border flex items-start justify-between shrink-0">
+      <div className="border-border flex shrink-0 items-start justify-between border-b p-5 pb-4 sm:p-6">
         <div className="flex items-center gap-3">
-          <div className="size-10 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-wise-green flex items-center justify-center shrink-0">
+          <div className="dark:text-wise-green flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600">
             {isEdit ? <Edit3 className="size-5" /> : <PlusCircle className="size-5" />}
           </div>
           <div>
-            <h2 className="text-lg sm:text-xl font-black text-foreground tracking-tight">
+            <h2 className="text-foreground text-lg font-black tracking-tight sm:text-xl">
               {isEdit ? `Ubah Paket Langganan` : "Tambah Paket Langganan Baru"}
             </h2>
-            <p className="text-xs font-semibold text-foreground-secondary">
+            <p className="text-foreground-secondary text-xs font-semibold">
               {isEdit
                 ? `Konfigurasi harga, kuota pesan, dan fitur tier ${plan?.name}.`
                 : "Tentukan kuota pesan, batas slot WhatsApp, dan harga tier baru."}
@@ -120,7 +106,7 @@ function PlanFormModalContent({
           type="button"
           onClick={onClose}
           disabled={isLoading}
-          className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer shrink-0 disabled:opacity-50"
+          className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full transition disabled:opacity-50"
           aria-label="Tutup"
         >
           <X className="size-4" />
@@ -128,33 +114,33 @@ function PlanFormModalContent({
       </div>
 
       {/* Form Body */}
-      <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto flex flex-col min-h-0">
-        <div className="p-5 sm:p-6 space-y-4 flex-1 text-xs">
+      <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+        <div className="flex-1 space-y-4 p-5 text-xs sm:p-6">
           {/* Row 1: Nama Paket & Harga */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                 Nama Paket Tier
               </label>
               <div className="relative">
-                <Layers className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted pointer-events-none" />
+                <Layers className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
                   placeholder="Contoh: Professional Plus"
-                  className="w-full h-10 pl-10 pr-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-emerald-600 dark:focus:border-wise-green focus:ring-2 focus:ring-emerald-500/20 dark:focus:ring-wise-green/20 outline-none transition"
+                  className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-full border pr-4 pl-10 font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e]"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                 Harga Bulanan (IDR)
               </label>
               <div className="relative">
-                <CreditCard className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted pointer-events-none" />
+                <CreditCard className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
                 <input
                   type="number"
                   min={0}
@@ -163,20 +149,20 @@ function PlanFormModalContent({
                   onChange={(e) => setPrice(Math.max(0, parseInt(e.target.value, 10) || 0))}
                   required
                   placeholder="50000"
-                  className="w-full h-10 pl-10 pr-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-bold border border-border hover:border-foreground-muted focus:border-emerald-600 dark:focus:border-wise-green focus:ring-2 focus:ring-emerald-500/20 dark:focus:ring-wise-green/20 outline-none transition font-mono"
+                  className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-full border pr-4 pl-10 font-mono font-bold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e]"
                 />
               </div>
             </div>
           </div>
 
           {/* Row 2: Batas Kuota Pesan, Slot Device, Slot CS */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-3">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                 Batas Pesan / Bulan
               </label>
               <div className="relative">
-                <MessageSquare className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted pointer-events-none" />
+                <MessageSquare className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
                 <input
                   type="number"
                   min={100}
@@ -186,125 +172,121 @@ function PlanFormModalContent({
                   }
                   required
                   placeholder="25000"
-                  className="w-full h-10 pl-10 pr-3 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-bold border border-border hover:border-foreground-muted focus:border-emerald-600 dark:focus:border-wise-green outline-none transition font-mono"
+                  className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green h-10 w-full rounded-full border pr-3 pl-10 font-mono font-bold transition outline-none focus:border-emerald-600 dark:bg-[#10110e]"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                 Batas Slot WA
               </label>
               <div className="relative">
-                <Smartphone className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted pointer-events-none" />
+                <Smartphone className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
                 <input
                   type="number"
                   min={1}
                   max={100}
                   value={maxDevices}
-                  onChange={(e) =>
-                    setMaxDevices(Math.max(1, parseInt(e.target.value, 10) || 1))
-                  }
+                  onChange={(e) => setMaxDevices(Math.max(1, parseInt(e.target.value, 10) || 1))}
                   required
                   placeholder="5"
-                  className="w-full h-10 pl-10 pr-3 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-bold border border-border hover:border-foreground-muted focus:border-emerald-600 dark:focus:border-wise-green outline-none transition font-mono"
+                  className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green h-10 w-full rounded-full border pr-3 pl-10 font-mono font-bold transition outline-none focus:border-emerald-600 dark:bg-[#10110e]"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                 Batas CS Agent
               </label>
               <div className="relative">
-                <Users className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted pointer-events-none" />
+                <Users className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
                 <input
                   type="number"
                   min={0}
                   max={100}
                   value={maxAgents}
-                  onChange={(e) =>
-                    setMaxAgents(Math.max(0, parseInt(e.target.value, 10) || 0))
-                  }
+                  onChange={(e) => setMaxAgents(Math.max(0, parseInt(e.target.value, 10) || 0))}
                   required
                   placeholder="2"
-                  className="w-full h-10 pl-10 pr-3 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-bold border border-border hover:border-foreground-muted focus:border-emerald-600 dark:focus:border-wise-green outline-none transition font-mono"
+                  className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green h-10 w-full rounded-full border pr-3 pl-10 font-mono font-bold transition outline-none focus:border-emerald-600 dark:bg-[#10110e]"
                 />
               </div>
             </div>
           </div>
 
           {/* Features Capabilities Grid */}
-          <div className="p-3.5 rounded-lg border border-border bg-muted/20 space-y-3">
-            <span className="block text-xs font-bold uppercase tracking-wider text-foreground">
+          <div className="border-border bg-muted/20 space-y-3 rounded-lg border p-3.5">
+            <span className="text-foreground block text-xs font-bold tracking-wider uppercase">
               Izin &amp; Kemampuan Fitur WhatsApp
             </span>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              <label className="flex items-center gap-2.5 p-2 rounded-md bg-surface dark:bg-[#10110e] border border-border cursor-pointer select-none">
+            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+              <label className="bg-surface border-border flex cursor-pointer items-center gap-2.5 rounded-md border p-2 select-none dark:bg-[#10110e]">
                 <input
                   type="checkbox"
                   checked={allowAttachment}
                   onChange={(e) => setAllowAttachment(e.target.checked)}
                   className="size-4 rounded text-emerald-600 focus:ring-emerald-500"
                 />
-                <Paperclip className="size-3.5 text-foreground-secondary shrink-0" />
-                <span className="font-semibold text-foreground">Kirim File / Lampiran</span>
+                <Paperclip className="text-foreground-secondary size-3.5 shrink-0" />
+                <span className="text-foreground font-semibold">Kirim File / Lampiran</span>
               </label>
 
-              <label className="flex items-center gap-2.5 p-2 rounded-md bg-surface dark:bg-[#10110e] border border-border cursor-pointer select-none">
+              <label className="bg-surface border-border flex cursor-pointer items-center gap-2.5 rounded-md border p-2 select-none dark:bg-[#10110e]">
                 <input
                   type="checkbox"
                   checked={allowCampaign}
                   onChange={(e) => setAllowCampaign(e.target.checked)}
                   className="size-4 rounded text-emerald-600 focus:ring-emerald-500"
                 />
-                <Send className="size-3.5 text-foreground-secondary shrink-0" />
-                <span className="font-semibold text-foreground">Broadcast &amp; Campaign</span>
+                <Send className="text-foreground-secondary size-3.5 shrink-0" />
+                <span className="text-foreground font-semibold">Broadcast &amp; Campaign</span>
               </label>
 
-              <label className="flex items-center gap-2.5 p-2 rounded-md bg-surface dark:bg-[#10110e] border border-border cursor-pointer select-none">
+              <label className="bg-surface border-border flex cursor-pointer items-center gap-2.5 rounded-md border p-2 select-none dark:bg-[#10110e]">
                 <input
                   type="checkbox"
                   checked={allowAutoreply}
                   onChange={(e) => setAllowAutoreply(e.target.checked)}
                   className="size-4 rounded text-emerald-600 focus:ring-emerald-500"
                 />
-                <Bot className="size-3.5 text-foreground-secondary shrink-0" />
-                <span className="font-semibold text-foreground">Auto-Reply &amp; Bot</span>
+                <Bot className="text-foreground-secondary size-3.5 shrink-0" />
+                <span className="text-foreground font-semibold">Auto-Reply &amp; Bot</span>
               </label>
 
-              <label className="flex items-center gap-2.5 p-2 rounded-md bg-surface dark:bg-[#10110e] border border-border cursor-pointer select-none">
+              <label className="bg-surface border-border flex cursor-pointer items-center gap-2.5 rounded-md border p-2 select-none dark:bg-[#10110e]">
                 <input
                   type="checkbox"
                   checked={allowSchedule}
                   onChange={(e) => setAllowSchedule(e.target.checked)}
                   className="size-4 rounded text-emerald-600 focus:ring-emerald-500"
                 />
-                <Clock className="size-3.5 text-foreground-secondary shrink-0" />
-                <span className="font-semibold text-foreground">Pesan Terjadwal</span>
+                <Clock className="text-foreground-secondary size-3.5 shrink-0" />
+                <span className="text-foreground font-semibold">Pesan Terjadwal</span>
               </label>
             </div>
           </div>
 
           {/* Watermark Section */}
-          <div className="p-3.5 rounded-lg border border-border bg-muted/20 space-y-2.5">
+          <div className="border-border bg-muted/20 space-y-2.5 rounded-lg border p-3.5">
             <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-foreground cursor-pointer select-none">
+              <label className="text-foreground flex cursor-pointer items-center gap-2 text-xs font-bold tracking-wider uppercase select-none">
                 <input
                   type="checkbox"
                   checked={hasWatermark}
                   onChange={(e) => setHasWatermark(e.target.checked)}
                   className="size-4 rounded text-emerald-600 focus:ring-emerald-500"
                 />
-                <Tag className="size-3.5 text-foreground-secondary shrink-0" />
+                <Tag className="text-foreground-secondary size-3.5 shrink-0" />
                 <span>Paksa Watermark Pada Pesan Broadcast</span>
               </label>
             </div>
 
             {hasWatermark && (
               <div>
-                <label className="block text-[11px] font-semibold text-foreground-muted mb-1">
+                <label className="text-foreground-muted mb-1 block text-[11px] font-semibold">
                   Teks Watermark (Muncul di akhir pesan)
                 </label>
                 <input
@@ -312,7 +294,7 @@ function PlanFormModalContent({
                   value={watermarkText}
                   onChange={(e) => setWatermarkText(e.target.value)}
                   placeholder="\n\n_Sent via Wahide WhatsApp Gateway_"
-                  className="w-full h-9 px-3 rounded-md bg-surface dark:bg-[#10110e] text-foreground font-mono text-xs border border-border outline-none focus:border-emerald-600 dark:focus:border-wise-green"
+                  className="bg-surface text-foreground border-border dark:focus:border-wise-green h-9 w-full rounded-md border px-3 font-mono text-xs outline-none focus:border-emerald-600 dark:bg-[#10110e]"
                 />
               </div>
             )}
@@ -320,14 +302,14 @@ function PlanFormModalContent({
         </div>
 
         {/* Footer Actions */}
-        <div className="p-4 sm:p-5 border-t border-border flex items-center justify-end gap-3 shrink-0 bg-muted/20">
+        <div className="border-border bg-muted/20 flex shrink-0 items-center justify-end gap-3 border-t p-4 sm:p-5">
           <Button
             type="button"
             variant="outline"
             size="sm"
             onClick={onClose}
             disabled={isLoading}
-            className="rounded-full text-xs font-bold border-border hover:bg-muted"
+            className="border-border hover:bg-muted rounded-full text-xs font-bold"
           >
             Batalkan
           </Button>
@@ -337,7 +319,7 @@ function PlanFormModalContent({
             variant="primaryPill"
             size="sm"
             disabled={isLoading || !name.trim()}
-            className="rounded-full text-xs font-extrabold gap-1.5 px-5 shadow-sm"
+            className="gap-1.5 rounded-full px-5 text-xs font-extrabold shadow-sm"
           >
             {isLoading ? (
               <>
@@ -357,12 +339,7 @@ function PlanFormModalContent({
   );
 }
 
-export function PlanFormModal({
-  plan,
-  isOpen,
-  onClose,
-  onSubmit,
-}: PlanFormModalProps) {
+export function PlanFormModal({ plan, isOpen, onClose, onSubmit }: PlanFormModalProps) {
   // Universal Escape key dismissal with zero listener churn
   useEscapeKey(isOpen, onClose);
 
@@ -375,7 +352,7 @@ export function PlanFormModal({
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
-      className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-sm p-3 sm:p-6 flex min-h-full items-center justify-center animate-in fade-in"
+      className="animate-in fade-in fixed inset-0 z-50 flex min-h-full items-center justify-center overflow-y-auto bg-black/75 p-3 backdrop-blur-sm sm:p-6"
     >
       <PlanFormModalContent
         key={plan?.id || "new-plan"}

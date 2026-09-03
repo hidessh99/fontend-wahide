@@ -5,15 +5,7 @@ import { UserActivityItem } from "@/modules/admin/types/admin.types";
 import { formatHumanActivityDate } from "./UserActivitiesTable";
 import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { Button } from "@/components/ui/button";
-import {
-  AlertTriangle,
-  X,
-  Trash2,
-  Loader2,
-  Clock,
-  User,
-  Mail,
-} from "lucide-react";
+import { AlertTriangle, X, Trash2, Loader2, Clock, User, Mail } from "lucide-react";
 
 interface DeleteActivityConfirmModalProps {
   isOpen: boolean;
@@ -58,31 +50,31 @@ export function DeleteActivityConfirmModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
       <div
-        className="relative w-full max-w-lg bg-surface dark:bg-[#161715] rounded-xl border border-border shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+        className="bg-surface border-border animate-in fade-in zoom-in-95 relative w-full max-w-lg overflow-hidden rounded-xl border shadow-2xl duration-200 dark:bg-[#161715]"
         role="dialog"
         aria-modal="true"
         aria-labelledby="delete-activity-title"
       >
         {/* Header Section */}
-        <div className="flex items-center justify-between p-5 border-b border-border bg-rose-500/5">
+        <div className="border-border flex items-center justify-between border-b bg-rose-500/5 p-5">
           <div className="flex items-center gap-3">
-            <div className="size-9 rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400">
               <AlertTriangle className="size-4.5" />
             </div>
             <div>
-              <h2 id="delete-activity-title" className="text-base font-extrabold text-foreground">
+              <h2 id="delete-activity-title" className="text-foreground text-base font-extrabold">
                 Hapus Rekaman Aktivitas
               </h2>
-              <p className="text-xs font-semibold text-foreground-secondary">
+              <p className="text-foreground-secondary text-xs font-semibold">
                 Tindakan ini akan menghapus rekaman log audit secara permanen.
               </p>
             </div>
           </div>
           <button
             onClick={handleClose}
-            className="size-8 rounded-full flex items-center justify-center text-foreground-secondary hover:text-foreground hover:bg-muted transition cursor-pointer"
+            className="text-foreground-secondary hover:text-foreground hover:bg-muted flex size-8 cursor-pointer items-center justify-center rounded-full transition"
             aria-label="Tutup Dialog"
           >
             <X className="size-4" />
@@ -90,39 +82,43 @@ export function DeleteActivityConfirmModal({
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleDelete} className="p-5 space-y-4 text-xs font-semibold">
+        <form onSubmit={handleDelete} className="space-y-4 p-5 text-xs font-semibold">
           {/* Target Activity Summary Card */}
-          <div className="p-3.5 rounded-lg border border-border bg-muted/40 space-y-2">
+          <div className="border-border bg-muted/40 space-y-2 rounded-lg border p-3.5">
             <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2 min-w-0">
-                <div className="size-7 rounded-full bg-rose-500/15 text-rose-600 flex items-center justify-center font-bold text-xs shrink-0">
-                  {activity.user?.name ? activity.user.name.charAt(0).toUpperCase() : <User className="size-3" />}
+              <div className="flex min-w-0 items-center gap-2">
+                <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-rose-500/15 text-xs font-bold text-rose-600">
+                  {activity.user?.name ? (
+                    activity.user.name.charAt(0).toUpperCase()
+                  ) : (
+                    <User className="size-3" />
+                  )}
                 </div>
                 <div className="min-w-0">
-                  <div className="font-bold text-foreground truncate text-xs">
+                  <div className="text-foreground truncate text-xs font-bold">
                     {activity.user?.name || "Pengguna Tanpa Nama"}
                   </div>
-                  <div className="text-[10px] text-foreground-muted font-mono truncate flex items-center gap-1">
+                  <div className="text-foreground-muted flex items-center gap-1 truncate font-mono text-[10px]">
                     <Mail className="size-2.5" />
                     <span>{activity.user?.email || activity.userId}</span>
                   </div>
                 </div>
               </div>
 
-              <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded-full bg-surface dark:bg-[#10110e] border border-border text-foreground">
+              <span className="bg-surface border-border text-foreground rounded-full border px-2 py-0.5 font-mono text-[10px] font-bold dark:bg-[#10110e]">
                 {activity.activityType || activity.type}
               </span>
             </div>
 
             {/* Description Box */}
-            <div className="p-2.5 rounded-md bg-surface dark:bg-[#121310] border border-border/60 text-foreground-secondary text-xs leading-relaxed">
+            <div className="bg-surface border-border/60 text-foreground-secondary rounded-md border p-2.5 text-xs leading-relaxed dark:bg-[#121310]">
               {activity.description || "Tidak ada deskripsi detail kejadian."}
             </div>
 
             {/* Timestamp & ID */}
-            <div className="flex items-center justify-between text-[11px] text-foreground-muted pt-1 border-t border-border/40">
-              <div className="flex items-center gap-1.5 font-medium text-foreground-secondary">
-                <Clock className="size-3 text-foreground-muted" />
+            <div className="text-foreground-muted border-border/40 flex items-center justify-between border-t pt-1 text-[11px]">
+              <div className="text-foreground-secondary flex items-center gap-1.5 font-medium">
+                <Clock className="text-foreground-muted size-3" />
                 <span>{formatHumanActivityDate(activity.createdAt).fullHuman}</span>
               </div>
               <span className="font-mono text-[9px]">ID: {activity.id}</span>
@@ -130,29 +126,30 @@ export function DeleteActivityConfirmModal({
           </div>
 
           {/* Security Confirmation Checkbox */}
-          <div className="pt-2 border-t border-border">
-            <label className="flex items-start gap-2.5 cursor-pointer select-none group">
+          <div className="border-border border-t pt-2">
+            <label className="group flex cursor-pointer items-start gap-2.5 select-none">
               <input
                 type="checkbox"
                 checked={isConfirmed}
                 onChange={(e) => setIsConfirmed(e.target.checked)}
-                className="mt-0.5 size-4 rounded border-border text-rose-600 focus:ring-rose-500 cursor-pointer"
+                className="border-border mt-0.5 size-4 cursor-pointer rounded text-rose-600 focus:ring-rose-500"
               />
-              <span className="text-xs text-foreground-secondary group-hover:text-foreground transition leading-tight font-bold">
-                Saya mengonfirmasi bahwa rekaman log audit ini akan dihapus secara permanen dan tidak dapat dipulihkan.
+              <span className="text-foreground-secondary group-hover:text-foreground text-xs leading-tight font-bold transition">
+                Saya mengonfirmasi bahwa rekaman log audit ini akan dihapus secara permanen dan
+                tidak dapat dipulihkan.
               </span>
             </label>
           </div>
 
           {/* Footer Action Buttons */}
-          <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-border">
+          <div className="border-border flex items-center justify-end gap-2.5 border-t pt-3">
             <Button
               type="button"
               variant="outline"
               size="sm"
               onClick={handleClose}
               disabled={isDeleting}
-              className="rounded-full px-4 text-xs font-bold border-border hover:border-foreground-muted cursor-pointer"
+              className="border-border hover:border-foreground-muted cursor-pointer rounded-full px-4 text-xs font-bold"
             >
               Batal
             </Button>
@@ -161,7 +158,7 @@ export function DeleteActivityConfirmModal({
               variant="destructive"
               size="sm"
               disabled={!isConfirmed || isDeleting}
-              className="gap-2 px-5 text-xs font-bold rounded-full shadow-sm cursor-pointer disabled:opacity-50"
+              className="cursor-pointer gap-2 rounded-full px-5 text-xs font-bold shadow-sm disabled:opacity-50"
             >
               {isDeleting ? (
                 <>

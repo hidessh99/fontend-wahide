@@ -9,7 +9,17 @@ import { TurnstileInstance } from "@marsidev/react-turnstile";
 import { registerSchema, RegisterInput } from "@/modules/iam/schemas/auth.schema";
 import { useAuth } from "@/modules/iam/hooks/useAuth";
 import { useI18n } from "@/lib/i18n/context";
-import { Eye, EyeOff, Lock, Mail, Phone, User, ArrowRight, AlertCircle, Loader2 } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  Lock,
+  Mail,
+  Phone,
+  User,
+  ArrowRight,
+  AlertCircle,
+  Loader2,
+} from "lucide-react";
 
 export function RegisterForm() {
   const router = useRouter();
@@ -68,19 +78,19 @@ export function RegisterForm() {
   };
 
   return (
-    <div className="space-y-5 w-full max-w-md">
+    <div className="w-full max-w-md space-y-5">
       <div className="space-y-1.5">
-        <h1 className="text-4xl font-black tracking-tight leading-[0.95] text-foreground">
+        <h1 className="text-foreground text-4xl leading-[0.95] font-black tracking-tight">
           {t("auth.register.title")}
         </h1>
-        <p className="text-sm font-semibold text-foreground-secondary">
+        <p className="text-foreground-secondary text-sm font-semibold">
           {t("auth.register.subtitle")}
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
-          <div className="flex items-center gap-3 rounded-md bg-rose-50 dark:bg-rose-950/40 p-4 text-sm font-semibold text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/50">
+          <div className="flex items-center gap-3 rounded-md border border-rose-200 bg-rose-50 p-4 text-sm font-semibold text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-300">
             <AlertCircle className="size-5 shrink-0" />
             <span>{error}</span>
           </div>
@@ -88,11 +98,11 @@ export function RegisterForm() {
 
         <div className="space-y-3.5">
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+            <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
               {t("auth.register.nameLabel")}
             </label>
             <div className="relative">
-              <User className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-foreground-muted" />
+              <User className="text-foreground-muted absolute top-1/2 left-4 size-5 -translate-y-1/2" />
               <input
                 type="text"
                 name="name"
@@ -100,11 +110,11 @@ export function RegisterForm() {
                 onChange={handleChange}
                 placeholder={t("auth.register.namePlaceholder")}
                 disabled={isLoading}
-                className={`w-full h-12 pl-12 pr-4 rounded-full bg-surface dark:bg-[#161715] text-foreground font-semibold border ${
+                className={`bg-surface text-foreground h-12 w-full rounded-full border pr-4 pl-12 font-semibold dark:bg-[#161715] ${
                   fieldErrors.name
                     ? "border-rose-500 ring-1 ring-rose-500"
-                    : "border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green"
-                } outline-none transition text-sm`}
+                    : "border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green focus:ring-2"
+                } text-sm transition outline-none`}
               />
             </div>
             {fieldErrors.name && (
@@ -115,11 +125,11 @@ export function RegisterForm() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+            <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
               {t("auth.register.emailLabel")}
             </label>
             <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-foreground-muted" />
+              <Mail className="text-foreground-muted absolute top-1/2 left-4 size-5 -translate-y-1/2" />
               <input
                 type="email"
                 name="email"
@@ -127,11 +137,11 @@ export function RegisterForm() {
                 onChange={handleChange}
                 placeholder={t("auth.register.emailPlaceholder")}
                 disabled={isLoading}
-                className={`w-full h-12 pl-12 pr-4 rounded-full bg-surface dark:bg-[#161715] text-foreground font-semibold border ${
+                className={`bg-surface text-foreground h-12 w-full rounded-full border pr-4 pl-12 font-semibold dark:bg-[#161715] ${
                   fieldErrors.email
                     ? "border-rose-500 ring-1 ring-rose-500"
-                    : "border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green"
-                } outline-none transition text-sm`}
+                    : "border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green focus:ring-2"
+                } text-sm transition outline-none`}
               />
             </div>
             {fieldErrors.email && (
@@ -142,11 +152,11 @@ export function RegisterForm() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+            <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
               {t("auth.register.phoneLabel")}
             </label>
             <div className="relative">
-              <Phone className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-foreground-muted" />
+              <Phone className="text-foreground-muted absolute top-1/2 left-4 size-5 -translate-y-1/2" />
               <input
                 type="tel"
                 name="phone"
@@ -154,11 +164,11 @@ export function RegisterForm() {
                 onChange={handleChange}
                 placeholder={t("auth.register.phonePlaceholder")}
                 disabled={isLoading}
-                className={`w-full h-12 pl-12 pr-4 rounded-full bg-surface dark:bg-[#161715] text-foreground font-semibold border ${
+                className={`bg-surface text-foreground h-12 w-full rounded-full border pr-4 pl-12 font-semibold dark:bg-[#161715] ${
                   fieldErrors.phone
                     ? "border-rose-500 ring-1 ring-rose-500"
-                    : "border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green"
-                } outline-none transition text-sm`}
+                    : "border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green focus:ring-2"
+                } text-sm transition outline-none`}
               />
             </div>
             {fieldErrors.phone && (
@@ -169,11 +179,11 @@ export function RegisterForm() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+            <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
               {t("auth.register.passwordLabel")}
             </label>
             <div className="relative">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-foreground-muted" />
+              <Lock className="text-foreground-muted absolute top-1/2 left-4 size-5 -translate-y-1/2" />
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
@@ -181,16 +191,16 @@ export function RegisterForm() {
                 onChange={handleChange}
                 placeholder={t("auth.register.passwordPlaceholder")}
                 disabled={isLoading}
-                className={`w-full h-12 pl-12 pr-12 rounded-full bg-surface dark:bg-[#161715] text-foreground font-semibold border ${
+                className={`bg-surface text-foreground h-12 w-full rounded-full border pr-12 pl-12 font-semibold dark:bg-[#161715] ${
                   fieldErrors.password
                     ? "border-rose-500 ring-1 ring-rose-500"
-                    : "border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green"
-                } outline-none transition text-sm`}
+                    : "border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green focus:ring-2"
+                } text-sm transition outline-none`}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 size-9 flex items-center justify-center rounded-full text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
+                className="text-foreground-muted hover:text-foreground hover:bg-muted absolute top-1/2 right-2 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full transition"
                 aria-label={showPassword ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}
               >
                 {showPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
@@ -204,11 +214,11 @@ export function RegisterForm() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+            <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
               {t("auth.register.confirmPasswordLabel")}
             </label>
             <div className="relative">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-foreground-muted" />
+              <Lock className="text-foreground-muted absolute top-1/2 left-4 size-5 -translate-y-1/2" />
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 name="confirmPassword"
@@ -216,17 +226,21 @@ export function RegisterForm() {
                 onChange={handleChange}
                 placeholder={t("auth.register.confirmPasswordPlaceholder")}
                 disabled={isLoading}
-                className={`w-full h-12 pl-12 pr-12 rounded-full bg-surface dark:bg-[#161715] text-foreground font-semibold border ${
+                className={`bg-surface text-foreground h-12 w-full rounded-full border pr-12 pl-12 font-semibold dark:bg-[#161715] ${
                   fieldErrors.confirmPassword
                     ? "border-rose-500 ring-1 ring-rose-500"
-                    : "border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green"
-                } outline-none transition text-sm`}
+                    : "border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green focus:ring-2"
+                } text-sm transition outline-none`}
               />
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 size-9 flex items-center justify-center rounded-full text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
-                aria-label={showConfirmPassword ? "Sembunyikan konfirmasi kata sandi" : "Tampilkan konfirmasi kata sandi"}
+                className="text-foreground-muted hover:text-foreground hover:bg-muted absolute top-1/2 right-2 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full transition"
+                aria-label={
+                  showConfirmPassword
+                    ? "Sembunyikan konfirmasi kata sandi"
+                    : "Tampilkan konfirmasi kata sandi"
+                }
               >
                 {showConfirmPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
               </button>
@@ -240,15 +254,15 @@ export function RegisterForm() {
         </div>
 
         <div className="pt-0.5">
-          <label className="flex items-start gap-2.5 cursor-pointer select-none">
+          <label className="flex cursor-pointer items-start gap-2.5 select-none">
             <input
               type="checkbox"
               name="agreeTerms"
               checked={formData.agreeTerms}
               onChange={handleChange}
-              className="size-4 mt-0.5 rounded accent-wise-green cursor-pointer"
+              className="accent-wise-green mt-0.5 size-4 cursor-pointer rounded"
             />
-            <span className="text-xs font-semibold text-foreground-secondary leading-relaxed">
+            <span className="text-foreground-secondary text-xs leading-relaxed font-semibold">
               {t("auth.register.agreeTerms")}
             </span>
           </label>
@@ -287,12 +301,12 @@ export function RegisterForm() {
           )}
         </Button>
 
-        <div className="text-center pt-1">
-          <p className="text-sm font-semibold text-foreground-secondary">
+        <div className="pt-1 text-center">
+          <p className="text-foreground-secondary text-sm font-semibold">
             {t("auth.register.haveAccountPrompt")}{" "}
             <Link
               href="/login"
-              className="font-bold text-dark-green dark:text-wise-green hover:underline"
+              className="text-dark-green dark:text-wise-green font-bold hover:underline"
             >
               {t("auth.register.loginLink")}
             </Link>

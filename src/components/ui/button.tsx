@@ -29,10 +29,8 @@ const buttonVariants = cva(
           "border border-border bg-background hover:bg-muted text-foreground rounded-full hover:scale-105 active:scale-95",
         secondary:
           "bg-secondary text-secondary-foreground rounded-full hover:scale-105 active:scale-95",
-        ghost:
-          "hover:bg-muted hover:text-foreground rounded-full hover:scale-105 active:scale-95",
-        destructive:
-          "bg-destructive text-white rounded-full hover:scale-105 active:scale-95",
+        ghost: "hover:bg-muted hover:text-foreground rounded-full hover:scale-105 active:scale-95",
+        destructive: "bg-destructive text-white rounded-full hover:scale-105 active:scale-95",
         link: "text-dark-green dark:text-wise-green underline-offset-4 hover:underline",
       },
       size: {

@@ -15,49 +15,51 @@ interface SubscriptionMetricsCardsProps {
 
 export function SubscriptionMetricsCards({ metrics }: SubscriptionMetricsCardsProps) {
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-      <div className="p-4 rounded-xl border border-border bg-surface dark:bg-[#161715] shadow-xs">
-        <div className="flex items-center justify-between text-foreground-muted mb-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider">Total Langganan</span>
-          <Receipt className="size-4 text-foreground-secondary" />
+    <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+      <div className="border-border bg-surface rounded-xl border p-4 shadow-xs dark:bg-[#161715]">
+        <div className="text-foreground-muted mb-1 flex items-center justify-between">
+          <span className="text-[11px] font-bold tracking-wider uppercase">Total Langganan</span>
+          <Receipt className="text-foreground-secondary size-4" />
         </div>
-        <div className="text-lg sm:text-xl font-black font-mono text-foreground">
+        <div className="text-foreground font-mono text-lg font-black sm:text-xl">
           {metrics.totalCount.toLocaleString("id-ID")} Akun
         </div>
-        <span className="text-[10px] text-foreground-muted">Terdaftar di platform</span>
+        <span className="text-foreground-muted text-[10px]">Terdaftar di platform</span>
       </div>
 
-      <div className="p-4 rounded-xl border border-border bg-surface dark:bg-[#161715] shadow-xs">
-        <div className="flex items-center justify-between text-foreground-muted mb-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider">Langganan Aktif</span>
-          <CheckCircle2 className="size-4 text-emerald-600 dark:text-wise-green" />
+      <div className="border-border bg-surface rounded-xl border p-4 shadow-xs dark:bg-[#161715]">
+        <div className="text-foreground-muted mb-1 flex items-center justify-between">
+          <span className="text-[11px] font-bold tracking-wider uppercase">Langganan Aktif</span>
+          <CheckCircle2 className="dark:text-wise-green size-4 text-emerald-600" />
         </div>
-        <div className="text-lg sm:text-xl font-black font-mono text-emerald-700 dark:text-wise-green">
+        <div className="dark:text-wise-green font-mono text-lg font-black text-emerald-700 sm:text-xl">
           {metrics.activeCount.toLocaleString("id-ID")} Akun
         </div>
-        <span className="text-[10px] text-foreground-muted">Memiliki kuota &amp; akses aktif</span>
+        <span className="text-foreground-muted text-[10px]">Memiliki kuota &amp; akses aktif</span>
       </div>
 
-      <div className="p-4 rounded-xl border border-border bg-surface dark:bg-[#161715] shadow-xs">
-        <div className="flex items-center justify-between text-foreground-muted mb-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider">Kedaluwarsa (Expired)</span>
+      <div className="border-border bg-surface rounded-xl border p-4 shadow-xs dark:bg-[#161715]">
+        <div className="text-foreground-muted mb-1 flex items-center justify-between">
+          <span className="text-[11px] font-bold tracking-wider uppercase">
+            Kedaluwarsa (Expired)
+          </span>
           <Clock className="size-4 text-rose-500" />
         </div>
-        <div className="text-lg sm:text-xl font-black font-mono text-rose-600 dark:text-rose-400">
+        <div className="font-mono text-lg font-black text-rose-600 sm:text-xl dark:text-rose-400">
           {metrics.expiredCount.toLocaleString("id-ID")} Akun
         </div>
-        <span className="text-[10px] text-foreground-muted">Masa aktif telah berakhir</span>
+        <span className="text-foreground-muted text-[10px]">Masa aktif telah berakhir</span>
       </div>
 
-      <div className="p-4 rounded-xl border border-border bg-surface dark:bg-[#161715] shadow-xs">
-        <div className="flex items-center justify-between text-foreground-muted mb-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider">Trial / Suspended</span>
+      <div className="border-border bg-surface rounded-xl border p-4 shadow-xs dark:bg-[#161715]">
+        <div className="text-foreground-muted mb-1 flex items-center justify-between">
+          <span className="text-[11px] font-bold tracking-wider uppercase">Trial / Suspended</span>
           <Sparkles className="size-4 text-amber-500" />
         </div>
-        <div className="text-lg sm:text-xl font-black font-mono text-amber-600 dark:text-amber-400">
+        <div className="font-mono text-lg font-black text-amber-600 sm:text-xl dark:text-amber-400">
           {(metrics.trialCount + metrics.suspendedCount).toLocaleString("id-ID")} Akun
         </div>
-        <span className="text-[10px] text-foreground-muted">
+        <span className="text-foreground-muted text-[10px]">
           {metrics.trialCount} Uji Coba &bull; {metrics.suspendedCount} Ditangguhkan
         </span>
       </div>

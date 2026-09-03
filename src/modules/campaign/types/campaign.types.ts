@@ -1,10 +1,4 @@
-export type CampaignStatus =
-  | "DRAFT"
-  | "SCHEDULED"
-  | "RUNNING"
-  | "PAUSED"
-  | "COMPLETED"
-  | "FAILED";
+export type CampaignStatus = "DRAFT" | "SCHEDULED" | "RUNNING" | "PAUSED" | "COMPLETED" | "FAILED";
 
 export interface Campaign {
   id: string;

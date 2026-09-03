@@ -94,7 +94,12 @@ export const DEFAULT_USERS: UserItem[] = [
 
 function normalizeUser(raw: Record<string, unknown>): UserItem {
   const roleName = String(raw.role_name || raw.roleName || raw.role || "USER").toUpperCase();
-  const isActive = raw.is_active !== undefined ? Boolean(raw.is_active) : raw.isActive !== undefined ? Boolean(raw.isActive) : true;
+  const isActive =
+    raw.is_active !== undefined
+      ? Boolean(raw.is_active)
+      : raw.isActive !== undefined
+        ? Boolean(raw.isActive)
+        : true;
   const balance = Number(raw.balance ?? raw.depositBalance ?? raw.deposit_balance ?? 0);
   const quotaRemaining = Number(raw.quotaRemaining ?? raw.quota_remaining ?? 1000);
   const phone = String(raw.phone_number || raw.phoneNumber || raw.phone || "");
@@ -107,7 +112,11 @@ function normalizeUser(raw: Record<string, unknown>): UserItem {
     phoneNumber: phone,
     role: roleName,
     roleName: roleName,
-    planName: String(raw.planName || raw.plan_name || (roleName === "SUPER_ADMIN" ? "Enterprise Cluster" : "Professional")),
+    planName: String(
+      raw.planName ||
+        raw.plan_name ||
+        (roleName === "SUPER_ADMIN" ? "Enterprise Cluster" : "Professional")
+    ),
     quotaRemaining: quotaRemaining,
     depositBalance: balance,
     balance: balance,
@@ -122,19 +131,35 @@ function normalizeUserActivity(raw: Record<string, unknown>): UserActivityItem {
   return {
     id: String(raw.id || ""),
     userId: String(raw.user_id || raw.userId || ""),
-    tenantId: raw.tenant_id ? String(raw.tenant_id) : raw.tenantId ? String(raw.tenantId) : undefined,
+    tenantId: raw.tenant_id
+      ? String(raw.tenant_id)
+      : raw.tenantId
+        ? String(raw.tenantId)
+        : undefined,
     activityType: String(raw.activity_type || raw.type || raw.activityType || ""),
     type: String(raw.type || raw.activity_type || raw.activityType || ""),
     description: String(raw.description || ""),
     createdAt: String(raw.created_at || raw.createdAt || ""),
-    updatedAt: raw.updated_at ? String(raw.updated_at) : raw.updatedAt ? String(raw.updatedAt) : undefined,
+    updatedAt: raw.updated_at
+      ? String(raw.updated_at)
+      : raw.updatedAt
+        ? String(raw.updatedAt)
+        : undefined,
     user: userRaw
       ? {
           id: String(userRaw.id || ""),
           name: String(userRaw.name || ""),
           email: String(userRaw.email || ""),
-          roleName: userRaw.role_name ? String(userRaw.role_name) : userRaw.roleName ? String(userRaw.roleName) : undefined,
-          phoneNumber: userRaw.phone_number ? String(userRaw.phone_number) : userRaw.phoneNumber ? String(userRaw.phoneNumber) : undefined,
+          roleName: userRaw.role_name
+            ? String(userRaw.role_name)
+            : userRaw.roleName
+              ? String(userRaw.roleName)
+              : undefined,
+          phoneNumber: userRaw.phone_number
+            ? String(userRaw.phone_number)
+            : userRaw.phoneNumber
+              ? String(userRaw.phoneNumber)
+              : undefined,
           isActive: Boolean(userRaw.is_active ?? userRaw.isActive ?? true),
         }
       : undefined,
@@ -166,14 +191,15 @@ export const adminApi = {
 
       const rawUsers = Array.isArray(res.payload) ? res.payload : [];
       const users = rawUsers.map(normalizeUser);
-      const addInfo = res.additional_info as { total?: number; page?: number; size?: number } | undefined;
+      const addInfo = res.additional_info as
+        { total?: number; page?: number; size?: number } | undefined;
       const total = typeof addInfo?.total === "number" ? addInfo.total : users.length;
       const resPage = typeof addInfo?.page === "number" ? addInfo.page : page;
       const resSize = typeof addInfo?.size === "number" ? addInfo.size : pageSize;
 
       return {
-        users: users.length > 0 ? users : (params?.search ? [] : DEFAULT_USERS),
-        total: users.length > 0 ? total : (params?.search ? 0 : DEFAULT_USERS.length),
+        users: users.length > 0 ? users : params?.search ? [] : DEFAULT_USERS,
+        total: users.length > 0 ? total : params?.search ? 0 : DEFAULT_USERS.length,
         page: resPage,
         pageSize: resSize,
       };
@@ -195,7 +221,8 @@ export const adminApi = {
     const body: Record<string, unknown> = {};
     if (payload.name) body.name = payload.name;
     if (payload.email) body.email = payload.email;
-    if (payload.phoneNumber || payload.phone) body.phone_number = payload.phoneNumber || payload.phone;
+    if (payload.phoneNumber || payload.phone)
+      body.phone_number = payload.phoneNumber || payload.phone;
     if (payload.password) body.password = payload.password;
     if (payload.isActive !== undefined) body.is_active = payload.isActive;
     if (payload.role) body.role_id = payload.role;
@@ -218,8 +245,7 @@ export const adminApi = {
         ? `${ADMIN_BASE}/admin/users/reduce-balance`
         : `${ADMIN_BASE}/admin/users/add-balance`;
 
-    const idempotencyKey =
-      payload.idempotencyKey || generateSecureRandomString("adm-bal-", 16);
+    const idempotencyKey = payload.idempotencyKey || generateSecureRandomString("adm-bal-", 16);
 
     const res = await httpClient.post<{ success: boolean; message: string }>(
       endpoint,
@@ -238,9 +264,7 @@ export const adminApi = {
       success: res.success,
       message:
         res.message ||
-        (payload.type === "REDUCE"
-          ? "Saldo berhasil dikurangi"
-          : "Saldo berhasil ditambahkan"),
+        (payload.type === "REDUCE" ? "Saldo berhasil dikurangi" : "Saldo berhasil ditambahkan"),
     };
   },
 
@@ -264,7 +288,9 @@ export const adminApi = {
     );
   },
 
-  getUserActivities: async (params?: GetUserActivitiesParams): Promise<UserActivityListResponse> => {
+  getUserActivities: async (
+    params?: GetUserActivitiesParams
+  ): Promise<UserActivityListResponse> => {
     try {
       const page = params?.page ?? 1;
       const pageSize = params?.pageSize ?? 15;
@@ -287,7 +313,8 @@ export const adminApi = {
 
       const rawActivities = Array.isArray(res.payload) ? res.payload : [];
       const activities = rawActivities.map(normalizeUserActivity);
-      const addInfo = res.additional_info as { total?: number; page?: number; size?: number } | undefined;
+      const addInfo = res.additional_info as
+        { total?: number; page?: number; size?: number } | undefined;
       const total = typeof addInfo?.total === "number" ? addInfo.total : activities.length;
       const resPage = typeof addInfo?.page === "number" ? addInfo.page : page;
       const resSize = typeof addInfo?.size === "number" ? addInfo.size : pageSize;
@@ -370,7 +397,10 @@ export const adminApi = {
   },
 
   createAdminPlan: async (payload: CreatePlanInput): Promise<AdminPlanItem> => {
-    const res = await httpClient.post<Record<string, unknown>>(`${ADMIN_BASE}/admin/plans`, payload);
+    const res = await httpClient.post<Record<string, unknown>>(
+      `${ADMIN_BASE}/admin/plans`,
+      payload
+    );
     if (!res.payload) {
       throw new Error(res.message || "Gagal membuat paket langganan");
     }
@@ -378,7 +408,10 @@ export const adminApi = {
   },
 
   updateAdminPlan: async (id: string, payload: UpdatePlanInput): Promise<AdminPlanItem> => {
-    const res = await httpClient.put<Record<string, unknown>>(`${ADMIN_BASE}/admin/plans/${id}`, payload);
+    const res = await httpClient.put<Record<string, unknown>>(
+      `${ADMIN_BASE}/admin/plans/${id}`,
+      payload
+    );
     if (!res.payload) {
       throw new Error(res.message || "Gagal memperbarui paket langganan");
     }
@@ -415,7 +448,8 @@ export const adminApi = {
         billings = billings.filter((b) => b.status === params.status);
       }
 
-      const addInfo = res.additional_info as { total?: number; page?: number; size?: number } | undefined;
+      const addInfo = res.additional_info as
+        { total?: number; page?: number; size?: number } | undefined;
       const total = typeof addInfo?.total === "number" ? addInfo.total : billings.length;
       const resPage = typeof addInfo?.page === "number" ? addInfo.page : page;
       const resSize = typeof addInfo?.size === "number" ? addInfo.size : pageSize;
@@ -486,7 +520,8 @@ export const adminApi = {
         queues = queues.filter((q) => q.status === params.status);
       }
 
-      const addInfo = res.additional_info as { total?: number; page?: number; size?: number } | undefined;
+      const addInfo = res.additional_info as
+        { total?: number; page?: number; size?: number } | undefined;
       const total = typeof addInfo?.total === "number" ? addInfo.total : queues.length;
       const resPage = typeof addInfo?.page === "number" ? addInfo.page : page;
       const resSize = typeof addInfo?.size === "number" ? addInfo.size : pageSize;
@@ -512,11 +547,16 @@ export const adminApi = {
     return { success: res.success, message: res.message || "Antrean berhasil dihapus" };
   },
 
-  broadcastToAllUsers: async (input: BroadcastToAllInput): Promise<{ success: boolean; message: string }> => {
-    const res = await httpClient.post<Record<string, unknown>>(`${ADMIN_BASE}/admin/broadcast/all`, {
-      subject: input.subject,
-      message: input.message,
-    });
+  broadcastToAllUsers: async (
+    input: BroadcastToAllInput
+  ): Promise<{ success: boolean; message: string }> => {
+    const res = await httpClient.post<Record<string, unknown>>(
+      `${ADMIN_BASE}/admin/broadcast/all`,
+      {
+        subject: input.subject,
+        message: input.message,
+      }
+    );
     return {
       success: res.success,
       message: res.message || "Siaran email berhasil dijadwalkan ke seluruh pengguna aktif",
@@ -526,11 +566,14 @@ export const adminApi = {
   broadcastToSpecificUsers: async (
     input: BroadcastToUsersInput
   ): Promise<{ success: boolean; message: string }> => {
-    const res = await httpClient.post<Record<string, unknown>>(`${ADMIN_BASE}/admin/broadcast/users`, {
-      user_ids: input.userIds,
-      subject: input.subject,
-      message: input.message,
-    });
+    const res = await httpClient.post<Record<string, unknown>>(
+      `${ADMIN_BASE}/admin/broadcast/users`,
+      {
+        user_ids: input.userIds,
+        subject: input.subject,
+        message: input.message,
+      }
+    );
     return {
       success: res.success,
       message: res.message || "Siaran email berhasil dijadwalkan ke target pengguna",
@@ -590,7 +633,8 @@ export const adminApi = {
       const rawLogs = Array.isArray(res.payload) ? res.payload : [];
       const logs = rawLogs.map(normalizeAdminMessageLog);
 
-      const addInfo = res.additional_info as { total?: number; page?: number; size?: number } | undefined;
+      const addInfo = res.additional_info as
+        { total?: number; page?: number; size?: number } | undefined;
       const total = typeof addInfo?.total === "number" ? addInfo.total : logs.length;
       const resPage = typeof addInfo?.page === "number" ? addInfo.page : page;
       const resSize = typeof addInfo?.size === "number" ? addInfo.size : pageSize;
@@ -619,9 +663,7 @@ export const adminApi = {
     };
   },
 
-  getAdminDevices: async (
-    params?: GetAdminDevicesParams
-  ): Promise<AdminDeviceListResponse> => {
+  getAdminDevices: async (params?: GetAdminDevicesParams): Promise<AdminDeviceListResponse> => {
     try {
       const page = params?.page ?? 1;
       const pageSize = params?.pageSize ?? 15;
@@ -645,7 +687,8 @@ export const adminApi = {
       const rawDevices = Array.isArray(res.payload) ? res.payload : [];
       const devices = rawDevices.map(normalizeAdminDevice);
 
-      const addInfo = res.additional_info as { total?: number; page?: number; size?: number } | undefined;
+      const addInfo = res.additional_info as
+        { total?: number; page?: number; size?: number } | undefined;
       const total = typeof addInfo?.total === "number" ? addInfo.total : devices.length;
       const resPage = typeof addInfo?.page === "number" ? addInfo.page : page;
       const resSize = typeof addInfo?.size === "number" ? addInfo.size : pageSize;
@@ -703,7 +746,8 @@ export const adminApi = {
       const rawSubs = Array.isArray(res.payload) ? res.payload : [];
       const subscriptions = rawSubs.map(normalizeAdminSubscription);
 
-      const addInfo = res.additional_info as { total?: number; page?: number; size?: number } | undefined;
+      const addInfo = res.additional_info as
+        { total?: number; page?: number; size?: number } | undefined;
       const total = typeof addInfo?.total === "number" ? addInfo.total : subscriptions.length;
       const resPage = typeof addInfo?.page === "number" ? addInfo.page : page;
       const resSize = typeof addInfo?.size === "number" ? addInfo.size : pageSize;
@@ -724,9 +768,7 @@ export const adminApi = {
     }
   },
 
-  expireAdminSubscription: async (
-    id: string
-  ): Promise<{ success: boolean; message: string }> => {
+  expireAdminSubscription: async (id: string): Promise<{ success: boolean; message: string }> => {
     const res = await httpClient.put(`${ADMIN_BASE}/admin/subscriptions/${id}/expire`, {
       status: "EXPIRED",
     });
@@ -798,9 +840,7 @@ function normalizeAdminBilling(raw: Record<string, unknown>): AdminBillingItem {
 
 function normalizeAdminQueue(raw: Record<string, unknown>): AdminQueueItem {
   const payload =
-    raw.payload && typeof raw.payload === "object"
-      ? (raw.payload as Record<string, unknown>)
-      : {};
+    raw.payload && typeof raw.payload === "object" ? (raw.payload as Record<string, unknown>) : {};
   let targetEmail = "";
   let targetName = "";
 
@@ -841,13 +881,18 @@ function normalizeAdminMessageLog(raw: Record<string, unknown>): AdminMessageLog
     id: String(raw.id || ""),
     tenantId: String(raw.tenant_id || raw.tenantId || ""),
     deviceId: String(raw.device_id || raw.deviceId || ""),
-    campaignId: raw.campaign_id || raw.campaignId ? String(raw.campaign_id || raw.campaignId) : undefined,
+    campaignId:
+      raw.campaign_id || raw.campaignId ? String(raw.campaign_id || raw.campaignId) : undefined,
     recipientJid: String(raw.recipient_jid || raw.recipientJid || ""),
-    direction: (String(raw.direction || "OUTBOUND").toUpperCase() as "OUTBOUND" | "INBOUND") || "OUTBOUND",
+    direction:
+      (String(raw.direction || "OUTBOUND").toUpperCase() as "OUTBOUND" | "INBOUND") || "OUTBOUND",
     messageBody: String(raw.message_body || raw.messageBody || ""),
     mediaUrl: raw.media_url || raw.mediaUrl ? String(raw.media_url || raw.mediaUrl) : undefined,
     status: String(raw.status || "PENDING").toUpperCase(),
-    errorMessage: raw.error_message || raw.errorMessage ? String(raw.error_message || raw.errorMessage) : undefined,
+    errorMessage:
+      raw.error_message || raw.errorMessage
+        ? String(raw.error_message || raw.errorMessage)
+        : undefined,
     sentAt: raw.sent_at ? String(raw.sent_at) : undefined,
     createdAt: String(raw.created_at || raw.createdAt || new Date().toISOString()),
   };
@@ -863,7 +908,8 @@ function normalizeAdminDevice(raw: Record<string, unknown>): AdminDeviceItem {
     trustScore: Number(raw.trust_score ?? raw.trustScore ?? 10),
     warmupDay: Number(raw.warmup_day ?? raw.warmupDay ?? 1),
     dailySentCount: Number(raw.daily_sent_count ?? raw.dailySentCount ?? 0),
-    lastSeenAt: raw.last_seen_at || raw.lastSeenAt ? String(raw.last_seen_at || raw.lastSeenAt) : undefined,
+    lastSeenAt:
+      raw.last_seen_at || raw.lastSeenAt ? String(raw.last_seen_at || raw.lastSeenAt) : undefined,
     createdAt: String(raw.created_at || raw.createdAt || new Date().toISOString()),
     updatedAt: String(raw.updated_at || raw.updatedAt || new Date().toISOString()),
   };
@@ -899,4 +945,3 @@ function normalizeAdminSubscription(raw: Record<string, unknown>): AdminSubscrip
     updatedAt: String(raw.updated_at || raw.updatedAt || new Date().toISOString()),
   };
 }
-

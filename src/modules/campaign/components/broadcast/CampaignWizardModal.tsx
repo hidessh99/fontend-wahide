@@ -29,11 +29,7 @@ interface CampaignWizardModalProps {
   onSubmit: (data: CreateCampaignInput) => Promise<unknown>;
 }
 
-export function CampaignWizardModal({
-  isOpen,
-  onClose,
-  onSubmit,
-}: CampaignWizardModalProps) {
+export function CampaignWizardModal({ isOpen, onClose, onSubmit }: CampaignWizardModalProps) {
   const { t } = useI18n();
   const { devices } = useDevices();
   const { contacts, allTags } = useContacts();
@@ -51,12 +47,9 @@ export function CampaignWizardModal({
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const {
-    template,
-    preview,
-    setTemplate,
-    randomize,
-  } = useSpintax("{Halo|Hi|Selamat Siang} Kak {nama}, dapatkan penawaran spesial {diskon 50%|potongan harga} hari ini!");
+  const { template, preview, setTemplate, randomize } = useSpintax(
+    "{Halo|Hi|Selamat Siang} Kak {nama}, dapatkan penawaran spesial {diskon 50%|potongan harga} hari ini!"
+  );
 
   // Universal Escape key dismissal with zero listener churn
   useEscapeKey(isOpen, onClose);
@@ -149,24 +142,24 @@ export function CampaignWizardModal({
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
-      className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-sm p-3 sm:p-6 flex min-h-full items-center justify-center animate-in fade-in"
+      className="animate-in fade-in fixed inset-0 z-50 flex min-h-full items-center justify-center overflow-y-auto bg-black/75 p-3 backdrop-blur-sm sm:p-6"
     >
-      <div className="relative w-full max-w-2xl max-h-[90vh] flex flex-col rounded-md border border-border bg-surface dark:bg-[#161715] shadow-2xl overflow-hidden animate-in zoom-in-95">
+      <div className="border-border bg-surface animate-in zoom-in-95 relative flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-md border shadow-2xl dark:bg-[#161715]">
         {/* Sticky Header with Step Tracker */}
-        <div className="p-5 sm:p-6 pb-3 border-b border-border/80 shrink-0 space-y-3">
+        <div className="border-border/80 shrink-0 space-y-3 border-b p-5 pb-3 sm:p-6">
           <div className="flex items-start justify-between">
             <div>
-              <h2 className="text-xl sm:text-2xl font-black text-foreground tracking-tight">
+              <h2 className="text-foreground text-xl font-black tracking-tight sm:text-2xl">
                 {t("campaign.wizardTitle")}
               </h2>
-              <p className="text-xs font-semibold text-foreground-secondary">
+              <p className="text-foreground-secondary text-xs font-semibold">
                 {t("campaign.wizardSubtitle")}
               </p>
             </div>
             <button
               type="button"
               onClick={onClose}
-              className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer shrink-0"
+              className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full transition"
               aria-label="Tutup"
             >
               <X className="size-4" />
@@ -183,16 +176,16 @@ export function CampaignWizardModal({
             ].map(({ num, label, icon: Icon }) => (
               <div
                 key={num}
-                className={`flex items-center gap-1.5 pb-1 border-b-2 transition-all ${
+                className={`flex items-center gap-1.5 border-b-2 pb-1 transition-all ${
                   step === num
                     ? "border-wise-green text-foreground font-black"
                     : step > num
-                    ? "border-emerald-500 text-emerald-600 dark:text-emerald-400"
-                    : "border-transparent text-foreground-muted"
+                      ? "border-emerald-500 text-emerald-600 dark:text-emerald-400"
+                      : "text-foreground-muted border-transparent"
                 }`}
               >
                 <Icon className="size-3.5 shrink-0" />
-                <span className="truncate hidden sm:inline">{label}</span>
+                <span className="hidden truncate sm:inline">{label}</span>
                 <span className="sm:hidden">L{num}</span>
               </div>
             ))}
@@ -200,10 +193,10 @@ export function CampaignWizardModal({
         </div>
 
         {/* Scrollable Body Content per Step */}
-        <div className="flex-1 overflow-y-auto min-h-0 p-5 sm:p-6 space-y-4">
+        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-5 sm:p-6">
           {/* Error Alert */}
           {error && (
-            <div className="p-3 rounded-md bg-rose-500/10 border border-rose-500/20 text-xs font-semibold text-rose-600 dark:text-rose-400">
+            <div className="rounded-md border border-rose-500/20 bg-rose-500/10 p-3 text-xs font-semibold text-rose-600 dark:text-rose-400">
               {error}
             </div>
           )}
@@ -212,7 +205,7 @@ export function CampaignWizardModal({
           {step === 1 && (
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+                <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                   {t("campaign.campaignNameLabel")}
                 </label>
                 <input
@@ -220,44 +213,44 @@ export function CampaignWizardModal({
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder={t("campaign.campaignNamePlaceholder")}
-                  className="w-full h-11 px-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs"
+                  className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-11 w-full rounded-full border px-4 text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
                   autoFocus
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+                <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                   {t("campaign.selectDeviceLabel")}
                 </label>
                 {connectedDevices.length === 0 ? (
-                  <div className="p-4 rounded-md bg-amber-500/10 border border-amber-500/20 text-xs font-semibold text-amber-700 dark:text-amber-400">
+                  <div className="rounded-md border border-amber-500/20 bg-amber-500/10 p-4 text-xs font-semibold text-amber-700 dark:text-amber-400">
                     {t("campaign.noConnectedDevices")}
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     {connectedDevices.map((d) => (
                       <div
                         key={d.id}
                         onClick={() => setSelectedDeviceId(d.id)}
-                        className={`p-3.5 rounded-md border transition cursor-pointer flex items-center justify-between ${
+                        className={`flex cursor-pointer items-center justify-between rounded-md border p-3.5 transition ${
                           selectedDeviceId === d.id
                             ? "border-wise-green bg-wise-green/10 dark:bg-wise-green/5 shadow-sm"
                             : "border-border hover:border-foreground-muted bg-surface dark:bg-[#10110e]"
                         }`}
                       >
                         <div className="flex items-center gap-2.5">
-                          <Smartphone className="size-4 text-emerald-700 dark:text-wise-green" />
+                          <Smartphone className="dark:text-wise-green size-4 text-emerald-700" />
                           <div>
-                            <span className="font-bold text-xs text-foreground block truncate max-w-36">
+                            <span className="text-foreground block max-w-36 truncate text-xs font-bold">
                               {d.name}
                             </span>
-                            <span className="text-[11px] text-foreground-secondary font-mono">
+                            <span className="text-foreground-secondary font-mono text-[11px]">
                               +{d.phone || "No Number"}
                             </span>
                           </div>
                         </div>
                         {selectedDeviceId === d.id && (
-                          <CheckCircle2 className="size-4 text-emerald-700 dark:text-wise-green" />
+                          <CheckCircle2 className="dark:text-wise-green size-4 text-emerald-700" />
                         )}
                       </div>
                     ))}
@@ -270,67 +263,75 @@ export function CampaignWizardModal({
           {/* STEP 2: Target Audience */}
           {step === 2 && (
             <div className="space-y-4">
-              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary">
+              <label className="text-foreground-secondary block text-xs font-semibold tracking-wider uppercase">
                 {t("campaign.selectAudienceLabel")}
               </label>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <button
                   type="button"
                   onClick={() => setTargetType("ALL")}
-                  className={`p-3.5 rounded-md border text-left transition cursor-pointer ${
+                  className={`cursor-pointer rounded-md border p-3.5 text-left transition ${
                     targetType === "ALL"
                       ? "border-wise-green bg-wise-green/10 dark:bg-wise-green/5 font-extrabold"
-                      : "border-border bg-surface dark:bg-[#10110e] text-foreground-secondary"
+                      : "border-border bg-surface text-foreground-secondary dark:bg-[#10110e]"
                   }`}
                 >
-                  <Users className="size-4 text-emerald-700 dark:text-wise-green mb-1" />
-                  <span className="text-xs block text-foreground">Semua Kontak</span>
-                  <span className="text-[10px] text-foreground-muted block">{contacts.length} nomor</span>
+                  <Users className="dark:text-wise-green mb-1 size-4 text-emerald-700" />
+                  <span className="text-foreground block text-xs">Semua Kontak</span>
+                  <span className="text-foreground-muted block text-[10px]">
+                    {contacts.length} nomor
+                  </span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setTargetType("TAGS")}
-                  className={`p-3.5 rounded-md border text-left transition cursor-pointer ${
+                  className={`cursor-pointer rounded-md border p-3.5 text-left transition ${
                     targetType === "TAGS"
                       ? "border-wise-green bg-wise-green/10 dark:bg-wise-green/5 font-extrabold"
-                      : "border-border bg-surface dark:bg-[#10110e] text-foreground-secondary"
+                      : "border-border bg-surface text-foreground-secondary dark:bg-[#10110e]"
                   }`}
                 >
-                  <Users className="size-4 text-sky-500 mb-1" />
-                  <span className="text-xs block text-foreground">Segmen Tag</span>
-                  <span className="text-[10px] text-foreground-muted block">{allTags.length} tag dibuat</span>
+                  <Users className="mb-1 size-4 text-sky-500" />
+                  <span className="text-foreground block text-xs">Segmen Tag</span>
+                  <span className="text-foreground-muted block text-[10px]">
+                    {allTags.length} tag dibuat
+                  </span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setTargetType("CUSTOM")}
-                  className={`p-3.5 rounded-md border text-left transition cursor-pointer ${
+                  className={`cursor-pointer rounded-md border p-3.5 text-left transition ${
                     targetType === "CUSTOM"
                       ? "border-wise-green bg-wise-green/10 dark:bg-wise-green/5 font-extrabold"
-                      : "border-border bg-surface dark:bg-[#10110e] text-foreground-secondary"
+                      : "border-border bg-surface text-foreground-secondary dark:bg-[#10110e]"
                   }`}
                 >
-                  <Smartphone className="size-4 text-amber-500 mb-1" />
-                  <span className="text-xs block text-foreground">Input Manual</span>
-                  <span className="text-[10px] text-foreground-muted block">Paste nomor langsung</span>
+                  <Smartphone className="mb-1 size-4 text-amber-500" />
+                  <span className="text-foreground block text-xs">Input Manual</span>
+                  <span className="text-foreground-muted block text-[10px]">
+                    Paste nomor langsung
+                  </span>
                 </button>
               </div>
 
               {targetType === "TAGS" && (
-                <div className="p-4 rounded-md border border-border bg-muted/20 space-y-2">
-                  <span className="text-xs font-bold text-foreground block">Pilih Tag yang Diikutsertakan:</span>
+                <div className="border-border bg-muted/20 space-y-2 rounded-md border p-4">
+                  <span className="text-foreground block text-xs font-bold">
+                    Pilih Tag yang Diikutsertakan:
+                  </span>
                   <div className="flex flex-wrap gap-2">
                     {allTags.map((tag) => (
                       <button
                         key={tag}
                         type="button"
                         onClick={() => toggleTag(tag)}
-                        className={`px-3 py-1.5 rounded-full text-xs font-bold border transition cursor-pointer ${
+                        className={`cursor-pointer rounded-full border px-3 py-1.5 text-xs font-bold transition ${
                           selectedTags.includes(tag)
                             ? "bg-wise-green text-dark-green border-wise-green"
-                            : "bg-surface dark:bg-[#10110e] text-foreground border-border hover:border-foreground-muted"
+                            : "bg-surface text-foreground border-border hover:border-foreground-muted dark:bg-[#10110e]"
                         }`}
                       >
                         {tag}
@@ -342,7 +343,7 @@ export function CampaignWizardModal({
 
               {targetType === "CUSTOM" && (
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+                  <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                     {t("campaign.customNumbersPlaceholder")}
                   </label>
                   <textarea
@@ -350,7 +351,7 @@ export function CampaignWizardModal({
                     value={customNumbersStr}
                     onChange={(e) => setCustomNumbersStr(e.target.value)}
                     placeholder="6281234567890&#10;6289876543210"
-                    className="w-full p-3 rounded-md bg-surface dark:bg-[#10110e] text-foreground font-mono text-xs border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition"
+                    className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green w-full rounded-md border p-3 font-mono text-xs transition outline-none focus:ring-2 dark:bg-[#10110e]"
                   />
                 </div>
               )}
@@ -361,11 +362,13 @@ export function CampaignWizardModal({
           {step === 3 && (
             <div className="space-y-4">
               <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary">
+                <div className="mb-1.5 flex items-center justify-between">
+                  <label className="text-foreground-secondary block text-xs font-semibold tracking-wider uppercase">
                     {t("campaign.messageContentLabel")}
                   </label>
-                  <span className="text-[11px] text-foreground-muted font-mono">{template.length} karakter</span>
+                  <span className="text-foreground-muted font-mono text-[11px]">
+                    {template.length} karakter
+                  </span>
                 </div>
 
                 <textarea
@@ -373,7 +376,7 @@ export function CampaignWizardModal({
                   value={template}
                   onChange={(e) => setTemplate(e.target.value)}
                   placeholder={t("campaign.messagePlaceholder")}
-                  className="w-full p-3 rounded-md bg-surface dark:bg-[#10110e] text-foreground font-semibold text-xs border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition leading-relaxed"
+                  className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green w-full rounded-md border p-3 text-xs leading-relaxed font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
                 />
 
                 {/* Quick Insert Buttons */}
@@ -381,21 +384,21 @@ export function CampaignWizardModal({
                   <button
                     type="button"
                     onClick={() => setTemplate(template + " {nama}")}
-                    className="px-2.5 py-1 rounded-full bg-muted hover:bg-muted/80 text-[11px] font-bold text-foreground-secondary border border-border"
+                    className="bg-muted hover:bg-muted/80 text-foreground-secondary border-border rounded-full border px-2.5 py-1 text-[11px] font-bold"
                   >
                     + {t("campaign.insertNameVar")}
                   </button>
                   <button
                     type="button"
                     onClick={() => setTemplate(template + " {phone}")}
-                    className="px-2.5 py-1 rounded-full bg-muted hover:bg-muted/80 text-[11px] font-bold text-foreground-secondary border border-border"
+                    className="bg-muted hover:bg-muted/80 text-foreground-secondary border-border rounded-full border px-2.5 py-1 text-[11px] font-bold"
                   >
                     + {t("campaign.insertPhoneVar")}
                   </button>
                   <button
                     type="button"
                     onClick={insertSpintaxSample}
-                    className="px-2.5 py-1 rounded-full bg-light-mint dark:bg-wise-green/15 hover:bg-light-mint/80 dark:hover:bg-wise-green/25 text-[11px] font-bold text-dark-green dark:text-wise-green border border-wise-green/30"
+                    className="bg-light-mint dark:bg-wise-green/15 hover:bg-light-mint/80 dark:hover:bg-wise-green/25 text-dark-green dark:text-wise-green border-wise-green/30 rounded-full border px-2.5 py-1 text-[11px] font-bold"
                   >
                     + {t("campaign.insertSpintax")}
                   </button>
@@ -411,17 +414,17 @@ export function CampaignWizardModal({
           {step === 4 && (
             <div className="space-y-5">
               {/* Jitter Slider */}
-              <div className="p-4 rounded-md border border-border bg-surface dark:bg-[#10110e] space-y-2">
+              <div className="border-border bg-surface space-y-2 rounded-md border p-4 dark:bg-[#10110e]">
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-xs font-bold text-foreground block">
+                    <span className="text-foreground block text-xs font-bold">
                       {t("campaign.jitterSliderLabel")}
                     </span>
-                    <span className="text-[11px] text-foreground-muted">
+                    <span className="text-foreground-muted text-[11px]">
                       {t("campaign.jitterSliderDesc")}
                     </span>
                   </div>
-                  <span className="px-3 py-1 rounded-full bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green font-black text-xs border border-wise-green/30">
+                  <span className="bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green border-wise-green/30 rounded-full border px-3 py-1 text-xs font-black">
                     {jitterDelaySeconds} Detik
                   </span>
                 </div>
@@ -432,52 +435,52 @@ export function CampaignWizardModal({
                   step={1}
                   value={jitterDelaySeconds}
                   onChange={(e) => setJitterDelaySeconds(parseInt(e.target.value, 10))}
-                  className="w-full accent-wise-green cursor-pointer"
+                  className="accent-wise-green w-full cursor-pointer"
                 />
               </div>
 
               {/* Human Typing Switch */}
-              <div className="p-4 rounded-md border border-border bg-surface dark:bg-[#10110e] flex items-center justify-between">
+              <div className="border-border bg-surface flex items-center justify-between rounded-md border p-4 dark:bg-[#10110e]">
                 <div>
-                  <span className="text-xs font-bold text-foreground block">
+                  <span className="text-foreground block text-xs font-bold">
                     {t("campaign.humanTypingLabel")}
                   </span>
-                  <span className="text-[11px] text-foreground-muted">
+                  <span className="text-foreground-muted text-[11px]">
                     {t("campaign.humanTypingDesc")}
                   </span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setEnableHumanTyping(!enableHumanTyping)}
-                  className={`w-12 h-6 rounded-full transition-colors p-0.5 cursor-pointer ${
+                  className={`h-6 w-12 cursor-pointer rounded-full p-0.5 transition-colors ${
                     enableHumanTyping ? "bg-wise-green" : "bg-muted"
                   }`}
                 >
                   <div
                     className={`size-5 rounded-full bg-white transition-transform ${
-                      enableHumanTyping ? "translate-x-6 bg-dark-green" : "translate-x-0"
+                      enableHumanTyping ? "bg-dark-green translate-x-6" : "translate-x-0"
                     }`}
                   />
                 </button>
               </div>
 
               {/* Schedule Option */}
-              <div className="p-4 rounded-md border border-border bg-surface dark:bg-[#10110e] space-y-3">
+              <div className="border-border bg-surface space-y-3 rounded-md border p-4 dark:bg-[#10110e]">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Clock className="size-4 text-foreground-muted" />
-                    <span className="text-xs font-bold text-foreground">Jadwalkan Pengiriman</span>
+                    <Clock className="text-foreground-muted size-4" />
+                    <span className="text-foreground text-xs font-bold">Jadwalkan Pengiriman</span>
                   </div>
                   <button
                     type="button"
                     onClick={() => setIsScheduled(!isScheduled)}
-                    className={`w-12 h-6 rounded-full transition-colors p-0.5 cursor-pointer ${
+                    className={`h-6 w-12 cursor-pointer rounded-full p-0.5 transition-colors ${
                       isScheduled ? "bg-wise-green" : "bg-muted"
                     }`}
                   >
                     <div
                       className={`size-5 rounded-full bg-white transition-transform ${
-                        isScheduled ? "translate-x-6 bg-dark-green" : "translate-x-0"
+                        isScheduled ? "bg-dark-green translate-x-6" : "translate-x-0"
                       }`}
                     />
                   </button>
@@ -485,14 +488,14 @@ export function CampaignWizardModal({
 
                 {isScheduled && (
                   <div>
-                    <label className="block text-[11px] font-semibold text-foreground-secondary mb-1">
+                    <label className="text-foreground-secondary mb-1 block text-[11px] font-semibold">
                       {t("campaign.scheduleDateLabel")}
                     </label>
                     <input
                       type="datetime-local"
                       value={scheduledAt}
                       onChange={(e) => setScheduledAt(e.target.value)}
-                      className="w-full h-10 px-3 rounded-md bg-surface dark:bg-[#161715] text-foreground text-xs font-semibold border border-border outline-none focus:border-wise-green"
+                      className="bg-surface text-foreground border-border focus:border-wise-green h-10 w-full rounded-md border px-3 text-xs font-semibold outline-none dark:bg-[#161715]"
                     />
                   </div>
                 )}
@@ -502,7 +505,7 @@ export function CampaignWizardModal({
         </div>
 
         {/* Sticky Modal Footer Controls */}
-        <div className="p-4 sm:p-6 pt-3 border-t border-border/80 bg-surface/90 dark:bg-[#161715]/90 backdrop-blur-sm flex items-center justify-between shrink-0">
+        <div className="border-border/80 bg-surface/90 flex shrink-0 items-center justify-between border-t p-4 pt-3 backdrop-blur-sm sm:p-6 dark:bg-[#161715]/90">
           {step > 1 ? (
             <Button
               type="button"
@@ -510,7 +513,7 @@ export function CampaignWizardModal({
               size="sm"
               onClick={handlePrev}
               disabled={isLoading}
-              className="rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted cursor-pointer"
+              className="border-border hover:border-foreground-muted cursor-pointer gap-1.5 rounded-full text-xs font-bold"
             >
               <ArrowLeft className="size-3.5" />
               <span>{t("campaign.btnPrev")}</span>
@@ -522,7 +525,7 @@ export function CampaignWizardModal({
               size="sm"
               onClick={onClose}
               disabled={isLoading}
-              className="rounded-full text-xs font-bold border-border hover:border-foreground-muted cursor-pointer"
+              className="border-border hover:border-foreground-muted cursor-pointer rounded-full text-xs font-bold"
             >
               Batal
             </Button>
@@ -534,7 +537,7 @@ export function CampaignWizardModal({
               variant="primaryPill"
               size="sm"
               onClick={handleNext}
-              className="text-xs font-bold gap-1.5 px-6 shadow-sm cursor-pointer"
+              className="cursor-pointer gap-1.5 px-6 text-xs font-bold shadow-sm"
             >
               <span>{t("campaign.btnNext")}</span>
               <ArrowRight className="size-3.5" />
@@ -546,7 +549,7 @@ export function CampaignWizardModal({
               size="sm"
               disabled={isLoading}
               onClick={handleSubmit}
-              className="text-xs font-bold gap-1.5 px-6 shadow-sm cursor-pointer"
+              className="cursor-pointer gap-1.5 px-6 text-xs font-bold shadow-sm"
             >
               {isLoading ? (
                 <>

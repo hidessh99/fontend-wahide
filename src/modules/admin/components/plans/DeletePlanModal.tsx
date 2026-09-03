@@ -13,12 +13,7 @@ interface DeletePlanModalProps {
   onConfirm: () => Promise<unknown>;
 }
 
-export function DeletePlanModal({
-  plan,
-  isOpen,
-  onClose,
-  onConfirm,
-}: DeletePlanModalProps) {
+export function DeletePlanModal({ plan, isOpen, onClose, onConfirm }: DeletePlanModalProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   // Universal Escape key dismissal with zero listener churn
@@ -43,20 +38,20 @@ export function DeletePlanModal({
       onClick={(e) => {
         if (e.target === e.currentTarget && !isLoading) onClose();
       }}
-      className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-sm p-3 sm:p-6 flex min-h-full items-center justify-center animate-in fade-in"
+      className="animate-in fade-in fixed inset-0 z-50 flex min-h-full items-center justify-center overflow-y-auto bg-black/75 p-3 backdrop-blur-sm sm:p-6"
     >
-      <div className="relative w-full max-w-md rounded-xl border border-border bg-surface dark:bg-[#161715] shadow-2xl overflow-hidden animate-in zoom-in-95">
+      <div className="border-border bg-surface animate-in zoom-in-95 relative w-full max-w-md overflow-hidden rounded-xl border shadow-2xl dark:bg-[#161715]">
         {/* Header */}
-        <div className="p-5 sm:p-6 pb-4 border-b border-border flex items-start justify-between shrink-0">
+        <div className="border-border flex shrink-0 items-start justify-between border-b p-5 pb-4 sm:p-6">
           <div className="flex items-center gap-3">
-            <div className="size-10 rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400">
               <Trash2 className="size-5" />
             </div>
             <div>
-              <h2 className="text-lg font-black text-foreground tracking-tight">
+              <h2 className="text-foreground text-lg font-black tracking-tight">
                 Hapus Paket Langganan
               </h2>
-              <p className="text-xs font-semibold text-foreground-secondary">
+              <p className="text-foreground-secondary text-xs font-semibold">
                 Konfirmasi penghapusan paket tier platform.
               </p>
             </div>
@@ -66,7 +61,7 @@ export function DeletePlanModal({
             type="button"
             onClick={onClose}
             disabled={isLoading}
-            className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer shrink-0 disabled:opacity-50"
+            className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full transition disabled:opacity-50"
             aria-label="Tutup"
           >
             <X className="size-4" />
@@ -74,31 +69,32 @@ export function DeletePlanModal({
         </div>
 
         {/* Content Body */}
-        <div className="p-5 sm:p-6 space-y-4 text-xs">
-          <div className="p-3.5 rounded-lg border border-rose-500/20 bg-rose-500/10 text-rose-700 dark:text-rose-400 flex items-start gap-2.5">
-            <AlertTriangle className="size-4 shrink-0 mt-0.5" />
+        <div className="space-y-4 p-5 text-xs sm:p-6">
+          <div className="flex items-start gap-2.5 rounded-lg border border-rose-500/20 bg-rose-500/10 p-3.5 text-rose-700 dark:text-rose-400">
+            <AlertTriangle className="mt-0.5 size-4 shrink-0" />
             <div className="space-y-1">
-              <span className="font-bold block">Tindakan ini tidak dapat dibatalkan!</span>
-              <p className="text-[11px] leading-relaxed text-foreground-secondary">
-                Anda akan menghapus paket tier <strong>&ldquo;{plan.name}&rdquo;</strong> dari katalog langganan platform.
+              <span className="block font-bold">Tindakan ini tidak dapat dibatalkan!</span>
+              <p className="text-foreground-secondary text-[11px] leading-relaxed">
+                Anda akan menghapus paket tier <strong>&ldquo;{plan.name}&rdquo;</strong> dari
+                katalog langganan platform.
               </p>
             </div>
           </div>
 
-          <div className="p-3 rounded-lg border border-border bg-muted/20 space-y-1.5 font-semibold text-foreground-secondary text-xs">
+          <div className="border-border bg-muted/20 text-foreground-secondary space-y-1.5 rounded-lg border p-3 text-xs font-semibold">
             <div className="flex justify-between">
               <span>Nama Paket:</span>
               <strong className="text-foreground">{plan.name}</strong>
             </div>
             <div className="flex justify-between">
               <span>Harga / Bulan:</span>
-              <span className="font-mono text-foreground font-bold">
+              <span className="text-foreground font-mono font-bold">
                 Rp {plan.price.toLocaleString("id-ID")}
               </span>
             </div>
             <div className="flex justify-between">
               <span>Batas Kuota Pesan:</span>
-              <span className="font-mono text-foreground">
+              <span className="text-foreground font-mono">
                 {plan.monthly_message_limit.toLocaleString("id-ID")} Pesan
               </span>
             </div>
@@ -106,14 +102,14 @@ export function DeletePlanModal({
         </div>
 
         {/* Footer Actions */}
-        <div className="p-4 sm:p-5 border-t border-border flex items-center justify-end gap-3 shrink-0 bg-muted/20">
+        <div className="border-border bg-muted/20 flex shrink-0 items-center justify-end gap-3 border-t p-4 sm:p-5">
           <Button
             type="button"
             variant="outline"
             size="sm"
             onClick={onClose}
             disabled={isLoading}
-            className="rounded-full text-xs font-bold border-border hover:bg-muted"
+            className="border-border hover:bg-muted rounded-full text-xs font-bold"
           >
             Batalkan
           </Button>
@@ -124,7 +120,7 @@ export function DeletePlanModal({
             size="sm"
             onClick={handleDelete}
             disabled={isLoading}
-            className="rounded-full text-xs font-extrabold gap-1.5 px-5 shadow-sm"
+            className="gap-1.5 rounded-full px-5 text-xs font-extrabold shadow-sm"
           >
             {isLoading ? (
               <>

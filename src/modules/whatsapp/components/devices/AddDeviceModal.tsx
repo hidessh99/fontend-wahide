@@ -12,11 +12,7 @@ interface AddDeviceModalProps {
   onSubmit: (name: string) => Promise<unknown>;
 }
 
-export function AddDeviceModal({
-  isOpen,
-  onClose,
-  onSubmit,
-}: AddDeviceModalProps) {
+export function AddDeviceModal({ isOpen, onClose, onSubmit }: AddDeviceModalProps) {
   const { t } = useI18n();
   const [name, setName] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -53,20 +49,20 @@ export function AddDeviceModal({
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
-      className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-sm p-3 sm:p-6 flex min-h-full items-center justify-center animate-in fade-in"
+      className="animate-in fade-in fixed inset-0 z-50 flex min-h-full items-center justify-center overflow-y-auto bg-black/75 p-3 backdrop-blur-sm sm:p-6"
     >
-      <div className="relative w-full max-w-md max-h-[90vh] flex flex-col rounded-md border border-border bg-surface dark:bg-[#161715] shadow-2xl overflow-hidden animate-in zoom-in-95">
+      <div className="border-border bg-surface animate-in zoom-in-95 relative flex max-h-[90vh] w-full max-w-md flex-col overflow-hidden rounded-md border shadow-2xl dark:bg-[#161715]">
         {/* Sticky Header */}
-        <div className="flex items-start justify-between p-5 sm:p-6 pb-4 border-b border-border shrink-0">
+        <div className="border-border flex shrink-0 items-start justify-between border-b p-5 pb-4 sm:p-6">
           <div className="flex items-center gap-3">
-            <div className="size-10 rounded-full bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green flex items-center justify-center shrink-0">
+            <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
               <Smartphone className="size-5" />
             </div>
             <div>
-              <h2 className="text-lg sm:text-xl font-black text-foreground tracking-tight">
+              <h2 className="text-foreground text-lg font-black tracking-tight sm:text-xl">
                 {t("whatsapp.addModalTitle")}
               </h2>
-              <p className="text-xs font-semibold text-foreground-secondary">
+              <p className="text-foreground-secondary text-xs font-semibold">
                 {t("whatsapp.addModalSubtitle")}
               </p>
             </div>
@@ -75,7 +71,7 @@ export function AddDeviceModal({
           <button
             type="button"
             onClick={onClose}
-            className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer shrink-0"
+            className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full transition"
             aria-label="Tutup"
           >
             <X className="size-4" />
@@ -83,16 +79,16 @@ export function AddDeviceModal({
         </div>
 
         {/* Scrollable Form Body */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto flex flex-col min-h-0">
-          <div className="p-5 sm:p-6 space-y-4 flex-1">
+        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+          <div className="flex-1 space-y-4 p-5 sm:p-6">
             {error && (
-              <div className="p-3 rounded-md bg-rose-500/10 border border-rose-500/20 text-xs font-semibold text-rose-600 dark:text-rose-400">
+              <div className="rounded-md border border-rose-500/20 bg-rose-500/10 p-3 text-xs font-semibold text-rose-600 dark:text-rose-400">
                 {error}
               </div>
             )}
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                 {t("whatsapp.deviceNameLabel")}
               </label>
               <input
@@ -104,21 +100,21 @@ export function AddDeviceModal({
                 }}
                 placeholder={t("whatsapp.deviceNamePlaceholder")}
                 disabled={isLoading}
-                className="w-full h-12 px-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-sm"
+                className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-12 w-full rounded-full border px-4 text-sm font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
                 autoFocus
               />
             </div>
           </div>
 
           {/* Sticky Footer */}
-          <div className="p-4 sm:p-6 pt-3 border-t border-border/80 bg-surface/90 dark:bg-[#161715]/90 backdrop-blur-sm flex items-center justify-end gap-2.5 shrink-0">
+          <div className="border-border/80 bg-surface/90 flex shrink-0 items-center justify-end gap-2.5 border-t p-4 pt-3 backdrop-blur-sm sm:p-6 dark:bg-[#161715]/90">
             <Button
               type="button"
               variant="outline"
               size="sm"
               onClick={onClose}
               disabled={isLoading}
-              className="rounded-full text-xs font-bold px-5 border-border hover:border-foreground-muted cursor-pointer"
+              className="border-border hover:border-foreground-muted cursor-pointer rounded-full px-5 text-xs font-bold"
             >
               {t("whatsapp.addCancel")}
             </Button>
@@ -127,7 +123,7 @@ export function AddDeviceModal({
               variant="primaryPill"
               size="sm"
               disabled={isLoading}
-              className="rounded-full text-xs font-bold gap-2 px-6 shadow-sm cursor-pointer"
+              className="cursor-pointer gap-2 rounded-full px-6 text-xs font-bold shadow-sm"
             >
               {isLoading ? (
                 <>

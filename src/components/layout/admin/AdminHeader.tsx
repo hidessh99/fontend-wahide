@@ -31,30 +31,28 @@ export function AdminHeader({ onOpenMobileNav }: AdminHeaderProps) {
   };
 
   return (
-    <header className="sticky top-0 z-20 h-16 border-b border-border bg-background/80 backdrop-blur-md px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+    <header className="border-border bg-background/80 sticky top-0 z-20 flex h-16 items-center justify-between border-b px-4 backdrop-blur-md sm:px-6 lg:px-8">
       {/* Left: Mobile Menu Toggle & Dynamic Breadcrumb */}
       <div className="flex items-center gap-3">
         {onOpenMobileNav && (
           <button
             onClick={onOpenMobileNav}
-            className="lg:hidden p-2 rounded-full hover:bg-muted text-foreground-secondary hover:text-foreground cursor-pointer transition"
+            className="hover:bg-muted text-foreground-secondary hover:text-foreground cursor-pointer rounded-full p-2 transition lg:hidden"
             aria-label="Buka Menu Admin"
           >
             <Menu className="size-5" />
           </button>
         )}
 
-        <div className="flex items-center gap-2 text-xs font-semibold text-foreground-secondary">
+        <div className="text-foreground-secondary flex items-center gap-2 text-xs font-semibold">
           <div className="flex items-center gap-1.5">
             <ShieldAlert className="size-3.5 text-rose-600" />
-            <span className="font-bold text-foreground">Admin</span>
+            <span className="text-foreground font-bold">Admin</span>
           </div>
           <span>/</span>
-          <span className="text-foreground-muted hidden sm:inline">
-            {currentRoute.section}
-          </span>
+          <span className="text-foreground-muted hidden sm:inline">{currentRoute.section}</span>
           <span className="hidden sm:inline">/</span>
-          <span className="font-bold text-foreground truncate max-w-40 sm:max-w-none">
+          <span className="text-foreground max-w-40 truncate font-bold sm:max-w-none">
             {currentRoute.title}
           </span>
         </div>
@@ -63,19 +61,19 @@ export function AdminHeader({ onOpenMobileNav }: AdminHeaderProps) {
       {/* Right: Cluster Status, Theme, Locale, and Tenant Link */}
       <div className="flex items-center gap-2.5">
         {/* Cluster Health Pill */}
-        <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-bold text-emerald-600 dark:text-emerald-400">
-          <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
+        <div className="hidden items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-600 md:flex dark:text-emerald-400">
+          <span className="size-2 animate-pulse rounded-full bg-emerald-500" />
           <span>Cluster 99.9% Uptime</span>
         </div>
 
         <LocaleSwitcher />
         <ThemeToggle />
 
-        <div className="h-5 w-px bg-border hidden sm:block mx-0.5" />
+        <div className="bg-border mx-0.5 hidden h-5 w-px sm:block" />
 
         <Link
           href="/dashboard"
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-wise-green text-dark-green hover:scale-105 active:scale-95 transition shadow-xs"
+          className="bg-wise-green text-dark-green flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold shadow-xs transition hover:scale-105 active:scale-95"
         >
           <ArrowLeft className="size-3.5" />
           <span className="hidden sm:inline">Tenant Dashboard</span>

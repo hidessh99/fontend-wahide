@@ -15,22 +15,22 @@ export function BalanceCard({ balance, onOpenTopUp }: BalanceCardProps) {
   const { t } = useI18n();
 
   return (
-    <div className="rounded-md border border-border bg-surface dark:bg-[#161715] p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6 shadow-sm">
+    <div className="border-border bg-surface flex flex-col justify-between gap-6 rounded-md border p-6 shadow-sm sm:flex-row sm:items-center sm:p-8 dark:bg-[#161715]">
       <div className="flex items-center gap-4">
-        <div className="size-14 rounded-full bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center shrink-0">
+        <div className="bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex size-14 shrink-0 items-center justify-center rounded-full">
           <Wallet className="size-7" />
         </div>
         <div className="space-y-1">
-          <span className="text-xs font-bold uppercase tracking-wider text-foreground-muted block">
+          <span className="text-foreground-muted block text-xs font-bold tracking-wider uppercase">
             {t("billing.depositBalanceTitle")}
           </span>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
+            <span className="text-foreground text-2xl font-black tracking-tight sm:text-3xl">
               Rp {(balance?.amount || 0).toLocaleString("id-ID")}
             </span>
-            <span className="text-xs font-semibold text-dark-green dark:text-wise-green">IDR</span>
+            <span className="text-dark-green dark:text-wise-green text-xs font-semibold">IDR</span>
           </div>
-          <p className="text-[11px] font-semibold text-foreground-secondary">
+          <p className="text-foreground-secondary text-[11px] font-semibold">
             {t("billing.depositBalanceDesc")}
           </p>
         </div>
@@ -40,7 +40,7 @@ export function BalanceCard({ balance, onOpenTopUp }: BalanceCardProps) {
         <Button
           variant="primaryPill"
           onClick={onOpenTopUp}
-          className="gap-2 text-xs font-bold shadow-sm px-6 py-2.5"
+          className="gap-2 px-6 py-2.5 text-xs font-bold shadow-sm"
         >
           <Plus className="size-4" />
           <span>{t("billing.topUpBalance")}</span>

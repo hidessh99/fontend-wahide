@@ -11,20 +11,23 @@ export function useMessageLogs(initialPage = 1, pageSize = 20) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchLogs = useCallback(async (targetPage = page) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const res = await campaignApi.getMessageLogs(targetPage, pageSize);
-      setLogs(res.logs);
-      setTotal(res.total);
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal memuat log pesan";
-      setError(msg);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [page, pageSize]);
+  const fetchLogs = useCallback(
+    async (targetPage = page) => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const res = await campaignApi.getMessageLogs(targetPage, pageSize);
+        setLogs(res.logs);
+        setTotal(res.total);
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : "Gagal memuat log pesan";
+        setError(msg);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [page, pageSize]
+  );
 
   useEffect(() => {
     let isMounted = true;

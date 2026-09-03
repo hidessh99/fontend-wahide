@@ -29,20 +29,21 @@ export function AdminDevicesView() {
   } = useAdminDevices();
 
   return (
-    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto p-3 sm:p-6 lg:p-8">
+    <div className="mx-auto max-w-7xl space-y-6 p-3 sm:space-y-8 sm:p-6 lg:p-8">
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5 sm:pb-6">
+      <div className="border-border flex flex-col justify-between gap-4 border-b pb-5 sm:flex-row sm:items-center sm:pb-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
-            <div className="size-8 sm:size-9 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-wise-green flex items-center justify-center shrink-0">
+            <div className="dark:text-wise-green flex size-8 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 sm:size-9">
               <Smartphone className="size-4 sm:size-5" />
             </div>
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-foreground tracking-tight">
+            <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl lg:text-3xl">
               Manajemen Perangkat WhatsApp Seluruh Pengguna
             </h1>
           </div>
-          <p className="text-xs sm:text-sm font-semibold text-foreground-secondary max-w-2xl">
-            Pantau dan kelola seluruh slot instance nomor WhatsApp yang terhubung di platform, audit trust score, dan kelola pemutusan sesi jika diperlukan.
+          <p className="text-foreground-secondary max-w-2xl text-xs font-semibold sm:text-sm">
+            Pantau dan kelola seluruh slot instance nomor WhatsApp yang terhubung di platform, audit
+            trust score, dan kelola pemutusan sesi jika diperlukan.
           </p>
         </div>
       </div>
@@ -54,8 +55,8 @@ export function AdminDevicesView() {
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="size-4 text-emerald-600 dark:text-wise-green" />
-            <h2 className="text-base font-black text-foreground">
+            <ShieldCheck className="dark:text-wise-green size-4 text-emerald-600" />
+            <h2 className="text-foreground text-base font-black">
               Daftar Seluruh Slot Perangkat WhatsApp
             </h2>
           </div>

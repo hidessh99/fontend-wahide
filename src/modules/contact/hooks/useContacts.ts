@@ -75,7 +75,10 @@ export function useContacts() {
 
     const loadInitialContacts = async () => {
       try {
-        const res = await contactApi.getContacts({ search: "", page: 1, pageSize: 10 }, controller.signal);
+        const res = await contactApi.getContacts(
+          { search: "", page: 1, pageSize: 10 },
+          controller.signal
+        );
         if (isMounted) {
           setContacts(res.contacts);
           setTotal(res.total);
@@ -154,7 +157,9 @@ export function useContacts() {
       setContacts((prev) => prev.filter((c) => !selectedIds.has(c.id)));
       setTotal((prev) => Math.max(0, prev - ids.length));
       setSelectedIds(new Set());
-      toast.success(t("contact.selectedCount", { count: ids.length.toString() }) + " berhasil dihapus");
+      toast.success(
+        t("contact.selectedCount", { count: ids.length.toString() }) + " berhasil dihapus"
+      );
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal menghapus kontak";
       toast.error(msg);
@@ -198,11 +203,7 @@ export function useContacts() {
   const filteredContacts = useMemo(() => {
     if (!activeSearch.trim()) return contacts;
     const term = activeSearch.toLowerCase().trim();
-    return contacts.filter(
-      (c) =>
-        c.name.toLowerCase().includes(term) ||
-        c.phone.includes(term)
-    );
+    return contacts.filter((c) => c.name.toLowerCase().includes(term) || c.phone.includes(term));
   }, [contacts, activeSearch]);
 
   return {

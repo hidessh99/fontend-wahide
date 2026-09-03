@@ -40,8 +40,6 @@ export interface PairPhoneResponse {
   pairing_code: string;
 }
 
-
-
 export interface DeviceStats {
   total: number;
   connected: number;

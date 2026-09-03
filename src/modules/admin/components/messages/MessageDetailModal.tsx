@@ -25,11 +25,7 @@ interface MessageDetailModalProps {
   onClose: () => void;
 }
 
-export function MessageDetailModal({
-  message,
-  isOpen,
-  onClose,
-}: MessageDetailModalProps) {
+export function MessageDetailModal({ message, isOpen, onClose }: MessageDetailModalProps) {
   const [hasCopied, setHasCopied] = useState(false);
 
   if (!isOpen || !message) return null;
@@ -49,23 +45,23 @@ export function MessageDetailModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity animate-in fade-in"
+        className="animate-in fade-in fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
         onClick={onClose}
       />
 
       {/* Dialog */}
-      <div className="relative z-10 w-full max-w-lg rounded-2xl border border-border bg-surface dark:bg-[#161715] shadow-2xl p-5 sm:p-6 space-y-4 animate-in fade-in zoom-in-95 max-h-[90vh] flex flex-col">
+      <div className="border-border bg-surface animate-in fade-in zoom-in-95 relative z-10 flex max-h-[90vh] w-full max-w-lg flex-col space-y-4 rounded-2xl border p-5 shadow-2xl sm:p-6 dark:bg-[#161715]">
         {/* Header */}
-        <div className="flex items-start justify-between gap-3 border-b border-border pb-3.5 shrink-0">
+        <div className="border-border flex shrink-0 items-start justify-between gap-3 border-b pb-3.5">
           <div className="flex items-center gap-2.5">
-            <div className="size-9 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-wise-green flex items-center justify-center shrink-0">
+            <div className="dark:text-wise-green flex size-9 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600">
               <MessageSquare className="size-4.5" />
             </div>
             <div>
-              <h2 className="text-base font-black text-foreground tracking-tight">
+              <h2 className="text-foreground text-base font-black tracking-tight">
                 Detail Log Pesan WhatsApp
               </h2>
-              <span className="font-mono text-[11px] text-foreground-muted block">
+              <span className="text-foreground-muted block font-mono text-[11px]">
                 ID: {message.id}
               </span>
             </div>
@@ -74,7 +70,7 @@ export function MessageDetailModal({
           <button
             type="button"
             onClick={onClose}
-            className="size-7 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
+            className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-7 cursor-pointer items-center justify-center rounded-full transition"
             aria-label="Tutup"
           >
             <X className="size-4" />
@@ -82,17 +78,17 @@ export function MessageDetailModal({
         </div>
 
         {/* Scrollable Content */}
-        <div className="space-y-4 overflow-y-auto flex-1 pr-1 text-xs">
+        <div className="flex-1 space-y-4 overflow-y-auto pr-1 text-xs">
           {/* Status & Direction Bar */}
           <div className="grid grid-cols-2 gap-2">
-            <div className="p-2.5 rounded-lg border border-border bg-muted/20">
-              <span className="text-[10px] uppercase font-bold text-foreground-muted block mb-0.5">
+            <div className="border-border bg-muted/20 rounded-lg border p-2.5">
+              <span className="text-foreground-muted mb-0.5 block text-[10px] font-bold uppercase">
                 Arah Pesan
               </span>
-              <div className="flex items-center gap-1.5 font-bold text-foreground">
+              <div className="text-foreground flex items-center gap-1.5 font-bold">
                 {message.direction === "OUTBOUND" ? (
                   <>
-                    <Send className="size-3 text-emerald-600 dark:text-wise-green" />
+                    <Send className="dark:text-wise-green size-3 text-emerald-600" />
                     <span>Keluar (OUTBOUND)</span>
                   </>
                 ) : (
@@ -104,11 +100,11 @@ export function MessageDetailModal({
               </div>
             </div>
 
-            <div className="p-2.5 rounded-lg border border-border bg-muted/20">
-              <span className="text-[10px] uppercase font-bold text-foreground-muted block mb-0.5">
+            <div className="border-border bg-muted/20 rounded-lg border p-2.5">
+              <span className="text-foreground-muted mb-0.5 block text-[10px] font-bold uppercase">
                 Status Pengiriman
               </span>
-              <span className="font-black font-mono text-emerald-700 dark:text-wise-green">
+              <span className="dark:text-wise-green font-mono font-black text-emerald-700">
                 {message.status}
               </span>
             </div>
@@ -117,13 +113,13 @@ export function MessageDetailModal({
           {/* Full Message Text Area */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-foreground-secondary">
+              <span className="text-foreground-secondary text-[11px] font-bold tracking-wider uppercase">
                 Isi Teks Pesan:
               </span>
               <button
                 type="button"
                 onClick={handleCopyText}
-                className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 dark:text-wise-green hover:underline cursor-pointer"
+                className="dark:text-wise-green flex cursor-pointer items-center gap-1 text-[11px] font-bold text-emerald-700 hover:underline"
               >
                 {hasCopied ? (
                   <>
@@ -139,27 +135,27 @@ export function MessageDetailModal({
               </button>
             </div>
 
-            <div className="p-3 rounded-xl border border-border bg-surface dark:bg-[#10110e] text-foreground font-sans font-medium text-xs whitespace-pre-wrap break-words leading-relaxed max-h-48 overflow-y-auto select-text">
+            <div className="border-border bg-surface text-foreground max-h-48 overflow-y-auto rounded-xl border p-3 font-sans text-xs leading-relaxed font-medium break-words whitespace-pre-wrap select-text dark:bg-[#10110e]">
               {message.messageBody || "(Pesan kosong)"}
             </div>
           </div>
 
           {/* Media Attachment if exists */}
           {message.mediaUrl && (
-            <div className="p-3 rounded-xl border border-border bg-muted/20 space-y-2">
-              <span className="text-[11px] font-bold text-foreground flex items-center gap-1.5">
+            <div className="border-border bg-muted/20 space-y-2 rounded-xl border p-3">
+              <span className="text-foreground flex items-center gap-1.5 text-[11px] font-bold">
                 <ExternalLink className="size-3.5 text-blue-500" />
                 <span>Lampiran Media:</span>
               </span>
               <div className="flex items-center justify-between gap-2">
-                <span className="font-mono text-[11px] text-foreground-muted truncate max-w-70">
+                <span className="text-foreground-muted max-w-70 truncate font-mono text-[11px]">
                   {message.mediaUrl}
                 </span>
                 <a
                   href={message.mediaUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-2.5 py-1 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold text-[11px] hover:bg-blue-500/20 transition shrink-0"
+                  className="shrink-0 rounded bg-blue-500/10 px-2.5 py-1 text-[11px] font-bold text-blue-600 transition hover:bg-blue-500/20 dark:text-blue-400"
                 >
                   Buka Media
                 </a>
@@ -169,61 +165,61 @@ export function MessageDetailModal({
 
           {/* Error Message Callout if failed */}
           {message.errorMessage && (
-            <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 space-y-1">
+            <div className="space-y-1 rounded-xl border border-rose-500/20 bg-rose-500/10 p-3 text-rose-600 dark:text-rose-400">
               <div className="flex items-center gap-1.5 font-bold">
                 <AlertCircle className="size-4 shrink-0" />
                 <span>Detail Pesan Error:</span>
               </div>
-              <p className="font-mono text-[11px] break-all leading-relaxed pl-5.5">
+              <p className="pl-5.5 font-mono text-[11px] leading-relaxed break-all">
                 {message.errorMessage}
               </p>
             </div>
           )}
 
           {/* Metadata Grid */}
-          <div className="p-3 rounded-xl border border-border bg-muted/20 space-y-2 text-xs">
+          <div className="border-border bg-muted/20 space-y-2 rounded-xl border p-3 text-xs">
             <div className="flex items-center justify-between">
-              <span className="text-foreground-secondary font-semibold flex items-center gap-1.5">
-                <Smartphone className="size-3.5 text-foreground-muted" />
+              <span className="text-foreground-secondary flex items-center gap-1.5 font-semibold">
+                <Smartphone className="text-foreground-muted size-3.5" />
                 <span>Target Nomor / JID:</span>
               </span>
-              <span className="font-mono font-bold text-foreground select-text">
+              <span className="text-foreground font-mono font-bold select-text">
                 {message.recipientJid}
               </span>
             </div>
 
-            <div className="flex items-center justify-between pt-1.5 border-t border-border/50">
-              <span className="text-foreground-secondary font-semibold flex items-center gap-1.5">
-                <Building2 className="size-3.5 text-foreground-muted" />
+            <div className="border-border/50 flex items-center justify-between border-t pt-1.5">
+              <span className="text-foreground-secondary flex items-center gap-1.5 font-semibold">
+                <Building2 className="text-foreground-muted size-3.5" />
                 <span>Tenant ID:</span>
               </span>
-              <span className="font-mono text-[11px] text-foreground-muted truncate max-w-40 select-text">
+              <span className="text-foreground-muted max-w-40 truncate font-mono text-[11px] select-text">
                 {message.tenantId}
               </span>
             </div>
 
-            <div className="flex items-center justify-between pt-1.5 border-t border-border/50">
+            <div className="border-border/50 flex items-center justify-between border-t pt-1.5">
               <span className="text-foreground-secondary font-semibold">Device ID:</span>
-              <span className="font-mono text-[11px] text-foreground-muted truncate max-w-40 select-text">
+              <span className="text-foreground-muted max-w-40 truncate font-mono text-[11px] select-text">
                 {message.deviceId}
               </span>
             </div>
 
             {message.campaignId && (
-              <div className="flex items-center justify-between pt-1.5 border-t border-border/50">
+              <div className="border-border/50 flex items-center justify-between border-t pt-1.5">
                 <span className="text-foreground-secondary font-semibold">Campaign ID:</span>
-                <span className="font-mono text-[11px] text-foreground-muted truncate max-w-40 select-text">
+                <span className="text-foreground-muted max-w-40 truncate font-mono text-[11px] select-text">
                   {message.campaignId}
                 </span>
               </div>
             )}
 
-            <div className="flex items-center justify-between pt-1.5 border-t border-border/50">
-              <span className="text-foreground-secondary font-semibold flex items-center gap-1.5">
-                <Clock className="size-3.5 text-foreground-muted" />
+            <div className="border-border/50 flex items-center justify-between border-t pt-1.5">
+              <span className="text-foreground-secondary flex items-center gap-1.5 font-semibold">
+                <Clock className="text-foreground-muted size-3.5" />
                 <span>Waktu Dibuat:</span>
               </span>
-              <span className="font-mono text-[11px] text-foreground font-semibold">
+              <span className="text-foreground font-mono text-[11px] font-semibold">
                 {formatDateTime(message.createdAt)}
               </span>
             </div>
@@ -231,13 +227,13 @@ export function MessageDetailModal({
         </div>
 
         {/* Footer */}
-        <div className="pt-2 border-t border-border flex justify-end shrink-0">
+        <div className="border-border flex shrink-0 justify-end border-t pt-2">
           <Button
             type="button"
             variant="outline"
             size="sm"
             onClick={onClose}
-            className="h-8.5 px-4 text-xs font-bold rounded-full border-border hover:bg-muted cursor-pointer"
+            className="border-border hover:bg-muted h-8.5 cursor-pointer rounded-full px-4 text-xs font-bold"
           >
             Tutup
           </Button>

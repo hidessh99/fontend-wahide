@@ -130,8 +130,12 @@ export function useAdminBilling() {
     const paidTotal = billings
       .filter((b) => b.status === "PAID")
       .reduce((acc, curr) => acc + curr.amount, 0);
-    const pendingCount = billings.filter((b) => b.status === "PENDING" || b.status === "PROCESSING").length;
-    const closedCount = billings.filter((b) => b.status === "EXPIRED" || b.status === "CANCELLED").length;
+    const pendingCount = billings.filter(
+      (b) => b.status === "PENDING" || b.status === "PROCESSING"
+    ).length;
+    const closedCount = billings.filter(
+      (b) => b.status === "EXPIRED" || b.status === "CANCELLED"
+    ).length;
 
     return {
       paidTotal,

@@ -4,15 +4,7 @@ import React, { useState } from "react";
 import { UserItem, AdjustBalanceInput } from "@/modules/admin/types/admin.types";
 import { Button } from "@/components/ui/button";
 import { useEscapeKey } from "@/hooks/useEscapeKey";
-import {
-  X,
-  CreditCard,
-  PlusCircle,
-  MinusCircle,
-  Loader2,
-  Save,
-  AlertTriangle,
-} from "lucide-react";
+import { X, CreditCard, PlusCircle, MinusCircle, Loader2, Save, AlertTriangle } from "lucide-react";
 
 interface AdjustBalanceModalProps {
   user: UserItem | null;
@@ -21,12 +13,7 @@ interface AdjustBalanceModalProps {
   onSubmit: (data: AdjustBalanceInput) => Promise<unknown>;
 }
 
-export function AdjustBalanceModal({
-  user,
-  isOpen,
-  onClose,
-  onSubmit,
-}: AdjustBalanceModalProps) {
+export function AdjustBalanceModal({ user, isOpen, onClose, onSubmit }: AdjustBalanceModalProps) {
   const [mode, setMode] = useState<"ADD" | "REDUCE">("ADD");
   const [amount, setAmount] = useState<number>(50000);
   const [isLoading, setIsLoading] = useState(false);
@@ -66,26 +53,26 @@ export function AdjustBalanceModal({
       onClick={(e) => {
         if (e.target === e.currentTarget && !isLoading) onClose();
       }}
-      className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-sm p-3 sm:p-6 flex min-h-full items-center justify-center animate-in fade-in"
+      className="animate-in fade-in fixed inset-0 z-50 flex min-h-full items-center justify-center overflow-y-auto bg-black/75 p-3 backdrop-blur-sm sm:p-6"
     >
-      <div className="relative w-full max-w-md max-h-[92vh] flex flex-col rounded-xl border border-border bg-surface dark:bg-[#161715] shadow-2xl overflow-hidden animate-in zoom-in-95">
+      <div className="border-border bg-surface animate-in zoom-in-95 relative flex max-h-[92vh] w-full max-w-md flex-col overflow-hidden rounded-xl border shadow-2xl dark:bg-[#161715]">
         {/* Header */}
-        <div className="p-5 sm:p-6 pb-4 border-b border-border flex items-start justify-between shrink-0">
+        <div className="border-border flex shrink-0 items-start justify-between border-b p-5 pb-4 sm:p-6">
           <div className="flex items-center gap-3">
             <div
-              className={`size-10 rounded-full flex items-center justify-center shrink-0 border ${
+              className={`flex size-10 shrink-0 items-center justify-center rounded-full border ${
                 mode === "ADD"
-                  ? "bg-emerald-500/15 text-emerald-600 dark:text-wise-green border-emerald-500/20"
-                  : "bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/20"
+                  ? "dark:text-wise-green border-emerald-500/20 bg-emerald-500/15 text-emerald-600"
+                  : "border-rose-500/20 bg-rose-500/15 text-rose-600 dark:text-rose-400"
               }`}
             >
               <CreditCard className="size-5" />
             </div>
             <div>
-              <h2 className="text-lg sm:text-xl font-black text-foreground tracking-tight">
+              <h2 className="text-foreground text-lg font-black tracking-tight sm:text-xl">
                 Penyesuaian Saldo Dompet
               </h2>
-              <p className="text-xs font-semibold text-foreground-secondary">
+              <p className="text-foreground-secondary text-xs font-semibold">
                 Kelola saldo dompet untuk akun {user.name}.
               </p>
             </div>
@@ -95,7 +82,7 @@ export function AdjustBalanceModal({
             type="button"
             onClick={onClose}
             disabled={isLoading}
-            className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer shrink-0 disabled:opacity-50"
+            className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full transition disabled:opacity-50"
             aria-label="Tutup"
           >
             <X className="size-4" />
@@ -103,16 +90,16 @@ export function AdjustBalanceModal({
         </div>
 
         {/* Scrollable Form Body */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto flex flex-col min-h-0">
-          <div className="p-5 sm:p-6 space-y-4 flex-1 text-xs">
+        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+          <div className="flex-1 space-y-4 p-5 text-xs sm:p-6">
             {/* Mode Tabs: Tambah Saldo vs Kurang Saldo */}
-            <div className="grid grid-cols-2 gap-2 p-1 rounded-full bg-muted/40 border border-border">
+            <div className="bg-muted/40 border-border grid grid-cols-2 gap-2 rounded-full border p-1">
               <button
                 type="button"
                 onClick={() => setMode("ADD")}
-                className={`h-8.5 rounded-full font-extrabold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer ${
+                className={`flex h-8.5 cursor-pointer items-center justify-center gap-1.5 rounded-full text-xs font-extrabold transition ${
                   mode === "ADD"
-                    ? "bg-surface dark:bg-[#1f211d] text-emerald-700 dark:text-wise-green shadow-xs border border-border"
+                    ? "bg-surface dark:text-wise-green border-border border text-emerald-700 shadow-xs dark:bg-[#1f211d]"
                     : "text-foreground-secondary hover:text-foreground"
                 }`}
               >
@@ -123,9 +110,9 @@ export function AdjustBalanceModal({
               <button
                 type="button"
                 onClick={() => setMode("REDUCE")}
-                className={`h-8.5 rounded-full font-extrabold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer ${
+                className={`flex h-8.5 cursor-pointer items-center justify-center gap-1.5 rounded-full text-xs font-extrabold transition ${
                   mode === "REDUCE"
-                    ? "bg-surface dark:bg-[#1f211d] text-rose-600 dark:text-rose-400 shadow-xs border border-border"
+                    ? "bg-surface border-border border text-rose-600 shadow-xs dark:bg-[#1f211d] dark:text-rose-400"
                     : "text-foreground-secondary hover:text-foreground"
                 }`}
               >
@@ -135,21 +122,21 @@ export function AdjustBalanceModal({
             </div>
 
             {/* Current & Projected Balance Card */}
-            <div className="p-3.5 rounded-lg border border-border bg-muted/20 space-y-2">
+            <div className="border-border bg-muted/20 space-y-2 rounded-lg border p-3.5">
               <div className="flex items-center justify-between text-xs">
                 <span className="text-foreground-secondary font-semibold">Saldo Saat Ini:</span>
-                <span className="font-mono font-bold text-foreground">
+                <span className="text-foreground font-mono font-bold">
                   Rp {currentBalance.toLocaleString("id-ID")}
                 </span>
               </div>
-              <div className="flex items-center justify-between text-xs pt-1.5 border-t border-border/50">
+              <div className="border-border/50 flex items-center justify-between border-t pt-1.5 text-xs">
                 <span className="text-foreground-secondary font-semibold">
                   Estimasi Saldo Setelah {mode === "ADD" ? "Penambahan" : "Pengurangan"}:
                 </span>
                 <span
                   className={`font-mono font-black ${
                     mode === "ADD"
-                      ? "text-emerald-700 dark:text-wise-green"
+                      ? "dark:text-wise-green text-emerald-700"
                       : "text-rose-600 dark:text-rose-400"
                   }`}
                 >
@@ -160,11 +147,11 @@ export function AdjustBalanceModal({
 
             {/* Amount Input */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                 Jumlah Nominal (IDR)
               </label>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-xs text-foreground-muted font-mono pointer-events-none">
+                <span className="text-foreground-muted pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 font-mono text-xs font-bold">
                   Rp
                 </span>
                 <input
@@ -175,14 +162,14 @@ export function AdjustBalanceModal({
                   onChange={(e) => setAmount(Math.max(0, parseInt(e.target.value, 10) || 0))}
                   required
                   placeholder="50000"
-                  className="w-full h-11 pl-12 pr-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-bold border border-border hover:border-foreground-muted focus:border-emerald-600 dark:focus:border-wise-green focus:ring-2 focus:ring-emerald-500/20 dark:focus:ring-wise-green/20 outline-none transition font-mono text-sm"
+                  className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-11 w-full rounded-full border pr-4 pl-12 font-mono text-sm font-bold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e]"
                 />
               </div>
             </div>
 
             {/* Quick Amount Presets */}
             <div>
-              <span className="block text-[11px] font-semibold text-foreground-muted mb-2">
+              <span className="text-foreground-muted mb-2 block text-[11px] font-semibold">
                 Pilihan Nominal Cepat:
               </span>
               <div className="grid grid-cols-3 gap-2">
@@ -191,10 +178,10 @@ export function AdjustBalanceModal({
                     key={p}
                     type="button"
                     onClick={() => setAmount(p)}
-                    className={`h-8 rounded-full border text-[11px] font-bold font-mono transition cursor-pointer ${
+                    className={`h-8 cursor-pointer rounded-full border font-mono text-[11px] font-bold transition ${
                       amount === p
-                        ? "border-emerald-600 dark:border-wise-green bg-emerald-500/10 text-emerald-700 dark:text-wise-green"
-                        : "border-border bg-surface dark:bg-[#10110e] text-foreground-secondary hover:border-foreground-muted"
+                        ? "dark:border-wise-green dark:text-wise-green border-emerald-600 bg-emerald-500/10 text-emerald-700"
+                        : "border-border bg-surface text-foreground-secondary hover:border-foreground-muted dark:bg-[#10110e]"
                     }`}
                   >
                     +{(p / 1000).toLocaleString("id-ID")}rb
@@ -205,7 +192,7 @@ export function AdjustBalanceModal({
 
             {/* Warning if reducing more than current balance */}
             {mode === "REDUCE" && amount > currentBalance && (
-              <div className="p-3 rounded-lg border border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-400 flex items-center gap-2 text-[11px] font-medium">
+              <div className="flex items-center gap-2 rounded-lg border border-amber-500/25 bg-amber-500/10 p-3 text-[11px] font-medium text-amber-700 dark:text-amber-400">
                 <AlertTriangle className="size-4 shrink-0" />
                 <span>
                   Perhatian: Nominal pengurangan lebih besar dari saldo saat ini (Rp{" "}
@@ -216,14 +203,14 @@ export function AdjustBalanceModal({
           </div>
 
           {/* Footer Actions */}
-          <div className="p-4 sm:p-5 border-t border-border flex items-center justify-end gap-3 shrink-0 bg-muted/20">
+          <div className="border-border bg-muted/20 flex shrink-0 items-center justify-end gap-3 border-t p-4 sm:p-5">
             <Button
               type="button"
               variant="outline"
               size="sm"
               onClick={onClose}
               disabled={isLoading}
-              className="rounded-full text-xs font-bold border-border hover:bg-muted"
+              className="border-border hover:bg-muted rounded-full text-xs font-bold"
             >
               Batalkan
             </Button>
@@ -232,7 +219,7 @@ export function AdjustBalanceModal({
               type="submit"
               size="sm"
               disabled={isLoading || amount <= 0}
-              className={`rounded-full text-xs font-extrabold gap-1.5 px-5 shadow-sm text-white ${
+              className={`gap-1.5 rounded-full px-5 text-xs font-extrabold text-white shadow-sm ${
                 mode === "ADD"
                   ? "bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800"
                   : "bg-rose-600 hover:bg-rose-700 active:bg-rose-800"
@@ -246,9 +233,7 @@ export function AdjustBalanceModal({
               ) : (
                 <>
                   <Save className="size-3.5" />
-                  <span>
-                    {mode === "ADD" ? "Tambah Saldo Sekarang" : "Kurangi Saldo Sekarang"}
-                  </span>
+                  <span>{mode === "ADD" ? "Tambah Saldo Sekarang" : "Kurangi Saldo Sekarang"}</span>
                 </>
               )}
             </Button>

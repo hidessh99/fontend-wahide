@@ -106,31 +106,31 @@ export function UpdateTicketStatusModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
       <div
-        className="relative w-full max-w-lg bg-surface dark:bg-[#161715] rounded-xl border border-border shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+        className="bg-surface border-border animate-in fade-in zoom-in-95 relative w-full max-w-lg overflow-hidden rounded-xl border shadow-2xl duration-200 dark:bg-[#161715]"
         role="dialog"
         aria-modal="true"
         aria-labelledby="status-modal-title"
       >
         {/* Header Section */}
-        <div className="flex items-center justify-between p-5 border-b border-border bg-muted/30">
+        <div className="border-border bg-muted/30 flex items-center justify-between border-b p-5">
           <div className="flex items-center gap-3">
-            <div className="size-9 rounded-full bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green flex items-center justify-center shrink-0">
+            <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-9 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
               <SlidersHorizontal className="size-4.5" />
             </div>
             <div>
-              <h2 id="status-modal-title" className="text-base font-extrabold text-foreground">
+              <h2 id="status-modal-title" className="text-foreground text-base font-extrabold">
                 {t("support.updateStatusModalTitle")}
               </h2>
-              <p className="text-xs font-semibold text-foreground-secondary">
+              <p className="text-foreground-secondary text-xs font-semibold">
                 {t("support.updateStatusModalSubtitle")}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="size-8 rounded-full flex items-center justify-center text-foreground-secondary hover:text-foreground hover:bg-muted transition cursor-pointer"
+            className="text-foreground-secondary hover:text-foreground hover:bg-muted flex size-8 cursor-pointer items-center justify-center rounded-full transition"
             aria-label="Tutup"
           >
             <X className="size-4" />
@@ -138,28 +138,26 @@ export function UpdateTicketStatusModal({
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-5 space-y-4 text-xs font-semibold">
+        <form onSubmit={handleSubmit} className="space-y-4 p-5 text-xs font-semibold">
           {/* Target Ticket Overview Summary */}
-          <div className="p-3 rounded-lg border border-border bg-muted/30 space-y-1.5">
+          <div className="border-border bg-muted/30 space-y-1.5 rounded-lg border p-3">
             <div className="flex items-center justify-between">
-              <span className="font-mono text-xs font-bold text-dark-green dark:text-wise-green bg-light-mint dark:bg-wise-green/15 px-2.5 py-0.5 rounded-full border border-wise-green/30">
+              <span className="text-dark-green dark:text-wise-green bg-light-mint dark:bg-wise-green/15 border-wise-green/30 rounded-full border px-2.5 py-0.5 font-mono text-xs font-bold">
                 {ticket.ticketNumber}
               </span>
-              <span className="text-[11px] font-bold text-foreground-muted uppercase">
+              <span className="text-foreground-muted text-[11px] font-bold uppercase">
                 {ticket.category}
               </span>
             </div>
-            <p className="font-bold text-foreground text-sm line-clamp-1">
-              {ticket.subject}
-            </p>
+            <p className="text-foreground line-clamp-1 text-sm font-bold">{ticket.subject}</p>
             {ticket.user && (
-              <div className="flex items-center gap-3 text-[11px] text-foreground-secondary pt-1 border-t border-border/50">
+              <div className="text-foreground-secondary border-border/50 flex items-center gap-3 border-t pt-1 text-[11px]">
                 <div className="flex items-center gap-1">
-                  <User className="size-3 text-emerald-700 dark:text-wise-green" />
-                  <span className="font-bold text-foreground">{ticket.user.name}</span>
+                  <User className="dark:text-wise-green size-3 text-emerald-700" />
+                  <span className="text-foreground font-bold">{ticket.user.name}</span>
                 </div>
                 <div className="flex items-center gap-1 font-mono">
-                  <Mail className="size-3 text-foreground-muted" />
+                  <Mail className="text-foreground-muted size-3" />
                   <span>{ticket.user.email}</span>
                 </div>
               </div>
@@ -168,10 +166,10 @@ export function UpdateTicketStatusModal({
 
           {/* Status Selection Cards */}
           <div className="space-y-2">
-            <label className="text-xs font-extrabold text-foreground tracking-wide uppercase">
+            <label className="text-foreground text-xs font-extrabold tracking-wide uppercase">
               {t("support.targetStatusLabel")}
             </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
               {STATUS_OPTIONS.map((opt) => {
                 const isSelected = selectedStatus === opt.value;
                 const Icon = opt.icon;
@@ -180,28 +178,26 @@ export function UpdateTicketStatusModal({
                   <div
                     key={opt.value}
                     onClick={() => setSelectedStatus(opt.value)}
-                    className={`p-3 rounded-lg border transition cursor-pointer select-none relative ${
+                    className={`relative cursor-pointer rounded-lg border p-3 transition select-none ${
                       isSelected
                         ? opt.borderActiveClass
-                        : "border-border bg-surface dark:bg-[#121310] hover:border-foreground-muted"
+                        : "border-border bg-surface hover:border-foreground-muted dark:bg-[#121310]"
                     }`}
                   >
-                    <div className="flex items-center justify-between gap-2 mb-1">
+                    <div className="mb-1 flex items-center justify-between gap-2">
                       <div className="flex items-center gap-1.5">
-                        <span className={`p-1 rounded-full border ${opt.accentClass}`}>
+                        <span className={`rounded-full border p-1 ${opt.accentClass}`}>
                           <Icon className="size-3" />
                         </span>
-                        <span className="font-extrabold text-xs text-foreground">
-                          {opt.label}
-                        </span>
+                        <span className="text-foreground text-xs font-extrabold">{opt.label}</span>
                       </div>
                       {isSelected && (
-                        <span className="size-4 rounded-full bg-wise-green text-dark-green flex items-center justify-center">
+                        <span className="bg-wise-green text-dark-green flex size-4 items-center justify-center rounded-full">
                           <Check className="size-2.5 stroke-3" />
                         </span>
                       )}
                     </div>
-                    <p className="text-[11px] text-foreground-secondary leading-relaxed">
+                    <p className="text-foreground-secondary text-[11px] leading-relaxed">
                       {opt.description}
                     </p>
                   </div>
@@ -211,29 +207,29 @@ export function UpdateTicketStatusModal({
           </div>
 
           {/* Checkbox Dialog Section: Konfirmasi Prosedur Helpdesk */}
-          <div className="pt-2 border-t border-border">
-            <label className="flex items-start gap-2.5 cursor-pointer select-none group">
+          <div className="border-border border-t pt-2">
+            <label className="group flex cursor-pointer items-start gap-2.5 select-none">
               <input
                 type="checkbox"
                 checked={confirmChange}
                 onChange={(e) => setConfirmChange(e.target.checked)}
-                className="mt-0.5 size-4 rounded border-border text-emerald-600 dark:text-wise-green focus:ring-emerald-500 dark:focus:ring-wise-green cursor-pointer"
+                className="border-border dark:text-wise-green dark:focus:ring-wise-green mt-0.5 size-4 cursor-pointer rounded text-emerald-600 focus:ring-emerald-500"
               />
-              <span className="text-xs text-foreground-secondary group-hover:text-foreground transition leading-tight font-bold">
+              <span className="text-foreground-secondary group-hover:text-foreground text-xs leading-tight font-bold transition">
                 {t("support.confirmChangeLabel")}
               </span>
             </label>
           </div>
 
           {/* Footer Actions */}
-          <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-border">
+          <div className="border-border flex items-center justify-end gap-2.5 border-t pt-3">
             <Button
               type="button"
               variant="outline"
               size="sm"
               onClick={onClose}
               disabled={isSubmitting}
-              className="rounded-full px-4 text-xs font-bold border-border hover:border-foreground-muted"
+              className="border-border hover:border-foreground-muted rounded-full px-4 text-xs font-bold"
             >
               {t("support.cancel")}
             </Button>

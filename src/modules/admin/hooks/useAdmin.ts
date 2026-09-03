@@ -1,11 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
-import {
-  UserItem,
-  AdjustBalanceInput,
-  UpdateUserInput,
-} from "../types/admin.types";
+import { UserItem, AdjustBalanceInput, UpdateUserInput } from "../types/admin.types";
 import { adminApi } from "../api/admin.api";
 import { toast } from "sonner";
 
@@ -95,7 +91,12 @@ export function useAdmin() {
               phoneNumber: payload.phoneNumber ?? payload.phone ?? u.phoneNumber,
               role: payload.role ?? u.role,
               roleName: payload.role ?? u.roleName,
-              status: payload.isActive !== undefined ? (payload.isActive ? "ACTIVE" : "SUSPENDED") : u.status,
+              status:
+                payload.isActive !== undefined
+                  ? payload.isActive
+                    ? "ACTIVE"
+                    : "SUSPENDED"
+                  : u.status,
               isActive: payload.isActive !== undefined ? payload.isActive : u.isActive,
             };
           }

@@ -6,15 +6,7 @@ import { ActiveSession } from "@/modules/iam/types/auth.types";
 import { Button } from "@/components/ui/button";
 import { SessionConfirmModal } from "./SessionConfirmModal";
 import { toast } from "sonner";
-import {
-  ShieldCheck,
-  Trash2,
-  RefreshCw,
-  Laptop,
-  Smartphone,
-  Globe,
-  Loader2,
-} from "lucide-react";
+import { ShieldCheck, Trash2, RefreshCw, Laptop, Smartphone, Globe, Loader2 } from "lucide-react";
 
 function formatDeviceLabel(ua?: string): { name: string; isMobile: boolean } {
   if (!ua) return { name: "Web Browser (Perangkat Tidak Diketahui)", isMobile: false };
@@ -142,15 +134,15 @@ export function ActiveSessionsCard() {
   const otherSessionsCount = sessions.filter((s) => !s.is_current).length;
 
   return (
-    <div className="rounded-md border border-border bg-surface dark:bg-[#161715] p-6 sm:p-8 space-y-5 shadow-sm">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-4">
+    <div className="border-border bg-surface space-y-5 rounded-md border p-6 shadow-sm sm:p-8 dark:bg-[#161715]">
+      <div className="border-border flex flex-col justify-between gap-3 border-b pb-4 sm:flex-row sm:items-center">
         <div className="flex items-center gap-3">
-          <div className="size-9 rounded-full bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green flex items-center justify-center">
+          <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-9 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
             <ShieldCheck className="size-4" />
           </div>
           <div>
-            <h2 className="text-lg font-black text-foreground">Sesi Login Aktif</h2>
-            <p className="text-xs font-semibold text-foreground-secondary">
+            <h2 className="text-foreground text-lg font-black">Sesi Login Aktif</h2>
+            <p className="text-foreground-secondary text-xs font-semibold">
               Kelola perangkat dan browser yang sedang terautentikasi ke akun Anda.
             </p>
           </div>
@@ -163,7 +155,7 @@ export function ActiveSessionsCard() {
             size="sm"
             onClick={loadSessions}
             disabled={isLoading}
-            className="size-8 rounded-full p-0 border-border text-foreground-muted hover:text-foreground hover:bg-muted"
+            className="border-border text-foreground-muted hover:text-foreground hover:bg-muted size-8 rounded-full p-0"
             aria-label="Refresh Sesi"
           >
             <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin" : ""}`} />
@@ -175,9 +167,9 @@ export function ActiveSessionsCard() {
               variant="outline"
               size="sm"
               onClick={handleOpenLogoutAllModal}
-              className="rounded-full text-xs font-bold text-rose-600 dark:text-rose-400 border-rose-500/20 hover:bg-rose-500/10"
+              className="rounded-full border-rose-500/20 text-xs font-bold text-rose-600 hover:bg-rose-500/10 dark:text-rose-400"
             >
-              <Trash2 className="size-3.5 mr-1.5" />
+              <Trash2 className="mr-1.5 size-3.5" />
               <span>Keluar dari Semua Perangkat</span>
             </Button>
           )}
@@ -185,14 +177,14 @@ export function ActiveSessionsCard() {
       </div>
 
       {isLoading ? (
-        <div className="py-8 flex flex-col items-center justify-center space-y-2 text-foreground-muted">
-          <Loader2 className="size-6 animate-spin text-emerald-600 dark:text-wise-green" />
+        <div className="text-foreground-muted flex flex-col items-center justify-center space-y-2 py-8">
+          <Loader2 className="dark:text-wise-green size-6 animate-spin text-emerald-600" />
           <span className="text-xs font-semibold">Memuat sesi login aktif...</span>
         </div>
       ) : sessions.length === 0 ? (
-        <div className="p-4 rounded-md border border-border bg-muted/20 flex items-center gap-3">
-          <Globe className="size-4 text-foreground-muted shrink-0" />
-          <div className="text-xs font-semibold text-foreground-secondary">
+        <div className="border-border bg-muted/20 flex items-center gap-3 rounded-md border p-4">
+          <Globe className="text-foreground-muted size-4 shrink-0" />
+          <div className="text-foreground-secondary text-xs font-semibold">
             Sesi saat ini aktif. Belum ada perangkat lain yang terhubung.
           </div>
         </div>
@@ -205,25 +197,25 @@ export function ActiveSessionsCard() {
             return (
               <div
                 key={s.token_id || idx}
-                className="p-3.5 rounded-md border border-border bg-muted/20 flex items-center justify-between gap-3"
+                className="border-border bg-muted/20 flex items-center justify-between gap-3 rounded-md border p-3.5"
               >
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="size-8 rounded-full bg-muted flex items-center justify-center text-foreground-secondary shrink-0">
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="bg-muted text-foreground-secondary flex size-8 shrink-0 items-center justify-center rounded-full">
                     {isMobile ? <Smartphone className="size-4" /> : <Laptop className="size-4" />}
                   </div>
 
-                  <div className="space-y-0.5 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-bold text-xs text-foreground truncate">
+                  <div className="min-w-0 space-y-0.5">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-foreground truncate text-xs font-bold">
                         {name} {s.is_current ? "(Perangkat Ini)" : ""}
                       </span>
                       {s.is_current && (
-                        <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green border border-emerald-500/25 dark:border-wise-green/20">
+                        <span className="dark:bg-wise-green/15 dark:text-wise-green dark:border-wise-green/20 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2 py-0.5 text-[9px] font-black tracking-wider text-emerald-700 uppercase">
                           Sesi Saat Ini
                         </span>
                       )}
                     </div>
-                    <span className="text-[11px] text-foreground-muted font-mono block truncate">
+                    <span className="text-foreground-muted block truncate font-mono text-[11px]">
                       {s.ip_address || "127.0.0.1"} • {timeLabel}
                     </span>
                   </div>
@@ -235,7 +227,7 @@ export function ActiveSessionsCard() {
                     variant="outline"
                     size="sm"
                     onClick={() => handleOpenRevokeSingleModal(s)}
-                    className="size-7 rounded-full p-0 border-border text-foreground-muted hover:text-rose-500 hover:border-rose-500/30 hover:bg-rose-500/10 shrink-0"
+                    className="border-border text-foreground-muted size-7 shrink-0 rounded-full p-0 hover:border-rose-500/30 hover:bg-rose-500/10 hover:text-rose-500"
                     aria-label="Cabut Sesi"
                   >
                     <Trash2 className="size-3" />

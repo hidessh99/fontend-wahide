@@ -20,15 +20,15 @@ export function DashboardMobileNav({ open, onClose }: DashboardMobileNavProps) {
       {/* Backdrop Overlay */}
       <div
         onClick={onClose}
-        className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity animate-in fade-in"
+        className="animate-in fade-in fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
       />
 
       {/* Drawer Container */}
-      <div className="fixed inset-y-0 left-0 max-w-xs w-full bg-surface dark:bg-[#131412] shadow-2xl z-50 animate-in slide-in-from-left duration-200 flex flex-col">
-        <div className="absolute right-4 top-4 z-50">
+      <div className="bg-surface animate-in slide-in-from-left fixed inset-y-0 left-0 z-50 flex w-full max-w-xs flex-col shadow-2xl duration-200 dark:bg-[#131412]">
+        <div className="absolute top-4 right-4 z-50">
           <button
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-muted text-foreground-secondary hover:text-foreground cursor-pointer"
+            className="hover:bg-muted text-foreground-secondary hover:text-foreground cursor-pointer rounded-full p-2"
             aria-label="Tutup Menu"
           >
             <X className="size-5" />

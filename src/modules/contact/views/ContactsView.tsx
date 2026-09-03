@@ -18,7 +18,10 @@ const ImportCsvModal = dynamic(
   { ssr: false }
 );
 const DeleteContactModal = dynamic(
-  () => import("@/modules/contact/components/modals/DeleteContactModal").then((m) => m.DeleteContactModal),
+  () =>
+    import("@/modules/contact/components/modals/DeleteContactModal").then(
+      (m) => m.DeleteContactModal
+    ),
   { ssr: false }
 );
 
@@ -125,33 +128,33 @@ export function ContactsView() {
   };
 
   return (
-    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto p-3 sm:p-6 lg:p-8">
+    <div className="mx-auto max-w-7xl space-y-6 p-3 sm:space-y-8 sm:p-6 lg:p-8">
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5 sm:pb-6">
+      <div className="border-border flex flex-col justify-between gap-4 border-b pb-5 sm:flex-row sm:items-center sm:pb-6">
         <div>
-          <div className="flex items-center gap-3 mb-1">
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-foreground">
+          <div className="mb-1 flex items-center gap-3">
+            <h1 className="text-foreground text-xl font-extrabold tracking-tight sm:text-2xl lg:text-3xl">
               {t("contact.title")}
             </h1>
             {total > 0 && (
-              <span className="px-2.5 py-0.5 text-xs font-bold rounded-full bg-wise-green/15 text-dark-green dark:text-wise-green border border-wise-green/30">
+              <span className="bg-wise-green/15 text-dark-green dark:text-wise-green border-wise-green/30 rounded-full border px-2.5 py-0.5 text-xs font-bold">
                 {total}
               </span>
             )}
           </div>
-          <p className="text-xs sm:text-sm font-semibold text-foreground-secondary">
+          <p className="text-foreground-secondary text-xs font-semibold sm:text-sm">
             {t("contact.subtitle")}
           </p>
         </div>
 
         {/* Top Action Buttons */}
-        <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+        <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
           <Button
             variant="outline"
             size="sm"
             onClick={handleExportCsv}
             disabled={contacts.length === 0}
-            className="rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted cursor-pointer h-9 px-3.5"
+            className="border-border hover:border-foreground-muted h-9 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold"
           >
             <Download className="size-3.5" />
             <span className="hidden sm:inline">{t("contact.exportCsv")}</span>
@@ -162,9 +165,9 @@ export function ContactsView() {
             variant="outline"
             size="sm"
             onClick={() => setIsImportModalOpen(true)}
-            className="rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted cursor-pointer h-9 px-3.5"
+            className="border-border hover:border-foreground-muted h-9 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold"
           >
-            <FileSpreadsheet className="size-3.5 text-dark-green dark:text-wise-green" />
+            <FileSpreadsheet className="text-dark-green dark:text-wise-green size-3.5" />
             <span className="hidden sm:inline">{t("contact.importCsv")}</span>
             <span className="sm:hidden">Impor</span>
           </Button>
@@ -176,7 +179,7 @@ export function ContactsView() {
               setEditingContact(null);
               setIsAddModalOpen(true);
             }}
-            className="gap-1.5 text-xs font-bold shadow-sm cursor-pointer h-9 px-4 ml-auto sm:ml-0"
+            className="ml-auto h-9 cursor-pointer gap-1.5 px-4 text-xs font-bold shadow-sm sm:ml-0"
           >
             <UserPlus className="size-4" />
             <span>{t("contact.addContact")}</span>
@@ -185,23 +188,23 @@ export function ContactsView() {
       </div>
 
       {/* Filter Toolbar & Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 sm:p-4 rounded-md border border-border bg-surface dark:bg-[#161715]">
+      <div className="border-border bg-surface flex flex-col justify-between gap-3 rounded-md border p-3 sm:flex-row sm:items-center sm:p-4 dark:bg-[#161715]">
         {/* Search Form with Submit Button */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
             executeSearch(searchInput);
           }}
-          className="flex-1 flex items-center gap-2"
+          className="flex flex-1 items-center gap-2"
         >
           <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted pointer-events-none" />
+            <Search className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
             <input
               type="text"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder={t("contact.searchPlaceholder")}
-              className="w-full h-10 pl-10 pr-9 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs"
+              className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full rounded-full border pr-9 pl-10 text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
             />
             {(searchInput || activeSearch) && (
               <button
@@ -210,7 +213,7 @@ export function ContactsView() {
                   setSearchInput("");
                   clearSearch();
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 size-5 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
+                className="text-foreground-muted hover:text-foreground hover:bg-muted absolute top-1/2 right-3 flex size-5 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full transition"
                 title="Hapus Pencarian"
                 aria-label="Hapus Pencarian"
               >
@@ -222,21 +225,21 @@ export function ContactsView() {
             type="submit"
             variant="primaryPill"
             size="sm"
-            className="h-10 px-4 text-xs font-bold shadow-xs shrink-0 cursor-pointer"
+            className="h-10 shrink-0 cursor-pointer px-4 text-xs font-bold shadow-xs"
           >
-            <Search className="size-3.5 mr-1" />
+            <Search className="mr-1 size-3.5" />
             <span>{t("contact.searchBtn")}</span>
           </Button>
         </form>
 
         {/* Bulk Action & Refresh */}
-        <div className="flex items-center justify-between sm:justify-end gap-2 pt-1 sm:pt-0 border-t sm:border-t-0 border-border/50">
+        <div className="border-border/50 flex items-center justify-between gap-2 border-t pt-1 sm:justify-end sm:border-t-0 sm:pt-0">
           {selectedIds.size > 0 && (
             <Button
               variant="outline"
               size="sm"
               onClick={handleRequestBulkDelete}
-              className="rounded-full text-xs font-bold gap-1.5 text-rose-600 dark:text-rose-400 border-rose-500/20 hover:bg-rose-500/10 cursor-pointer h-9 px-3.5"
+              className="h-9 cursor-pointer gap-1.5 rounded-full border-rose-500/20 px-3.5 text-xs font-bold text-rose-600 hover:bg-rose-500/10 dark:text-rose-400"
             >
               <Trash2 className="size-3.5" />
               <span>{t("contact.selectedCount", { count: selectedIds.size.toString() })}</span>
@@ -248,7 +251,7 @@ export function ContactsView() {
             size="sm"
             onClick={() => fetchContacts()}
             disabled={isLoading}
-            className="rounded-full size-8.5 p-0 border-border hover:border-foreground-muted cursor-pointer shrink-0 ml-auto sm:ml-0"
+            className="border-border hover:border-foreground-muted ml-auto size-8.5 shrink-0 cursor-pointer rounded-full p-0 sm:ml-0"
             aria-label="Refresh Kontak"
           >
             <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin" : ""}`} />
@@ -258,19 +261,17 @@ export function ContactsView() {
 
       {/* Main Table or Empty State */}
       {isLoading && contacts.length === 0 ? (
-        <div className="h-64 rounded-md border border-border bg-surface dark:bg-[#161715] animate-pulse p-6" />
+        <div className="border-border bg-surface h-64 animate-pulse rounded-md border p-6 dark:bg-[#161715]" />
       ) : filteredContacts.length === 0 ? (
-        <div className="flex flex-col items-center justify-center p-6 sm:p-10 text-center rounded-md border border-dashed border-border bg-surface dark:bg-[#161715]/50 space-y-3">
-          <div className="size-12 rounded-full bg-wise-green/10 text-dark-green dark:text-wise-green flex items-center justify-center">
+        <div className="border-border bg-surface flex flex-col items-center justify-center space-y-3 rounded-md border border-dashed p-6 text-center sm:p-10 dark:bg-[#161715]/50">
+          <div className="bg-wise-green/10 text-dark-green dark:text-wise-green flex size-12 items-center justify-center rounded-full">
             <Users className="size-6" />
           </div>
-          <div className="space-y-1 max-w-sm">
-            <h3 className="font-extrabold text-base sm:text-lg text-foreground">
-              {activeSearch
-                ? t("contact.noSearchResults")
-                : t("contact.noContacts")}
+          <div className="max-w-sm space-y-1">
+            <h3 className="text-foreground text-base font-extrabold sm:text-lg">
+              {activeSearch ? t("contact.noSearchResults") : t("contact.noContacts")}
             </h3>
-            <p className="text-xs font-semibold text-foreground-secondary">
+            <p className="text-foreground-secondary text-xs font-semibold">
               {activeSearch
                 ? `Tidak ditemukan kontak dengan kata kunci "${activeSearch}". Silakan periksa kembali ejaan atau hapus filter.`
                 : t("contact.noContactsDesc")}
@@ -282,9 +283,9 @@ export function ContactsView() {
                 variant="outline"
                 size="sm"
                 onClick={() => setIsImportModalOpen(true)}
-                className="gap-2 rounded-full text-xs font-bold border-border cursor-pointer"
+                className="border-border cursor-pointer gap-2 rounded-full text-xs font-bold"
               >
-                <FileSpreadsheet className="size-4 text-dark-green dark:text-wise-green" />
+                <FileSpreadsheet className="text-dark-green dark:text-wise-green size-4" />
                 <span>{t("contact.importCsv")}</span>
               </Button>
               <Button
@@ -294,7 +295,7 @@ export function ContactsView() {
                   setEditingContact(null);
                   setIsAddModalOpen(true);
                 }}
-                className="gap-2 text-xs font-bold shadow-sm cursor-pointer"
+                className="cursor-pointer gap-2 text-xs font-bold shadow-sm"
               >
                 <UserPlus className="size-4" />
                 <span>{t("contact.addContact")}</span>

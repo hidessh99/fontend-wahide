@@ -3,13 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { addressApi } from "../api/address.api";
-import {
-  Province,
-  City,
-  District,
-  UserAddress,
-  AddressFormState,
-} from "../types/address.types";
+import { Province, City, District, UserAddress, AddressFormState } from "../types/address.types";
 
 const DEFAULT_FORM_STATE: AddressFormState = {
   address: "",
@@ -64,9 +58,7 @@ export function useUserAddress() {
 
       if (!provinceName) return;
 
-      const selected = provinces.find(
-        (p) => p.name.toUpperCase() === provinceName.toUpperCase()
-      );
+      const selected = provinces.find((p) => p.name.toUpperCase() === provinceName.toUpperCase());
       if (selected) {
         setIsLoadingCities(true);
         try {
@@ -106,9 +98,7 @@ export function useUserAddress() {
 
       if (!cityName) return;
 
-      const selected = cities.find(
-        (c) => c.name.toUpperCase() === cityName.toUpperCase()
-      );
+      const selected = cities.find((c) => c.name.toUpperCase() === cityName.toUpperCase());
       if (selected) {
         await fetchDistricts(selected.id);
       }

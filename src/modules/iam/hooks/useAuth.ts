@@ -45,7 +45,7 @@ export const useAuth = create<AuthState>()(
           const tenantId = res.tenant_id || "";
 
           const user: User = {
-            id: ("id" in res && typeof res.id === "string" && res.id) ? res.id : "",
+            id: "id" in res && typeof res.id === "string" && res.id ? res.id : "",
             name: res.name || "",
             email: res.email || "",
             role: res.role ? res.role.toUpperCase() : "SELLER",
@@ -80,9 +80,12 @@ export const useAuth = create<AuthState>()(
           });
 
           // Auto-sync full genuine user profile from backend (ensuring accurate User ID)
-          get().fetchProfile().catch(() => null);
+          get()
+            .fetchProfile()
+            .catch(() => null);
         } catch (err: unknown) {
-          const errorMessage = err instanceof Error ? err.message : "Email atau password yang Anda masukkan salah.";
+          const errorMessage =
+            err instanceof Error ? err.message : "Email atau password yang Anda masukkan salah.";
           set({
             error: errorMessage,
             isLoading: false,
@@ -98,7 +101,8 @@ export const useAuth = create<AuthState>()(
           await authApi.register(payload);
           set({ isLoading: false });
         } catch (err: unknown) {
-          const errorMessage = err instanceof Error ? err.message : "Gagal melakukan registrasi akun.";
+          const errorMessage =
+            err instanceof Error ? err.message : "Gagal melakukan registrasi akun.";
           set({
             error: errorMessage,
             isLoading: false,
@@ -179,7 +183,8 @@ export const useAuth = create<AuthState>()(
             tenant: state.tenant ? { ...state.tenant, name: `${name}'s Workspace` } : null,
           }));
         } catch (err: unknown) {
-          const errorMessage = err instanceof Error ? err.message : "Gagal memperbarui nama profil.";
+          const errorMessage =
+            err instanceof Error ? err.message : "Gagal memperbarui nama profil.";
           set({ isLoading: false, error: errorMessage });
           throw err;
         }

@@ -74,9 +74,7 @@ export function useAdminSubscriptions() {
       await adminApi.expireAdminSubscription(id);
       setSubscriptions((prev) =>
         prev.map((s) =>
-          s.id === id
-            ? { ...s, status: "EXPIRED", expiredAt: new Date().toISOString() }
-            : s
+          s.id === id ? { ...s, status: "EXPIRED", expiredAt: new Date().toISOString() } : s
         )
       );
       toast.success("Status langganan berhasil diubah menjadi EXPIRED.");

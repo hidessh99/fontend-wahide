@@ -1,16 +1,8 @@
 "use client";
 
-
 import { Button } from "@/components/ui/button";
 import { useEscapeKey } from "@/hooks/useEscapeKey";
-import {
-  X,
-  AlertTriangle,
-  Trash2,
-  ShieldAlert,
-  Loader2,
-  Smartphone,
-} from "lucide-react";
+import { X, AlertTriangle, Trash2, ShieldAlert, Loader2, Smartphone } from "lucide-react";
 
 interface SessionConfirmModalProps {
   isOpen: boolean;
@@ -44,17 +36,17 @@ export function SessionConfirmModal({
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/70 backdrop-blur-sm animate-in fade-in"
+      className="animate-in fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm sm:p-6"
     >
-      <div className="relative w-full max-w-lg rounded-xl border border-border bg-surface dark:bg-[#161715] shadow-2xl overflow-hidden p-6 sm:p-8 space-y-6 animate-in zoom-in-95 duration-150">
+      <div className="border-border bg-surface animate-in zoom-in-95 relative w-full max-w-lg space-y-6 overflow-hidden rounded-xl border p-6 shadow-2xl duration-150 sm:p-8 dark:bg-[#161715]">
         {/* Header Icon & Close Button */}
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3.5">
             <div
-              className={`size-11 rounded-full flex items-center justify-center shrink-0 border ${
+              className={`flex size-11 shrink-0 items-center justify-center rounded-full border ${
                 isLogoutAll
-                  ? "bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/25"
-                  : "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/25"
+                  ? "border-rose-500/25 bg-rose-500/10 text-rose-700 dark:text-rose-400"
+                  : "border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-400"
               }`}
             >
               {isLogoutAll ? (
@@ -64,12 +56,10 @@ export function SessionConfirmModal({
               )}
             </div>
             <div>
-              <h2 className="text-lg sm:text-xl font-black text-foreground tracking-tight">
-                {isLogoutAll
-                  ? "Keluar dari Semua Perangkat?"
-                  : "Cabut Sesi Perangkat?"}
+              <h2 className="text-foreground text-lg font-black tracking-tight sm:text-xl">
+                {isLogoutAll ? "Keluar dari Semua Perangkat?" : "Cabut Sesi Perangkat?"}
               </h2>
-              <p className="text-xs font-semibold text-foreground-secondary">
+              <p className="text-foreground-secondary text-xs font-semibold">
                 {isLogoutAll
                   ? "Tindakan keamanan pencabutan akses massal sesi akun."
                   : "Konfirmasi pencabutan akses login perangkat tertentu."}
@@ -81,7 +71,7 @@ export function SessionConfirmModal({
             type="button"
             onClick={onClose}
             disabled={isLoading}
-            className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer disabled:opacity-50"
+            className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-8 cursor-pointer items-center justify-center rounded-full transition disabled:opacity-50"
             aria-label="Tutup"
           >
             <X className="size-4" />
@@ -90,10 +80,10 @@ export function SessionConfirmModal({
 
         {/* Warning Callout Box */}
         <div
-          className={`p-4 rounded-lg border space-y-2.5 ${
+          className={`space-y-2.5 rounded-lg border p-4 ${
             isLogoutAll
-              ? "bg-rose-500/5 dark:bg-rose-500/10 border-rose-500/20"
-              : "bg-amber-500/5 dark:bg-amber-500/10 border-amber-500/20"
+              ? "border-rose-500/20 bg-rose-500/5 dark:bg-rose-500/10"
+              : "border-amber-500/20 bg-amber-500/5 dark:bg-amber-500/10"
           }`}
         >
           <div className="flex items-center gap-2 text-xs font-extrabold">
@@ -108,11 +98,10 @@ export function SessionConfirmModal({
             </span>
           </div>
 
-          <p className="text-xs font-medium text-foreground-secondary leading-relaxed">
+          <p className="text-foreground-secondary text-xs leading-relaxed font-medium">
             {isLogoutAll ? (
               <>
-                Seluruh sesi login yang sedang aktif di browser atau perangkat lain
-                akan{" "}
+                Seluruh sesi login yang sedang aktif di browser atau perangkat lain akan{" "}
                 <strong className="text-foreground font-bold">
                   dikeluarkan seketika secara permanen
                 </strong>
@@ -124,8 +113,8 @@ export function SessionConfirmModal({
                 <strong className="text-foreground font-bold">
                   {targetSession?.device || "terpilih"}
                 </strong>{" "}
-                ({targetSession?.ip || "IP Unknown"}) akan langsung dicabut dan
-                pengguna pada perangkat tersebut wajib login ulang.
+                ({targetSession?.ip || "IP Unknown"}) akan langsung dicabut dan pengguna pada
+                perangkat tersebut wajib login ulang.
               </>
             )}
           </p>
@@ -133,15 +122,15 @@ export function SessionConfirmModal({
 
         {/* Target Details preview */}
         {!isLogoutAll && targetSession && (
-          <div className="p-3 rounded-lg border border-border bg-muted/30 flex items-center gap-3">
-            <div className="size-8 rounded-full bg-muted flex items-center justify-center text-foreground-secondary">
+          <div className="border-border bg-muted/30 flex items-center gap-3 rounded-lg border p-3">
+            <div className="bg-muted text-foreground-secondary flex size-8 items-center justify-center rounded-full">
               <Smartphone className="size-4" />
             </div>
             <div className="min-w-0 flex-1">
-              <div className="text-xs font-bold text-foreground truncate">
+              <div className="text-foreground truncate text-xs font-bold">
                 {targetSession.device}
               </div>
-              <div className="text-[11px] text-foreground-muted font-mono truncate">
+              <div className="text-foreground-muted truncate font-mono text-[11px]">
                 IP: {targetSession.ip}
               </div>
             </div>
@@ -149,14 +138,14 @@ export function SessionConfirmModal({
         )}
 
         {/* Actions Button */}
-        <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-3 pt-2">
+        <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:items-center sm:justify-end">
           <Button
             type="button"
             variant="outline"
             size="sm"
             onClick={onClose}
             disabled={isLoading}
-            className="rounded-full text-xs font-bold text-foreground border-border hover:bg-muted"
+            className="text-foreground border-border hover:bg-muted rounded-full text-xs font-bold"
           >
             Batalkan
           </Button>
@@ -166,7 +155,7 @@ export function SessionConfirmModal({
             size="sm"
             onClick={onConfirm}
             disabled={isLoading}
-            className={`rounded-full text-xs font-extrabold gap-2 px-5 text-white shadow-md ${
+            className={`gap-2 rounded-full px-5 text-xs font-extrabold text-white shadow-md ${
               isLogoutAll
                 ? "bg-rose-600 hover:bg-rose-700 active:bg-rose-800"
                 : "bg-amber-600 hover:bg-amber-700 active:bg-amber-800"
@@ -181,9 +170,7 @@ export function SessionConfirmModal({
               <>
                 <Trash2 className="size-4" />
                 <span>
-                  {isLogoutAll
-                    ? "Ya, Keluar Semua Perangkat"
-                    : "Ya, Cabut Sesi Perangkat"}
+                  {isLogoutAll ? "Ya, Keluar Semua Perangkat" : "Ya, Cabut Sesi Perangkat"}
                 </span>
               </>
             )}
