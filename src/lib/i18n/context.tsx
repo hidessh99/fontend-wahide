@@ -170,9 +170,5 @@ const I18nContext = createContext<{ locale: Locale; setLocale: (locale: Locale) 
 
 export function I18nProvider({ children }: { children: React.ReactNode }) {
   const { locale, setLocale } = useI18nStore();
-  return (
-    <I18nContext.Provider value={{ locale, setLocale }}>
-      {children}
-    </I18nContext.Provider>
-  );
+  return <I18nContext.Provider value={{ locale, setLocale }}>{children}</I18nContext.Provider>;
 }

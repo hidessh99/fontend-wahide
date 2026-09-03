@@ -1,13 +1,21 @@
-﻿"use client";
+"use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { Device } from "@/modules/whatsapp/types/whatsapp.types";
 import { useQRPairing } from "@/modules/whatsapp/hooks/useQRPairing";
+import { useAuth } from "@/modules/iam/hooks/useAuth";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { useI18n } from "@/lib/i18n/context";
 import {
-  X,
   RefreshCw,
   CheckCircle2,
   AlertCircle,
@@ -27,25 +35,12 @@ interface LiveQRModalProps {
   onSuccess: (device: Device) => void;
 }
 
-export function LiveQRModal({
-  device,
-  isOpen,
-  onClose,
-  onSuccess,
-}: LiveQRModalProps) {
+export function LiveQRModal({ device, isOpen, onClose, onSuccess }: LiveQRModalProps) {
   const { t } = useI18n();
-  const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const authUserPhone = useAuth((s) => s.user?.phone || "");
+  const [customPhone, setCustomPhone] = useState<string | null>(null);
+  const phoneNumber = customPhone !== null ? customPhone : authUserPhone;
   const [copied, setCopied] = useState<boolean>(false);
-
-  // Escape key to dismiss
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
 
   const handlePairingSuccess = () => {
     if (device) {
@@ -77,69 +72,52 @@ export function LiveQRModal({
 
   const handleRequestCode = async (e: React.FormEvent) => {
     e.preventDefault();
-    let raw = phoneNumber.trim().replace(/\D/g, "");
-    if (!raw) return;
-    if (raw.startsWith("0")) {
-      raw = "62" + raw.slice(1);
-    } else if (raw.startsWith("8")) {
-      raw = "62" + raw;
-    }
-    await requestPairingCode(raw);
+    if (!phoneNumber.trim()) return;
+    await requestPairingCode(phoneNumber);
   };
-
 
   const handleCopyCode = () => {
-    if (!pairingCode) return;
-    navigator.clipboard.writeText(pairingCode.replace(/-/g, ""));
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    if (pairingCode) {
+      navigator.clipboard.writeText(pairingCode);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
-  if (!isOpen || !device) return null;
+  if (!device) return null;
 
   return (
-    <div
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-      className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-sm p-3 sm:p-6 flex min-h-full items-center justify-center animate-in fade-in"
-    >
-      <div className="relative w-full max-w-lg max-h-[90vh] flex flex-col rounded-md border border-border bg-surface dark:bg-[#161715] shadow-2xl overflow-hidden animate-in zoom-in-95">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="border-border bg-surface max-h-[92vh] max-w-md gap-0 overflow-hidden p-0 dark:bg-[#161715]">
         {/* Sticky Header */}
-        <div className="flex items-start justify-between p-5 sm:p-6 pb-4 border-b border-border shrink-0">
+        <DialogHeader className="border-border flex flex-row items-start justify-between border-b p-5 pb-4 text-left sm:p-6">
           <div className="space-y-1">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green border border-wise-green/30 mb-1">
+            <div className="bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green border-wise-green/30 mb-1 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-bold">
               <ShieldCheck className="size-3.5" />
               <span>Multi-Device End-to-End Encrypted</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-black text-foreground tracking-tight">
+            <DialogTitle className="text-foreground text-xl font-black tracking-tight sm:text-2xl">
               Tautkan Perangkat WhatsApp
-            </h2>
-            <p className="text-xs font-semibold text-foreground-secondary">
-              Slot: <span className="text-foreground font-bold">{device.push_name || device.pushName || device.name || "WhatsApp Device"}</span>
-            </p>
+            </DialogTitle>
+            <DialogDescription className="text-foreground-secondary text-xs font-semibold">
+              Slot:{" "}
+              <span className="text-foreground font-bold">
+                {device.push_name || device.pushName || device.name || "WhatsApp Device"}
+              </span>
+            </DialogDescription>
           </div>
-
-          <button
-            type="button"
-            onClick={onClose}
-            className="size-9 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer shrink-0"
-            aria-label="Tutup Modal"
-          >
-            <X className="size-5" />
-          </button>
-        </div>
+        </DialogHeader>
 
         {/* Tab Switcher: QR Code vs Phone Pairing Code */}
         {status !== "AUTHENTICATED" && (
-          <div className="px-5 sm:px-6 pt-4 pb-0">
-            <div className="grid grid-cols-2 p-1 rounded-md bg-muted/60 border border-border text-xs font-bold">
+          <div className="px-5 pt-4 pb-0 sm:px-6">
+            <div className="bg-muted/60 border-border grid grid-cols-2 rounded-md border p-1 text-xs font-bold">
               <button
                 type="button"
                 onClick={() => setPairMode("QR")}
-                className={`flex items-center justify-center gap-2 py-2 rounded transition cursor-pointer ${
+                className={`flex cursor-pointer items-center justify-center gap-2 rounded py-2 transition ${
                   pairMode === "QR"
-                    ? "bg-surface text-foreground shadow-sm font-extrabold"
+                    ? "bg-surface text-foreground font-extrabold shadow-sm"
                     : "text-foreground-muted hover:text-foreground"
                 }`}
               >
@@ -149,9 +127,9 @@ export function LiveQRModal({
               <button
                 type="button"
                 onClick={() => setPairMode("PHONE")}
-                className={`flex items-center justify-center gap-2 py-2 rounded transition cursor-pointer ${
+                className={`flex cursor-pointer items-center justify-center gap-2 rounded py-2 transition ${
                   pairMode === "PHONE"
-                    ? "bg-surface text-foreground shadow-sm font-extrabold"
+                    ? "bg-surface text-foreground font-extrabold shadow-sm"
                     : "text-foreground-muted hover:text-foreground"
                 }`}
               >
@@ -163,114 +141,99 @@ export function LiveQRModal({
         )}
 
         {/* Scrollable Body Content */}
-        <div className="p-5 sm:p-6 overflow-y-auto space-y-5 flex-1">
+        <div className="flex-1 space-y-5 overflow-y-auto p-5 sm:p-6">
           {/* Main Presentation Box */}
-          <div className="flex flex-col items-center justify-center p-5 rounded-md bg-zinc-100 dark:bg-[#10110e] border border-border/80 min-h-60">
+          <div className="border-border/80 flex min-h-60 flex-col items-center justify-center rounded-md border bg-zinc-100 p-5 dark:bg-[#10110e]">
             {status === "AUTHENTICATED" ? (
-              <div className="text-center space-y-3 py-6 animate-in zoom-in-95">
-                <div className="size-16 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center mx-auto border border-emerald-500/20">
+              <div className="animate-in zoom-in-95 space-y-3 py-6 text-center">
+                <div className="mx-auto flex size-16 items-center justify-center rounded-full border border-emerald-500/20 bg-emerald-500/10 text-emerald-500">
                   <CheckCircle2 className="size-10 animate-bounce" />
                 </div>
-                <h3 className="font-extrabold text-lg text-foreground">
+                <h3 className="text-foreground text-lg font-extrabold">
                   {t("whatsapp.qrSuccess")}
                 </h3>
-                <p className="text-xs text-foreground-secondary max-w-xs font-semibold">
+                <p className="text-foreground-secondary max-w-xs text-xs font-semibold">
                   {t("whatsapp.qrSuccessDesc")}
                 </p>
               </div>
             ) : status === "ERROR" ? (
-              <div className="text-center space-y-3 py-4">
-                <div className="size-12 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center mx-auto">
+              <div className="space-y-3 py-4 text-center">
+                <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-rose-500/10 text-rose-500">
                   <AlertCircle className="size-7" />
                 </div>
-                <h3 className="font-bold text-base text-foreground">
-                  Gagal Memulai Pairing
-                </h3>
-                <p className="text-xs text-foreground-secondary font-semibold max-w-xs">
+                <h3 className="text-foreground text-base font-bold">Gagal Memulai Pairing</h3>
+                <p className="text-foreground-secondary max-w-xs text-xs font-semibold">
                   {errorMessage || "Terjadi kesalahan saat menghubungkan ke WhatsApp"}
                 </p>
                 <Button
                   variant="primaryPill"
                   size="sm"
                   onClick={retry}
-                  className="gap-2 text-xs font-bold mt-2"
+                  className="cursor-pointer gap-2 rounded-full px-5 text-xs font-bold"
                 >
                   <RefreshCw className="size-3.5" />
-                  <span>{t("whatsapp.qrRetry")}</span>
+                  <span>Coba Hubungkan Ulang</span>
                 </Button>
               </div>
             ) : pairMode === "QR" ? (
-              /* TAB 1: QR CODE DISPLAY */
+              /* TAB 1: QR SCANNER */
               qrCode ? (
-                <div className="flex flex-col items-center space-y-3">
-                  <div className="relative p-2.5 rounded-md bg-white shadow-md border border-zinc-200">
-                    {qrCode.startsWith("data:image") || qrCode.startsWith("http") ? (
-                      <Image
-                        src={qrCode}
-                        alt="WhatsApp QR Code"
-                        width={190}
-                        height={190}
-                        unoptimized
-                        className="size-44 sm:size-48 object-contain"
-                      />
-                    ) : (
-                      <Image
-                        src={`data:image/png;base64,${qrCode}`}
-                        alt="WhatsApp QR Code"
-                        width={190}
-                        height={190}
-                        unoptimized
-                        className="size-44 sm:size-48 object-contain"
-                      />
-                    )}
+                <div className="flex flex-col items-center space-y-3.5">
+                  <div className="border-border/80 flex size-52 items-center justify-center rounded-md border bg-white p-3 shadow-md sm:size-56">
+                    <Image
+                      src={qrCode}
+                      alt="WhatsApp QR Code"
+                      width={190}
+                      height={190}
+                      unoptimized
+                      className="size-44 object-contain sm:size-48"
+                    />
                   </div>
 
                   {/* Countdown Indicator or Expired Refresh */}
                   {countdown > 0 ? (
-                    <div className="flex items-center gap-2 text-xs font-semibold text-foreground-secondary">
-                      <RefreshCw className="size-3.5 animate-spin text-wise-green" />
-                      <span>
-                        {t("whatsapp.qrExpiresIn", { seconds: countdown.toString() })}
-                      </span>
+                    <div className="text-foreground-secondary flex items-center gap-2 text-xs font-semibold">
+                      <RefreshCw className="dark:text-wise-green size-3.5 animate-spin text-emerald-700" />
+                      <span>{t("whatsapp.qrExpiresIn", { seconds: countdown.toString() })}</span>
                     </div>
                   ) : (
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={retry}
-                      className="rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted cursor-pointer"
+                      className="border-border hover:border-foreground-muted cursor-pointer gap-1.5 rounded-full text-xs font-bold"
                     >
-                      <RefreshCw className="size-3.5 text-wise-green" />
+                      <RefreshCw className="dark:text-wise-green size-3.5 text-emerald-700" />
                       <span>QR Kedaluwarsa - Muat Ulang</span>
                     </Button>
                   )}
                 </div>
               ) : (
-                <div className="text-center space-y-3 py-8">
-                  <Loader2 className="size-9 animate-spin text-wise-green mx-auto" />
-                  <p className="text-xs font-semibold text-foreground-secondary">
+                <div className="space-y-3 py-8 text-center">
+                  <Loader2 className="dark:text-wise-green mx-auto size-9 animate-spin text-emerald-700" />
+                  <p className="text-foreground-secondary text-xs font-semibold">
                     {t("whatsapp.qrWaiting")}
                   </p>
                 </div>
               )
             ) : (
               /* TAB 2: PHONE PAIRING CODE */
-              <div className="w-full max-w-sm flex flex-col items-center space-y-4">
+              <div className="flex w-full max-w-sm flex-col items-center space-y-4">
                 {pairingCode ? (
-                  <div className="w-full text-center space-y-3 animate-in zoom-in-95">
-                    <p className="text-xs font-semibold text-foreground-secondary">
+                  <div className="animate-in zoom-in-95 w-full space-y-3 text-center">
+                    <p className="text-foreground-secondary text-xs font-semibold">
                       Masukkan 8 karakter kode berikut di aplikasi WhatsApp ponsel Anda:
                     </p>
-                    
+
                     {/* Big Monospace OTP Boxes */}
-                    <div className="inline-flex items-center justify-center gap-1.5 p-3 rounded-md bg-white dark:bg-[#1f211d] border border-wise-green/40 shadow-inner">
+                    <div className="border-wise-green/40 inline-flex items-center justify-center gap-1.5 rounded-md border bg-white p-3 shadow-inner dark:bg-[#1f211d]">
                       {pairingCode.split("").map((char, idx) => (
                         <span
                           key={idx}
-                          className={`font-mono text-xl sm:text-2xl font-black ${
+                          className={`font-mono text-xl font-black sm:text-2xl ${
                             char === "-"
                               ? "text-foreground-muted px-1"
-                              : "size-8 sm:size-9 rounded bg-muted/60 flex items-center justify-center text-foreground border border-border"
+                              : "bg-muted/60 text-foreground border-border flex size-8 items-center justify-center rounded border sm:size-9"
                           }`}
                         >
                           {char}
@@ -283,12 +246,14 @@ export function LiveQRModal({
                         variant="outline"
                         size="sm"
                         onClick={handleCopyCode}
-                        className="gap-2 text-xs font-bold rounded-full border-border hover:border-wise-green cursor-pointer"
+                        className="border-border hover:border-wise-green cursor-pointer gap-2 rounded-full text-xs font-bold"
                       >
                         {copied ? (
                           <>
-                            <Check className="size-3.5 text-dark-green dark:text-wise-green" />
-                            <span className="text-dark-green dark:text-wise-green font-bold">Kode Tersalin!</span>
+                            <Check className="text-dark-green dark:text-wise-green size-3.5" />
+                            <span className="text-dark-green dark:text-wise-green font-bold">
+                              Kode Tersalin!
+                            </span>
                           </>
                         ) : (
                           <>
@@ -302,19 +267,19 @@ export function LiveQRModal({
                 ) : (
                   <form onSubmit={handleRequestCode} className="w-full space-y-3">
                     <div className="space-y-1 text-left">
-                      <label className="text-xs font-bold text-foreground">
+                      <label className="text-foreground text-xs font-bold">
                         Nomor WhatsApp Ponsel
                       </label>
-                      <div className="flex rounded-md border border-border bg-surface overflow-hidden focus-within:ring-2 focus-within:ring-wise-green/40">
-                        <span className="px-3 py-2 bg-muted text-foreground-secondary text-xs font-bold border-r border-border flex items-center">
+                      <div className="border-border bg-surface focus-within:ring-wise-green/40 flex overflow-hidden rounded-md border focus-within:ring-2">
+                        <span className="bg-muted text-foreground-secondary border-border flex items-center border-r px-3 py-2 text-xs font-bold">
                           +62
                         </span>
                         <input
                           type="tel"
                           placeholder="81234567890"
                           value={phoneNumber}
-                          onChange={(e) => setPhoneNumber(e.target.value)}
-                          className="flex-1 px-3 py-2 text-xs font-semibold bg-transparent focus:outline-none text-foreground"
+                          onChange={(e) => setCustomPhone(e.target.value)}
+                          className="text-foreground flex-1 bg-transparent px-3 py-2 text-xs font-semibold focus:outline-none"
                           autoFocus
                           required
                         />
@@ -347,9 +312,9 @@ export function LiveQRModal({
           </div>
 
           {/* Step-by-Step Instructions */}
-          <div className="space-y-2 rounded-md bg-surface dark:bg-[#1b1d1a] p-4 border border-border text-xs font-semibold">
-            <div className="flex items-center gap-2 font-bold text-foreground mb-1">
-              <Smartphone className="size-4 text-wise-green" />
+          <div className="bg-surface border-border space-y-2 rounded-md border p-4 text-xs font-semibold dark:bg-[#1b1d1a]">
+            <div className="text-foreground mb-1 flex items-center gap-2 font-bold">
+              <Smartphone className="dark:text-wise-green size-4 text-emerald-700" />
               <span>
                 {pairMode === "QR"
                   ? "Petunjuk Pemindaian QR di Ponsel:"
@@ -357,16 +322,23 @@ export function LiveQRModal({
               </span>
             </div>
             {pairMode === "QR" ? (
-              <ol className="space-y-1.5 text-foreground-secondary list-decimal list-inside leading-relaxed pl-1">
+              <ol className="text-foreground-secondary list-inside list-decimal space-y-1.5 pl-1 leading-relaxed">
                 <li>{t("whatsapp.qrInstructionsStep1")}</li>
                 <li>{t("whatsapp.qrInstructionsStep2")}</li>
                 <li>{t("whatsapp.qrInstructionsStep3")}</li>
               </ol>
             ) : (
-              <ol className="space-y-1.5 text-foreground-secondary list-decimal list-inside leading-relaxed pl-1">
-                <li>Buka WhatsApp di ponsel $\rightarrow$ Ketuk <b>Menu</b> (titik tiga) atau <b>Pengaturan</b>.</li>
-                <li>Pilih <b>Perangkat Tertaut</b> $\rightarrow$ <b>Tautkan Perangkat</b>.</li>
-                <li>Pilih <b>Tautkan dengan nomor telepon saja</b> di bagian bawah layar.</li>
+              <ol className="text-foreground-secondary list-inside list-decimal space-y-1.5 pl-1 leading-relaxed">
+                <li>
+                  Buka WhatsApp di ponsel $\rightarrow$ Ketuk <b>Menu</b> (titik tiga) atau{" "}
+                  <b>Pengaturan</b>.
+                </li>
+                <li>
+                  Pilih <b>Perangkat Tertaut</b> $\rightarrow$ <b>Tautkan Perangkat</b>.
+                </li>
+                <li>
+                  Pilih <b>Tautkan dengan nomor telepon saja</b> di bagian bawah layar.
+                </li>
                 <li>Masukkan 8 karakter kode pairing yang tertera di atas.</li>
               </ol>
             )}
@@ -374,17 +346,17 @@ export function LiveQRModal({
         </div>
 
         {/* Sticky Footer */}
-        <div className="p-4 sm:p-5 border-t border-border flex justify-end shrink-0 bg-surface/50">
+        <DialogFooter className="border-border bg-surface/50 m-0 flex shrink-0 flex-row justify-end rounded-none border-t p-4 sm:p-5">
           <Button
             variant="outline"
             size="sm"
             onClick={onClose}
-            className="rounded-full text-xs font-bold px-6 border-border hover:border-foreground-muted cursor-pointer"
+            className="border-border hover:border-foreground-muted cursor-pointer rounded-full px-6 text-xs font-bold"
           >
             {t("whatsapp.qrClose")}
           </Button>
-        </div>
-      </div>
-    </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

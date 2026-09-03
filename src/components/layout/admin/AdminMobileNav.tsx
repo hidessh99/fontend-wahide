@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect } from "react";
 import { AdminSidebar } from "./AdminSidebar";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { X } from "lucide-react";
 
 interface AdminMobileNavProps {
@@ -10,15 +10,8 @@ interface AdminMobileNavProps {
 }
 
 export function AdminMobileNav({ open, onClose }: AdminMobileNavProps) {
-  // Escape key listener to close drawer
-  useEffect(() => {
-    if (!open) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [open, onClose]);
+  // Universal Escape key dismissal with zero listener churn
+  useEscapeKey(open, onClose);
 
   if (!open) return null;
 
@@ -27,15 +20,15 @@ export function AdminMobileNav({ open, onClose }: AdminMobileNavProps) {
       {/* Backdrop Overlay */}
       <div
         onClick={onClose}
-        className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity animate-in fade-in"
+        className="animate-in fade-in fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
       />
 
       {/* Drawer Container */}
-      <div className="fixed inset-y-0 left-0 max-w-xs w-full bg-surface dark:bg-[#121310] shadow-2xl z-50 animate-in slide-in-from-left duration-200 flex flex-col">
-        <div className="absolute right-4 top-4 z-50">
+      <div className="bg-surface animate-in slide-in-from-left fixed inset-y-0 left-0 z-50 flex w-full max-w-xs flex-col shadow-2xl duration-200 dark:bg-[#121310]">
+        <div className="absolute top-4 right-4 z-50">
           <button
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-muted text-foreground-secondary hover:text-foreground cursor-pointer transition"
+            className="text-foreground-secondary hover:text-foreground hover:bg-muted/60 flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-full p-2.5 transition"
             aria-label="Tutup Menu Admin"
           >
             <X className="size-5" />

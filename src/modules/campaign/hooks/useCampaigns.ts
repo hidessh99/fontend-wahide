@@ -65,9 +65,7 @@ export function useCampaigns() {
   const pauseCampaign = async (id: string): Promise<void> => {
     try {
       await campaignApi.pauseCampaign(id);
-      setCampaigns((prev) =>
-        prev.map((c) => (c.id === id ? { ...c, status: "PAUSED" } : c))
-      );
+      setCampaigns((prev) => prev.map((c) => (c.id === id ? { ...c, status: "PAUSED" } : c)));
       toast.success(t("campaign.toastPaused"));
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal menjeda kampanye";
@@ -79,9 +77,7 @@ export function useCampaigns() {
   const resumeCampaign = async (id: string): Promise<void> => {
     try {
       await campaignApi.resumeCampaign(id);
-      setCampaigns((prev) =>
-        prev.map((c) => (c.id === id ? { ...c, status: "RUNNING" } : c))
-      );
+      setCampaigns((prev) => prev.map((c) => (c.id === id ? { ...c, status: "RUNNING" } : c)));
       toast.success(t("campaign.toastResumed"));
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal melanjutkan kampanye";

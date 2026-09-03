@@ -1,11 +1,12 @@
-﻿"use client";
+"use client";
 
 import React, { useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Contact } from "@/modules/contact/types/contact.types";
 import { useI18n } from "@/lib/i18n/context";
-import { Edit2, Trash2, Check, ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Edit2, Trash2 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { DataTablePagination } from "@/components/ui/pagination";
 
 interface ContactTableProps {
   contacts: Contact[];
@@ -47,35 +48,29 @@ export function ContactTable({
     overscan: 5,
   });
 
-  const isAllSelected =
-    contacts.length > 0 && selectedIds.size === contacts.length;
+  const isAllSelected = contacts.length > 0 && selectedIds.size === contacts.length;
 
   const startItem = total > 0 ? (page - 1) * pageSize + 1 : 0;
   const endItem = total > 0 ? Math.min(page * pageSize, total) : 0;
 
   return (
-    <div className="rounded-md border border-border bg-surface dark:bg-[#161715] overflow-hidden shadow-xs">
+    <div className="border-border bg-surface overflow-hidden rounded-md border shadow-xs dark:bg-[#161715]">
       {/* Mobile View: Card-based Contact List (Visible on < 768px) */}
-      <div className="md:hidden divide-y divide-border/40">
+      <div className="divide-border/40 divide-y md:hidden">
         {/* Select All Bar on Mobile */}
-        <div className="p-3 bg-muted/50 border-b border-border flex items-center justify-between text-xs font-bold text-foreground-muted">
+        <div className="bg-muted/50 border-border text-foreground-muted flex items-center justify-between border-b p-3 text-xs font-bold">
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => onToggleSelectAll(contacts.map((c) => c.id))}
-              className={`size-4.5 rounded border flex items-center justify-center transition cursor-pointer ${
-                isAllSelected
-                  ? "bg-wise-green border-wise-green text-dark-green"
-                  : "border-foreground-muted/50 hover:border-foreground"
-              }`}
+            <Checkbox
+              checked={isAllSelected}
+              onCheckedChange={() => onToggleSelectAll(contacts.map((c) => c.id))}
               aria-label="Pilih Semua Kontak"
-            >
-              {isAllSelected && <Check className="size-3.5 stroke-3" />}
-            </button>
+            />
             <span>Pilih Semua ({contacts.length})</span>
           </div>
           {selectedIds.size > 0 && (
-            <span className="text-wise-green">{selectedIds.size} terpilih</span>
+            <span className="dark:text-wise-green font-bold text-emerald-700">
+              {selectedIds.size} terpilih
+            </span>
           )}
         </div>
 
@@ -85,36 +80,27 @@ export function ContactTable({
           return (
             <div
               key={contact.id}
-              className={`p-3.5 space-y-2 transition-colors ${
+              className={`space-y-2 p-3.5 transition-colors ${
                 isSelected
                   ? "bg-wise-green/10 dark:bg-wise-green/5"
                   : "bg-surface dark:bg-[#161715]"
               }`}
             >
               <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <button
-                    type="button"
-                    onClick={() => onToggleSelectOne(contact.id)}
-                    className={`size-5 rounded border flex items-center justify-center transition cursor-pointer shrink-0 ${
-                      isSelected
-                        ? "bg-wise-green border-wise-green text-dark-green"
-                        : "border-foreground-muted/50 hover:border-foreground"
-                    }`}
+                <div className="flex min-w-0 items-center gap-2.5">
+                  <Checkbox
+                    checked={isSelected}
+                    onCheckedChange={() => onToggleSelectOne(contact.id)}
                     aria-label={`Pilih ${contact.name}`}
-                  >
-                    {isSelected && <Check className="size-3.5 stroke-3" />}
-                  </button>
-                  <span className="font-bold text-sm text-foreground truncate">
-                    {contact.name}
-                  </span>
+                  />
+                  <span className="text-foreground truncate text-sm font-bold">{contact.name}</span>
                 </div>
 
-                <div className="flex items-center gap-1 shrink-0">
+                <div className="flex shrink-0 items-center gap-1">
                   <button
                     type="button"
                     onClick={() => onEdit(contact)}
-                    className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
+                    className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-8 cursor-pointer items-center justify-center rounded-full transition"
                     aria-label={`Ubah ${contact.name}`}
                   >
                     <Edit2 className="size-3.5" />
@@ -122,7 +108,7 @@ export function ContactTable({
                   <button
                     type="button"
                     onClick={() => onDelete(contact)}
-                    className="size-8 rounded-full flex items-center justify-center text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"
+                    className="flex size-8 cursor-pointer items-center justify-center rounded-full text-rose-500 transition hover:bg-rose-500/10"
                     aria-label={`Hapus ${contact.name}`}
                   >
                     <Trash2 className="size-3.5" />
@@ -130,7 +116,7 @@ export function ContactTable({
                 </div>
               </div>
 
-              <div className="pl-7 text-xs font-mono text-foreground-secondary">
+              <div className="text-foreground-secondary pl-7 font-mono text-xs">
                 +{contact.phone}
               </div>
             </div>
@@ -141,20 +127,13 @@ export function ContactTable({
       {/* Desktop View: Tabular Virtualized Grid (Visible on >= 768px) */}
       <div className="hidden md:block">
         {/* Table Header */}
-        <div className="grid grid-cols-12 gap-3 px-5 py-4 bg-muted/60 border-b border-border text-xs font-extrabold uppercase tracking-wider text-foreground-muted select-none">
+        <div className="bg-muted/60 border-border text-foreground-muted grid grid-cols-12 gap-3 border-b px-5 py-4 text-xs font-extrabold tracking-wider uppercase select-none">
           <div className="col-span-1 flex items-center justify-center">
-            <button
-              type="button"
-              onClick={() => onToggleSelectAll(contacts.map((c) => c.id))}
-              className={`size-4.5 rounded border flex items-center justify-center transition cursor-pointer ${
-                isAllSelected
-                  ? "bg-wise-green border-wise-green text-dark-green"
-                  : "border-foreground-muted/50 hover:border-foreground"
-              }`}
+            <Checkbox
+              checked={isAllSelected}
+              onCheckedChange={() => onToggleSelectAll(contacts.map((c) => c.id))}
               aria-label="Pilih Semua Kontak"
-            >
-              {isAllSelected && <Check className="size-3.5 stroke-3" />}
-            </button>
+            />
           </div>
           <div className="col-span-5">{t("contact.tableHeaderName")}</div>
           <div className="col-span-4">{t("contact.tableHeaderPhone")}</div>
@@ -164,7 +143,7 @@ export function ContactTable({
         {/* Virtualized Table Body */}
         <div
           ref={parentRef}
-          className="overflow-auto max-h-135 relative scrollbar-thin divide-y divide-border/40"
+          className="divide-border/40 relative max-h-135 scrollbar-thin divide-y overflow-auto"
         >
           <div
             style={{
@@ -190,35 +169,26 @@ export function ContactTable({
                     width: "100%",
                     transform: `translateY(${virtualRow.start}px)`,
                   }}
-                  className={`grid grid-cols-12 gap-3 px-5 py-3.5 items-center transition-colors min-h-14.5 ${
-                    isSelected
-                      ? "bg-wise-green/10 dark:bg-wise-green/5"
-                      : "hover:bg-muted/40"
+                  className={`grid min-h-14.5 grid-cols-12 items-center gap-3 px-5 py-3.5 transition-colors ${
+                    isSelected ? "bg-wise-green/10 dark:bg-wise-green/5" : "hover:bg-muted/40"
                   }`}
                 >
                   {/* Select Checkbox */}
                   <div className="col-span-1 flex items-center justify-center">
-                    <button
-                      type="button"
-                      onClick={() => onToggleSelectOne(contact.id)}
-                      className={`size-4.5 rounded border flex items-center justify-center transition cursor-pointer ${
-                        isSelected
-                          ? "bg-wise-green border-wise-green text-dark-green"
-                          : "border-foreground-muted/50 hover:border-foreground"
-                      }`}
+                    <Checkbox
+                      checked={isSelected}
+                      onCheckedChange={() => onToggleSelectOne(contact.id)}
                       aria-label={`Pilih ${contact.name}`}
-                    >
-                      {isSelected && <Check className="size-3.5 stroke-3" />}
-                    </button>
+                    />
                   </div>
 
                   {/* Name Column */}
-                  <div className="col-span-5 font-bold text-sm sm:text-base text-foreground truncate tracking-tight">
+                  <div className="text-foreground col-span-5 truncate text-sm font-bold tracking-tight sm:text-base">
                     {contact.name}
                   </div>
 
                   {/* Phone Column */}
-                  <div className="col-span-4 text-foreground-secondary font-mono font-medium text-xs sm:text-sm tracking-wide truncate">
+                  <div className="text-foreground-secondary col-span-4 truncate font-mono text-xs font-medium tracking-wide sm:text-sm">
                     +{contact.phone}
                   </div>
 
@@ -227,7 +197,7 @@ export function ContactTable({
                     <button
                       type="button"
                       onClick={() => onEdit(contact)}
-                      className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
+                      className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-8 cursor-pointer items-center justify-center rounded-full transition"
                       aria-label={`Ubah ${contact.name}`}
                     >
                       <Edit2 className="size-4" />
@@ -235,7 +205,7 @@ export function ContactTable({
                     <button
                       type="button"
                       onClick={() => onDelete(contact)}
-                      className="size-8 rounded-full flex items-center justify-center text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"
+                      className="flex size-8 cursor-pointer items-center justify-center rounded-full text-rose-500 transition hover:bg-rose-500/10"
                       aria-label={`Hapus ${contact.name}`}
                     >
                       <Trash2 className="size-4" />
@@ -250,9 +220,9 @@ export function ContactTable({
 
       {/* Pagination Footer */}
       {total > 0 && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 sm:px-5 sm:py-3.5 border-t border-border bg-muted/30">
+        <div className="border-border bg-muted/30 flex flex-col items-center justify-between gap-3 border-t p-3 sm:flex-row sm:px-5 sm:py-3.5">
           {/* Item count summary */}
-          <div className="text-xs sm:text-sm font-semibold text-foreground-secondary">
+          <div className="text-foreground-secondary text-xs font-semibold sm:text-sm">
             {t("contact.showingPagination", {
               start: String(startItem),
               end: String(endItem),
@@ -260,38 +230,17 @@ export function ContactTable({
             })}
           </div>
 
-          {/* Page buttons: Previous, Page Indicator, Next */}
+          {/* Shadcn UI Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-foreground-muted px-1.5 select-none">
-                {t("contact.pageIndicator", {
-                  page: String(page),
-                  total: String(totalPages),
-                })}
-              </span>
-
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onPrevPage}
-                disabled={page <= 1}
-                className="h-8.5 px-3.5 rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted cursor-pointer disabled:opacity-40"
-              >
-                <ChevronLeft className="size-3.5" />
-                <span>{t("contact.prevPage")}</span>
-              </Button>
-
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onNextPage}
-                disabled={page >= totalPages}
-                className="h-8.5 px-3.5 rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted cursor-pointer disabled:opacity-40"
-              >
-                <span>{t("contact.nextPage")}</span>
-                <ChevronRight className="size-3.5" />
-              </Button>
-            </div>
+            <DataTablePagination
+              page={page}
+              totalPages={totalPages}
+              onPrevPage={onPrevPage}
+              onNextPage={onNextPage}
+              prevText={t("contact.prevPage")}
+              nextText={t("contact.nextPage")}
+              className="mx-0 w-auto"
+            />
           )}
         </div>
       )}

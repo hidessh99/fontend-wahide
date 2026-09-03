@@ -1,5 +1,7 @@
+import React, { Suspense } from "react";
 import type { Metadata } from "next";
-import { BillingView } from "@/components/dashboard/BillingView";
+import { BillingView } from "@/modules/finance/views/BillingView";
+import { SellerRouteGuard } from "@/components/layout/shared/SellerRouteGuard";
 
 export const metadata: Metadata = {
   title: "Faktur & Tagihan Pembayaran",
@@ -15,5 +17,11 @@ export const metadata: Metadata = {
 };
 
 export default function BillingPage() {
-  return <BillingView />;
+  return (
+    <SellerRouteGuard>
+      <Suspense fallback={<div className="flex h-96 animate-pulse items-center justify-center" />}>
+        <BillingView />
+      </Suspense>
+    </SellerRouteGuard>
+  );
 }

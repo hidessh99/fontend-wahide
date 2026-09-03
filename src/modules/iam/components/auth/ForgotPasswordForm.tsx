@@ -1,7 +1,8 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { TurnstileWidget } from "@/components/ui/TurnstileWidget";
 import { TurnstileInstance } from "@marsidev/react-turnstile";
@@ -12,6 +13,7 @@ import { Mail, ArrowLeft, CheckCircle2, AlertCircle, Loader2 } from "lucide-reac
 
 export function ForgotPasswordForm() {
   const { t } = useI18n();
+  const router = useRouter();
   const turnstileRef = useRef<TurnstileInstance>(null);
 
   const [formData, setFormData] = useState<ForgotPasswordInput>({
@@ -36,7 +38,12 @@ export function ForgotPasswordForm() {
     setIsLoading(true);
     try {
       const res = await authApi.forgotPassword({ email: result.data.email });
-      setSuccessMessage(res.message || "Tautan pemulihan password telah dikirim ke email Anda.");
+      setSuccessMessage(res.message || t("auth.forgotPassword.redirectingNotice"));
+
+      // Auto redirect to /reset-password after 1.5s
+      setTimeout(() => {
+        router.push(`/reset-password?email=${encodeURIComponent(result.data.email)}`);
+      }, 1500);
     } catch (err: unknown) {
       turnstileRef.current?.reset();
       setFormData((prev) => ({ ...prev, turnstileToken: "" }));
@@ -51,37 +58,50 @@ export function ForgotPasswordForm() {
   };
 
   return (
-    <div className="space-y-6 w-full max-w-md">
+    <div className="w-full max-w-md space-y-6">
       <div className="space-y-2 text-center">
-        <h1 className="text-4xl font-black tracking-tight leading-[0.95] text-foreground">
+        <h1 className="text-foreground text-4xl leading-[0.95] font-black tracking-tight">
           {t("auth.forgotPassword.title")}
         </h1>
-        <p className="text-sm font-semibold text-foreground-secondary">
+        <p className="text-foreground-secondary text-sm font-semibold">
           {t("auth.forgotPassword.subtitle")}
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         {successMessage && (
-          <div className="flex items-center gap-3 rounded-md bg-emerald-50 dark:bg-emerald-950/40 p-4 text-sm font-semibold text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900/50">
-            <CheckCircle2 className="size-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
-            <span>{successMessage}</span>
+          <div className="space-y-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-300">
+            <div className="flex items-center gap-3">
+              <CheckCircle2 className="size-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+              <span>{successMessage}</span>
+            </div>
+            <Button
+              type="button"
+              variant="primaryPill"
+              size="sm"
+              onClick={() =>
+                router.push(`/reset-password?email=${encodeURIComponent(formData.email)}`)
+              }
+              className="w-full text-xs font-bold"
+            >
+              {t("auth.forgotPassword.proceedToTokenButton")} →
+            </Button>
           </div>
         )}
 
         {error && (
-          <div className="flex items-center gap-3 rounded-md bg-rose-50 dark:bg-rose-950/40 p-4 text-sm font-semibold text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/50">
+          <div className="flex items-center gap-3 rounded-md border border-rose-200 bg-rose-50 p-4 text-sm font-semibold text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-300">
             <AlertCircle className="size-5 shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-2">
+          <label className="text-foreground-secondary mb-2 block text-xs font-semibold tracking-wider uppercase">
             {t("auth.forgotPassword.emailLabel")}
           </label>
           <div className="relative">
-            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-foreground-muted" />
+            <Mail className="text-foreground-muted absolute top-1/2 left-4 size-5 -translate-y-1/2" />
             <input
               type="email"
               value={formData.email}
@@ -91,7 +111,7 @@ export function ForgotPasswordForm() {
               }}
               placeholder={t("auth.forgotPassword.emailPlaceholder")}
               disabled={isLoading}
-              className="w-full h-13 pl-12 pr-4 rounded-full bg-surface dark:bg-[#161715] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-sm"
+              className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-13 w-full rounded-full border pr-4 pl-12 text-sm font-semibold transition outline-none focus:ring-2 dark:bg-[#161715]"
             />
           </div>
         </div>
@@ -121,14 +141,25 @@ export function ForgotPasswordForm() {
           )}
         </Button>
 
-        <div className="text-center pt-1">
-          <Link
-            href="/login"
-            className="inline-flex items-center gap-2 text-sm font-bold text-foreground-secondary hover:text-foreground"
-          >
-            <ArrowLeft className="size-4" />
-            <span>{t("auth.forgotPassword.backToLogin")}</span>
-          </Link>
+        <div className="space-y-2.5 pt-1 text-center text-xs font-semibold">
+          <p className="text-foreground-secondary">
+            {t("auth.forgotPassword.hasTokenPrompt")}{" "}
+            <Link
+              href={`/reset-password${formData.email ? `?email=${encodeURIComponent(formData.email)}` : ""}`}
+              className="text-foreground hover:text-wise-green underline"
+            >
+              {t("auth.forgotPassword.enterTokenLink")}
+            </Link>
+          </p>
+          <div>
+            <Link
+              href="/login"
+              className="text-foreground-secondary hover:text-foreground inline-flex items-center gap-1.5 transition"
+            >
+              <ArrowLeft className="size-3.5" />
+              <span>{t("auth.forgotPassword.backToLogin")}</span>
+            </Link>
+          </div>
         </div>
       </form>
     </div>

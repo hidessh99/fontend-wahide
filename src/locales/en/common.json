@@ -16,7 +16,7 @@
   "hero": {
     "badge": "WhatsApp Multi-Device Gateway & REST API",
     "title": "Send Bulk WhatsApp Messages Faster, Safer, and Ban-Free.",
-    "subtitle": "Fastest multi-device WhatsApp gateway powered by 5-Layer Anti-Ban, dynamic Spintax, and load-balanced device rotation. Supports diverse WhatsApp-based workflows including chatbots, customer service systems, automated alerts, and broadcast campaigns with full support for text, media files, and efficient contact management.",
+    "subtitle": "High-throughput multi-device WhatsApp gateway with 5-layer anti-ban protection, dynamic spintax, and number load balancing. Power your chatbots, alerts, and mass broadcasts effortlessly.",
     "ctaTrial": "Start Free (1,500 Messages)",
     "ctaLogin": "Access Dashboard",
     "trustBadge": "No credit card required • 5-minute setup • End-to-end encryption"
@@ -271,6 +271,42 @@
     "keyCopied": "API Key copied to clipboard!",
     "regenerateKey": "Regenerate New Token",
     "keyRegenerated": "New API Key token generated successfully."
+  },
+  "address": {
+    "title": "Business & Billing Address",
+    "subtitle": "Manage your company's physical location and official billing address for invoice generation and account verification.",
+    "statusRegistered": "Registered",
+    "statusNotSet": "Not Configured",
+    "countryLabel": "Country",
+    "provinceLabel": "Province / State",
+    "provincePlaceholder": "Select Province...",
+    "cityLabel": "City / Regency",
+    "cityPlaceholder": "Select City / Regency...",
+    "districtLabel": "District",
+    "districtPlaceholder": "Select District (Optional)...",
+    "postalCodeLabel": "Postal Code",
+    "postalCodePlaceholder": "e.g. 12190",
+    "streetAddressLabel": "Street Address / Unit & Building",
+    "streetAddressPlaceholder": "e.g. Artha Graha Building 15th Fl, Jl. Jend. Sudirman Kav. 52-53",
+    "streetAddressHelp": "Include street name, building number, suite/unit, and landmarks.",
+    "saveBtn": "Save Business Address",
+    "saving": "Saving...",
+    "saveSuccess": "Address saved successfully!",
+    "securityNote": "Address data is encrypted & stored securely in the IAM database.",
+    "billingRequiredBannerTitle": "Address Details Required for Top-Up",
+    "billingRequiredBannerDesc": "To proceed with balance Top-Up transactions and generate official invoices, please complete your business address first.",
+    "saveAndReturnToast": "Address saved! Redirecting to Top-Up payment..."
+  },
+  "billing": {
+    "title": "Invoices & Payment Billing",
+    "subtitle": "Manage broadcast deposit balance, view subscription invoice history, and download official receipts.",
+    "depositBalanceTitle": "Transaction Deposit Balance",
+    "depositBalanceDesc": "Used for sending WhatsApp broadcasts and purchasing extra quotas.",
+    "topUpBalance": "Top Up Balance",
+    "invoicesTitle": "Invoice History & Receipts",
+    "invoicesSubtitle": "List of all payment history and official billing invoices.",
+    "invoicesCountLabel": "Total Invoices",
+    "addressRequiredForTopUp": "Please configure your business address first to proceed with balance Top-Up."
   },
   "errors": {
     "notFound": {

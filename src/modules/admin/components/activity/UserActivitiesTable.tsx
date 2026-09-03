@@ -1,12 +1,14 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
 import { UserActivityItem } from "@/modules/admin/types/admin.types";
 import { DeleteActivityConfirmModal } from "./DeleteActivityConfirmModal";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty";
+import { SearchInput } from "@/components/ui/search-input";
+import { DataTablePagination } from "@/components/ui/pagination";
 import {
-  Search,
-  X,
   RefreshCw,
   Activity,
   LogIn,
@@ -16,8 +18,6 @@ import {
   Shield,
   Clock,
   User,
-  ChevronLeft,
-  ChevronRight,
   Filter,
   CreditCard,
   Receipt,
@@ -109,11 +109,6 @@ export function UserActivitiesTable({
   const [searchInput, setSearchInput] = useState("");
   const [activityToDelete, setActivityToDelete] = useState<UserActivityItem | null>(null);
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSearch(searchInput);
-  };
-
   const handleClear = () => {
     setSearchInput("");
     onClearSearch();
@@ -133,89 +128,98 @@ export function UserActivitiesTable({
 
     if (t.includes("TOPUP")) {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+        <Badge variant="success">
           <CreditCard className="size-3" />
           <span>TOP-UP</span>
-        </span>
+        </Badge>
       );
     }
     if (t.includes("PAYMENT") || t.includes("SUBSCRIPTION")) {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
+        <Badge variant="info">
           <Receipt className="size-3" />
           <span>PAYMENT</span>
-        </span>
+        </Badge>
       );
     }
     if (t.includes("WITHDRAWAL")) {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+        <Badge variant="warning">
           <Wallet className="size-3" />
           <span>WITHDRAWAL</span>
-        </span>
+        </Badge>
       );
     }
     if (t.includes("DEVICE")) {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
+        <Badge
+          variant="outline"
+          className="border-indigo-500/20 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
+        >
           <Smartphone className="size-3" />
           <span>DEVICE</span>
-        </span>
+        </Badge>
       );
     }
     if (t.includes("CAMPAIGN")) {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20">
+        <Badge
+          variant="outline"
+          className="border-cyan-500/20 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400"
+        >
           <Send className="size-3" />
           <span>CAMPAIGN</span>
-        </span>
+        </Badge>
       );
     }
     if (t.includes("LOGIN")) {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+        <Badge variant="success">
           <LogIn className="size-3" />
           <span>LOGIN</span>
-        </span>
+        </Badge>
       );
     }
     if (t.includes("LOGOUT")) {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-zinc-500/10 text-zinc-600 dark:text-zinc-400 border border-zinc-500/20">
+        <Badge variant="neutral">
           <LogOut className="size-3" />
           <span>LOGOUT</span>
-        </span>
+        </Badge>
       );
     }
     if (t.includes("REGISTER") || t.includes("SIGNUP")) {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
+        <Badge variant="info">
           <UserPlus className="size-3" />
           <span>REGISTER</span>
-        </span>
+        </Badge>
       );
     }
     if (t.includes("PASSWORD") || t.includes("VERIFY")) {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+        <Badge variant="warning">
           <KeyRound className="size-3" />
           <span>SECURITY</span>
-        </span>
+        </Badge>
       );
     }
     if (t.includes("TOKEN") || t.includes("APIKEY")) {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
+        <Badge
+          variant="outline"
+          className="border-purple-500/20 bg-purple-500/10 text-purple-600 dark:text-purple-400"
+        >
           <Shield className="size-3" />
           <span>API TOKEN</span>
-        </span>
+        </Badge>
       );
     }
     return (
-      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-muted text-foreground-secondary border border-border">
+      <Badge variant="neutral">
         <Activity className="size-3" />
         <span>{t}</span>
-      </span>
+      </Badge>
     );
   };
 
@@ -223,154 +227,162 @@ export function UserActivitiesTable({
   const endItem = total > 0 ? Math.min(page * pageSize, total) : 0;
 
   return (
-    <div className="space-y-4">
+    <div className="w-full min-w-0 space-y-4">
       {/* Toolbar Section: Search Bar & Filter Chips */}
-      <div className="space-y-3 p-4 rounded-xl border border-border bg-surface dark:bg-[#161715] shadow-xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="border-border bg-surface w-full min-w-0 space-y-3 overflow-hidden rounded-xl border p-3.5 shadow-xs sm:p-4 dark:bg-[#161715]">
+        <div className="flex w-full min-w-0 flex-col justify-between gap-2.5 sm:flex-row sm:items-center sm:gap-3">
           {/* Search Form */}
-          <form onSubmit={handleSearchSubmit} className="flex items-center gap-2 flex-1 max-w-lg">
-            <div className="relative flex-1">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted pointer-events-none" />
-              <input
-                type="text"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                placeholder="Cari nama, email, atau deskripsi aktivitas..."
-                className="w-full h-9.5 pl-10 pr-9 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-rose-500 focus:ring-1 focus:ring-rose-500 outline-none transition text-xs"
-              />
-              {(searchInput || activeSearch) && (
-                <button
-                  type="button"
-                  onClick={handleClear}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 size-5 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
-                  title="Hapus Pencarian"
-                  aria-label="Hapus Pencarian"
-                >
-                  <X className="size-3.5" />
-                </button>
-              )}
-            </div>
+          <div className="flex w-full max-w-lg min-w-0 flex-1 items-center gap-2">
+            <SearchInput
+              value={searchInput}
+              onChange={setSearchInput}
+              onSearch={() => onSearch(searchInput.trim())}
+              onClear={handleClear}
+              placeholder="Cari nama, email, atau deskripsi aktivitas..."
+            />
+            {/* Refresh Button on Mobile (Inline inside form container row) */}
             <Button
-              type="submit"
+              type="button"
               variant="outline"
               size="sm"
-              className="h-9.5 px-4 text-xs font-bold rounded-full shrink-0 border-border hover:border-foreground-muted cursor-pointer"
+              onClick={onRefresh}
+              disabled={isLoading}
+              className="border-border hover:border-foreground-muted h-10 shrink-0 cursor-pointer gap-1 rounded-full px-3 text-xs font-bold sm:hidden"
+              title="Muat Ulang Data"
             >
-              <Search className="size-3.5 mr-1" />
-              <span>Cari</span>
+              <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin text-rose-500" : ""}`} />
             </Button>
-          </form>
+          </div>
 
-          {/* Refresh Button */}
+          {/* Refresh Button on Desktop */}
           <Button
             type="button"
             variant="outline"
             size="sm"
             onClick={onRefresh}
             disabled={isLoading}
-            className="h-9.5 px-3.5 text-xs font-bold rounded-full border-border hover:border-foreground-muted self-start sm:self-auto shrink-0 gap-1.5 cursor-pointer"
+            className="border-border hover:border-foreground-muted hidden h-9.5 shrink-0 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold sm:flex"
             title="Muat Ulang Data"
           >
             <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin text-rose-500" : ""}`} />
-            <span className="hidden sm:inline">Refresh</span>
+            <span>Refresh</span>
           </Button>
         </div>
 
-        {/* Filter Category Chips (Horizontal Scrollable) */}
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1 border-t border-border/50 scroll-smooth">
-          <div className="flex items-center gap-1 text-[11px] font-bold text-foreground-muted mr-1 shrink-0">
-            <Filter className="size-3" />
-            <span>Kategori:</span>
+        {/* Filter Category Chips (Horizontal Scrollable with Touch Support) */}
+        <div className="border-border/50 w-full min-w-0 space-y-1.5 border-t pt-2">
+          <div className="flex items-center justify-between px-0.5">
+            <div className="text-foreground-muted flex items-center gap-1.5 text-[11px] font-bold">
+              <Filter className="size-3 text-rose-500" />
+              <span>Kategori Aktivitas:</span>
+            </div>
+            <span className="text-foreground-muted text-[10px] font-semibold tracking-tight sm:hidden">
+              Geser ke samping &rarr;
+            </span>
           </div>
-          {filterChips.map((chip) => {
-            const isActive = typeFilter === chip.value;
-            return (
-              <button
-                key={chip.value}
-                type="button"
-                onClick={() => onTypeFilterChange(chip.value)}
-                className={`px-3 py-1 rounded-full text-xs transition cursor-pointer whitespace-nowrap shrink-0 ${
-                  isActive
-                    ? "bg-rose-600 text-white font-extrabold shadow-xs"
-                    : "bg-muted/70 hover:bg-muted text-foreground-secondary hover:text-foreground font-semibold border border-border/60"
-                }`}
-              >
-                {chip.label}
-              </button>
-            );
-          })}
+
+          <div className="flex w-full min-w-0 touch-pan-x snap-x scrollbar-thin items-center gap-1.5 overflow-x-auto scroll-smooth pt-0.5 pb-1">
+            {filterChips.map((chip) => {
+              const isActive = typeFilter === chip.value;
+              return (
+                <button
+                  key={chip.value}
+                  type="button"
+                  onClick={() => onTypeFilterChange(chip.value)}
+                  className={`shrink-0 cursor-pointer snap-start rounded-full px-3 py-1.5 text-xs whitespace-nowrap transition select-none ${
+                    isActive
+                      ? "bg-rose-600 font-extrabold text-white shadow-xs ring-2 ring-rose-500/30"
+                      : "bg-muted/70 hover:bg-muted text-foreground-secondary hover:text-foreground border-border/60 border font-semibold"
+                  }`}
+                >
+                  {chip.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
       {/* Activities Table Container */}
-      <div className="rounded-xl border border-border bg-surface dark:bg-[#161715] overflow-hidden shadow-xs">
+      <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs dark:bg-[#161715]">
         {isLoading ? (
-          <div className="p-12 text-center space-y-3">
-            <div className="size-9 rounded-full bg-rose-500/15 text-rose-600 flex items-center justify-center mx-auto animate-spin">
+          <div className="space-y-3 p-12 text-center">
+            <div className="mx-auto flex size-9 animate-spin items-center justify-center rounded-full bg-rose-500/15 text-rose-600">
               <RefreshCw className="size-4.5" />
             </div>
-            <p className="text-xs font-bold text-foreground">Memuat rekaman log aktivitas...</p>
+            <p className="text-foreground text-xs font-bold">Memuat rekaman log aktivitas...</p>
           </div>
         ) : activities.length === 0 ? (
-          <div className="p-10 sm:p-14 text-center space-y-2.5">
-            <Activity className="size-10 text-foreground-muted mx-auto" />
-            <h3 className="font-bold text-sm text-foreground">Tidak Ada Aktivitas Pengguna Ditemukan</h3>
-            <p className="text-xs text-foreground-secondary max-w-sm mx-auto">
-              {activeSearch
+          <EmptyState
+            icon={<Activity />}
+            title="Tidak Ada Aktivitas Pengguna Ditemukan"
+            description={
+              activeSearch
                 ? `Tidak ada hasil yang sesuai dengan kata kunci "${activeSearch}". Silakan periksa kembali filter Anda.`
-                : "Belum ada rekaman aktivitas pengguna yang tercatat pada sistem."}
-            </p>
-            {activeSearch && (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleClear}
-                className="rounded-full text-xs font-bold mt-2 cursor-pointer"
-              >
-                Reset Pencarian
-              </Button>
-            )}
-          </div>
+                : "Belum ada rekaman aktivitas pengguna yang tercatat pada sistem."
+            }
+            action={
+              activeSearch && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleClear}
+                  className="cursor-pointer rounded-full text-xs font-bold"
+                >
+                  Reset Pencarian
+                </Button>
+              )
+            }
+          />
         ) : (
           <div>
             {/* Mobile View: Card List (Visible on < 768px) */}
-            <div className="md:hidden divide-y divide-border/50">
+            <div className="divide-border/50 w-full min-w-0 divide-y md:hidden">
               {activities.map((act) => {
                 const { fullHuman } = formatHumanActivityDate(act.createdAt);
                 return (
-                  <div key={act.id} className="p-4 space-y-2.5 bg-surface dark:bg-[#161715]">
+                  <div
+                    key={act.id}
+                    className="bg-surface w-full min-w-0 space-y-2.5 p-4 dark:bg-[#161715]"
+                  >
                     <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <div className="size-7 rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold text-xs shrink-0">
-                          {act.user?.name ? act.user.name.charAt(0).toUpperCase() : <User className="size-3.5" />}
+                      <div className="flex min-w-0 items-center gap-2">
+                        <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-rose-500/15 text-xs font-bold text-rose-600 dark:text-rose-400">
+                          {act.user?.name ? (
+                            act.user.name.charAt(0).toUpperCase()
+                          ) : (
+                            <User className="size-3.5" />
+                          )}
                         </div>
-                        <div className="min-w-0">
-                          <div className="text-xs font-bold text-foreground truncate">
+                        <div className="min-w-0 flex-1">
+                          <div className="text-foreground truncate text-xs font-bold">
                             {act.user?.name || "Pengguna Tanpa Nama"}
                           </div>
-                          <div className="text-[10px] text-foreground-muted font-mono truncate max-w-40">
+                          <div className="text-foreground-muted max-w-40 truncate font-mono text-[10px] sm:max-w-xs">
                             {act.user?.email || act.userId}
                           </div>
                         </div>
                       </div>
-                      {renderTypeBadge(act.activityType || act.type)}
+                      <div className="shrink-0">
+                        {renderTypeBadge(act.activityType || act.type)}
+                      </div>
                     </div>
 
-                    <p className="text-xs font-medium text-foreground-secondary leading-relaxed bg-muted/30 p-2.5 rounded-lg border border-border/40">
+                    <p className="text-foreground-secondary bg-muted/30 border-border/40 rounded-lg border p-2.5 text-xs leading-relaxed font-medium wrap-break-word">
                       {act.description || "Tidak ada deskripsi rinci aktivitas."}
                     </p>
 
-                    <div className="flex items-center justify-between text-[11px] text-foreground-muted pt-1 border-t border-border/30">
-                      <div className="flex items-center gap-1.5 font-medium text-foreground-secondary">
-                        <Clock className="size-3 text-foreground-muted" />
+                    <div className="text-foreground-muted border-border/30 flex items-center justify-between border-t pt-1 text-[11px]">
+                      <div className="text-foreground-secondary flex items-center gap-1.5 font-medium">
+                        <Clock className="text-foreground-muted size-3" />
                         <span>{fullHuman}</span>
                       </div>
 
                       <button
                         type="button"
                         onClick={() => setActivityToDelete(act)}
-                        className="size-7 rounded-full flex items-center justify-center text-foreground-muted hover:text-rose-600 hover:bg-rose-500/10 transition cursor-pointer border border-transparent hover:border-rose-500/30"
+                        className="text-foreground-muted flex size-7 cursor-pointer items-center justify-center rounded-full border border-transparent transition hover:border-rose-500/30 hover:bg-rose-500/10 hover:text-rose-600"
                         title="Hapus Rekaman Aktivitas"
                         aria-label="Hapus Rekaman Aktivitas"
                       >
@@ -385,7 +397,7 @@ export function UserActivitiesTable({
             {/* Desktop View: Tabular Grid (Visible on >= 768px) */}
             <div className="hidden md:block">
               {/* Header */}
-              <div className="grid grid-cols-12 gap-3 px-5 py-3.5 bg-muted/60 border-b border-border text-xs font-extrabold uppercase tracking-wider text-foreground-muted select-none">
+              <div className="bg-muted/60 border-border text-foreground-muted grid grid-cols-12 gap-3 border-b px-5 py-3.5 text-xs font-extrabold tracking-wider uppercase select-none">
                 <div className="col-span-3">Pengguna / Akun</div>
                 <div className="col-span-2 text-center">Tipe Aktivitas</div>
                 <div className="col-span-4">Deskripsi Kejadian</div>
@@ -394,24 +406,28 @@ export function UserActivitiesTable({
               </div>
 
               {/* Rows */}
-              <div className="divide-y divide-border/50 text-xs font-semibold">
+              <div className="divide-border/50 divide-y text-xs font-semibold">
                 {activities.map((act) => {
                   const { formattedDate, formattedTime } = formatHumanActivityDate(act.createdAt);
                   return (
                     <div
                       key={act.id}
-                      className="grid grid-cols-12 gap-3 px-5 py-3.5 items-center hover:bg-muted/40 transition-colors min-h-14"
+                      className="hover:bg-muted/40 grid min-h-14 grid-cols-12 items-center gap-3 px-5 py-3.5 transition-colors"
                     >
                       {/* Col 1: Pengguna */}
-                      <div className="col-span-3 flex items-center gap-2.5 min-w-0">
-                        <div className="size-7.5 rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold text-xs shrink-0">
-                          {act.user?.name ? act.user.name.charAt(0).toUpperCase() : <User className="size-3.5" />}
+                      <div className="col-span-3 flex min-w-0 items-center gap-2.5">
+                        <div className="flex size-7.5 shrink-0 items-center justify-center rounded-full bg-rose-500/15 text-xs font-bold text-rose-600 dark:text-rose-400">
+                          {act.user?.name ? (
+                            act.user.name.charAt(0).toUpperCase()
+                          ) : (
+                            <User className="size-3.5" />
+                          )}
                         </div>
                         <div className="min-w-0 flex-1">
-                          <div className="font-bold text-foreground truncate text-xs sm:text-sm">
+                          <div className="text-foreground truncate text-xs font-bold sm:text-sm">
                             {act.user?.name || "Pengguna Tanpa Nama"}
                           </div>
-                          <div className="text-[11px] text-foreground-muted font-mono truncate">
+                          <div className="text-foreground-muted truncate font-mono text-[11px]">
                             {act.user?.email || act.userId}
                           </div>
                         </div>
@@ -423,29 +439,29 @@ export function UserActivitiesTable({
                       </div>
 
                       {/* Col 3: Deskripsi */}
-                      <div className="col-span-4 text-xs font-medium text-foreground-secondary pr-2">
+                      <div className="text-foreground-secondary col-span-4 pr-2 text-xs font-medium">
                         <span className="line-clamp-2 leading-relaxed">
                           {act.description || "Aktivitas tercatat pada sistem."}
                         </span>
                       </div>
 
                       {/* Col 4: Waktu */}
-                      <div className="col-span-2 text-right space-y-0.5">
-                        <div className="font-bold text-foreground text-xs leading-tight">
+                      <div className="col-span-2 space-y-0.5 text-right">
+                        <div className="text-foreground text-xs leading-tight font-bold">
                           {formattedDate}
                         </div>
-                        <div className="flex items-center justify-end gap-1 font-mono text-[11px] text-foreground-muted">
-                          <Clock className="size-3 text-foreground-muted" />
+                        <div className="text-foreground-muted flex items-center justify-end gap-1 font-mono text-[11px]">
+                          <Clock className="text-foreground-muted size-3" />
                           <span>{formattedTime}</span>
                         </div>
                       </div>
 
                       {/* Col 5: Aksi Hapus */}
-                      <div className="col-span-1 flex justify-end items-center">
+                      <div className="col-span-1 flex items-center justify-end">
                         <button
                           type="button"
                           onClick={() => setActivityToDelete(act)}
-                          className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-rose-600 hover:bg-rose-500/10 transition cursor-pointer border border-transparent hover:border-rose-500/30"
+                          className="text-foreground-muted flex size-8 cursor-pointer items-center justify-center rounded-full border border-transparent transition hover:border-rose-500/30 hover:bg-rose-500/10 hover:text-rose-600"
                           title="Hapus Rekaman Aktivitas"
                           aria-label="Hapus Rekaman Aktivitas"
                         >
@@ -462,40 +478,20 @@ export function UserActivitiesTable({
 
         {/* Pagination Footer */}
         {!isLoading && total > 0 && (
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-3.5 border-t border-border bg-muted/20 text-xs font-semibold text-foreground-secondary select-none">
+          <div className="border-border bg-muted/20 text-foreground-secondary flex flex-col justify-between gap-3 border-t px-5 py-3.5 text-xs font-semibold select-none sm:flex-row sm:items-center">
             <div>
-              Menampilkan <span className="font-bold text-foreground">{startItem}</span> -{" "}
-              <span className="font-bold text-foreground">{endItem}</span> dari{" "}
-              <span className="font-bold text-foreground">{total}</span> rekaman aktivitas
+              Menampilkan <span className="text-foreground font-bold">{startItem}</span> -{" "}
+              <span className="text-foreground font-bold">{endItem}</span> dari{" "}
+              <span className="text-foreground font-bold">{total}</span> rekaman aktivitas
             </div>
 
-            <div className="flex items-center gap-2">
-              <span className="text-[11px] text-foreground-muted mr-1">
-                Halaman {page} dari {totalPages}
-              </span>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={onPrevPage}
-                disabled={page <= 1}
-                className="h-8 px-3 rounded-full text-xs font-bold gap-1 border-border hover:border-foreground-muted cursor-pointer disabled:opacity-40"
-              >
-                <ChevronLeft className="size-3.5" />
-                <span>Sebelumnya</span>
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={onNextPage}
-                disabled={page >= totalPages}
-                className="h-8 px-3 rounded-full text-xs font-bold gap-1 border-border hover:border-foreground-muted cursor-pointer disabled:opacity-40"
-              >
-                <span>Berikutnya</span>
-                <ChevronRight className="size-3.5" />
-              </Button>
-            </div>
+            <DataTablePagination
+              page={page}
+              totalPages={totalPages}
+              onPrevPage={onPrevPage}
+              onNextPage={onNextPage}
+              className="mx-0 w-auto"
+            />
           </div>
         )}
       </div>

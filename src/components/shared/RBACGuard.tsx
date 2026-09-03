@@ -10,11 +10,7 @@ interface RBACGuardProps {
   fallback?: React.ReactNode;
 }
 
-export function RBACGuard({
-  children,
-  allowedRoles,
-  fallback = null,
-}: RBACGuardProps) {
+export function RBACGuard({ children, allowedRoles, fallback = null }: RBACGuardProps) {
   const { user, isAuthenticated } = useAuth();
 
   if (!isAuthenticated || !user) {

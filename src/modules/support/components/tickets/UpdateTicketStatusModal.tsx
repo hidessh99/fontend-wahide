@@ -1,13 +1,20 @@
-﻿"use client";
+"use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Ticket, TicketStatus } from "@/modules/support/types/support.types";
 import { supportApi } from "@/modules/support/api/support.api";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { useI18n } from "@/lib/i18n/context";
 import { toast } from "sonner";
 import {
-  X,
   SlidersHorizontal,
   Clock,
   CheckCircle2,
@@ -37,17 +44,7 @@ export function UpdateTicketStatusModal({
   const [confirmChange, setConfirmChange] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Escape key listener
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
-
-  if (!isOpen || !ticket) return null;
+  if (!ticket) return null;
 
   const STATUS_OPTIONS: Array<{
     value: TicketStatus;
@@ -104,142 +101,125 @@ export function UpdateTicketStatusModal({
       toast.success(t("support.statusUpdatedSuccess"));
       onSuccess();
       onClose();
-    } catch {
-      toast.error(t("support.statusUpdateFailed"));
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : t("support.statusUpdatedError");
+      toast.error(msg);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-      <div
-        className="relative w-full max-w-lg bg-surface dark:bg-[#161715] rounded-xl border border-border shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="status-modal-title"
-      >
-        {/* Header Section */}
-        <div className="flex items-center justify-between p-5 border-b border-border bg-muted/30">
-          <div className="flex items-center gap-3">
-            <div className="size-9 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center shrink-0">
-              <SlidersHorizontal className="size-4.5" />
-            </div>
-            <div>
-              <h2 id="status-modal-title" className="text-base font-extrabold text-foreground">
-                {t("support.updateStatusModalTitle")}
-              </h2>
-              <p className="text-xs font-semibold text-foreground-secondary">
-                {t("support.updateStatusModalSubtitle")}
-              </p>
-            </div>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && !isSubmitting && onClose()}>
+      <DialogContent className="border-border bg-surface max-h-[92vh] max-w-lg gap-0 overflow-hidden p-0 dark:bg-[#161715]">
+        {/* Header */}
+        <DialogHeader className="border-border flex flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
+          <div className="dark:text-wise-green flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600">
+            <SlidersHorizontal className="size-5" />
           </div>
-          <button
-            onClick={onClose}
-            className="size-8 rounded-full flex items-center justify-center text-foreground-secondary hover:text-foreground hover:bg-muted transition cursor-pointer"
-            aria-label="Tutup"
-          >
-            <X className="size-4" />
-          </button>
-        </div>
+          <div>
+            <DialogTitle className="text-foreground text-lg font-black tracking-tight sm:text-xl">
+              {t("support.updateStatusTitle")}
+            </DialogTitle>
+            <DialogDescription className="text-foreground-secondary text-xs font-semibold">
+              {t("support.updateStatusDesc")}
+            </DialogDescription>
+          </div>
+        </DialogHeader>
 
-        {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-5 space-y-4 text-xs font-semibold">
-          {/* Target Ticket Overview Summary */}
-          <div className="p-3 rounded-lg border border-border bg-muted/30 space-y-1.5">
-            <div className="flex items-center justify-between">
-              <span className="font-mono text-xs font-bold text-dark-green dark:text-wise-green bg-light-mint dark:bg-wise-green/15 px-2.5 py-0.5 rounded-full border border-wise-green/30">
-                {ticket.ticketNumber}
-              </span>
-              <span className="text-[11px] font-bold text-foreground-muted uppercase">
-                {ticket.category}
-              </span>
-            </div>
-            <p className="font-bold text-foreground text-sm line-clamp-1">
-              {ticket.subject}
-            </p>
-            {ticket.user && (
-              <div className="flex items-center gap-3 text-[11px] text-foreground-secondary pt-1 border-t border-border/50">
-                <div className="flex items-center gap-1">
-                  <User className="size-3 text-wise-green" />
-                  <span className="font-bold text-foreground">{ticket.user.name}</span>
+        {/* Scrollable Form Body */}
+        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+          <div className="flex-1 space-y-4.5 p-5 text-xs sm:p-6">
+            {/* Target Ticket Identity Snippet */}
+            <div className="border-border bg-muted/20 space-y-2 rounded-lg border p-3.5">
+              <div className="flex items-center justify-between">
+                <span className="text-foreground-muted font-mono text-[10px] font-bold uppercase">
+                  ID: #{ticket.id.slice(0, 8)}
+                </span>
+                <span className="border-border bg-surface text-foreground-secondary rounded-full border px-2 py-0.5 font-mono text-[10px] font-bold dark:bg-[#10110e]">
+                  {ticket.category}
+                </span>
+              </div>
+              <h3 className="text-foreground line-clamp-1 text-xs font-bold sm:text-sm">
+                {ticket.subject}
+              </h3>
+              <div className="text-foreground-muted border-border/40 flex items-center gap-3 border-t pt-2 text-[11px]">
+                <div className="flex items-center gap-1 truncate">
+                  <User className="size-3 shrink-0" />
+                  <span className="truncate">{ticket.user?.name || "Pengguna"}</span>
                 </div>
-                <div className="flex items-center gap-1 font-mono">
-                  <Mail className="size-3 text-foreground-muted" />
-                  <span>{ticket.user.email}</span>
+                <div className="flex items-center gap-1 truncate font-mono">
+                  <Mail className="size-3 shrink-0" />
+                  <span className="truncate">{ticket.user?.email || "-"}</span>
                 </div>
               </div>
-            )}
-          </div>
-
-          {/* Status Selection Cards */}
-          <div className="space-y-2">
-            <label className="text-xs font-extrabold text-foreground tracking-wide uppercase">
-              {t("support.targetStatusLabel")}
-            </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              {STATUS_OPTIONS.map((opt) => {
-                const isSelected = selectedStatus === opt.value;
-                const Icon = opt.icon;
-
-                return (
-                  <div
-                    key={opt.value}
-                    onClick={() => setSelectedStatus(opt.value)}
-                    className={`p-3 rounded-lg border transition cursor-pointer select-none relative ${
-                      isSelected
-                        ? opt.borderActiveClass
-                        : "border-border bg-surface dark:bg-[#121310] hover:border-foreground-muted"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between gap-2 mb-1">
-                      <div className="flex items-center gap-1.5">
-                        <span className={`p-1 rounded-full border ${opt.accentClass}`}>
-                          <Icon className="size-3" />
-                        </span>
-                        <span className="font-extrabold text-xs text-foreground">
-                          {opt.label}
-                        </span>
-                      </div>
-                      {isSelected && (
-                        <span className="size-4 rounded-full bg-wise-green text-dark-green flex items-center justify-center">
-                          <Check className="size-2.5 stroke-3" />
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-[11px] text-foreground-secondary leading-relaxed">
-                      {opt.description}
-                    </p>
-                  </div>
-                );
-              })}
             </div>
-          </div>
 
-          {/* Checkbox Dialog Section: Konfirmasi Prosedur Helpdesk */}
-          <div className="pt-2 border-t border-border">
-            <label className="flex items-start gap-2.5 cursor-pointer select-none group">
-              <input
-                type="checkbox"
-                checked={confirmChange}
-                onChange={(e) => setConfirmChange(e.target.checked)}
-                className="mt-0.5 size-4 rounded border-border text-wise-green focus:ring-wise-green cursor-pointer"
-              />
-              <span className="text-xs text-foreground-secondary group-hover:text-foreground transition leading-tight font-bold">
-                {t("support.confirmChangeLabel")}
-              </span>
-            </label>
+            {/* Status Option Grid */}
+            <div className="space-y-2">
+              <label className="text-foreground block text-xs font-bold">
+                {t("support.selectNewStatus")}
+              </label>
+              <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                {STATUS_OPTIONS.map((opt) => {
+                  const isSelected = selectedStatus === opt.value;
+                  const Icon = opt.icon;
+
+                  return (
+                    <div
+                      key={opt.value}
+                      onClick={() => setSelectedStatus(opt.value)}
+                      className={`border-border bg-surface hover:border-foreground-muted relative flex cursor-pointer flex-col justify-between rounded-lg border p-3.5 transition select-none dark:bg-[#10110e] ${
+                        isSelected ? opt.borderActiveClass : ""
+                      }`}
+                    >
+                      <div className="mb-2 flex items-center justify-between">
+                        <span
+                          className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-xs font-black ${opt.accentClass}`}
+                        >
+                          <Icon className="size-3" />
+                          <span>{opt.label}</span>
+                        </span>
+                        {isSelected && (
+                          <div className="dark:bg-wise-green flex size-4 items-center justify-center rounded-full bg-emerald-600 text-white">
+                            <Check className="size-2.5 stroke-3" />
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-foreground-secondary text-[11px] leading-relaxed">
+                        {opt.description}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Checkbox Dialog Section: Konfirmasi Prosedur Helpdesk */}
+            <div className="border-border border-t pt-2">
+              <label className="group flex cursor-pointer items-start gap-2.5 select-none">
+                <input
+                  type="checkbox"
+                  checked={confirmChange}
+                  onChange={(e) => setConfirmChange(e.target.checked)}
+                  className="border-border dark:text-wise-green dark:focus:ring-wise-green mt-0.5 size-4 cursor-pointer rounded text-emerald-600 focus:ring-emerald-500"
+                />
+                <span className="text-foreground-secondary group-hover:text-foreground text-xs leading-tight font-bold transition">
+                  {t("support.confirmChangeLabel")}
+                </span>
+              </label>
+            </div>
           </div>
 
           {/* Footer Actions */}
-          <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-border">
+          <DialogFooter className="border-border m-0 flex flex-row items-center justify-end gap-2.5 rounded-none border-t bg-transparent p-4 sm:p-5">
             <Button
               type="button"
               variant="outline"
               size="sm"
               onClick={onClose}
               disabled={isSubmitting}
-              className="rounded-full px-4 text-xs font-bold border-border hover:border-foreground-muted"
+              className="border-border hover:border-foreground-muted rounded-full px-4 text-xs font-bold"
             >
               {t("support.cancel")}
             </Button>
@@ -259,9 +239,9 @@ export function UpdateTicketStatusModal({
                 <span>{t("support.saveStatusBtn")}</span>
               )}
             </Button>
-          </div>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

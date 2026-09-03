@@ -1,6 +1,11 @@
 import { httpClient } from "@/lib/api/http-client";
 import { env } from "@/lib/config/env";
-import { Device, CreateDeviceInput, PairDeviceResponse, PairPhoneResponse } from "../types/whatsapp.types";
+import {
+  Device,
+  CreateDeviceInput,
+  PairDeviceResponse,
+  PairPhoneResponse,
+} from "../types/whatsapp.types";
 
 const WHATSAPP_BASE = env.NEXT_PUBLIC_WHATSAPP_API_URL;
 
@@ -16,7 +21,7 @@ const mapBackendDevice = (d: any): Device => {
   } else {
     mappedStatus = "DISCONNECTED";
   }
-  
+
   // Extract clean phone number from JID (e.g., "6282151743688:80@s.whatsapp.net" -> "6282151743688")
   let phone = d.phone || null;
   const rawJid = d.jid || d.j_id || "";
@@ -25,7 +30,7 @@ const mapBackendDevice = (d: any): Device => {
   }
 
   const pushName = d.push_name || d.pushName || d.name || "WhatsApp Device";
-  
+
   return {
     ...d,
     push_name: pushName,
@@ -37,13 +42,14 @@ const mapBackendDevice = (d: any): Device => {
 };
 
 export const whatsappApi = {
-  getDevices: async (): Promise<Device[]> => {
+  getDevices: async (signal?: AbortSignal): Promise<Device[]> => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const res = await httpClient.get<any>(`${WHATSAPP_BASE}/whatsapp/devices`);
+      const res = await httpClient.get<any>(`${WHATSAPP_BASE}/whatsapp/devices`, { signal });
       const data = res.payload || (Array.isArray(res) ? res : []);
       return data.map(mapBackendDevice);
-    } catch {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") throw err;
       // Fallback empty array on initial connection failure
       return [];
     }
@@ -59,17 +65,21 @@ export const whatsappApi = {
   },
 
   pairDevice: async (id: string): Promise<PairDeviceResponse> => {
-    const res = await httpClient.post<PairDeviceResponse>(`${WHATSAPP_BASE}/whatsapp/devices/${id}/pair`);
+    const res = await httpClient.post<PairDeviceResponse>(
+      `${WHATSAPP_BASE}/whatsapp/devices/${id}/pair`
+    );
     return res.payload || (res as unknown as PairDeviceResponse);
   },
 
   pairPhone: async (id: string, phone: string): Promise<PairPhoneResponse> => {
-    const res = await httpClient.post<PairPhoneResponse>(`${WHATSAPP_BASE}/whatsapp/devices/${id}/pair-phone`, {
-      phone,
-    });
+    const res = await httpClient.post<PairPhoneResponse>(
+      `${WHATSAPP_BASE}/whatsapp/devices/${id}/pair-phone`,
+      {
+        phone,
+      }
+    );
     return res.payload || (res as unknown as PairPhoneResponse);
   },
-
 
   deleteDevice: async (id: string): Promise<{ success: boolean; message: string }> => {
     const res = await httpClient.delete(`${WHATSAPP_BASE}/whatsapp/devices/${id}`);
@@ -100,7 +110,8 @@ export const whatsappApi = {
       `${WHATSAPP_BASE}/whatsapp/messages/send`,
       payload
     );
-    return res.payload || (res as unknown as { message_id: string; status: string; sent_at: string });
+    return (
+      res.payload || (res as unknown as { message_id: string; status: string; sent_at: string })
+    );
   },
 };
-

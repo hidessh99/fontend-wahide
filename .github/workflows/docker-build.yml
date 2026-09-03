@@ -60,7 +60,7 @@ jobs:
           name: Release v${{ github.run_number }}
           body: |
             Automated Next.js 16 Docker build release for commit ${{ github.sha }}
-            
+
             Docker Image:
             - ghcr.io/${{ github.repository_owner }}/fontwahide:latest
           draft: false
@@ -72,8 +72,8 @@ jobs:
         uses: actions/delete-package-versions@v5
         continue-on-error: true
         with:
-          package-name: 'fontwahide'
-          package-type: 'container'
+          package-name: "fontwahide"
+          package-type: "container"
           min-versions-to-keep: 3
-          delete-only-untagged-versions: 'true'
+          delete-only-untagged-versions: "true"
           token: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}

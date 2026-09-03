@@ -1,15 +1,16 @@
-﻿"use client";
+"use client";
 
-import React, { useEffect } from "react";
 import { Invoice } from "@/modules/finance/types/finance.types";
 import { Button } from "@/components/ui/button";
-import { useI18n } from "@/lib/i18n/context";
 import {
-  X,
-  Printer,
-  CheckCircle2,
-  Receipt,
-} from "lucide-react";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { useI18n } from "@/lib/i18n/context";
+import { Printer, CheckCircle2, Receipt } from "lucide-react";
 
 interface InvoiceReceiptModalProps {
   isOpen: boolean;
@@ -17,24 +18,10 @@ interface InvoiceReceiptModalProps {
   invoice: Invoice | null;
 }
 
-export function InvoiceReceiptModal({
-  isOpen,
-  onClose,
-  invoice,
-}: InvoiceReceiptModalProps) {
+export function InvoiceReceiptModal({ isOpen, onClose, invoice }: InvoiceReceiptModalProps) {
   const { t } = useI18n();
 
-  // Dismiss on Escape key
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
-
-  if (!isOpen || !invoice) return null;
+  if (!invoice) return null;
 
   const handlePrint = () => {
     if (typeof window !== "undefined") {
@@ -63,129 +50,102 @@ export function InvoiceReceiptModal({
     : formattedDate;
 
   return (
-    <div
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-      className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-sm p-3 sm:p-6 flex min-h-full items-center justify-center animate-in fade-in print:p-0 print:bg-white"
-    >
-      <div className="relative w-full max-w-xl max-h-[90vh] flex flex-col rounded-md border border-border bg-surface dark:bg-[#161715] shadow-2xl overflow-hidden animate-in zoom-in-95 print:border-none print:shadow-none print:max-h-full">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="border-border bg-surface max-h-[90vh] max-w-xl gap-0 overflow-hidden p-0 dark:bg-[#161715] print:max-h-full print:border-none print:shadow-none">
         {/* Sticky Modal Header (Hidden on Print) */}
-        <div className="flex items-center justify-between p-4 sm:p-5 border-b border-border shrink-0 print:hidden">
-          <div className="flex items-center gap-2.5">
-            <div className="size-8 rounded-full bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center">
-              <Receipt className="size-4" />
-            </div>
-            <div>
-              <h2 className="text-sm sm:text-base font-black text-foreground">
-                {t("billing.officialInvoiceTitle")}
-              </h2>
-              <span className="text-[11px] font-mono text-foreground-muted block">
-                {invoice.invoiceNumber}
-              </span>
-            </div>
+        <DialogHeader className="border-border flex flex-row items-center gap-2.5 border-b p-4 text-left sm:p-5 print:hidden">
+          <div className="bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex size-8 items-center justify-center rounded-full">
+            <Receipt className="size-4" />
           </div>
+          <div>
+            <DialogTitle className="text-foreground text-sm font-black sm:text-base">
+              {t("billing.officialInvoiceTitle")}
+            </DialogTitle>
+            <span className="text-foreground-muted block font-mono text-[11px]">
+              {invoice.invoiceNumber}
+            </span>
+          </div>
+        </DialogHeader>
 
-          <button
-            type="button"
-            onClick={onClose}
-            className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
-            aria-label="Tutup"
-          >
-            <X className="size-4" />
-          </button>
-        </div>
-
-        {/* Printable Official Invoice Body */}
-        <div className="p-6 sm:p-8 overflow-y-auto space-y-6 flex-1 text-foreground print:p-0">
-          {/* Company Header & Brand */}
-          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-border pb-6">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <span className="font-black text-xl tracking-tight text-foreground">
-                  WAHIDE
-                </span>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green border border-wise-green/30">
-                  Enterprise
-                </span>
-              </div>
-              <p className="text-xs font-semibold text-foreground-secondary">
-                Infrastruktur WhatsApp Gateway B2B Multi-Tenant
+        {/* Scrollable Printable Receipt Content */}
+        <div className="flex-1 space-y-6 overflow-y-auto p-4 sm:p-6 print:overflow-visible print:p-0">
+          {/* Top Brand Banner */}
+          <div className="border-border/60 flex items-start justify-between border-b pb-4">
+            <div>
+              <span className="text-foreground text-base font-black tracking-tight sm:text-lg">
+                Wahide Enterprise
+              </span>
+              <p className="text-foreground-secondary text-xs">
+                Platform Gateway WhatsApp Skala Tinggi
               </p>
-              <p className="text-[11px] text-foreground-muted">
-                support@wahide.com • https://wahide.com
+              <p className="text-foreground-muted font-mono text-[11px]">
+                PT Wahide Global Mandiri
               </p>
             </div>
-
-            {/* Paid Stamp / Badge */}
-            <div className="flex flex-col items-start sm:items-end">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 text-xs font-black tracking-wider uppercase">
+            <div className="text-right">
+              <div className="bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green border-wise-green/30 inline-flex items-center gap-1.5 rounded-full border px-3 py-0.5 text-xs font-bold">
                 <CheckCircle2 className="size-3.5" />
-                <span>LUNAS / PAID</span>
+                <span>{t("billing.statusPaid")}</span>
               </div>
-              <span className="text-[10px] text-foreground-muted font-mono mt-1">
-                Tgl: {paidDate}
-              </span>
+              <p className="text-foreground-muted mt-1 font-mono text-[11px]">Tgl: {paidDate}</p>
             </div>
           </div>
 
           {/* Invoice Metadata Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
+          <div className="grid grid-cols-2 gap-4 text-xs sm:grid-cols-3">
             <div className="space-y-0.5">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-foreground-muted block">
+              <span className="text-foreground-muted block text-[10px] font-bold tracking-wider uppercase">
                 No. Faktur
               </span>
-              <span className="font-mono font-bold text-foreground block">
+              <span className="text-foreground block font-mono font-bold">
                 {invoice.invoiceNumber}
               </span>
             </div>
 
             <div className="space-y-0.5">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-foreground-muted block">
+              <span className="text-foreground-muted block text-[10px] font-bold tracking-wider uppercase">
                 Tanggal Terbit
               </span>
-              <span className="font-semibold text-foreground block">
-                {formattedDate}
-              </span>
+              <span className="text-foreground block font-semibold">{formattedDate}</span>
             </div>
 
-            <div className="space-y-0.5 col-span-2 sm:col-span-1">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-foreground-muted block">
+            <div className="col-span-2 space-y-0.5 sm:col-span-1">
+              <span className="text-foreground-muted block text-[10px] font-bold tracking-wider uppercase">
                 Metode Pembayaran
               </span>
-              <span className="font-semibold text-foreground block">
+              <span className="text-foreground block font-semibold">
                 {invoice.paymentMethod || "QRIS Instan"}
               </span>
             </div>
           </div>
 
           {/* Line Items Table */}
-          <div className="rounded-md border border-border overflow-hidden">
-            <div className="grid grid-cols-12 gap-2 bg-muted/60 p-3 text-[11px] font-bold uppercase tracking-wider text-foreground-muted border-b border-border">
+          <div className="border-border overflow-hidden rounded-md border">
+            <div className="bg-muted/60 text-foreground-muted border-border grid grid-cols-12 gap-2 border-b p-3 text-[11px] font-bold tracking-wider uppercase">
               <div className="col-span-8">Deskripsi Layanan</div>
               <div className="col-span-4 text-right">Jumlah</div>
             </div>
 
-            <div className="p-3 text-xs space-y-2">
-              <div className="grid grid-cols-12 gap-2 items-center">
-                <div className="col-span-8 font-semibold text-foreground">
+            <div className="space-y-2 p-3 text-xs">
+              <div className="grid grid-cols-12 items-center gap-2">
+                <div className="text-foreground col-span-8 font-semibold">
                   {invoice.description || "Layanan WhatsApp Gateway"}
                 </div>
-                <div className="col-span-4 text-right font-mono font-bold text-foreground">
+                <div className="text-foreground col-span-4 text-right font-mono font-bold">
                   Rp {safeAmount.toLocaleString("id-ID")}
                 </div>
               </div>
             </div>
 
             {/* Total Section */}
-            <div className="bg-muted/30 p-3 border-t border-border space-y-1.5 text-xs">
-              <div className="flex justify-between text-foreground-secondary text-[11px]">
+            <div className="bg-muted/30 border-border space-y-1.5 border-t p-3 text-xs">
+              <div className="text-foreground-secondary flex justify-between text-[11px]">
                 <span>Biaya Transaksi / Gateway</span>
                 <span className="font-mono">Rp 0</span>
               </div>
-              <div className="flex justify-between font-black text-sm text-foreground pt-1 border-t border-border/50">
+              <div className="text-foreground border-border/50 flex justify-between border-t pt-1 text-sm font-black">
                 <span>Total Pembayaran</span>
-                <span className="font-mono text-dark-green dark:text-wise-green">
+                <span className="text-dark-green dark:text-wise-green font-mono">
                   Rp {safeAmount.toLocaleString("id-ID")}
                 </span>
               </div>
@@ -193,22 +153,24 @@ export function InvoiceReceiptModal({
           </div>
 
           {/* Official Footnote */}
-          <div className="p-3.5 rounded-md bg-muted/30 border border-border/60 text-[11px] text-foreground-secondary space-y-1">
-            <p className="font-bold text-foreground">Catatan Resmi:</p>
+          <div className="bg-muted/30 border-border/60 text-foreground-secondary space-y-1 rounded-md border p-3.5 text-[11px]">
+            <p className="text-foreground font-bold">Catatan Resmi:</p>
             <p>
-              Faktur ini merupakan bukti pembayaran elektronik yang sah dan diterbitkan secara otomatis oleh sistem Wahide Enterprise. Saldo deposit telah dikreditkan ke akun organisasi Anda secara real-time.
+              Faktur ini merupakan bukti pembayaran elektronik yang sah dan diterbitkan secara
+              otomatis oleh sistem Wahide Enterprise. Saldo deposit telah dikreditkan ke akun
+              organisasi Anda secara real-time.
             </p>
           </div>
         </div>
 
         {/* Sticky Footer (Hidden on Print) */}
-        <div className="p-4 sm:p-5 border-t border-border flex items-center justify-between gap-3 shrink-0 bg-surface/50 print:hidden">
+        <DialogFooter className="border-border bg-surface/50 m-0 flex shrink-0 flex-row items-center justify-between gap-3 rounded-none border-t p-4 sm:p-5 print:hidden">
           <Button
             type="button"
             variant="outline"
             size="sm"
             onClick={onClose}
-            className="rounded-full text-xs font-bold px-5 border-border hover:border-foreground-muted cursor-pointer"
+            className="border-border hover:border-foreground-muted cursor-pointer rounded-full px-5 text-xs font-bold"
           >
             {t("billing.cancel")}
           </Button>
@@ -218,13 +180,13 @@ export function InvoiceReceiptModal({
             variant="primaryPill"
             size="sm"
             onClick={handlePrint}
-            className="rounded-full text-xs font-bold gap-1.5 px-6 shadow-sm cursor-pointer"
+            className="cursor-pointer gap-1.5 rounded-full px-6 text-xs font-bold shadow-sm"
           >
             <Printer className="size-3.5" />
             <span>{t("billing.printReceipt")}</span>
           </Button>
-        </div>
-      </div>
-    </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

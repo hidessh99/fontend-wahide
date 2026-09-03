@@ -48,9 +48,7 @@ export function proxy(request: NextRequest) {
     }
 
     const isSuperAdmin =
-      userRole === "SUPERADMIN" ||
-      userRole === "SUPER_ADMIN" ||
-      userRole === "ADMIN";
+      userRole === "SUPERADMIN" || userRole === "SUPER_ADMIN" || userRole === "ADMIN";
 
     if (!isSuperAdmin) {
       return NextResponse.redirect(new URL("/dashboard", request.url));

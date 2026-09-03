@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ContactsView } from "@/components/dashboard/ContactsView";
+import { ContactsView } from "@/modules/contact/views/ContactsView";
 
 export const metadata: Metadata = {
   title: "Buku Kontak & Segmentasi Audiens",

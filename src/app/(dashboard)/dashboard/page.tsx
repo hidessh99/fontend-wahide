@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { DashboardOverviewView } from "@/components/dashboard/DashboardOverviewView";
+import { DashboardOverviewView } from "@/modules/overview/views/DashboardOverviewView";
 
 export const metadata: Metadata = {
   title: "Ringkasan Bisnis & Status Gateway",

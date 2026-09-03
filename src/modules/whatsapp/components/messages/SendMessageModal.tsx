@@ -1,11 +1,19 @@
-﻿"use client";
+"use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Device } from "@/modules/whatsapp/types/whatsapp.types";
 import { whatsappApi } from "@/modules/whatsapp/api/whatsapp.api";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { X, Send, Loader2 } from "lucide-react";
+import { Send, Loader2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n/context";
 
 interface SendMessageModalProps {
@@ -14,11 +22,7 @@ interface SendMessageModalProps {
   onClose: () => void;
 }
 
-export function SendMessageModal({
-  devices,
-  isOpen,
-  onClose,
-}: SendMessageModalProps) {
+export function SendMessageModal({ devices, isOpen, onClose }: SendMessageModalProps) {
   const { t } = useI18n();
   const connectedDevices = devices.filter((d) => d.status === "CONNECTED");
   const [userSelectedDeviceId, setUserSelectedDeviceId] = useState<string>("");
@@ -31,18 +35,6 @@ export function SendMessageModal({
     userSelectedDeviceId && connectedDevices.some((d) => d.id === userSelectedDeviceId)
       ? userSelectedDeviceId
       : connectedDevices[0]?.id || "";
-
-  // Escape key to dismiss
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
-
-  if (!isOpen) return null;
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,64 +55,48 @@ export function SendMessageModal({
         phone: recipient.trim(),
         message: message.trim(),
       });
-      toast.success(t("whatsapp.sendSuccess"));
+      toast.success(t("whatsapp.sendSuccess"), { id: "whatsapp-fast-send" });
       setRecipient("");
       setMessage("");
       onClose();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : t("whatsapp.qrError");
-      toast.error(msg);
+      toast.error(msg, { id: "whatsapp-fast-send" });
     } finally {
       setIsSending(false);
     }
   };
 
   return (
-    <div
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-      className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-sm p-3 sm:p-6 flex min-h-full items-center justify-center animate-in fade-in"
-    >
-      <div className="relative w-full max-w-lg max-h-[90vh] flex flex-col rounded-md border border-border bg-surface dark:bg-[#161715] shadow-2xl overflow-hidden animate-in zoom-in-95">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && !isSending && onClose()}>
+      <DialogContent className="border-border bg-surface max-h-[90vh] max-w-lg gap-0 overflow-hidden p-0 dark:bg-[#161715]">
         {/* Sticky Header */}
-        <div className="flex items-start justify-between p-5 sm:p-6 pb-4 border-b border-border shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="size-10 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center shrink-0">
-              <Send className="size-5" />
-            </div>
-            <div>
-              <h2 className="text-lg sm:text-xl font-black text-foreground tracking-tight">
-                {t("whatsapp.fastSendTitle")}
-              </h2>
-              <p className="text-xs font-semibold text-foreground-secondary">
-                {t("whatsapp.fastSendSubtitle")}
-              </p>
-            </div>
+        <DialogHeader className="border-border flex flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
+          <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
+            <Send className="size-5" />
           </div>
-
-          <button
-            type="button"
-            onClick={onClose}
-            className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer shrink-0"
-            aria-label={t("whatsapp.qrClose")}
-          >
-            <X className="size-4" />
-          </button>
-        </div>
+          <div>
+            <DialogTitle className="text-foreground text-lg font-black tracking-tight sm:text-xl">
+              {t("whatsapp.fastSendTitle")}
+            </DialogTitle>
+            <DialogDescription className="text-foreground-secondary text-xs font-semibold">
+              {t("whatsapp.fastSendSubtitle")}
+            </DialogDescription>
+          </div>
+        </DialogHeader>
 
         {/* Scrollable Form Body */}
-        <form onSubmit={handleSend} className="flex-1 overflow-y-auto flex flex-col min-h-0">
-          <div className="p-5 sm:p-6 space-y-4 flex-1">
+        <form onSubmit={handleSend} className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+          <div className="flex-1 space-y-4 p-5 sm:p-6">
             {/* Select Device */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                 {t("whatsapp.selectSenderDevice")}
               </label>
               <select
                 value={activeDeviceId}
                 onChange={(e) => setUserSelectedDeviceId(e.target.value)}
-                className="w-full h-10 px-3 rounded-md bg-surface dark:bg-[#10110e] text-foreground text-xs font-semibold border border-border outline-none focus:border-wise-green"
+                className="bg-surface text-foreground border-border focus:border-wise-green h-10 w-full rounded-md border px-3 text-xs font-semibold outline-none dark:bg-[#10110e]"
               >
                 {connectedDevices.length === 0 ? (
                   <option value="">{t("whatsapp.noConnectedDevices")}</option>
@@ -136,25 +112,25 @@ export function SendMessageModal({
 
             {/* Recipient Phone */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                 {t("whatsapp.recipientPhoneLabel")}
               </label>
               <input
-                type="text"
+                type="tel"
                 value={recipient}
                 onChange={(e) => setRecipient(e.target.value)}
-                placeholder={t("whatsapp.recipientPhonePlaceholder")}
-                className="w-full h-10 px-3 rounded-md bg-surface dark:bg-[#10110e] text-foreground text-xs font-semibold border border-border outline-none focus:border-wise-green"
+                placeholder="6281234567890"
+                className="bg-surface text-foreground border-border focus:border-wise-green h-10 w-full rounded-md border px-3 font-mono text-xs font-semibold outline-none dark:bg-[#10110e]"
                 required
               />
-              <p className="text-[11px] text-foreground-muted mt-1">
+              <span className="text-foreground-muted mt-1 block text-[11px]">
                 {t("whatsapp.recipientPhoneHint")}
-              </p>
+              </span>
             </div>
 
-            {/* Message Content */}
+            {/* Message Body */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                 {t("whatsapp.messageTextLabel")}
               </label>
               <textarea
@@ -162,21 +138,21 @@ export function SendMessageModal({
                 onChange={(e) => setMessage(e.target.value)}
                 rows={4}
                 placeholder={t("whatsapp.messageTextPlaceholder")}
-                className="w-full p-3 rounded-md bg-surface dark:bg-[#10110e] text-foreground text-xs font-semibold border border-border outline-none focus:border-wise-green resize-none"
+                className="bg-surface text-foreground border-border focus:border-wise-green w-full resize-none rounded-md border p-3 text-xs font-semibold outline-none dark:bg-[#10110e]"
                 required
               />
             </div>
           </div>
 
           {/* Sticky Footer */}
-          <div className="p-4 sm:p-6 pt-3 border-t border-border/80 bg-surface/90 dark:bg-[#161715]/90 backdrop-blur-sm flex items-center justify-end gap-2.5 shrink-0">
+          <DialogFooter className="border-border/80 bg-surface/90 m-0 flex shrink-0 flex-row items-center justify-end gap-2.5 rounded-none border-t p-4 pt-3 backdrop-blur-sm sm:p-6 dark:bg-[#161715]/90">
             <Button
               type="button"
               variant="outline"
               size="sm"
               onClick={onClose}
               disabled={isSending}
-              className="rounded-full text-xs font-bold px-5 border-border hover:border-foreground-muted cursor-pointer"
+              className="border-border hover:border-foreground-muted cursor-pointer rounded-full px-5 text-xs font-bold"
             >
               {t("whatsapp.cancel")}
             </Button>
@@ -185,7 +161,7 @@ export function SendMessageModal({
               variant="primaryPill"
               size="sm"
               disabled={isSending || connectedDevices.length === 0}
-              className="rounded-full text-xs font-bold gap-2 px-6 shadow-sm cursor-pointer"
+              className="cursor-pointer gap-2 rounded-full px-6 text-xs font-bold shadow-sm"
             >
               {isSending ? (
                 <>
@@ -199,9 +175,9 @@ export function SendMessageModal({
                 </>
               )}
             </Button>
-          </div>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

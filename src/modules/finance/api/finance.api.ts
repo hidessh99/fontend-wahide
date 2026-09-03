@@ -1,6 +1,15 @@
 import { httpClient } from "@/lib/api/http-client";
 import { env } from "@/lib/config/env";
-import { Invoice, TenantBalance, CreateTopUpInput, InvoiceStatus, PaymentMethod, GetInvoicesParams, InvoiceListResponse } from "../types/finance.types";
+import {
+  Invoice,
+  TenantBalance,
+  CreateTopUpInput,
+  InvoiceStatus,
+  PaymentMethod,
+  GetInvoicesParams,
+  InvoiceListResponse,
+} from "../types/finance.types";
+import { userApi } from "@/modules/iam/api/user.api";
 
 const BILLING_BASE = env.NEXT_PUBLIC_FINANCE_API_URL || env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -12,13 +21,23 @@ export function normalizeInvoice(raw: Record<string, unknown>): Invoice {
     statusStr === "PAID" || statusStr === "SUCCESS" || statusStr === "COMPLETED"
       ? "PAID"
       : statusStr === "EXPIRED" || statusStr === "CANCELLED"
-      ? "EXPIRED"
-      : "PENDING";
+        ? "EXPIRED"
+        : "PENDING";
 
   const amount = Number(raw.amount ?? raw.total_price ?? raw.gross_amount ?? raw.price ?? 0);
-  const invoiceNumber = String(raw.invoiceNumber || raw.invoice_number || raw.ref || raw.id || `INV/2026/08/WAH-${Date.now().toString().slice(-4)}`);
-  const description = String(raw.description || raw.title || `Top-Up Saldo Deposit Rp ${amount.toLocaleString("id-ID")}`);
-  const paymentMethod = String(raw.paymentMethod || raw.payment_method || raw.method || "QRIS") as PaymentMethod;
+  const invoiceNumber = String(
+    raw.invoiceNumber ||
+      raw.invoice_number ||
+      raw.ref ||
+      raw.id ||
+      `INV/2026/08/WAH-${Date.now().toString().slice(-4)}`
+  );
+  const description = String(
+    raw.description || raw.title || `Top-Up Saldo Deposit Rp ${amount.toLocaleString("id-ID")}`
+  );
+  const paymentMethod = String(
+    raw.paymentMethod || raw.payment_method || raw.method || "QRIS"
+  ) as PaymentMethod;
 
   const rawUrl =
     raw.checkout_url ||
@@ -38,7 +57,8 @@ export function normalizeInvoice(raw: Record<string, unknown>): Invoice {
     raw.url;
 
   const paymentUrl = rawUrl ? String(rawUrl) : undefined;
-  const invoiceUrl = raw.invoiceUrl || raw.invoice_url ? String(raw.invoiceUrl || raw.invoice_url) : paymentUrl;
+  const invoiceUrl =
+    raw.invoiceUrl || raw.invoice_url ? String(raw.invoiceUrl || raw.invoice_url) : paymentUrl;
   const createdAt = String(raw.createdAt || raw.created_at || new Date().toISOString());
   const paidAt = raw.paidAt || raw.paid_at ? String(raw.paidAt || raw.paid_at) : undefined;
 
@@ -67,15 +87,21 @@ export function normalizeBalance(raw: Record<string, unknown> | null | undefined
   return {
     amount: Number(raw.amount ?? raw.balance ?? raw.saldo ?? 0),
     currency: String(raw.currency || "IDR"),
-    lastTopUpAt: raw.lastTopUpAt || raw.last_top_up_at ? String(raw.lastTopUpAt || raw.last_top_up_at) : undefined,
+    lastTopUpAt:
+      raw.lastTopUpAt || raw.last_top_up_at
+        ? String(raw.lastTopUpAt || raw.last_top_up_at)
+        : undefined,
   };
 }
 
 export const financeApi = {
   getBalance: async (): Promise<TenantBalance> => {
     try {
-      const res = await httpClient.get<Record<string, unknown>>(`${BILLING_BASE}/billing/balance`);
-      return normalizeBalance(res.payload);
+      const userProfile = await userApi.getProfile();
+      return {
+        amount: Number(userProfile.balance ?? 0),
+        currency: "IDR",
+      };
     } catch {
       return normalizeBalance(null);
     }
@@ -95,14 +121,18 @@ export const financeApi = {
         query.set("status", params.status);
       }
       const queryString = `?${query.toString()}`;
-      const res = await httpClient.get<Record<string, unknown>[]>(`${BILLING_BASE}/billing/invoices${queryString}`);
+      const res = await httpClient.get<Record<string, unknown>[]>(
+        `${BILLING_BASE}/billing/invoices${queryString}`
+      );
 
       const rawList = res.payload || (Array.isArray(res) ? res : []);
-      const invoices = Array.isArray(rawList) && rawList.length > 0
-        ? rawList.map((item) => normalizeInvoice(item as Record<string, unknown>))
-        : [];
+      const invoices =
+        Array.isArray(rawList) && rawList.length > 0
+          ? rawList.map((item) => normalizeInvoice(item as Record<string, unknown>))
+          : [];
 
-      const addInfo = res.additional_info as { total?: number; page?: number; size?: number } | undefined;
+      const addInfo = res.additional_info as
+        { total?: number; page?: number; size?: number } | undefined;
       const total = typeof addInfo?.total === "number" ? addInfo.total : invoices.length;
       const resPage = typeof addInfo?.page === "number" ? addInfo.page : page;
       const resSize = typeof addInfo?.size === "number" ? addInfo.size : pageSize;
@@ -123,7 +153,9 @@ export const financeApi = {
     }
   },
 
-  createTopUp: async (payload: CreateTopUpInput): Promise<{ invoiceUrl?: string; invoice: Invoice }> => {
+  createTopUp: async (
+    payload: CreateTopUpInput
+  ): Promise<{ invoiceUrl?: string; invoice: Invoice }> => {
     const idempotencyKey =
       typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
         ? `topup_${crypto.randomUUID()}`
@@ -161,7 +193,9 @@ export const financeApi = {
       data.url;
 
     const invoiceUrl = rawUrl ? String(rawUrl) : undefined;
-    const rawInvoice = (data.invoice && typeof data.invoice === "object" ? data.invoice : data) as Record<string, unknown>;
+    const rawInvoice = (
+      data.invoice && typeof data.invoice === "object" ? data.invoice : data
+    ) as Record<string, unknown>;
 
     const invoice = normalizeInvoice({
       ...rawInvoice,

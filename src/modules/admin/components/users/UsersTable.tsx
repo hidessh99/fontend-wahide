@@ -1,11 +1,25 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
-import { UserItem, AdjustBalanceInput } from "@/modules/admin/types/admin.types";
+import { UserItem, AdjustBalanceInput, UpdateUserInput } from "@/modules/admin/types/admin.types";
 import { AdjustBalanceModal } from "./AdjustBalanceModal";
+import { EditUserModal } from "./EditUserModal";
 import { Button } from "@/components/ui/button";
-import { useI18n } from "@/lib/i18n/context";
-import { Search, X, RefreshCw, Sliders, CheckCircle2, ShieldAlert, ChevronLeft, ChevronRight } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty";
+import { SearchInput } from "@/components/ui/search-input";
+import { DataTablePagination } from "@/components/ui/pagination";
+import {
+  RefreshCw,
+  Sliders,
+  Edit,
+  CheckCircle2,
+  ShieldAlert,
+  Phone,
+  Mail,
+  User,
+  Loader2,
+} from "lucide-react";
 
 interface UsersTableProps {
   users: UserItem[];
@@ -13,16 +27,35 @@ interface UsersTableProps {
   activeSearch: string;
   onSearch: (val: string) => void;
   onClearSearch: () => void;
-  planFilter: string;
-  onPlanFilterChange: (val: string) => void;
+  roleFilter: string;
+  onRoleFilterChange: (val: string) => void;
+  statusFilter: string;
+  onStatusFilterChange: (val: string) => void;
   page?: number;
   pageSize?: number;
   total?: number;
   totalPages?: number;
+  onPageChange?: (page: number) => void;
+  onPageSizeChange?: (size: number) => void;
   onPrevPage?: () => void;
   onNextPage?: () => void;
   onRefresh: () => void;
   onAdjustBalance: (data: AdjustBalanceInput) => Promise<unknown>;
+  onUpdateUser: (userId: string, data: UpdateUserInput) => Promise<unknown>;
+}
+
+function getRoleBadge(role: string) {
+  const upper = (role || "").toUpperCase();
+  if (upper === "SUPER_ADMIN" || upper === "ADMIN") {
+    return <Badge variant="danger">Super Admin</Badge>;
+  }
+  if (upper === "SELLER") {
+    return <Badge variant="success">Seller</Badge>;
+  }
+  if (upper === "AGENT") {
+    return <Badge variant="info">CS Agent</Badge>;
+  }
+  return <Badge variant="neutral">{role || "User"}</Badge>;
 }
 
 export function UsersTable({
@@ -31,30 +64,36 @@ export function UsersTable({
   activeSearch,
   onSearch,
   onClearSearch,
-  planFilter,
-  onPlanFilterChange,
+  roleFilter,
+  onRoleFilterChange,
+  statusFilter,
+  onStatusFilterChange,
   page = 1,
   pageSize = 10,
   total = 0,
   totalPages = 1,
+  onPageChange,
+  onPageSizeChange,
   onPrevPage,
   onNextPage,
   onRefresh,
   onAdjustBalance,
+  onUpdateUser,
 }: UsersTableProps) {
-  const { t } = useI18n();
   const [searchInput, setSearchInput] = useState("");
-  const [selectedUser, setSelectedUser] = useState<UserItem | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUserForAdjust, setSelectedUserForAdjust] = useState<UserItem | null>(null);
+  const [selectedUserForEdit, setSelectedUserForEdit] = useState<UserItem | null>(null);
+  const [isAdjustModalOpen, setIsAdjustModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const handleOpenAdjust = (user: UserItem) => {
-    setSelectedUser(user);
-    setIsModalOpen(true);
+    setSelectedUserForAdjust(user);
+    setIsAdjustModalOpen(true);
   };
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSearch(searchInput);
+  const handleOpenEdit = (user: UserItem) => {
+    setSelectedUserForEdit(user);
+    setIsEditModalOpen(true);
   };
 
   const handleResetSearch = () => {
@@ -66,64 +105,53 @@ export function UsersTable({
   const endItem = total > 0 ? Math.min(page * pageSize, total) : 0;
 
   return (
-    <div className="space-y-6">
-      {/* Header & Filter Row */}
-      <div className="space-y-3 sm:space-y-4 p-3 sm:p-4 rounded-md border border-border bg-surface dark:bg-[#161715]">
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-          {/* Search Form with Submit Button */}
-          <form onSubmit={handleSearchSubmit} className="flex-1 flex items-center gap-2">
-            <div className="relative flex-1">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted pointer-events-none" />
-              <input
-                type="text"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                placeholder={t("admin.searchUsers")}
-                className="w-full h-10 pl-10 pr-9 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs"
-              />
-              {(searchInput || activeSearch) && (
-                <button
-                  type="button"
-                  onClick={handleResetSearch}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 size-5 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
-                  title="Hapus Pencarian"
-                  aria-label="Hapus Pencarian"
-                >
-                  <X className="size-3.5" />
-                </button>
-              )}
-            </div>
-            <Button
-              type="submit"
-              variant="primaryPill"
-              size="sm"
-              className="h-10 px-4 text-xs font-bold shadow-xs shrink-0 cursor-pointer"
-            >
-              <Search className="size-3.5 mr-1" />
-              <span>Cari</span>
-            </Button>
-          </form>
+    <div className="space-y-5">
+      {/* Search & Filter Toolbar */}
+      <div className="border-border bg-surface space-y-3 rounded-xl border p-3.5 shadow-xs sm:p-4 dark:bg-[#161715]">
+        <div className="flex flex-col items-stretch justify-between gap-3 lg:flex-row lg:items-center">
+          {/* Search Form */}
+          <SearchInput
+            value={searchInput}
+            onChange={setSearchInput}
+            onSearch={() => onSearch(searchInput.trim())}
+            onClear={handleResetSearch}
+            placeholder="Cari berdasarkan nama, email, atau nomor WhatsApp..."
+          />
 
-          {/* Plan Filter & Refresh */}
-          <div className="flex items-center gap-2 shrink-0">
+          {/* Filters & Refresh */}
+          <div className="flex shrink-0 flex-wrap items-center gap-2 sm:flex-nowrap">
+            {/* Role Filter */}
             <select
-              value={planFilter}
-              onChange={(e) => onPlanFilterChange(e.target.value)}
-              className="h-10 px-3.5 rounded-full bg-surface dark:bg-[#10110e] text-foreground text-xs font-semibold border border-border outline-none focus:border-wise-green cursor-pointer flex-1 sm:flex-initial"
+              value={roleFilter}
+              onChange={(e) => onRoleFilterChange(e.target.value)}
+              className="bg-surface text-foreground border-border dark:focus:border-wise-green h-10 flex-1 cursor-pointer rounded-full border px-3.5 text-xs font-semibold outline-none focus:border-emerald-600 sm:flex-initial dark:bg-[#10110e]"
             >
-              <option value="ALL">{t("admin.filterAllPlans")}</option>
-              <option value="Starter">Starter</option>
-              <option value="Professional">Professional</option>
-              <option value="Enterprise Cluster">Enterprise Cluster</option>
+              <option value="ALL">Semua Peran</option>
+              <option value="SELLER">Seller</option>
+              <option value="SUPER_ADMIN">Super Admin</option>
+              <option value="AGENT">CS Agent</option>
+              <option value="USER">User</option>
             </select>
 
+            {/* Status Filter */}
+            <select
+              value={statusFilter}
+              onChange={(e) => onStatusFilterChange(e.target.value)}
+              className="bg-surface text-foreground border-border dark:focus:border-wise-green h-10 flex-1 cursor-pointer rounded-full border px-3.5 text-xs font-semibold outline-none focus:border-emerald-600 sm:flex-initial dark:bg-[#10110e]"
+            >
+              <option value="ALL">Semua Status</option>
+              <option value="ACTIVE">🟢 Aktif</option>
+              <option value="SUSPENDED">🔴 Ditangguhkan</option>
+            </select>
+
+            {/* Refresh Button */}
             <Button
               variant="outline"
               size="sm"
               onClick={onRefresh}
               disabled={isLoading}
-              className="rounded-full size-10 p-0 border-border hover:border-foreground-muted cursor-pointer shrink-0"
-              aria-label="Refresh Users"
+              className="border-border hover:border-foreground-muted size-10 shrink-0 cursor-pointer rounded-full p-0"
+              aria-label="Refresh Data Pengguna"
             >
               <RefreshCw className={`size-4 ${isLoading ? "animate-spin" : ""}`} />
             </Button>
@@ -131,203 +159,283 @@ export function UsersTable({
         </div>
       </div>
 
-      {/* Users Table */}
-      <div className="rounded-md border border-border bg-surface dark:bg-[#161715] overflow-hidden shadow-xs">
-        {users.length === 0 ? (
-          <div className="p-6 sm:p-10 text-center text-xs font-semibold text-foreground-secondary">
-            {activeSearch
-              ? `Tidak ditemukan pengguna dengan kata kunci "${activeSearch}".`
-              : "Tidak ada data pengguna."}
+      {/* Users Data Display (6 Columns: Nama, Email, No. HP, Role, Status, Saldo Dompet + Aksi) */}
+      <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs dark:bg-[#161715]">
+        {isLoading ? (
+          <div className="text-foreground-muted flex flex-col items-center justify-center space-y-3 py-16">
+            <Loader2 className="dark:text-wise-green size-7 animate-spin text-emerald-600" />
+            <span className="text-xs font-bold">Memuat daftar pengguna platform...</span>
           </div>
+        ) : users.length === 0 ? (
+          <EmptyState
+            icon={<User />}
+            title="Tidak Ada Pengguna Ditemukan"
+            description={
+              activeSearch
+                ? `Tidak ditemukan hasil yang cocok dengan kata kunci "${activeSearch}". Coba kata kunci lain.`
+                : "Belum ada data pengguna yang terdaftar pada sistem."
+            }
+          />
         ) : (
           <div>
-            {/* Mobile View: Card-based Users List (Visible on < 768px) */}
-            <div className="md:hidden divide-y divide-border/50">
-              {users.map((u) => (
-                <div key={u.id} className="p-3.5 sm:p-4 space-y-3 bg-surface dark:bg-[#161715]">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className="font-bold text-sm text-foreground truncate">{u.name}</span>
-                      {u.role === "SUPER_ADMIN" && (
-                        <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 shrink-0">
-                          Admin
-                        </span>
-                      )}
-                    </div>
+            {/* Mobile View: Card-based list for screen < 1024px */}
+            <div className="divide-border/60 divide-y lg:hidden">
+              {users.map((u) => {
+                const balance = u.balance ?? u.depositBalance ?? 0;
+                const isActive = u.status === "ACTIVE" || u.isActive === true;
+                const phone = u.phoneNumber || u.phone || "-";
 
-                    <div className="flex items-center gap-2 shrink-0">
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-muted border border-border text-foreground-secondary">
-                        {u.planName}
-                      </span>
-                      {u.status === "ACTIVE" ? (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-                          <CheckCircle2 className="size-3" />
-                          <span>{t("admin.statusActive")}</span>
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-rose-600 dark:text-rose-400">
-                          <ShieldAlert className="size-3" />
-                          <span>{t("admin.statusSuspended")}</span>
-                        </span>
-                      )}
-                    </div>
-                  </div>
+                return (
+                  <div key={u.id} className="bg-surface space-y-3 p-4 dark:bg-[#161715]">
+                    {/* Header: Name, Avatar, Status & Role */}
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex min-w-0 items-center gap-2.5">
+                        <div className="bg-muted text-foreground border-border flex size-9 shrink-0 items-center justify-center rounded-full border text-xs font-black uppercase">
+                          {u.name ? u.name.charAt(0) : "U"}
+                        </div>
+                        <div className="min-w-0">
+                          <span className="text-foreground block truncate text-sm font-bold">
+                            {u.name}
+                          </span>
+                          <span className="text-foreground-muted block truncate font-mono text-[11px]">
+                            {u.email}
+                          </span>
+                        </div>
+                      </div>
 
-                  <div className="space-y-1 text-xs text-foreground-secondary">
-                    <span className="block font-mono text-foreground-muted text-[11px] truncate">{u.email}</span>
-                    <div className="flex items-center justify-between pt-1 font-mono text-xs">
-                      <span>Sisa Kuota: <strong>{u.quotaRemaining.toLocaleString("id-ID")}</strong></span>
-                      <span>Saldo: <strong className="text-foreground">Rp {u.depositBalance.toLocaleString("id-ID")}</strong></span>
-                    </div>
-                  </div>
-
-                  <div className="pt-2 border-t border-border/50 flex justify-end">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleOpenAdjust(u)}
-                      className="w-full h-8.5 px-3 rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted cursor-pointer justify-center"
-                    >
-                      <Sliders className="size-3.5 text-rose-600 dark:text-rose-400" />
-                      <span>Sesuaikan Kuota &amp; Saldo</span>
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Desktop View: Tabular Grid (Visible on >= 768px) */}
-            <div className="hidden md:block">
-              {/* Table Header */}
-              <div className="grid grid-cols-12 gap-3 px-5 py-4 bg-muted/60 border-b border-border text-xs font-extrabold uppercase tracking-wider text-foreground-muted select-none">
-                <div className="col-span-3">{t("admin.tableHeaderUser")}</div>
-                <div className="col-span-2">{t("admin.tableHeaderPlan")}</div>
-                <div className="col-span-2">{t("admin.tableHeaderQuota")}</div>
-                <div className="col-span-2">{t("admin.tableHeaderBalance")}</div>
-                <div className="col-span-1 text-center">{t("admin.tableHeaderStatus")}</div>
-                <div className="col-span-2 text-right">{t("admin.tableHeaderAction")}</div>
-              </div>
-
-              {/* Table Body */}
-              <div className="divide-y divide-border/50 text-xs font-semibold">
-                {users.map((u) => (
-                  <div
-                    key={u.id}
-                    className="grid grid-cols-12 gap-3 px-5 py-3.5 items-center hover:bg-muted/40 transition-colors min-h-14.5"
-                  >
-                    {/* User Name & Email */}
-                    <div className="col-span-3 space-y-0.5">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-sm sm:text-base text-foreground truncate">{u.name}</span>
-                        {u.role === "SUPER_ADMIN" && (
-                          <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
-                            Admin
+                      <div className="flex shrink-0 flex-col items-end gap-1">
+                        {getRoleBadge(u.role || u.roleName || "USER")}
+                        {isActive ? (
+                          <span className="dark:text-wise-green inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600">
+                            <CheckCircle2 className="size-3" />
+                            <span>Aktif</span>
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-rose-600 dark:text-rose-400">
+                            <ShieldAlert className="size-3" />
+                            <span>Ditangguhkan</span>
                           </span>
                         )}
                       </div>
-                      <span className="text-xs text-foreground-muted block truncate font-mono">
-                        {u.email}
-                      </span>
                     </div>
 
-                    {/* Plan */}
-                    <div className="col-span-2 text-foreground-secondary">
-                      <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-muted border border-border">
-                        {u.planName}
-                      </span>
-                    </div>
-
-                    {/* Quota */}
-                    <div className="col-span-2 font-mono font-bold text-sm text-foreground truncate">
-                      {u.quotaRemaining.toLocaleString("id-ID")} Pesan
-                    </div>
-
-                    {/* Balance */}
-                    <div className="col-span-2 font-mono font-bold text-sm text-foreground-secondary truncate">
-                      Rp {u.depositBalance.toLocaleString("id-ID")}
-                    </div>
-
-                    {/* Status */}
-                    <div className="col-span-1 flex justify-center">
-                      {u.status === "ACTIVE" ? (
-                        <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                          <CheckCircle2 className="size-3.5" />
-                          <span>{t("admin.statusActive")}</span>
+                    {/* Phone & Balance Grid */}
+                    <div className="border-border/40 grid grid-cols-2 gap-2 border-t pt-2 text-xs">
+                      <div>
+                        <span className="text-foreground-muted block text-[10px] font-bold uppercase">
+                          No. Telepon / WA
                         </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 text-xs font-bold text-rose-600 dark:text-rose-400">
-                          <ShieldAlert className="size-3.5" />
-                          <span>{t("admin.statusSuspended")}</span>
+                        <span className="text-foreground block truncate font-mono text-[11px] font-semibold">
+                          {phone}
                         </span>
-                      )}
+                      </div>
+                      <div className="text-right">
+                        <span className="text-foreground-muted block text-[10px] font-bold uppercase">
+                          Saldo Dompet
+                        </span>
+                        <span className="dark:text-wise-green block truncate font-mono text-xs font-bold text-emerald-700">
+                          Rp {balance.toLocaleString("id-ID")}
+                        </span>
+                      </div>
                     </div>
 
-                    {/* Action */}
-                    <div className="col-span-2 flex justify-end">
+                    {/* Actions */}
+                    <div className="border-border/40 grid grid-cols-2 gap-2 border-t pt-2.5">
                       <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleOpenEdit(u)}
+                        className="border-border hover:bg-muted h-8.5 justify-center gap-1.5 rounded-full text-xs font-bold"
+                      >
+                        <Edit className="dark:text-wise-green size-3.5 text-emerald-600" />
+                        <span>Ubah</span>
+                      </Button>
+
+                      <Button
+                        type="button"
                         variant="outline"
                         size="sm"
                         onClick={() => handleOpenAdjust(u)}
-                        className="h-8 px-3 rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted cursor-pointer"
+                        className="border-border hover:bg-muted h-8.5 justify-center gap-1.5 rounded-full text-xs font-bold"
                       >
                         <Sliders className="size-3.5 text-rose-600 dark:text-rose-400" />
-                        <span>Sesuaikan</span>
+                        <span>Saldo</span>
                       </Button>
                     </div>
                   </div>
-                ))}
-              </div>
+                );
+              })}
+            </div>
+
+            {/* Desktop View: Tabular Grid for screen >= 1024px */}
+            <div className="hidden overflow-x-auto lg:block">
+              <table className="w-full border-collapse text-left">
+                <thead>
+                  <tr className="border-border bg-muted/50 text-foreground-muted border-b text-[11px] font-extrabold tracking-wider uppercase select-none">
+                    <th className="px-5 py-3.5 font-extrabold">Nama Lengkap</th>
+                    <th className="px-4 py-3.5 font-extrabold">Email</th>
+                    <th className="px-4 py-3.5 font-extrabold">Nomor Telepon / WhatsApp</th>
+                    <th className="px-3 py-3.5 text-center font-extrabold">Role / Peran</th>
+                    <th className="px-3 py-3.5 text-center font-extrabold">Status Akun</th>
+                    <th className="px-4 py-3.5 text-right font-extrabold">Saldo Dompet</th>
+                    <th className="px-5 py-3.5 text-right font-extrabold">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-border/50 divide-y text-xs font-semibold">
+                  {users.map((u) => {
+                    const balance = u.balance ?? u.depositBalance ?? 0;
+                    const isActive = u.status === "ACTIVE" || u.isActive === true;
+                    const phone = u.phoneNumber || u.phone || "-";
+
+                    return (
+                      <tr key={u.id} className="hover:bg-muted/30 group transition-colors">
+                        {/* 1. Nama Lengkap with Avatar */}
+                        <td className="px-5 py-3.5">
+                          <div className="flex items-center gap-2.5">
+                            <div className="bg-muted text-foreground border-border flex size-8 shrink-0 items-center justify-center rounded-full border text-xs font-black uppercase">
+                              {u.name ? u.name.charAt(0) : "U"}
+                            </div>
+                            <span className="text-foreground max-w-45 truncate text-sm font-bold">
+                              {u.name}
+                            </span>
+                          </div>
+                        </td>
+
+                        {/* 2. Email */}
+                        <td className="px-4 py-3.5">
+                          <div className="text-foreground-secondary flex max-w-50 items-center gap-1.5 truncate font-mono text-xs">
+                            <Mail className="text-foreground-muted size-3 shrink-0" />
+                            <span className="truncate">{u.email}</span>
+                          </div>
+                        </td>
+
+                        {/* 3. Nomor Telepon / WhatsApp */}
+                        <td className="px-4 py-3.5">
+                          <div className="text-foreground flex max-w-40 items-center gap-1.5 truncate font-mono text-xs">
+                            <Phone className="text-foreground-muted size-3 shrink-0" />
+                            <span>{phone}</span>
+                          </div>
+                        </td>
+
+                        {/* 4. Role / Peran */}
+                        <td className="px-3 py-3.5 text-center">
+                          {getRoleBadge(u.role || u.roleName || "USER")}
+                        </td>
+
+                        {/* 5. Status Akun */}
+                        <td className="px-3 py-3.5 text-center">
+                          {isActive ? (
+                            <span className="dark:text-wise-green inline-flex items-center gap-1 text-xs font-bold text-emerald-600">
+                              <CheckCircle2 className="size-3.5" />
+                              <span>Aktif</span>
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 text-xs font-bold text-rose-600 dark:text-rose-400">
+                              <ShieldAlert className="size-3.5" />
+                              <span>Ditangguhkan</span>
+                            </span>
+                          )}
+                        </td>
+
+                        {/* 6. Saldo Dompet */}
+                        <td className="text-foreground px-4 py-3.5 text-right font-mono font-bold">
+                          <span className="dark:text-wise-green text-emerald-700">
+                            Rp {balance.toLocaleString("id-ID")}
+                          </span>
+                        </td>
+
+                        {/* 7. Aksi (Ubah & Sesuaikan Saldo) */}
+                        <td className="px-5 py-3.5 text-right">
+                          <div className="flex items-center justify-end gap-1.5">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleOpenEdit(u)}
+                              className="border-border hover:border-foreground-muted hover:bg-muted h-8 gap-1 rounded-full px-2.5 text-xs font-bold"
+                              title="Ubah Data & Password"
+                            >
+                              <Edit className="dark:text-wise-green size-3.5 text-emerald-600" />
+                              <span>Ubah</span>
+                            </Button>
+
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleOpenAdjust(u)}
+                              className="border-border hover:border-foreground-muted hover:bg-muted h-8 gap-1 rounded-full px-2.5 text-xs font-bold"
+                              title="Sesuaikan Saldo Dompet"
+                            >
+                              <Sliders className="size-3.5 text-rose-600 dark:text-rose-400" />
+                              <span>Saldo</span>
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           </div>
         )}
 
-        {/* Pagination Footer */}
+        {/* Responsive Pagination Footer */}
         {total > 0 && (
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 sm:px-5 sm:py-3.5 border-t border-border bg-muted/30">
-            {/* Item count summary */}
-            <div className="text-xs font-semibold text-foreground-secondary">
-              Menampilkan {startItem} - {endItem} dari {total} pengguna
+          <div className="border-border bg-muted/20 flex flex-col items-center justify-between gap-3 border-t p-3.5 sm:flex-row sm:px-5 sm:py-3.5">
+            {/* Item count summary & Page size selector */}
+            <div className="text-foreground-secondary flex items-center gap-3 text-xs font-semibold">
+              <span>
+                Menampilkan{" "}
+                <strong className="text-foreground">
+                  {startItem} - {endItem}
+                </strong>{" "}
+                dari <strong className="text-foreground">{total}</strong> pengguna
+              </span>
+
+              {onPageSizeChange && (
+                <div className="text-foreground-muted flex items-center gap-1.5 text-xs">
+                  <span>| Baris:</span>
+                  <select
+                    value={pageSize}
+                    onChange={(e) => onPageSizeChange(Number(e.target.value))}
+                    className="bg-surface border-border text-foreground h-7 cursor-pointer rounded-md border px-2 text-xs font-bold outline-none dark:bg-[#10110e]"
+                  >
+                    <option value={10}>10</option>
+                    <option value={25}>25</option>
+                    <option value={50}>50</option>
+                  </select>
+                </div>
+              )}
             </div>
 
-            {/* Page navigation: Previous, Page Indicator, Next */}
-            {totalPages > 1 && (
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-foreground-muted px-1.5 select-none">
-                  Halaman {page} dari {totalPages}
-                </span>
-
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={onPrevPage}
-                  disabled={page <= 1}
-                  className="h-8.5 px-3.5 rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted cursor-pointer disabled:opacity-40"
-                >
-                  <ChevronLeft className="size-3.5" />
-                  <span>Sebelumnya</span>
-                </Button>
-
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={onNextPage}
-                  disabled={page >= totalPages}
-                  className="h-8.5 px-3.5 rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted cursor-pointer disabled:opacity-40"
-                >
-                  <span>Berikutnya</span>
-                  <ChevronRight className="size-3.5" />
-                </Button>
-              </div>
-            )}
+            <DataTablePagination
+              page={page}
+              totalPages={totalPages}
+              onPageChange={onPageChange}
+              onPrevPage={onPrevPage}
+              onNextPage={onNextPage}
+              className="mx-0 w-auto"
+            />
           </div>
         )}
       </div>
 
-      {/* Adjust Modal */}
+      {/* Edit User Modal */}
+      <EditUserModal
+        user={selectedUserForEdit}
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onSubmit={onUpdateUser}
+      />
+
+      {/* Adjust Balance Modal */}
       <AdjustBalanceModal
-        user={selectedUser}
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        user={selectedUserForAdjust}
+        isOpen={isAdjustModalOpen}
+        onClose={() => setIsAdjustModalOpen(false)}
         onSubmit={onAdjustBalance}
       />
     </div>

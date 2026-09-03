@@ -10,7 +10,10 @@ export function DashboardBreadcrumb() {
   const segments = pathname.split("/").filter(Boolean);
 
   return (
-    <nav className="flex items-center gap-1.5 text-xs font-semibold text-foreground-muted" aria-label="Breadcrumb">
+    <nav
+      className="text-foreground-muted flex items-center gap-1.5 text-xs font-semibold"
+      aria-label="Breadcrumb"
+    >
       <Link href="/dashboard" className="hover:text-foreground flex items-center gap-1">
         <Home className="size-3.5" />
         <span className="hidden sm:inline">Home</span>
@@ -23,7 +26,7 @@ export function DashboardBreadcrumb() {
 
         return (
           <React.Fragment key={href}>
-            <ChevronRight className="size-3 text-border" />
+            <ChevronRight className="text-border size-3" />
             {isLast ? (
               <span className="text-foreground font-bold">{title}</span>
             ) : (

@@ -1,5 +1,6 @@
 // Canonical Backend Role Constants (matching G:\WEB2026\wahide\internal\modules\iam\domain\entity\role.go)
-export type UserRole = "admin" | "seller" | "user" | "reseller" | "SUPER_ADMIN" | "SELLER" | "AGENT" | string;
+export type UserRole =
+  "admin" | "seller" | "user" | "reseller" | "SUPER_ADMIN" | "SELLER" | "AGENT" | string;
 
 export function isAdmin(role?: string): boolean {
   if (!role) return false;
@@ -90,4 +91,17 @@ export interface DashboardStats {
   activeCampaignsCount: number;
   totalContacts: number;
   monthlyCost?: number;
+}
+
+export interface ActiveSession {
+  token_id: string;
+  user_id: string;
+  email: string;
+  role: string;
+  tenant_id: string;
+  ip_address?: string;
+  user_agent?: string;
+  created_at?: string;
+  last_active?: string;
+  is_current?: boolean;
 }

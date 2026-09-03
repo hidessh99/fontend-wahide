@@ -6,30 +6,23 @@ import { DashboardHeader } from "@/components/layout/dashboard/DashboardHeader";
 import { DashboardMobileNav } from "@/components/layout/dashboard/DashboardMobileNav";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   return (
-    <div className="min-h-screen flex bg-background text-foreground">
+    <div className="bg-background text-foreground flex min-h-screen">
       {/* Desktop Persistent Sidebar */}
-      <div className="hidden lg:block fixed inset-y-0 left-0 w-64 z-30">
+      <div className="fixed inset-y-0 left-0 z-30 hidden w-64 lg:block">
         <DashboardSidebar />
       </div>
 
       {/* Mobile Drawer Navigation */}
-      <DashboardMobileNav
-        open={mobileNavOpen}
-        onClose={() => setMobileNavOpen(false)}
-      />
+      <DashboardMobileNav open={mobileNavOpen} onClose={() => setMobileNavOpen(false)} />
 
       {/* Main Content Area */}
-      <div className="flex-1 lg:pl-64 flex flex-col min-w-0">
+      <div className="flex min-w-0 flex-1 flex-col lg:pl-64">
         <DashboardHeader onOpenMobileNav={() => setMobileNavOpen(true)} />
-        <main className="flex-1 min-w-0">
+        <main className="min-w-0 flex-1">
           <ErrorBoundary fallbackTitle="Terjadi Kendala Memuat Halaman Dasbor">
             {children}
           </ErrorBoundary>

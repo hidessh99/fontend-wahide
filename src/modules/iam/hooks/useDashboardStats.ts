@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "./useAuth";
@@ -8,12 +8,13 @@ import { adminApi } from "@/modules/admin/api/admin.api";
 import { UserDashboardStats, AdminDashboardStats } from "../types/dashboard.types";
 
 export function useDashboardStats() {
-  const { user, isAuthenticated } = useAuth();
-  const isSuperAdmin = isAdmin(user?.role);
+  const userRole = useAuth((s) => s.user?.role);
+  const isAuthenticated = useAuth((s) => s.isAuthenticated);
+  const isSuperAdmin = isAdmin(userRole);
 
   const [userStats, setUserStats] = useState<UserDashboardStats | null>(null);
   const [adminStats, setAdminStats] = useState<AdminDashboardStats | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(isAuthenticated);
   const [error, setError] = useState<string | null>(null);
 
   const fetchStats = useCallback(async () => {
@@ -35,18 +36,29 @@ export function useDashboardStats() {
         if (data) {
           const currentTenant = useAuth.getState().tenant;
           if (currentTenant) {
-            useAuth.getState().setTenant({
-              ...currentTenant,
-              planName: data.plan_name || currentTenant.planName,
-              maxDevices: data.device_limit || currentTenant.maxDevices,
-              monthlyQuota: data.monthly_message_limit,
-              usedQuota: data.total_messages_sent,
-              activeDevicesCount: data.connected_devices,
-            });
+            // Guard against unnecessary state updates to prevent render cascades
+            const hasChanged =
+              currentTenant.planName !== (data.plan_name || currentTenant.planName) ||
+              currentTenant.maxDevices !== (data.device_limit || currentTenant.maxDevices) ||
+              currentTenant.monthlyQuota !== data.monthly_message_limit ||
+              currentTenant.usedQuota !== data.total_messages_sent ||
+              currentTenant.activeDevicesCount !== data.connected_devices;
+
+            if (hasChanged) {
+              useAuth.getState().setTenant({
+                ...currentTenant,
+                planName: data.plan_name || currentTenant.planName,
+                maxDevices: data.device_limit || currentTenant.maxDevices,
+                monthlyQuota: data.monthly_message_limit,
+                usedQuota: data.total_messages_sent,
+                activeDevicesCount: data.connected_devices,
+              });
+            }
           }
         }
       }
     } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") return;
       const msg = err instanceof Error ? err.message : "Gagal memuat statistik dasbor";
       setError(msg);
     } finally {
@@ -55,20 +67,16 @@ export function useDashboardStats() {
   }, [isAuthenticated, isSuperAdmin]);
 
   useEffect(() => {
+    if (!isAuthenticated) return;
+
     let isMounted = true;
+    const controller = new AbortController();
 
-    if (!isAuthenticated) {
-      return;
-    }
-
-    const init = async () => {
+    const loadInitialStats = async () => {
       try {
         if (isSuperAdmin) {
           const data = await adminApi.getAdminDashboardStats();
-          if (isMounted) {
-            setAdminStats(data);
-            setIsLoading(false);
-          }
+          if (isMounted) setAdminStats(data);
         } else {
           const data = await userApi.getDashboardStats();
           if (isMounted) {
@@ -76,32 +84,44 @@ export function useDashboardStats() {
             if (data) {
               const currentTenant = useAuth.getState().tenant;
               if (currentTenant) {
-                useAuth.getState().setTenant({
-                  ...currentTenant,
-                  planName: data.plan_name || currentTenant.planName,
-                  maxDevices: data.device_limit || currentTenant.maxDevices,
-                  monthlyQuota: data.monthly_message_limit,
-                  usedQuota: data.total_messages_sent,
-                  activeDevicesCount: data.connected_devices,
-                });
+                const hasChanged =
+                  currentTenant.planName !== (data.plan_name || currentTenant.planName) ||
+                  currentTenant.maxDevices !== (data.device_limit || currentTenant.maxDevices) ||
+                  currentTenant.monthlyQuota !== data.monthly_message_limit ||
+                  currentTenant.usedQuota !== data.total_messages_sent ||
+                  currentTenant.activeDevicesCount !== data.connected_devices;
+
+                if (hasChanged) {
+                  useAuth.getState().setTenant({
+                    ...currentTenant,
+                    planName: data.plan_name || currentTenant.planName,
+                    maxDevices: data.device_limit || currentTenant.maxDevices,
+                    monthlyQuota: data.monthly_message_limit,
+                    usedQuota: data.total_messages_sent,
+                    activeDevicesCount: data.connected_devices,
+                  });
+                }
               }
             }
-            setIsLoading(false);
           }
         }
       } catch (err: unknown) {
+        if (err instanceof Error && err.name === "AbortError") return;
         if (isMounted) {
-          const msg = err instanceof Error ? err.message : "Gagal memuat statistik dasbor";
-          setError(msg);
+          setError(err instanceof Error ? err.message : "Gagal memuat statistik dasbor");
+        }
+      } finally {
+        if (isMounted) {
           setIsLoading(false);
         }
       }
     };
 
-    init();
+    loadInitialStats();
 
     return () => {
       isMounted = false;
+      controller.abort();
     };
   }, [isAuthenticated, isSuperAdmin]);
 

@@ -15,10 +15,7 @@ interface ErrorBoundaryState {
   error: Error | null;
 }
 
-export class ErrorBoundary extends Component<
-  ErrorBoundaryProps,
-  ErrorBoundaryState
-> {
+export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   public state: ErrorBoundaryState = {
     hasError: false,
     error: null,
@@ -43,16 +40,16 @@ export class ErrorBoundary extends Component<
   public render() {
     if (this.state.hasError) {
       return (
-        <div className="p-6 rounded-md border border-rose-500/20 bg-rose-500/5 text-center space-y-3 my-3 animate-in fade-in">
-          <div className="size-10 rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400 flex items-center justify-center mx-auto">
+        <div className="animate-in fade-in my-3 space-y-3 rounded-md border border-rose-500/20 bg-rose-500/5 p-6 text-center">
+          <div className="mx-auto flex size-10 items-center justify-center rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400">
             <AlertTriangle className="size-5" />
           </div>
 
           <div className="space-y-1">
-            <h3 className="text-sm font-black text-foreground">
+            <h3 className="text-foreground text-sm font-black">
               {this.props.fallbackTitle || "Terjadi Kendala Memuat Modul"}
             </h3>
-            <p className="text-xs text-foreground-secondary font-mono max-w-md mx-auto truncate">
+            <p className="text-foreground-secondary mx-auto max-w-md truncate font-mono text-xs">
               {this.state.error?.message || "Kesalahan runtime JavaScript tidak terduga"}
             </p>
           </div>
@@ -62,9 +59,9 @@ export class ErrorBoundary extends Component<
               variant="outline"
               size="sm"
               onClick={this.handleReset}
-              className="rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted shadow-sm"
+              className="border-border hover:border-foreground-muted gap-1.5 rounded-full text-xs font-bold shadow-sm"
             >
-              <RefreshCw className="size-3.5 text-wise-green" />
+              <RefreshCw className="dark:text-wise-green size-3.5 text-emerald-700" />
               <span>Coba Pulihkan Modul</span>
             </Button>
           </div>

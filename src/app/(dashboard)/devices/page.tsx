@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { DevicesView } from "@/components/dashboard/DevicesView";
+import { DevicesView } from "@/modules/whatsapp/views/DevicesView";
 
 export const metadata: Metadata = {
   title: "Perangkat WhatsApp & Pairing QR",

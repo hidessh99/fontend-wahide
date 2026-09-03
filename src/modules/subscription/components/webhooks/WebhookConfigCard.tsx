@@ -1,8 +1,9 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
 import { WebhookConfig } from "@/modules/subscription/types/subscription.types";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { useI18n } from "@/lib/i18n/context";
 import {
   Webhook,
@@ -58,18 +59,18 @@ export function WebhookConfigCard({
   };
 
   return (
-    <div className="rounded-md border border-border bg-surface dark:bg-[#161715] p-6 sm:p-8 space-y-6 shadow-sm">
+    <div className="border-border bg-surface space-y-6 rounded-md border p-6 shadow-sm sm:p-8 dark:bg-[#161715]">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-4">
+      <div className="border-border flex flex-col justify-between gap-3 border-b pb-4 sm:flex-row sm:items-center">
         <div className="flex items-center gap-3">
-          <div className="size-10 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center">
+          <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-10 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
             <Webhook className="size-5" />
           </div>
           <div>
-            <h2 className="text-xl font-black text-foreground tracking-tight">
+            <h2 className="text-foreground text-xl font-black tracking-tight">
               {t("subscription.webhookTitle")}
             </h2>
-            <p className="text-xs font-semibold text-foreground-secondary">
+            <p className="text-foreground-secondary text-xs font-semibold">
               {t("subscription.webhookSubtitle")}
             </p>
           </div>
@@ -77,23 +78,10 @@ export function WebhookConfigCard({
 
         {/* Toggle Switch */}
         <div className="flex items-center gap-2.5">
-          <span className="text-xs font-bold text-foreground">
+          <span className="text-foreground text-xs font-bold">
             {isEnabled ? "Webhook Aktif" : "Webhook Nonaktif"}
           </span>
-          <button
-            type="button"
-            onClick={() => setIsEnabled(!isEnabled)}
-            className={`w-12 h-6 rounded-full transition-colors p-0.5 cursor-pointer ${
-              isEnabled ? "bg-wise-green" : "bg-muted"
-            }`}
-            aria-label="Toggle Webhook"
-          >
-            <div
-              className={`size-5 rounded-full bg-white transition-transform ${
-                isEnabled ? "translate-x-6 bg-dark-green" : "translate-x-0"
-              }`}
-            />
-          </button>
+          <Switch checked={isEnabled} onCheckedChange={setIsEnabled} aria-label="Toggle Webhook" />
         </div>
       </div>
 
@@ -101,7 +89,7 @@ export function WebhookConfigCard({
       <form onSubmit={handleSave} className="space-y-5">
         {/* Endpoint URL Input */}
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+          <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
             {t("subscription.webhookUrlLabel")}
           </label>
           <input
@@ -110,16 +98,16 @@ export function WebhookConfigCard({
             onChange={(e) => setUrl(e.target.value)}
             placeholder={t("subscription.webhookUrlPlaceholder")}
             disabled={!isEnabled || isSaving}
-            className="w-full h-11 px-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs font-mono disabled:opacity-50"
+            className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-11 w-full rounded-full border px-4 font-mono text-xs font-semibold transition outline-none focus:ring-2 disabled:opacity-50 dark:bg-[#10110e]"
           />
         </div>
 
         {/* Signing Secret Box */}
-        <div className="p-4 rounded-md border border-border bg-muted/30 space-y-2">
+        <div className="border-border bg-muted/30 space-y-2 rounded-md border p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Key className="size-4 text-wise-green" />
-              <span className="text-xs font-bold text-foreground">
+              <Key className="dark:text-wise-green size-4 text-emerald-700" />
+              <span className="text-foreground text-xs font-bold">
                 {t("subscription.signingSecretLabel")}
               </span>
             </div>
@@ -130,7 +118,7 @@ export function WebhookConfigCard({
                 variant="outline"
                 size="sm"
                 onClick={() => setShowSecret(!showSecret)}
-                className="size-7 rounded-full p-0 border-border"
+                className="border-border size-7 rounded-full p-0"
                 aria-label={showSecret ? "Sembunyikan Kunci" : "Tampilkan Kunci"}
               >
                 {showSecret ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
@@ -141,7 +129,7 @@ export function WebhookConfigCard({
                 variant="outline"
                 size="sm"
                 onClick={() => config?.secret && onCopySecret(config.secret)}
-                className="size-7 rounded-full p-0 border-border"
+                className="border-border size-7 rounded-full p-0"
                 aria-label="Salin Secret"
               >
                 <Copy className="size-3.5" />
@@ -153,7 +141,7 @@ export function WebhookConfigCard({
                 size="sm"
                 disabled={isRegenerating}
                 onClick={handleRegenerate}
-                className="size-7 rounded-full p-0 border-border"
+                className="border-border size-7 rounded-full p-0"
                 aria-label="Regenerate Secret"
               >
                 <RefreshCw className={`size-3.5 ${isRegenerating ? "animate-spin" : ""}`} />
@@ -161,15 +149,15 @@ export function WebhookConfigCard({
             </div>
           </div>
 
-          <div className="p-2.5 rounded bg-surface dark:bg-[#10110e] border border-border text-xs font-mono text-foreground font-semibold break-all">
-            {showSecret
-              ? config?.secret || "whsec_..."
-              : "whsec_••••••••••••••••••••••••••••••••"}
+          <div className="bg-surface border-border text-foreground rounded border p-2.5 font-mono text-xs font-semibold break-all dark:bg-[#10110e]">
+            {showSecret ? config?.secret || "whsec_..." : "whsec_••••••••••••••••••••••••••••••••"}
           </div>
 
-          <div className="flex items-center gap-1.5 text-[11px] font-semibold text-foreground-muted pt-1">
-            <ShieldCheck className="size-3.5 text-wise-green shrink-0" />
-            <span>Gunakan kunci ini untuk memverifikasi signature header `X-Wahide-Signature-256`.</span>
+          <div className="text-foreground-muted flex items-center gap-1.5 pt-1 text-[11px] font-semibold">
+            <ShieldCheck className="dark:text-wise-green size-3.5 shrink-0 text-emerald-600" />
+            <span>
+              Gunakan kunci ini untuk memverifikasi signature header `X-Wahide-Signature-256`.
+            </span>
           </div>
         </div>
 
@@ -180,7 +168,7 @@ export function WebhookConfigCard({
             variant="primaryPill"
             size="sm"
             disabled={isSaving || !isEnabled}
-            className="text-xs font-bold gap-2 px-6 shadow-sm"
+            className="gap-2 px-6 text-xs font-bold shadow-sm"
           >
             {isSaving ? (
               <>

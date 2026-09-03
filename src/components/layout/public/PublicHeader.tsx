@@ -1,6 +1,6 @@
-﻿"use client";
+"use client";
 
-import React, { useState } from "react";
+import React, { useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
@@ -10,10 +10,15 @@ import { useI18n } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 import { User, Menu, X, ArrowRight } from "lucide-react";
 
+const emptySubscribe = () => () => {};
+const getClientSnapshot = () => true;
+const getServerSnapshot = () => false;
+
 export function PublicHeader() {
   const { user, isAuthenticated } = useAuth();
   const { t } = useI18n();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const isClient = useSyncExternalStore(emptySubscribe, getClientSnapshot, getServerSnapshot);
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/80 bg-background/85 backdrop-blur-md transition-colors">
@@ -46,11 +51,11 @@ export function PublicHeader() {
         </nav>
 
         {/* Action Controls & Auth State */}
-        <div className="hidden sm:flex items-center gap-3 shrink-0">
+        <div className="hidden lg:flex items-center gap-3 shrink-0">
           <LocaleSwitcher />
           <ThemeToggle />
 
-          {isAuthenticated && user ? (
+          {isClient && isAuthenticated && user ? (
             <Link
               href="/dashboard"
               className={cn(
@@ -142,7 +147,7 @@ export function PublicHeader() {
           </nav>
 
           <div className="pt-3 border-t border-border/70 flex flex-col gap-2.5">
-            {isAuthenticated && user ? (
+            {isClient && isAuthenticated && user ? (
               <Link
                 href="/dashboard"
                 onClick={() => setMobileMenuOpen(false)}

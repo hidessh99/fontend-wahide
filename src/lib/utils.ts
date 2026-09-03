@@ -5,36 +5,73 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+const idrFormatter = new Intl.NumberFormat("id-ID", {
+  style: "currency",
+  currency: "IDR",
+  maximumFractionDigits: 0,
+});
+
+const usdFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+});
+
+const idrDateTimeFormatter = new Intl.DateTimeFormat("id-ID", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+});
+
+const idrDateShortFormatter = new Intl.DateTimeFormat("id-ID", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+});
+
+const idrNumberFormatter = new Intl.NumberFormat("id-ID");
+
 /**
- * Format angka ke Rupiah IDR atau USD
+ * Format angka ke Rupiah IDR atau USD (Zero Allocation)
  */
 export function formatCurrency(amount: number, currency: "IDR" | "USD" = "IDR"): string {
   if (currency === "IDR") {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      maximumFractionDigits: 0,
-    }).format(amount);
+    return idrFormatter.format(amount);
   }
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(amount);
+  return usdFormatter.format(amount);
 }
 
 /**
- * Format tanggal dan waktu standar Indonesia
+ * Format cepat ke Rupiah IDR (Zero Allocation)
+ */
+export function formatRupiah(amount: number): string {
+  return idrFormatter.format(amount);
+}
+
+/**
+ * Format pemisah ribuan standar Indonesia (Zero Allocation)
+ */
+export function formatNumber(value: number): string {
+  return idrNumberFormatter.format(value);
+}
+
+/**
+ * Format tanggal dan waktu standar Indonesia (Zero Allocation)
  */
 export function formatDateTime(dateInput: string | Date | number): string {
   const date = new Date(dateInput);
   if (isNaN(date.getTime())) return "-";
-  return new Intl.DateTimeFormat("id-ID", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
+  return idrDateTimeFormatter.format(date);
+}
+
+/**
+ * Format tanggal singkat standar Indonesia (Zero Allocation)
+ */
+export function formatDateShort(dateInput: string | Date | number): string {
+  const date = new Date(dateInput);
+  if (isNaN(date.getTime())) return "-";
+  return idrDateShortFormatter.format(date);
 }
 
 /**
@@ -74,4 +111,3 @@ export function generateSecureRandomString(prefix: string = "", byteLength: numb
   }
   return prefix ? `${prefix}000000000000000000000000` : "000000000000000000000000";
 }
-

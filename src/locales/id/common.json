@@ -16,7 +16,7 @@
   "hero": {
     "badge": "WhatsApp Multi-Device Gateway & REST API",
     "title": "Kirim Pesan WhatsApp Massal Lebih Cepat, Aman, dan Tanpa Blokir.",
-    "subtitle": "Gateway WhatsApp multi-device tercepat dengan 5 Lapis Anti-Ban, Spintax dinamis, dan rotasi load-balancing nomor. Mendukung berbagai aplikasi berbasis WhatsApp, termasuk chatbot, sistem layanan pelanggan, notifikasi otomatis, dan kampanye pesan massal. Platform ini menawarkan fitur lengkap untuk mengirim pesan teks, gambar, serta file media, sekaligus mengelola daftar kontak secara efisien.",
+    "subtitle": "Gateway WhatsApp multi-device dengan 5 lapis anti-ban, spintax dinamis, dan load balancing nomor. Kelola customer support, chatbot, dan broadcast massal ribuan pesan tanpa khawatir nomor terblokir.",
     "ctaTrial": "Mulai Gratis (1.500 Pesan)",
     "ctaLogin": "Masuk ke Dasbor",
     "trustBadge": "Tanpa kartu kredit • Siap integrasi dalam 5 menit • Enkripsi end-to-end"
@@ -271,6 +271,42 @@
     "keyCopied": "API Key berhasil disalin ke clipboard!",
     "regenerateKey": "Regenerasi Token Baru",
     "keyRegenerated": "Token API baru berhasil dibuat."
+  },
+  "address": {
+    "title": "Alamat Bisnis & Penagihan",
+    "subtitle": "Kelola data lokasi fisik dan alamat resmi perusahaan Anda untuk pencetakan faktur penagihan dan verifikasi akun.",
+    "statusRegistered": "Terdaftar",
+    "statusNotSet": "Belum Diatur",
+    "countryLabel": "Negara",
+    "provinceLabel": "Provinsi",
+    "provincePlaceholder": "Pilih Provinsi...",
+    "cityLabel": "Kota / Kabupaten",
+    "cityPlaceholder": "Pilih Kota / Kabupaten...",
+    "districtLabel": "Kecamatan",
+    "districtPlaceholder": "Pilih Kecamatan (Opsional)...",
+    "postalCodeLabel": "Kode Pos",
+    "postalCodePlaceholder": "Contoh: 12190",
+    "streetAddressLabel": "Alamat Lengkap / Nama Jalan & Nomor",
+    "streetAddressPlaceholder": "Contoh: Gedung Artha Graha Lt. 15, Jl. Jenderal Sudirman Kav. 52-53, RT.05/RW.03",
+    "streetAddressHelp": "Tuliskan nama jalan, nomor bangunan, RT/RW, dan patokan alamat secara lengkap.",
+    "saveBtn": "Simpan Alamat Bisnis",
+    "saving": "Menyimpan...",
+    "saveSuccess": "Alamat berhasil disimpan!",
+    "securityNote": "Data alamat terenkripsi & tersimpan aman pada database IAM.",
+    "billingRequiredBannerTitle": "Kelengkapan Alamat Diperlukan untuk Top-Up",
+    "billingRequiredBannerDesc": "Untuk melanjutkan transaksi Top-Up saldo dan penerbitan faktur tagihan resmi, silakan lengkapi alamat bisnis Anda terlebih dahulu.",
+    "saveAndReturnToast": "Alamat berhasil disimpan! Mengalihkan ke transaksi Top-Up..."
+  },
+  "billing": {
+    "title": "Faktur & Tagihan Pembayaran",
+    "subtitle": "Kelola saldo deposit broadcast, riwayat faktur pembayaran langganan, dan unduh bukti transaksi resmi bisnis Anda.",
+    "depositBalanceTitle": "Saldo Deposit Transaksi",
+    "depositBalanceDesc": "Digunakan untuk pengiriman broadcast WhatsApp dan penambahan kuota.",
+    "topUpBalance": "Top Up Saldo",
+    "invoicesTitle": "Riwayat Faktur & Kwitansi",
+    "invoicesSubtitle": "Daftar seluruh riwayat pembayaran dan faktur resmi penagihan.",
+    "invoicesCountLabel": "Total Faktur",
+    "addressRequiredForTopUp": "Silakan lengkapi alamat bisnis Anda terlebih dahulu untuk melanjutkan Top-Up saldo."
   },
   "errors": {
     "notFound": {

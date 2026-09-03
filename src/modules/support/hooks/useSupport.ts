@@ -111,7 +111,11 @@ export function useSupport() {
     }
   };
 
-  const replyTicket = async (ticketId: string, content: string, attachment?: string): Promise<TicketMessage> => {
+  const replyTicket = async (
+    ticketId: string,
+    content: string,
+    attachment?: string
+  ): Promise<TicketMessage> => {
     try {
       const newMsg = await supportApi.replyTicket(ticketId, content, attachment);
       setTickets((prev) =>
@@ -142,9 +146,7 @@ export function useSupport() {
     if (activeSearch.trim()) {
       const term = activeSearch.toLowerCase().trim();
       list = list.filter(
-        (t) =>
-          t.subject.toLowerCase().includes(term) ||
-          t.ticketNumber.toLowerCase().includes(term)
+        (t) => t.subject.toLowerCase().includes(term) || t.ticketNumber.toLowerCase().includes(term)
       );
     }
     return list;

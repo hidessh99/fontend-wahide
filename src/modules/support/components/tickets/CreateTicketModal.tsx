@@ -1,11 +1,31 @@
-﻿"use client";
+"use client";
 
-import React, { useState, useRef } from "react";
-import { CreateTicketInput, TicketCategory, TicketPriority } from "@/modules/support/types/support.types";
+import React, { useState, useEffect, useRef } from "react";
+import {
+  CreateTicketInput,
+  TicketCategory,
+  TicketPriority,
+} from "@/modules/support/types/support.types";
 import { supportApi } from "@/modules/support/api/support.api";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { useI18n } from "@/lib/i18n/context";
-import { X, LifeBuoy, Send, Loader2, Paperclip, Trash2, CheckCircle2, Image as ImageIcon } from "lucide-react";
+import {
+  LifeBuoy,
+  Send,
+  Loader2,
+  Paperclip,
+  Trash2,
+  CheckCircle2,
+  Image as ImageIcon,
+} from "lucide-react";
 
 interface CreateTicketModalProps {
   isOpen: boolean;
@@ -13,11 +33,7 @@ interface CreateTicketModalProps {
   onSubmit: (data: CreateTicketInput) => Promise<unknown>;
 }
 
-export function CreateTicketModal({
-  isOpen,
-  onClose,
-  onSubmit,
-}: CreateTicketModalProps) {
+export function CreateTicketModal({ isOpen, onClose, onSubmit }: CreateTicketModalProps) {
   const { t } = useI18n();
   const [subject, setSubject] = useState("");
   const [category, setCategory] = useState<TicketCategory>("WHATSAPP");
@@ -32,17 +48,14 @@ export function CreateTicketModal({
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Escape key to dismiss
-  React.useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+  // Clean up object URL on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      if (previewUrl && previewUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(previewUrl);
+      }
     };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
-
-  if (!isOpen) return null;
+  }, [previewUrl]);
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -59,6 +72,10 @@ export function CreateTicketModal({
       return;
     }
 
+    if (previewUrl && previewUrl.startsWith("blob:")) {
+      URL.revokeObjectURL(previewUrl);
+    }
+
     setError(null);
     setIsUploading(true);
     setAttachmentFileName(file.name);
@@ -72,16 +89,19 @@ export function CreateTicketModal({
       setError(msg);
       setAttachmentUrl("");
       setAttachmentFileName("");
+      if (previewUrl && previewUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(previewUrl);
+      }
       setPreviewUrl("");
     } finally {
       setIsUploading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
     }
   };
 
   const handleRemoveAttachment = () => {
+    if (previewUrl && previewUrl.startsWith("blob:")) {
+      URL.revokeObjectURL(previewUrl);
+    }
     setAttachmentUrl("");
     setAttachmentFileName("");
     setPreviewUrl("");
@@ -92,13 +112,18 @@ export function CreateTicketModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!subject.trim() || !message.trim()) {
-      setError(t("support.errRequiredFields"));
+    if (!subject.trim()) {
+      setError("Subjek tiket wajib diisi.");
+      return;
+    }
+    if (!message.trim()) {
+      setError("Pesan kendala wajib diisi.");
       return;
     }
 
     setIsLoading(true);
     setError(null);
+
     try {
       await onSubmit({
         subject: subject.trim(),
@@ -107,14 +132,9 @@ export function CreateTicketModal({
         message: message.trim(),
         attachment: attachmentUrl || undefined,
       });
-      setSubject("");
-      setMessage("");
-      setAttachmentUrl("");
-      setAttachmentFileName("");
-      setPreviewUrl("");
       onClose();
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : t("support.errCreateFailed");
+      const msg = err instanceof Error ? err.message : "Gagal membuat tiket bantuan";
       setError(msg);
     } finally {
       setIsLoading(false);
@@ -122,51 +142,35 @@ export function CreateTicketModal({
   };
 
   return (
-    <div
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-      className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-sm p-3 sm:p-6 flex min-h-full items-center justify-center animate-in fade-in"
-    >
-      <div className="relative w-full max-w-lg max-h-[90vh] flex flex-col rounded-md border border-border bg-surface dark:bg-[#161715] shadow-2xl overflow-hidden animate-in zoom-in-95">
-        {/* Sticky Header */}
-        <div className="p-5 sm:p-6 pb-4 border-b border-border/80 flex items-start justify-between shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="size-10 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center">
-              <LifeBuoy className="size-5" />
-            </div>
-            <div>
-              <h2 className="text-lg sm:text-xl font-black text-foreground tracking-tight">
-                {t("support.createModalTitle")}
-              </h2>
-              <p className="text-xs font-semibold text-foreground-secondary">
-                {t("support.createModalSubtitle")}
-              </p>
-            </div>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && !isLoading && onClose()}>
+      <DialogContent className="border-border bg-surface max-h-[90vh] max-w-lg gap-0 overflow-hidden p-0 dark:bg-[#161715]">
+        {/* Sticky Modal Header */}
+        <DialogHeader className="border-border/80 flex flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
+          <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
+            <LifeBuoy className="size-5" />
           </div>
-
-          <button
-            type="button"
-            onClick={onClose}
-            className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
-            aria-label="Tutup"
-          >
-            <X className="size-4" />
-          </button>
-        </div>
+          <div>
+            <DialogTitle className="text-foreground text-lg font-black tracking-tight sm:text-xl">
+              {t("support.createTicketTitle")}
+            </DialogTitle>
+            <DialogDescription className="text-foreground-secondary text-xs font-semibold">
+              {t("support.createTicketSubtitle")}
+            </DialogDescription>
+          </div>
+        </DialogHeader>
 
         {/* Scrollable Form Body */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto flex flex-col min-h-0">
-          <div className="p-5 sm:p-6 space-y-4 flex-1">
+        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+          <div className="flex-1 space-y-4 p-5 sm:p-6">
             {error && (
-              <div className="p-3 rounded-md bg-rose-500/10 border border-rose-500/20 text-xs font-semibold text-rose-600 dark:text-rose-400">
+              <div className="rounded-md border border-rose-500/20 bg-rose-500/10 p-3 text-xs font-semibold text-rose-600 dark:text-rose-400">
                 {error}
               </div>
             )}
 
-            {/* Subject */}
+            {/* Subject Input */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                 {t("support.subjectLabel")}
               </label>
               <input
@@ -175,68 +179,72 @@ export function CreateTicketModal({
                 onChange={(e) => setSubject(e.target.value)}
                 placeholder={t("support.subjectPlaceholder")}
                 disabled={isLoading}
-                className="w-full h-11 px-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs"
+                className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full rounded-md border px-3 text-xs font-semibold transition outline-none focus:ring-1 dark:bg-[#10110e]"
                 autoFocus
               />
             </div>
 
-            {/* Category & Priority */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {/* Category & Priority Grid */}
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+                <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                   {t("support.categoryLabel")}
                 </label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value as TicketCategory)}
-                  className="w-full h-10 px-3 rounded-md bg-surface dark:bg-[#10110e] text-foreground text-xs font-semibold border border-border outline-none focus:border-wise-green"
+                  disabled={isLoading}
+                  className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full cursor-pointer rounded-md border px-3 text-xs font-semibold outline-none focus:ring-1 dark:bg-[#10110e]"
                 >
-                  <option value="WHATSAPP">{t("support.categoryWhatsapp")}</option>
-                  <option value="BILLING">{t("support.categoryBilling")}</option>
-                  <option value="API">{t("support.categoryApi")}</option>
-                  <option value="GENERAL">{t("support.categoryGeneral")}</option>
+                  <option value="WHATSAPP">{t("support.catWhatsApp")}</option>
+                  <option value="BILLING">{t("support.catBilling")}</option>
+                  <option value="ACCOUNT">{t("support.catAccount")}</option>
+                  <option value="FEATURE_REQUEST">{t("support.catFeature")}</option>
+                  <option value="OTHER">{t("support.catOther")}</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+                <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                   {t("support.priorityLabel")}
                 </label>
                 <select
                   value={priority}
                   onChange={(e) => setPriority(e.target.value as TicketPriority)}
-                  className="w-full h-10 px-3 rounded-md bg-surface dark:bg-[#10110e] text-foreground text-xs font-semibold border border-border outline-none focus:border-wise-green"
+                  disabled={isLoading}
+                  className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full cursor-pointer rounded-md border px-3 text-xs font-semibold outline-none focus:ring-1 dark:bg-[#10110e]"
                 >
                   <option value="LOW">{t("support.priorityLow")}</option>
                   <option value="MEDIUM">{t("support.priorityMedium")}</option>
                   <option value="HIGH">{t("support.priorityHigh")}</option>
+                  <option value="URGENT">{t("support.priorityUrgent")}</option>
                 </select>
               </div>
             </div>
 
-            {/* Detailed Message */}
+            {/* Message Area */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                 {t("support.messageLabel")}
               </label>
               <textarea
-                rows={4}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder={t("support.messagePlaceholder")}
                 disabled={isLoading}
-                className="w-full p-3 rounded-md bg-surface dark:bg-[#10110e] text-foreground font-semibold text-xs border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition leading-relaxed"
+                rows={4}
+                className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green w-full resize-none rounded-md border p-3 text-xs font-semibold transition outline-none focus:ring-1 dark:bg-[#10110e]"
               />
             </div>
 
-            {/* Screenshot Attachment */}
+            {/* Attachment Section */}
             <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary">
+              <div className="flex items-center justify-between">
+                <label className="text-foreground-secondary text-xs font-semibold tracking-wider uppercase">
                   {t("support.attachmentLabel")}
                 </label>
-                <span className="text-[11px] font-semibold text-foreground-muted">
-                  {t("support.attachmentHint")}
+                <span className="text-foreground-muted text-[11px]">
+                  {t("support.attachmentNotice")}
                 </span>
               </div>
 
@@ -244,56 +252,59 @@ export function CreateTicketModal({
                 type="file"
                 ref={fileInputRef}
                 onChange={handleFileSelect}
-                accept="image/png,image/jpeg,image/jpg"
+                accept="image/png, image/jpeg, image/jpg"
                 className="hidden"
               />
 
-              {!attachmentUrl && !previewUrl && !isUploading && (
+              {!attachmentUrl && !isUploading && (
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isLoading}
-                  className="w-full py-2.5 px-4 rounded-md border border-dashed border-border hover:border-wise-green bg-surface/50 dark:bg-[#10110e]/50 hover:bg-wise-green/5 text-foreground-secondary hover:text-foreground flex items-center justify-center gap-2 text-xs font-semibold transition cursor-pointer"
+                  className="border-border hover:border-wise-green/80 bg-surface text-foreground-secondary hover:text-foreground mt-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-md border border-dashed py-3 text-xs font-semibold transition dark:bg-[#10110e]"
                 >
-                  <Paperclip className="size-3.5 text-wise-green" />
-                  <span>{t("support.selectScreenshot")}</span>
+                  <Paperclip className="size-4" />
+                  <span>{t("support.attachScreenshot")}</span>
                 </button>
               )}
 
               {isUploading && (
-                <div className="w-full py-3 px-4 rounded-md border border-border bg-surface dark:bg-[#10110e] flex items-center justify-center gap-2 text-xs font-semibold text-foreground-secondary">
-                  <Loader2 className="size-4 animate-spin text-wise-green" />
+                <div className="border-border bg-surface mt-2 flex items-center justify-center gap-2 rounded-md border p-3 text-xs font-semibold dark:bg-[#10110e]">
+                  <Loader2 className="dark:text-wise-green size-4 animate-spin text-emerald-600" />
                   <span>{t("support.uploadingImage")}</span>
                 </div>
               )}
 
-              {(previewUrl || attachmentUrl) && !isUploading && (
-                <div className="p-2.5 rounded-md border border-wise-green/30 bg-wise-green/5 dark:bg-wise-green/10 flex items-center justify-between gap-3">
+              {attachmentUrl && (
+                <div className="border-border bg-surface mt-2 flex items-center justify-between gap-3 rounded-md border p-2.5 dark:bg-[#10110e]">
                   <div className="flex items-center gap-2.5 overflow-hidden">
-                    <div className="size-10 rounded bg-surface dark:bg-black/40 border border-border flex items-center justify-center shrink-0 overflow-hidden">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={previewUrl || attachmentUrl}
-                        alt="Thumbnail lampiran"
-                        className="size-full object-cover"
+                    {previewUrl ? (
+                      <div
+                        role="img"
+                        aria-label={attachmentFileName || "Screenshot Preview"}
+                        className="size-10 shrink-0 rounded bg-cover bg-center"
+                        style={{ backgroundImage: `url("${previewUrl}")` }}
                       />
-                    </div>
-                    <div className="overflow-hidden">
+                    ) : (
+                      <div className="bg-muted flex size-10 shrink-0 items-center justify-center rounded">
+                        <ImageIcon className="text-foreground-muted size-5" />
+                      </div>
+                    )}
+                    <div className="min-w-0">
                       <div className="flex items-center gap-1.5">
-                        <CheckCircle2 className="size-3 text-wise-green shrink-0" />
-                        <p className="text-xs font-bold text-foreground truncate">
-                          {attachmentFileName || t("support.screenshotUploaded")}
-                        </p>
+                        <span className="text-foreground truncate text-xs font-bold">
+                          {attachmentFileName || "Screenshot.jpg"}
+                        </span>
+                        <CheckCircle2 className="dark:text-wise-green size-3.5 shrink-0 text-emerald-600" />
                       </div>
                       {attachmentUrl && (
                         <a
                           href={attachmentUrl}
                           target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[11px] font-semibold text-wise-green hover:underline inline-flex items-center gap-1 mt-0.5"
+                          rel="noreferrer"
+                          className="dark:text-wise-green block truncate font-mono text-[10px] text-emerald-600 hover:underline"
                         >
-                          <ImageIcon className="size-3" />
-                          <span>{t("support.viewAttachment")} ↗</span>
+                          {attachmentUrl}
                         </a>
                       )}
                     </div>
@@ -303,7 +314,7 @@ export function CreateTicketModal({
                     type="button"
                     onClick={handleRemoveAttachment}
                     disabled={isLoading}
-                    className="size-7 rounded-full flex items-center justify-center text-foreground-muted hover:text-rose-500 hover:bg-rose-500/10 transition cursor-pointer shrink-0"
+                    className="text-foreground-muted flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-full transition hover:bg-rose-500/10 hover:text-rose-500"
                     title={t("support.removeAttachment")}
                   >
                     <Trash2 className="size-3.5" />
@@ -314,14 +325,14 @@ export function CreateTicketModal({
           </div>
 
           {/* Sticky Modal Footer */}
-          <div className="p-4 sm:p-6 pt-3 border-t border-border/80 bg-surface/90 dark:bg-[#161715]/90 backdrop-blur-sm flex items-center justify-end gap-2.5 shrink-0">
+          <DialogFooter className="border-border/80 bg-surface/90 m-0 flex shrink-0 flex-row items-center justify-end gap-2.5 rounded-none border-t p-4 pt-3 backdrop-blur-sm sm:p-6 dark:bg-[#161715]/90">
             <Button
               type="button"
               variant="outline"
               size="sm"
               onClick={onClose}
               disabled={isLoading}
-              className="rounded-full text-xs font-bold px-4 border-border hover:border-foreground-muted"
+              className="border-border hover:border-foreground-muted rounded-full px-4 text-xs font-bold"
             >
               {t("support.cancel")}
             </Button>
@@ -330,7 +341,7 @@ export function CreateTicketModal({
               variant="primaryPill"
               size="sm"
               disabled={isLoading}
-              className="text-xs font-bold gap-1.5 px-6 shadow-sm"
+              className="gap-1.5 px-6 text-xs font-bold shadow-sm"
             >
               {isLoading ? (
                 <>
@@ -344,9 +355,9 @@ export function CreateTicketModal({
                 </>
               )}
             </Button>
-          </div>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

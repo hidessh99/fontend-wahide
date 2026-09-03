@@ -14,13 +14,15 @@ export function useDevices() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<DeviceStatus | "ALL">("ALL");
 
-  const fetchDevices = useCallback(async () => {
+  const fetchDevices = useCallback(async (signalOrEvent?: AbortSignal | unknown) => {
+    const signal = signalOrEvent instanceof AbortSignal ? signalOrEvent : undefined;
     setIsLoading(true);
     setError(null);
     try {
-      const data = await whatsappApi.getDevices();
+      const data = await whatsappApi.getDevices(signal);
       setDevices(data);
     } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") return;
       const msg = err instanceof Error ? err.message : "Gagal memuat daftar perangkat";
       setError(msg);
     } finally {
@@ -30,24 +32,31 @@ export function useDevices() {
 
   useEffect(() => {
     let isMounted = true;
-    const init = async () => {
+    const controller = new AbortController();
+
+    const loadInitialDevices = async () => {
       try {
-        const data = await whatsappApi.getDevices();
+        const data = await whatsappApi.getDevices(controller.signal);
         if (isMounted) {
           setDevices(data);
-          setIsLoading(false);
         }
       } catch (err: unknown) {
+        if (err instanceof Error && err.name === "AbortError") return;
         if (isMounted) {
-          const msg = err instanceof Error ? err.message : "Gagal memuat daftar perangkat";
-          setError(msg);
+          setError(err instanceof Error ? err.message : "Gagal memuat daftar perangkat");
+        }
+      } finally {
+        if (isMounted) {
           setIsLoading(false);
         }
       }
     };
-    init();
+
+    loadInitialDevices();
+
     return () => {
       isMounted = false;
+      controller.abort();
     };
   }, []);
 
@@ -58,7 +67,6 @@ export function useDevices() {
       toast.success(t("whatsapp.toastCreated"));
       return newDevice;
     } catch (err: unknown) {
-
       const msg = err instanceof Error ? err.message : "Gagal membuat slot perangkat";
       toast.error(msg);
       throw err;
@@ -80,9 +88,7 @@ export function useDevices() {
   const disconnectDevice = async (id: string): Promise<void> => {
     try {
       await whatsappApi.disconnectDevice(id);
-      setDevices((prev) =>
-        prev.map((d) => (d.id === id ? { ...d, status: "DISCONNECTED" } : d))
-      );
+      setDevices((prev) => prev.map((d) => (d.id === id ? { ...d, status: "DISCONNECTED" } : d)));
       toast.success(t("whatsapp.toastDisconnected"));
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal memutuskan koneksi";
@@ -94,9 +100,7 @@ export function useDevices() {
   const hibernateDevice = async (id: string): Promise<void> => {
     try {
       await whatsappApi.hibernateDevice(id);
-      setDevices((prev) =>
-        prev.map((d) => (d.id === id ? { ...d, status: "HIBERNATED" } : d))
-      );
+      setDevices((prev) => prev.map((d) => (d.id === id ? { ...d, status: "HIBERNATED" } : d)));
       toast.success(t("whatsapp.toastHibernated"));
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal menghibernasi sesi";
@@ -108,9 +112,7 @@ export function useDevices() {
   const wakeDevice = async (id: string): Promise<void> => {
     try {
       await whatsappApi.wakeDevice(id);
-      setDevices((prev) =>
-        prev.map((d) => (d.id === id ? { ...d, status: "CONNECTED" } : d))
-      );
+      setDevices((prev) => prev.map((d) => (d.id === id ? { ...d, status: "CONNECTED" } : d)));
       toast.success(t("whatsapp.toastWoken"));
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal membangunkan sesi";
@@ -119,11 +121,12 @@ export function useDevices() {
     }
   };
 
-  const updateDeviceStatus = useCallback((id: string, status: DeviceStatus, extra?: Partial<Device>) => {
-    setDevices((prev) =>
-      prev.map((d) => (d.id === id ? { ...d, status, ...extra } : d))
-    );
-  }, []);
+  const updateDeviceStatus = useCallback(
+    (id: string, status: DeviceStatus, extra?: Partial<Device>) => {
+      setDevices((prev) => prev.map((d) => (d.id === id ? { ...d, status, ...extra } : d)));
+    },
+    []
+  );
 
   const filteredDevices = useMemo(() => {
     return devices.filter((device) => {
@@ -133,13 +136,11 @@ export function useDevices() {
         devName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         Boolean(device.phone && device.phone.includes(searchQuery));
 
-      const matchesStatus =
-        statusFilter === "ALL" || device.status === statusFilter;
+      const matchesStatus = statusFilter === "ALL" || device.status === statusFilter;
 
       return matchesSearch && matchesStatus;
     });
   }, [devices, searchQuery, statusFilter]);
-
 
   const stats: DeviceStats = useMemo(() => {
     return {

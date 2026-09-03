@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { CampaignsView } from "@/components/dashboard/CampaignsView";
+import { CampaignsView } from "@/modules/campaign/views/CampaignsView";
+import { SellerRouteGuard } from "@/components/layout/shared/SellerRouteGuard";
 
 export const metadata: Metadata = {
   title: "Kampanye Broadcast & Spintax",
@@ -15,5 +16,9 @@ export const metadata: Metadata = {
 };
 
 export default function CampaignsPage() {
-  return <CampaignsView />;
+  return (
+    <SellerRouteGuard>
+      <CampaignsView />
+    </SellerRouteGuard>
+  );
 }

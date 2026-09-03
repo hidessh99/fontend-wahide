@@ -1,10 +1,13 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import { Invoice, InvoiceStatus } from "@/modules/finance/types/finance.types";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty";
+import { DataTablePagination } from "@/components/ui/pagination";
 import { useI18n } from "@/lib/i18n/context";
-import { FileText, CheckCircle2, Clock, AlertCircle, CreditCard, ChevronLeft, ChevronRight } from "lucide-react";
+import { FileText, CheckCircle2, Clock, AlertCircle, CreditCard } from "lucide-react";
 
 interface InvoiceTableProps {
   invoices: Invoice[];
@@ -38,42 +41,42 @@ export function InvoiceTable({
     switch (status) {
       case "PAID":
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+          <Badge variant="success">
             <CheckCircle2 className="size-3" />
             <span>{t("billing.statusPaid")}</span>
-          </span>
+          </Badge>
         );
       case "PENDING":
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+          <Badge variant="warning">
             <Clock className="size-3" />
             <span>{t("billing.statusPending")}</span>
-          </span>
+          </Badge>
         );
       case "EXPIRED":
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-zinc-500/10 text-zinc-600 dark:text-zinc-400 border border-zinc-500/20">
+          <Badge variant="neutral">
             <AlertCircle className="size-3" />
             <span>{t("billing.statusExpired")}</span>
-          </span>
+          </Badge>
         );
     }
   };
 
   return (
-    <div className="rounded-md border border-border bg-surface dark:bg-[#161715] overflow-hidden shadow-xs">
+    <div className="border-border bg-surface overflow-hidden rounded-md border shadow-xs dark:bg-[#161715]">
       {/* Invoices List */}
       {invoices.length === 0 ? (
-        <div className="p-6 sm:p-10 text-center space-y-2">
-          <FileText className="size-10 text-foreground-muted mx-auto" />
-          <h3 className="font-bold text-sm text-foreground">{t("billing.noInvoices")}</h3>
-          <p className="text-xs text-foreground-secondary">{t("billing.noInvoicesDesc")}</p>
-        </div>
+        <EmptyState
+          icon={<FileText />}
+          title={t("billing.noInvoices")}
+          description={t("billing.noInvoicesDesc")}
+        />
       ) : (
         <div>
           {/* Mobile View: Card-based Invoice List (Visible on < 768px) */}
-          <div className="md:hidden divide-y divide-border/50">
+          <div className="divide-border/50 divide-y md:hidden">
             {invoices.map((inv) => {
               const safeAmount = Number(inv.amount ?? 0);
               const dateStr = inv.createdAt
@@ -85,10 +88,10 @@ export function InvoiceTable({
                 : "-";
 
               return (
-                <div key={inv.id} className="p-3.5 sm:p-4 space-y-3 bg-surface dark:bg-[#161715]">
+                <div key={inv.id} className="bg-surface space-y-3 p-3.5 sm:p-4 dark:bg-[#161715]">
                   {/* Top: Invoice Number & Status Badge */}
                   <div className="flex items-center justify-between gap-2">
-                    <span className="font-mono text-xs font-bold text-foreground bg-muted px-2.5 py-0.5 rounded-full border border-border">
+                    <span className="text-foreground bg-muted border-border rounded-full border px-2.5 py-0.5 font-mono text-xs font-bold">
                       {inv.invoiceNumber || "INV-WAHIDE"}
                     </span>
                     <div>{renderStatusBadge(inv.status)}</div>
@@ -96,14 +99,14 @@ export function InvoiceTable({
 
                   {/* Middle: Description & Amount */}
                   <div className="space-y-1">
-                    <p className="text-xs font-semibold text-foreground-secondary line-clamp-1">
+                    <p className="text-foreground-secondary line-clamp-1 text-xs font-semibold">
                       {inv.description || "Layanan WhatsApp Gateway"}
                     </p>
                     <div className="flex items-baseline justify-between gap-2">
-                      <span className="text-base font-black font-mono text-foreground">
+                      <span className="text-foreground font-mono text-base font-black">
                         Rp {safeAmount.toLocaleString("id-ID")}
                       </span>
-                      <span className="text-[11px] text-foreground-muted">{dateStr}</span>
+                      <span className="text-foreground-muted text-[11px]">{dateStr}</span>
                     </div>
                   </div>
 
@@ -114,12 +117,16 @@ export function InvoiceTable({
                       size="sm"
                       onClick={() => {
                         if (inv.paymentUrl || inv.invoiceUrl) {
-                          window.open(inv.paymentUrl || inv.invoiceUrl, "_blank", "noopener,noreferrer");
+                          window.open(
+                            inv.paymentUrl || inv.invoiceUrl,
+                            "_blank",
+                            "noopener,noreferrer"
+                          );
                         } else if (onPay) {
                           onPay(inv);
                         }
                       }}
-                      className="w-full h-9 text-xs font-bold gap-1.5 rounded-full shadow-xs cursor-pointer justify-center"
+                      className="h-9 w-full cursor-pointer justify-center gap-1.5 rounded-full text-xs font-bold shadow-xs"
                     >
                       <CreditCard className="size-3.5" />
                       <span>{t("billing.payNow")}</span>
@@ -129,9 +136,9 @@ export function InvoiceTable({
                       variant="outline"
                       size="sm"
                       onClick={() => onViewReceipt(inv)}
-                      className="w-full h-9 text-xs font-bold gap-1.5 rounded-full border-border hover:border-foreground-muted cursor-pointer justify-center"
+                      className="border-border hover:border-foreground-muted h-9 w-full cursor-pointer justify-center gap-1.5 rounded-full text-xs font-bold"
                     >
-                      <FileText className="size-3.5 text-foreground-secondary" />
+                      <FileText className="text-foreground-secondary size-3.5" />
                       <span>{t("billing.viewInvoice")}</span>
                     </Button>
                   ) : null}
@@ -143,7 +150,7 @@ export function InvoiceTable({
           {/* Desktop View: Tabular Grid (Visible on >= 768px) */}
           <div className="hidden md:block">
             {/* Table Header */}
-            <div className="grid grid-cols-12 gap-3 px-5 py-4 bg-muted/60 border-b border-border text-xs font-extrabold uppercase tracking-wider text-foreground-muted select-none">
+            <div className="bg-muted/60 border-border text-foreground-muted grid grid-cols-12 gap-3 border-b px-5 py-4 text-xs font-extrabold tracking-wider uppercase select-none">
               <div className="col-span-3">{t("billing.tableHeaderInvoice")}</div>
               <div className="col-span-4">{t("billing.tableHeaderDesc")}</div>
               <div className="col-span-2">{t("billing.tableHeaderAmount")}</div>
@@ -152,7 +159,7 @@ export function InvoiceTable({
             </div>
 
             {/* Table Body */}
-            <div className="divide-y divide-border/50 text-xs font-semibold">
+            <div className="divide-border/50 divide-y text-xs font-semibold">
               {invoices.map((inv) => {
                 const safeAmount = Number(inv.amount ?? 0);
                 const dateStr = inv.createdAt
@@ -166,25 +173,23 @@ export function InvoiceTable({
                 return (
                   <div
                     key={inv.id}
-                    className="grid grid-cols-12 gap-3 px-5 py-3.5 items-center hover:bg-muted/40 transition-colors min-h-14.5"
+                    className="hover:bg-muted/40 grid min-h-14.5 grid-cols-12 items-center gap-3 px-5 py-3.5 transition-colors"
                   >
                     {/* Invoice Number & Date */}
                     <div className="col-span-3 space-y-0.5">
-                      <span className="font-bold text-foreground block font-mono text-sm tracking-tight truncate">
+                      <span className="text-foreground block truncate font-mono text-sm font-bold tracking-tight">
                         {inv.invoiceNumber || "INV-WAHIDE"}
                       </span>
-                      <span className="text-xs text-foreground-muted block">
-                        {dateStr}
-                      </span>
+                      <span className="text-foreground-muted block text-xs">{dateStr}</span>
                     </div>
 
                     {/* Description */}
-                    <div className="col-span-4 text-sm font-semibold text-foreground-secondary truncate">
+                    <div className="text-foreground-secondary col-span-4 truncate text-sm font-semibold">
                       {inv.description || "Layanan WhatsApp Gateway"}
                     </div>
 
                     {/* Amount */}
-                    <div className="col-span-2 font-mono font-bold text-sm text-foreground truncate">
+                    <div className="text-foreground col-span-2 truncate font-mono text-sm font-bold">
                       Rp {safeAmount.toLocaleString("id-ID")}
                     </div>
 
@@ -194,19 +199,23 @@ export function InvoiceTable({
                     </div>
 
                     {/* Action Column */}
-                    <div className="col-span-1 flex justify-end items-center">
+                    <div className="col-span-1 flex items-center justify-end">
                       {inv.status === "PENDING" ? (
                         <Button
                           variant="primaryPill"
                           size="sm"
                           onClick={() => {
                             if (inv.paymentUrl || inv.invoiceUrl) {
-                              window.open(inv.paymentUrl || inv.invoiceUrl, "_blank", "noopener,noreferrer");
+                              window.open(
+                                inv.paymentUrl || inv.invoiceUrl,
+                                "_blank",
+                                "noopener,noreferrer"
+                              );
                             } else if (onPay) {
                               onPay(inv);
                             }
                           }}
-                          className="h-8 px-3.5 text-xs font-bold gap-1 rounded-full shadow-xs cursor-pointer"
+                          className="h-8 cursor-pointer gap-1 rounded-full px-3.5 text-xs font-bold shadow-xs"
                         >
                           <CreditCard className="size-3.5" />
                           <span>{t("billing.payNow")}</span>
@@ -216,14 +225,14 @@ export function InvoiceTable({
                           variant="outline"
                           size="sm"
                           onClick={() => onViewReceipt(inv)}
-                          className="h-8 px-3 text-xs font-bold gap-1.5 rounded-full border-border hover:border-foreground-muted cursor-pointer"
+                          className="border-border hover:border-foreground-muted h-8 cursor-pointer gap-1.5 rounded-full px-3 text-xs font-bold"
                           title={t("billing.viewInvoice")}
                         >
-                          <FileText className="size-3.5 text-foreground-secondary" />
+                          <FileText className="text-foreground-secondary size-3.5" />
                           <span>{t("billing.viewInvoice")}</span>
                         </Button>
                       ) : (
-                        <span className="text-foreground-muted text-xs font-mono pr-2">-</span>
+                        <span className="text-foreground-muted pr-2 font-mono text-xs">-</span>
                       )}
                     </div>
                   </div>
@@ -236,41 +245,23 @@ export function InvoiceTable({
 
       {/* Pagination Footer */}
       {total > 0 && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 sm:px-5 sm:py-3.5 border-t border-border bg-muted/30">
+        <div className="border-border bg-muted/30 flex flex-col items-center justify-between gap-3 border-t p-3 sm:flex-row sm:px-5 sm:py-3.5">
           {/* Item count summary */}
-          <div className="text-xs font-semibold text-foreground-secondary">
+          <div className="text-foreground-secondary text-xs font-semibold">
             Menampilkan {startItem} - {endItem} dari {total} faktur
           </div>
 
-          {/* Page navigation: Previous, Page Indicator, Next */}
+          {/* Shadcn UI Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-foreground-muted px-1.5 select-none">
-                Halaman {page} dari {totalPages}
-              </span>
-
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onPrevPage}
-                disabled={page <= 1}
-                className="h-8.5 px-3.5 rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted cursor-pointer disabled:opacity-40"
-              >
-                <ChevronLeft className="size-3.5" />
-                <span>Sebelumnya</span>
-              </Button>
-
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onNextPage}
-                disabled={page >= totalPages}
-                className="h-8.5 px-3.5 rounded-full text-xs font-bold gap-1.5 border-border hover:border-foreground-muted cursor-pointer disabled:opacity-40"
-              >
-                <span>Berikutnya</span>
-                <ChevronRight className="size-3.5" />
-              </Button>
-            </div>
+            <DataTablePagination
+              page={page}
+              totalPages={totalPages}
+              onPrevPage={onPrevPage}
+              onNextPage={onNextPage}
+              prevText={t("billing.prevPage") || "Sebelumnya"}
+              nextText={t("billing.nextPage") || "Berikutnya"}
+              className="mx-0 w-auto"
+            />
           )}
         </div>
       )}

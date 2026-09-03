@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
@@ -23,7 +23,7 @@ export function BlogListView() {
     <div className="space-y-10 max-w-5xl mx-auto p-4 sm:p-6 lg:p-8">
       {/* Header */}
       <div className="space-y-2 border-b border-border pb-6">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-wise-green/15 text-wise-green">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-700 dark:text-wise-green border border-emerald-500/20 dark:border-wise-green/20">
           <Newspaper className="size-3.5" />
           <span>{t("content.badge")}</span>
         </div>
@@ -63,7 +63,7 @@ export function BlogListView() {
                 </div>
 
                 <Link href={`/blog/${post.slug}`} className="block group">
-                  <h2 className="text-lg font-black text-foreground group-hover:text-wise-green transition leading-snug">
+                  <h2 className="text-lg font-black text-foreground group-hover:text-emerald-700 dark:group-hover:text-wise-green transition leading-snug">
                     {post.title}
                   </h2>
                 </Link>
@@ -88,7 +88,7 @@ export function BlogListView() {
 
                 <Link
                   href={`/blog/${post.slug}`}
-                  className="inline-flex items-center gap-1 text-xs font-bold text-wise-green hover:underline"
+                  className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 dark:text-wise-green hover:underline"
                 >
                   <span>{t("content.readArticle")}</span>
                   <ArrowRight className="size-3" />

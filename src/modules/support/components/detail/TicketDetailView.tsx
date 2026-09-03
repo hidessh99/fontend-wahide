@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Ticket, TicketMessage, TicketStatus } from "../../types/support.types";
 import { supportApi } from "../../api/support.api";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useI18n } from "@/lib/i18n/context";
 import { toast } from "sonner";
 import {
@@ -23,6 +25,27 @@ import {
   X,
   Check,
 } from "lucide-react";
+
+/**
+ * Strict protocol sanitizer for media URLs (img src and a href)
+ * Prevents DOM-based XSS (CodeQL js/xss-through-dom) and rejects dangerous schemes (javascript:, vbscript:, data:text/html)
+ */
+function getSafeMediaUrl(url: string | null | undefined): string | null {
+  if (!url || typeof url !== "string") return null;
+  const trimmed = url.trim();
+
+  if (
+    trimmed.startsWith("blob:") ||
+    trimmed.startsWith("https://") ||
+    trimmed.startsWith("http://")
+  ) {
+    if (/^(javascript|vbscript|data:(?!image\/)):/i.test(trimmed)) {
+      return null;
+    }
+    return trimmed;
+  }
+  return null;
+}
 
 interface TicketDetailViewProps {
   ticketId: string;
@@ -48,6 +71,15 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
 
   // Close Ticket State
   const [isClosing, setIsClosing] = useState(false);
+
+  // Clean up object URL on unmount to prevent browser memory leaks
+  useEffect(() => {
+    return () => {
+      if (previewUrl && previewUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   useEffect(() => {
     let isMounted = true;
@@ -96,6 +128,11 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
       return;
     }
 
+    // Revoke previous blob url if exists
+    if (previewUrl && previewUrl.startsWith("blob:")) {
+      URL.revokeObjectURL(previewUrl);
+    }
+
     setUploadError(null);
     setIsUploading(true);
     setAttachmentFile(file);
@@ -108,6 +145,9 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
       const msg = err instanceof Error ? err.message : t("support.errUploadFailed");
       setUploadError(msg);
       setAttachmentUrl("");
+      if (previewUrl && previewUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(previewUrl);
+      }
       setPreviewUrl("");
       setAttachmentFile(null);
     } finally {
@@ -119,6 +159,9 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
   };
 
   const handleRemoveAttachment = () => {
+    if (previewUrl && previewUrl.startsWith("blob:")) {
+      URL.revokeObjectURL(previewUrl);
+    }
     setAttachmentFile(null);
     setAttachmentUrl("");
     setPreviewUrl("");
@@ -140,11 +183,7 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
         finalAttachmentUrl = await supportApi.uploadImage(attachmentFile);
       }
 
-      const newMsg = await supportApi.replyTicket(
-        ticket.id,
-        text,
-        finalAttachmentUrl || undefined
-      );
+      const newMsg = await supportApi.replyTicket(ticket.id, text, finalAttachmentUrl || undefined);
 
       setReplies((prev) => [...prev, newMsg]);
       setReplyText("");
@@ -180,32 +219,32 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
     switch (status) {
       case "RESOLVED":
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+          <Badge variant="success">
             <CheckCircle2 className="size-3" />
             <span>{t("support.statusResolved")}</span>
-          </span>
+          </Badge>
         );
       case "IN_PROGRESS":
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+          <Badge variant="warning">
             <Clock className="size-3" />
             <span>{t("support.statusInProgress")}</span>
-          </span>
+          </Badge>
         );
       case "CLOSED":
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-muted text-foreground-muted border border-border">
+          <Badge variant="neutral">
             <Lock className="size-3" />
             <span>{t("support.statusClosed")}</span>
-          </span>
+          </Badge>
         );
       case "OPEN":
       default:
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
+          <Badge variant="info">
             <AlertCircle className="size-3" />
             <span>{t("support.statusOpen")}</span>
-          </span>
+          </Badge>
         );
     }
   };
@@ -213,18 +252,16 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
   const renderPriorityBadge = (priority: string) => {
     if (priority === "HIGH") {
       return (
-        <span className="inline-flex items-center gap-1 text-xs font-extrabold text-rose-600 dark:text-rose-400 uppercase">
-          <ShieldAlert className="size-3.5" />
+        <Badge variant="danger">
+          <ShieldAlert className="size-3" />
           <span>{t("support.priorityHigh")}</span>
-        </span>
+        </Badge>
       );
     }
     return (
-      <span className="text-xs font-bold text-foreground-muted uppercase">
-        {priority === "MEDIUM"
-          ? t("support.priorityMedium")
-          : t("support.priorityLow")}
-      </span>
+      <Badge variant="neutral">
+        {priority === "MEDIUM" ? t("support.priorityMedium") : t("support.priorityLow")}
+      </Badge>
     );
   };
 
@@ -245,16 +282,16 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
 
   if (isLoading) {
     return (
-      <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto p-3 sm:p-6 lg:p-8 animate-pulse">
-        <div className="h-4 w-40 bg-muted rounded" />
-        <div className="h-10 w-3/4 bg-muted rounded" />
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-4">
-          <div className="lg:col-span-8 space-y-6">
-            <div className="h-48 bg-muted rounded-md" />
-            <div className="h-64 bg-muted rounded-md" />
+      <div className="mx-auto max-w-7xl space-y-6 p-3 sm:space-y-8 sm:p-6 lg:p-8">
+        <Skeleton className="h-4 w-40 rounded" />
+        <Skeleton className="h-10 w-3/4 rounded-md" />
+        <div className="grid grid-cols-1 gap-6 pt-4 lg:grid-cols-12">
+          <div className="space-y-6 lg:col-span-8">
+            <Skeleton className="h-48 w-full rounded-md" />
+            <Skeleton className="h-64 w-full rounded-md" />
           </div>
           <div className="lg:col-span-4">
-            <div className="h-80 bg-muted rounded-md" />
+            <Skeleton className="h-80 w-full rounded-md" />
           </div>
         </div>
       </div>
@@ -263,26 +300,24 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
 
   if (error || !ticket) {
     return (
-      <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto p-3 sm:p-6 lg:p-8">
+      <div className="mx-auto max-w-7xl space-y-6 p-3 sm:space-y-8 sm:p-6 lg:p-8">
         <Link
           href="/support"
-          className="inline-flex items-center gap-2 text-xs font-bold text-foreground-muted hover:text-foreground transition"
+          className="text-foreground-muted hover:text-foreground inline-flex items-center gap-2 text-xs font-bold transition"
         >
           <ArrowLeft className="size-3.5" />
           <span>{t("support.backToTickets")}</span>
         </Link>
-        <div className="rounded-md border border-rose-500/20 bg-rose-500/10 p-8 text-center space-y-3">
-          <AlertCircle className="size-10 text-rose-600 dark:text-rose-400 mx-auto" />
-          <h2 className="text-lg font-bold text-foreground">
-            {t("support.ticketNotFound")}
-          </h2>
-          <p className="text-xs text-foreground-muted max-w-md mx-auto">
+        <div className="space-y-3 rounded-md border border-rose-500/20 bg-rose-500/10 p-8 text-center">
+          <AlertCircle className="mx-auto size-10 text-rose-600 dark:text-rose-400" />
+          <h2 className="text-foreground text-lg font-bold">{t("support.ticketNotFound")}</h2>
+          <p className="text-foreground-muted mx-auto max-w-md text-xs">
             {error || t("support.ticketNotFoundDesc")}
           </p>
           <div className="pt-2">
             <Link
               href="/support"
-              className="inline-flex items-center h-9 px-4 rounded-full text-xs font-bold border border-border bg-surface hover:bg-muted transition text-foreground"
+              className="border-border bg-surface hover:bg-muted text-foreground inline-flex h-9 items-center rounded-full border px-4 text-xs font-bold transition"
             >
               {t("support.backToSupport")}
             </Link>
@@ -293,26 +328,26 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
   }
 
   return (
-    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto p-3 sm:p-6 lg:p-8">
+    <div className="mx-auto max-w-7xl space-y-6 p-3 sm:space-y-8 sm:p-6 lg:p-8">
       {/* Header Section dengan Breadcrumb Terintegrasi */}
-      <div className="space-y-3 border-b border-border pb-5 sm:pb-6">
+      <div className="border-border space-y-3 border-b pb-5 sm:pb-6">
         <div>
           <Link
             href="/support"
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-foreground-muted hover:text-foreground transition group"
+            className="text-foreground-muted hover:text-foreground group inline-flex items-center gap-1.5 text-xs font-bold transition"
           >
-            <ArrowLeft className="size-3.5 group-hover:-translate-x-0.5 transition-transform" />
+            <ArrowLeft className="size-3.5 transition-transform group-hover:-translate-x-0.5" />
             <span>{t("support.backToTickets")}</span>
           </Link>
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div className="space-y-2">
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-foreground tracking-tight">
+            <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl lg:text-3xl">
               {ticket.subject}
             </h1>
-            <div className="flex flex-wrap items-center gap-2.5 text-xs font-semibold text-foreground-muted">
-              <span className="font-mono text-dark-green dark:text-wise-green bg-light-mint dark:bg-wise-green/15 px-2.5 py-0.5 rounded-full border border-wise-green/30 font-bold">
+            <div className="text-foreground-muted flex flex-wrap items-center gap-2.5 text-xs font-semibold">
+              <span className="text-dark-green dark:text-wise-green bg-light-mint dark:bg-wise-green/15 border-wise-green/30 rounded-full border px-2.5 py-0.5 font-mono font-bold">
                 {ticket.ticketNumber}
               </span>
               <span>•</span>
@@ -320,7 +355,7 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
               <span>•</span>
               {renderPriorityBadge(ticket.priority)}
               <span>•</span>
-              <span className="px-2 py-0.5 rounded bg-muted text-foreground-secondary font-medium">
+              <span className="bg-muted text-foreground-secondary rounded px-2 py-0.5 font-medium">
                 {ticket.category}
               </span>
               <span>•</span>
@@ -335,7 +370,7 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
                 size="sm"
                 onClick={handleCloseTicket}
                 disabled={isClosing}
-                className="h-9 px-4 rounded-full text-xs font-bold gap-1.5 border-border hover:border-rose-500/40 hover:text-rose-600 dark:hover:text-rose-400 transition cursor-pointer"
+                className="border-border h-9 cursor-pointer gap-1.5 rounded-full px-4 text-xs font-bold transition hover:border-rose-500/40 hover:text-rose-600 dark:hover:text-rose-400"
               >
                 {isClosing ? (
                   <Loader2 className="size-3.5 animate-spin" />
@@ -350,60 +385,58 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
       </div>
 
       {/* 2-Column Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
         {/* Left Column: Thread Timeline & Composer (Col-Span 8) */}
-        <div className="lg:col-span-8 space-y-6">
+        <div className="space-y-6 lg:col-span-8">
           {/* Initial Message Card */}
-          <div className="rounded-md border border-border bg-surface dark:bg-[#161715] shadow-xs overflow-hidden">
-            <div className="p-4 sm:p-5 border-b border-border/60 bg-muted/30 flex items-center justify-between gap-3 text-xs">
+          <div className="border-border bg-surface overflow-hidden rounded-md border shadow-xs dark:bg-[#161715]">
+            <div className="border-border/60 bg-muted/30 flex items-center justify-between gap-3 border-b p-4 text-xs sm:p-5">
               <div className="flex items-center gap-2">
-                <div className="size-7 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center font-bold">
+                <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-7 items-center justify-center rounded-full bg-emerald-500/10 font-bold text-emerald-700">
                   <User className="size-3.5" />
                 </div>
                 <div>
-                  <span className="font-bold text-foreground">
-                    {t("support.senderYou")}
-                  </span>
+                  <span className="text-foreground font-bold">{t("support.senderYou")}</span>
                   <span className="text-foreground-muted ml-2 text-[11px]">
                     {t("support.ticketAuthor")}
                   </span>
                 </div>
               </div>
-              <span className="text-[11px] text-foreground-muted">
+              <span className="text-foreground-muted text-[11px]">
                 {formatDate(ticket.createdAt)}
               </span>
             </div>
 
-            <div className="p-5 sm:p-6 space-y-4 text-xs font-semibold text-foreground leading-relaxed">
+            <div className="text-foreground space-y-4 p-5 text-xs leading-relaxed font-semibold sm:p-6">
               <p className="whitespace-pre-wrap">{ticket.message || "-"}</p>
 
               {/* Initial Attachment */}
-              {ticket.attachment && (
-                <div className="p-3 rounded-md bg-muted/40 border border-border flex items-center justify-between gap-3">
+              {ticket.attachment && getSafeMediaUrl(ticket.attachment) && (
+                <div className="bg-muted/40 border-border flex items-center justify-between gap-3 rounded-md border p-3">
                   <div className="flex items-center gap-3 overflow-hidden">
-                    <div className="size-12 rounded bg-surface border border-border overflow-hidden shrink-0 flex items-center justify-center">
+                    <div className="bg-surface border-border flex size-12 shrink-0 items-center justify-center overflow-hidden rounded border">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={ticket.attachment}
+                        src={getSafeMediaUrl(ticket.attachment)!}
                         alt="Screenshot"
                         className="size-full object-cover"
                       />
                     </div>
                     <div className="overflow-hidden">
-                      <span className="font-bold text-foreground block truncate">
+                      <span className="text-foreground block truncate font-bold">
                         {t("support.initialAttachment")}
                       </span>
-                      <span className="text-[11px] text-foreground-muted">
+                      <span className="text-foreground-muted text-[11px]">
                         Cloudflare R2 Storage
                       </span>
                     </div>
                   </div>
 
                   <a
-                    href={ticket.attachment}
+                    href={getSafeMediaUrl(ticket.attachment)!}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs font-bold text-wise-green hover:underline px-3 py-1.5 rounded-full bg-wise-green/10 border border-wise-green/20 shrink-0"
+                    className="dark:text-wise-green dark:bg-wise-green/10 dark:border-wise-green/20 inline-flex shrink-0 items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-xs font-bold text-emerald-700 hover:underline"
                   >
                     <span>{t("support.viewImage")}</span>
                     <ExternalLink className="size-3" />
@@ -417,14 +450,14 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
           {replies.map((reply) => (
             <div
               key={reply.id}
-              className={`rounded-md border shadow-xs overflow-hidden ${
+              className={`overflow-hidden rounded-md border shadow-xs ${
                 reply.isStaff
                   ? "border-wise-green/30 bg-wise-green/5 dark:bg-wise-green/5"
                   : "border-border bg-surface dark:bg-[#161715]"
               }`}
             >
               <div
-                className={`p-4 sm:p-5 border-b flex items-center justify-between gap-3 text-xs ${
+                className={`flex items-center justify-between gap-3 border-b p-4 text-xs sm:p-5 ${
                   reply.isStaff
                     ? "border-wise-green/20 bg-wise-green/10"
                     : "border-border/60 bg-muted/30"
@@ -432,7 +465,7 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
               >
                 <div className="flex items-center gap-2">
                   <div
-                    className={`size-7 rounded-full flex items-center justify-center font-bold ${
+                    className={`flex size-7 items-center justify-center rounded-full font-bold ${
                       reply.isStaff
                         ? "bg-wise-green text-black"
                         : "bg-muted text-foreground-secondary"
@@ -445,42 +478,42 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
                     )}
                   </div>
                   <div>
-                    <span className="font-bold text-foreground">
+                    <span className="text-foreground font-bold">
                       {reply.isStaff
                         ? t("support.staffSupport")
                         : reply.senderName === "Anda" || reply.senderName === "You"
-                        ? t("support.senderYou")
-                        : reply.senderName}
+                          ? t("support.senderYou")
+                          : reply.senderName}
                     </span>
                     {reply.isStaff && (
-                      <span className="ml-2 px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-wise-green/20 text-dark-green dark:text-wise-green border border-wise-green/30">
+                      <span className="bg-wise-green/20 text-dark-green dark:text-wise-green border-wise-green/30 ml-2 rounded-full border px-2 py-0.5 text-[10px] font-extrabold uppercase">
                         {t("support.staffSupport")}
                       </span>
                     )}
                   </div>
                 </div>
-                <span className="text-[11px] text-foreground-muted">
+                <span className="text-foreground-muted text-[11px]">
                   {formatDate(reply.createdAt)}
                 </span>
               </div>
 
-              <div className="p-5 sm:p-6 space-y-4 text-xs font-semibold text-foreground leading-relaxed">
+              <div className="text-foreground space-y-4 p-5 text-xs leading-relaxed font-semibold sm:p-6">
                 {/* Reply Screenshot if any */}
-                {reply.attachment && (
-                  <div className="rounded-md overflow-hidden border border-border max-w-md bg-black/5 dark:bg-black/30">
+                {reply.attachment && getSafeMediaUrl(reply.attachment) && (
+                  <div className="border-border max-w-md overflow-hidden rounded-md border bg-black/5 dark:bg-black/30">
                     <a
-                      href={reply.attachment}
+                      href={getSafeMediaUrl(reply.attachment)!}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block group relative overflow-hidden cursor-pointer"
+                      className="group relative block cursor-pointer overflow-hidden"
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={reply.attachment}
+                        src={getSafeMediaUrl(reply.attachment)!}
                         alt="Screenshot"
-                        className="max-h-72 w-full object-cover group-hover:scale-105 transition duration-200"
+                        className="max-h-72 w-full object-cover transition duration-200 group-hover:scale-105"
                       />
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition text-white text-xs font-bold gap-1.5">
+                      <div className="absolute inset-0 flex items-center justify-center gap-1.5 bg-black/40 text-xs font-bold text-white opacity-0 transition group-hover:opacity-100">
                         <span>{t("support.viewFullScreen")}</span>
                         <ExternalLink className="size-3.5" />
                       </div>
@@ -495,11 +528,9 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
 
           {/* Reply Composer Section */}
           {ticket.status !== "CLOSED" ? (
-            <div className="rounded-md border border-border bg-surface dark:bg-[#161715] shadow-xs p-5 sm:p-6 space-y-4">
-              <div className="flex items-center justify-between border-b border-border pb-3">
-                <h3 className="text-sm font-bold text-foreground">
-                  {t("support.replyToTicket")}
-                </h3>
+            <div className="border-border bg-surface space-y-4 rounded-md border p-5 shadow-xs sm:p-6 dark:bg-[#161715]">
+              <div className="border-border flex items-center justify-between border-b pb-3">
+                <h3 className="text-foreground text-sm font-bold">{t("support.replyToTicket")}</h3>
               </div>
 
               <form onSubmit={handleSendReply} className="space-y-4">
@@ -509,14 +540,14 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
                   onChange={(e) => setReplyText(e.target.value)}
                   placeholder={t("support.replyPlaceholder")}
                   disabled={isSending}
-                  className="w-full p-4 rounded-md bg-surface dark:bg-[#10110e] text-foreground font-semibold text-xs border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition"
+                  className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green w-full rounded-md border p-4 text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
                 />
 
                 {/* File Attachment Preview Chip */}
                 {(previewUrl || isUploading || uploadError) && (
                   <div>
                     {uploadError ? (
-                      <div className="flex items-center justify-between gap-2 p-2.5 px-3 rounded-md bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-semibold">
+                      <div className="flex items-center justify-between gap-2 rounded-md border border-rose-500/20 bg-rose-500/10 p-2.5 px-3 text-xs font-semibold text-rose-600 dark:text-rose-400">
                         <span>{uploadError}</span>
                         <button
                           type="button"
@@ -526,22 +557,22 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
                           <X className="size-3.5" />
                         </button>
                       </div>
-                    ) : previewUrl ? (
-                      <div className="flex items-center justify-between gap-3 p-2.5 px-3 rounded-md bg-muted/60 border border-border text-xs">
+                    ) : getSafeMediaUrl(previewUrl) ? (
+                      <div className="bg-muted/60 border-border flex items-center justify-between gap-3 rounded-md border p-2.5 px-3 text-xs">
                         <div className="flex items-center gap-2.5 overflow-hidden">
-                          <div className="size-12 rounded bg-surface border border-border overflow-hidden shrink-0 flex items-center justify-center">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                              src={previewUrl}
-                              alt="Preview"
-                              className="size-full object-cover"
+                          <div className="bg-surface border-border flex size-12 shrink-0 items-center justify-center overflow-hidden rounded border">
+                            <div
+                              role="img"
+                              aria-label="Preview"
+                              className="size-full bg-cover bg-center"
+                              style={{ backgroundImage: `url("${getSafeMediaUrl(previewUrl)!}")` }}
                             />
                           </div>
                           <div className="overflow-hidden">
-                            <span className="font-bold text-foreground block truncate">
+                            <span className="text-foreground block truncate font-bold">
                               {attachmentFile?.name || t("support.screenshotUploaded")}
                             </span>
-                            <span className="text-[11px] text-foreground-muted">
+                            <span className="text-foreground-muted text-[11px]">
                               {isUploading
                                 ? t("support.uploadingImage")
                                 : t("support.readyToAttach")}
@@ -549,12 +580,12 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
                           </div>
                         </div>
                         {isUploading ? (
-                          <Loader2 className="size-4 animate-spin text-wise-green shrink-0" />
+                          <Loader2 className="dark:text-wise-green size-4 shrink-0 animate-spin text-emerald-700" />
                         ) : (
                           <button
                             type="button"
                             onClick={handleRemoveAttachment}
-                            className="size-6 rounded-full flex items-center justify-center text-foreground-muted hover:text-rose-500 hover:bg-rose-500/10 transition cursor-pointer shrink-0"
+                            className="text-foreground-muted flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-full transition hover:bg-rose-500/10 hover:text-rose-500"
                             title={t("support.removeAttachment")}
                           >
                             <X className="size-3.5" />
@@ -574,18 +605,18 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
                   className="hidden"
                 />
 
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+                <div className="flex flex-col justify-between gap-3 pt-1 sm:flex-row sm:items-center">
                   <div className="space-y-1">
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
                       disabled={isSending || isUploading}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold text-foreground-secondary hover:text-foreground hover:bg-muted border border-border transition cursor-pointer disabled:opacity-50"
+                      className="text-foreground-secondary hover:text-foreground hover:bg-muted border-border inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition disabled:opacity-50"
                     >
-                      <Paperclip className="size-3.5 text-wise-green" />
+                      <Paperclip className="dark:text-wise-green size-3.5 text-emerald-700" />
                       <span>{t("support.attachImage")}</span>
                     </button>
-                    <p className="text-[11px] text-foreground-muted pl-1">
+                    <p className="text-foreground-muted pl-1 text-[11px]">
                       {t("support.supportedFormats")}
                     </p>
                   </div>
@@ -598,7 +629,7 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
                       isUploading ||
                       (!replyText.trim() && !attachmentUrl && !attachmentFile)
                     }
-                    className="text-xs font-bold gap-1.5 shadow-sm h-9 px-5 cursor-pointer w-full sm:w-auto"
+                    className="h-9 w-full cursor-pointer gap-1.5 px-5 text-xs font-bold shadow-sm sm:w-auto"
                   >
                     {isSending || isUploading ? (
                       <Loader2 className="size-3.5 animate-spin" />
@@ -613,12 +644,12 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
               </form>
             </div>
           ) : (
-            <div className="rounded-md border border-border bg-muted/30 p-6 text-center space-y-2">
-              <Lock className="size-5 text-foreground-muted mx-auto" />
-              <h4 className="text-xs font-bold text-foreground">
+            <div className="border-border bg-muted/30 space-y-2 rounded-md border p-6 text-center">
+              <Lock className="text-foreground-muted mx-auto size-5" />
+              <h4 className="text-foreground text-xs font-bold">
                 {t("support.ticketClosedNotice")}
               </h4>
-              <p className="text-[11px] text-foreground-muted max-w-sm mx-auto">
+              <p className="text-foreground-muted mx-auto max-w-sm text-[11px]">
                 {t("support.ticketClosedNoticeDesc")}
               </p>
             </div>
@@ -627,84 +658,70 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
 
         {/* Right Column: Sticky Ticket Details Sidebar (Col-Span 4) */}
         <div className="lg:col-span-4">
-          <div className="rounded-md border border-border bg-surface dark:bg-[#161715] shadow-xs p-5 space-y-5 sticky top-6">
-            <h3 className="text-sm font-bold text-foreground border-b border-border pb-3">
+          <div className="border-border bg-surface sticky top-6 space-y-5 rounded-md border p-5 shadow-xs dark:bg-[#161715]">
+            <h3 className="text-foreground border-border border-b pb-3 text-sm font-bold">
               {t("support.ticketDetailsTitle")}
             </h3>
 
-            <div className="divide-y divide-border/60 text-xs font-semibold">
-              <div className="py-2.5 flex items-center justify-between gap-2">
-                <span className="text-foreground-muted">
-                  {t("support.detailStatus")}
-                </span>
+            <div className="divide-border/60 divide-y text-xs font-semibold">
+              <div className="flex items-center justify-between gap-2 py-2.5">
+                <span className="text-foreground-muted">{t("support.detailStatus")}</span>
                 <div>{renderStatusBadge(ticket.status)}</div>
               </div>
 
-              <div className="py-2.5 flex items-center justify-between gap-2">
-                <span className="text-foreground-muted">
-                  {t("support.detailPriority")}
-                </span>
+              <div className="flex items-center justify-between gap-2 py-2.5">
+                <span className="text-foreground-muted">{t("support.detailPriority")}</span>
                 <div>{renderPriorityBadge(ticket.priority)}</div>
               </div>
 
-              <div className="py-2.5 flex items-center justify-between gap-2">
-                <span className="text-foreground-muted">
-                  {t("support.detailCategory")}
-                </span>
-                <span className="font-bold text-foreground">{ticket.category}</span>
+              <div className="flex items-center justify-between gap-2 py-2.5">
+                <span className="text-foreground-muted">{t("support.detailCategory")}</span>
+                <span className="text-foreground font-bold">{ticket.category}</span>
               </div>
 
-              <div className="py-2.5 flex items-center justify-between gap-2">
-                <span className="text-foreground-muted">
-                  {t("support.detailRefNumber")}
-                </span>
-                <span className="font-mono text-dark-green dark:text-wise-green font-bold">
+              <div className="flex items-center justify-between gap-2 py-2.5">
+                <span className="text-foreground-muted">{t("support.detailRefNumber")}</span>
+                <span className="text-dark-green dark:text-wise-green font-mono font-bold">
                   {ticket.ticketNumber}
                 </span>
               </div>
 
-              <div className="py-2.5 flex items-center justify-between gap-2">
-                <span className="text-foreground-muted">
-                  {t("support.detailCreatedAt")}
-                </span>
+              <div className="flex items-center justify-between gap-2 py-2.5">
+                <span className="text-foreground-muted">{t("support.detailCreatedAt")}</span>
                 <span className="text-foreground">{formatDate(ticket.createdAt)}</span>
               </div>
 
-              <div className="py-2.5 flex items-center justify-between gap-2">
-                <span className="text-foreground-muted">
-                  {t("support.detailUpdatedAt")}
-                </span>
+              <div className="flex items-center justify-between gap-2 py-2.5">
+                <span className="text-foreground-muted">{t("support.detailUpdatedAt")}</span>
                 <span className="text-foreground">{formatDate(ticket.updatedAt)}</span>
               </div>
 
-              <div className="py-2.5 flex items-center justify-between gap-2">
-                <span className="text-foreground-muted">
-                  {t("support.detailTotalReplies")}
-                </span>
-                <span className="px-2 py-0.5 rounded-full bg-muted text-foreground font-bold text-[11px]">
+              <div className="flex items-center justify-between gap-2 py-2.5">
+                <span className="text-foreground-muted">{t("support.detailTotalReplies")}</span>
+                <span className="bg-muted text-foreground rounded-full px-2 py-0.5 text-[11px] font-bold">
                   {replies.length}
                 </span>
               </div>
             </div>
 
-            {ticket.attachment && (
-              <div className="pt-2 border-t border-border">
-                <span className="text-[11px] font-bold text-foreground-muted block mb-2">
+            {ticket.attachment && getSafeMediaUrl(ticket.attachment) && (
+              <div className="border-border border-t pt-2">
+                <span className="text-foreground-muted mb-2 block text-[11px] font-bold">
                   {t("support.initialAttachmentSidebar")}
                 </span>
                 <a
-                  href={ticket.attachment}
+                  href={getSafeMediaUrl(ticket.attachment)!}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block rounded overflow-hidden border border-border group relative"
+                  className="border-border group relative block overflow-hidden rounded border"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={ticket.attachment}
+                    src={getSafeMediaUrl(ticket.attachment)!}
                     alt="Attachment"
-                    className="h-32 w-full object-cover group-hover:scale-105 transition"
+                    className="h-32 w-full object-cover transition group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition text-white text-xs font-bold gap-1">
+                  <div className="absolute inset-0 flex items-center justify-center gap-1 bg-black/40 text-xs font-bold text-white opacity-0 transition group-hover:opacity-100">
                     <span>{t("support.viewImage")}</span>
                     <ExternalLink className="size-3" />
                   </div>

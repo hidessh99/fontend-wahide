@@ -36,17 +36,17 @@ export function FaqAccordion() {
   };
 
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
+    <div className="mx-auto max-w-4xl space-y-8">
       {/* Section Header */}
-      <div className="text-center space-y-2">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green">
+      <div className="space-y-2 text-center">
+        <div className="bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold">
           <HelpCircle className="size-3.5" />
           <span>{t("common.landing.faq.badge")}</span>
         </div>
-        <h2 className="text-2xl sm:text-4xl font-black text-foreground tracking-tight">
+        <h2 className="text-foreground text-2xl font-black tracking-tight sm:text-4xl">
           {t("common.landing.faq.title")}
         </h2>
-        <p className="text-xs sm:text-sm font-semibold text-foreground-secondary max-w-xl mx-auto">
+        <p className="text-foreground-secondary mx-auto max-w-xl text-xs font-semibold sm:text-sm">
           {t("common.landing.faq.subtitle")}
         </p>
       </div>
@@ -58,22 +58,22 @@ export function FaqAccordion() {
           return (
             <div
               key={idx}
-              className="rounded-md border border-border bg-surface dark:bg-[#161715] overflow-hidden transition shadow-xs"
+              className="border-border bg-surface overflow-hidden rounded-md border shadow-xs transition dark:bg-[#161715]"
             >
               <button
                 onClick={() => toggleFaq(idx)}
-                className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 font-bold text-sm sm:text-base text-foreground hover:text-dark-green dark:hover:text-wise-green transition"
+                className="text-foreground hover:text-dark-green dark:hover:text-wise-green flex w-full items-center justify-between gap-4 p-5 text-left text-sm font-bold transition sm:p-6 sm:text-base"
               >
                 <span>{item.q}</span>
                 <ChevronDown
-                  className={`size-4 text-foreground-muted shrink-0 transition-transform duration-200 ${
-                    isOpen ? "rotate-180 text-dark-green dark:text-wise-green" : ""
+                  className={`text-foreground-muted size-4 shrink-0 transition-transform duration-200 ${
+                    isOpen ? "text-dark-green dark:text-wise-green rotate-180" : ""
                   }`}
                 />
               </button>
 
               {isOpen && (
-                <div className="px-5 sm:px-6 pb-6 text-xs sm:text-sm font-semibold text-foreground-secondary leading-relaxed border-t border-border/60 pt-4 animate-in fade-in duration-200">
+                <div className="text-foreground-secondary border-border/60 animate-in fade-in border-t px-5 pt-4 pb-6 text-xs leading-relaxed font-semibold duration-200 sm:px-6 sm:text-sm">
                   <p>{item.a}</p>
                 </div>
               )}

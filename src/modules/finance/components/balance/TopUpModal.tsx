@@ -1,18 +1,18 @@
-﻿"use client";
+"use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { PaymentMethod } from "@/modules/finance/types/finance.types";
 import { Button } from "@/components/ui/button";
-import { useI18n } from "@/lib/i18n/context";
-import { toast } from "sonner";
 import {
-  X,
-  QrCode,
-  Loader2,
-  CheckCircle2,
-  Wallet,
-  Zap,
-} from "lucide-react";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { useI18n } from "@/lib/i18n/context";
+import { QrCode, Loader2, CheckCircle2, Wallet, Zap } from "lucide-react";
 
 interface TopUpModalProps {
   isOpen: boolean;
@@ -28,18 +28,6 @@ export function TopUpModal({ isOpen, onClose, onSubmit }: TopUpModalProps) {
   const [customAmount, setCustomAmount] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-
-  // Escape key to dismiss
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
-
-  if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,56 +55,40 @@ export function TopUpModal({ isOpen, onClose, onSubmit }: TopUpModalProps) {
   };
 
   return (
-    <div
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-      className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-sm p-3 sm:p-6 flex min-h-full items-center justify-center animate-in fade-in"
-    >
-      <div className="relative w-full max-w-lg max-h-[90vh] flex flex-col rounded-md border border-border bg-surface dark:bg-[#161715] shadow-2xl overflow-hidden animate-in zoom-in-95">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && !isLoading && onClose()}>
+      <DialogContent className="border-border bg-surface max-h-[90vh] max-w-lg gap-0 overflow-hidden p-0 dark:bg-[#161715]">
         {/* Sticky Header */}
-        <div className="flex items-start justify-between p-5 sm:p-6 pb-4 border-b border-border shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="size-10 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center shrink-0">
-              <Wallet className="size-5" />
-            </div>
-            <div>
-              <h2 className="text-lg sm:text-xl font-black text-foreground tracking-tight">
-                {t("billing.topUpModalTitle")}
-              </h2>
-              <p className="text-xs font-semibold text-foreground-secondary">
-                {t("billing.topUpModalSubtitle")}
-              </p>
-            </div>
+        <DialogHeader className="border-border flex flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
+          <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
+            <Wallet className="size-5" />
           </div>
-
-          <button
-            type="button"
-            onClick={onClose}
-            className="size-8 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer shrink-0"
-            aria-label="Tutup"
-          >
-            <X className="size-4" />
-          </button>
-        </div>
+          <div>
+            <DialogTitle className="text-foreground text-lg font-black tracking-tight sm:text-xl">
+              {t("billing.topUpModalTitle")}
+            </DialogTitle>
+            <DialogDescription className="text-foreground-secondary text-xs font-semibold">
+              {t("billing.topUpModalSubtitle")}
+            </DialogDescription>
+          </div>
+        </DialogHeader>
 
         {/* Scrollable Form Body */}
-        <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
-          <div className="p-5 sm:p-6 overflow-y-auto space-y-4.5 flex-1">
+        <form onSubmit={handleSubmit} className="flex flex-1 flex-col overflow-hidden">
+          <div className="flex-1 space-y-4.5 overflow-y-auto p-5 sm:p-6">
             {error && (
-              <div className="p-3 rounded-md bg-rose-500/10 border border-rose-500/20 text-xs font-semibold text-rose-600 dark:text-rose-400">
+              <div className="rounded-md border border-rose-500/20 bg-rose-500/10 p-3 text-xs font-semibold text-rose-600 dark:text-rose-400">
                 {error}
               </div>
             )}
 
             {/* Preset Nominal Grid */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-2">
-                {t("billing.selectAmountLabel")}
+              <label className="text-foreground-secondary mb-2 block text-xs font-bold">
+                {t("billing.selectAmountPreset")}
               </label>
-              <div className="grid grid-cols-2 gap-2.5">
+              <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
                 {PRESET_AMOUNTS.map((amt) => {
-                  const isSelected = !customAmount && selectedAmount === amt;
+                  const isSelected = selectedAmount === amt && !customAmount;
                   return (
                     <button
                       key={amt}
@@ -126,13 +98,15 @@ export function TopUpModal({ isOpen, onClose, onSubmit }: TopUpModalProps) {
                         setCustomAmount("");
                         setError(null);
                       }}
-                      className={`p-3 rounded-md border text-center transition cursor-pointer font-bold text-xs ${
+                      className={`cursor-pointer rounded-md border p-3 text-center transition ${
                         isSelected
-                          ? "border-wise-green bg-wise-green/15 text-foreground ring-1 ring-wise-green"
-                          : "border-border bg-surface dark:bg-[#10110e] text-foreground-secondary hover:border-foreground-muted"
+                          ? "bg-light-mint dark:bg-wise-green/15 border-wise-green text-dark-green dark:text-wise-green font-black"
+                          : "border-border bg-surface hover:border-foreground-muted text-foreground font-semibold dark:bg-[#10110e]"
                       }`}
                     >
-                      Rp {amt.toLocaleString("id-ID")}
+                      <span className="block font-mono text-xs">
+                        Rp {amt.toLocaleString("id-ID")}
+                      </span>
                     </button>
                   );
                 })}
@@ -141,85 +115,73 @@ export function TopUpModal({ isOpen, onClose, onSubmit }: TopUpModalProps) {
 
             {/* Custom Amount Input */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
+              <label
+                htmlFor="custom-nominal-input"
+                className="text-foreground-secondary mb-1.5 block text-xs font-bold"
+              >
                 {t("billing.customAmountLabel")}
               </label>
-              <input
-                type="number"
-                min={10000}
-                step={5000}
-                value={customAmount}
-                onChange={(e) => {
-                  setCustomAmount(e.target.value);
-                  setError(null);
-                }}
-                placeholder={t("billing.customAmountPlaceholder")}
-                className="w-full h-11 px-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs font-mono"
-              />
-            </div>
-
-            {/* Voucher Code */}
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
-                {t("billing.voucherLabel")}
-              </label>
-              <div className="flex gap-2">
+              <div className="relative">
+                <span className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 font-mono text-xs font-bold">
+                  Rp
+                </span>
                 <input
+                  id="custom-nominal-input"
                   type="text"
-                  placeholder={t("billing.voucherPlaceholder")}
-                  className="flex-1 h-10 px-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs font-mono uppercase"
+                  placeholder="Contoh: 150.000"
+                  value={customAmount}
+                  onChange={(e) => {
+                    const raw = e.target.value.replace(/[^0-9]/g, "");
+                    setCustomAmount(raw ? Number(raw).toLocaleString("id-ID") : "");
+                    setError(null);
+                  }}
+                  className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full rounded-md border pr-4 pl-10 font-mono text-xs font-semibold outline-none focus:ring-1 dark:bg-[#10110e]"
                 />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => toast.success(t("billing.voucherSuccess"))}
-                  className="rounded-full text-xs font-bold px-4 border-border"
-                >
-                  {t("billing.voucherApplyBtn")}
-                </Button>
               </div>
+              <span className="text-foreground-muted mt-1 block text-[11px]">
+                {t("billing.minimumTopUpNotice")}
+              </span>
             </div>
 
-            {/* Pembayaran Instan Murni QRIS */}
+            {/* Payment Method - Exclusive QRIS Highlight */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-2">
-                {t("billing.selectPaymentMethod")}
+              <label className="text-foreground-secondary mb-2 block text-xs font-bold">
+                {t("billing.paymentMethod")}
               </label>
-              <div className="p-3.5 rounded-md border border-wise-green/30 bg-wise-green/10 dark:bg-wise-green/5 flex items-center justify-between gap-3">
+              <div className="bg-light-mint/50 dark:bg-wise-green/10 border-wise-green/60 flex items-center justify-between rounded-md border p-3.5 shadow-2xs">
                 <div className="flex items-center gap-3">
-                  <div className="size-9 rounded-full bg-wise-green/20 text-wise-green flex items-center justify-center shrink-0">
+                  <div className="bg-wise-green/20 text-dark-green dark:text-wise-green flex size-10 shrink-0 items-center justify-center rounded-md">
                     <QrCode className="size-5" />
                   </div>
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <span className="text-xs font-bold text-foreground block">
+                      <span className="text-foreground block text-xs font-bold">
                         QRIS Instan (Auto-Settlement)
                       </span>
-                      <span className="inline-flex items-center gap-1 px-2 py-0.2 text-[10px] font-bold rounded-full bg-wise-green text-[#0e1708]">
+                      <span className="py-0.2 bg-wise-green inline-flex items-center gap-1 rounded-full px-2 text-[10px] font-bold text-[#0e1708]">
                         <Zap className="size-2.5" />
                         <span>0 Detik</span>
                       </span>
                     </div>
-                    <span className="text-[11px] text-foreground-secondary font-semibold block leading-tight mt-0.5">
+                    <span className="text-foreground-secondary mt-0.5 block text-[11px] leading-tight font-semibold">
                       Scan via BCA, Mandiri, BRI, BNI, GoPay, OVO, DANA, ShopeePay
                     </span>
                   </div>
                 </div>
-                <CheckCircle2 className="size-5 text-wise-green shrink-0" />
+                <CheckCircle2 className="dark:text-wise-green size-5 shrink-0 text-emerald-700" />
               </div>
             </div>
           </div>
 
           {/* Sticky Footer */}
-          <div className="p-4 sm:p-5 border-t border-border flex items-center justify-end gap-2.5 shrink-0 bg-surface/50">
+          <DialogFooter className="border-border bg-surface/50 m-0 flex shrink-0 flex-row items-center justify-end gap-2.5 rounded-none border-t p-4 sm:p-5">
             <Button
               type="button"
               variant="outline"
               size="sm"
               onClick={onClose}
               disabled={isLoading}
-              className="rounded-full text-xs font-bold px-5 border-border hover:border-foreground-muted cursor-pointer"
+              className="border-border hover:border-foreground-muted cursor-pointer rounded-full px-5 text-xs font-bold"
             >
               {t("billing.cancel")}
             </Button>
@@ -228,7 +190,7 @@ export function TopUpModal({ isOpen, onClose, onSubmit }: TopUpModalProps) {
               variant="primaryPill"
               size="sm"
               disabled={isLoading}
-              className="rounded-full text-xs font-bold gap-1.5 px-6 shadow-sm cursor-pointer"
+              className="cursor-pointer gap-1.5 rounded-full px-6 text-xs font-bold shadow-sm"
             >
               {isLoading ? (
                 <>
@@ -239,9 +201,9 @@ export function TopUpModal({ isOpen, onClose, onSubmit }: TopUpModalProps) {
                 <span>{t("billing.submitTopUp")}</span>
               )}
             </Button>
-          </div>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

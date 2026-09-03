@@ -1,9 +1,6 @@
 import { httpClient } from "@/lib/api/http-client";
 import { env } from "@/lib/config/env";
-import {
-  BackendLoginPayload,
-  ApiKeyInfo,
-} from "../types/auth.types";
+import { BackendLoginPayload, ApiKeyInfo } from "../types/auth.types";
 import {
   LoginInput,
   RegisterInput,
@@ -40,7 +37,10 @@ export const authApi = {
   },
 
   resetPassword: async (payload: ResetPasswordInput): Promise<{ message: string }> => {
-    const res = await httpClient.post(`${IAM_BASE}/auth/reset-password`, payload);
+    const res = await httpClient.post(`${IAM_BASE}/auth/reset-password`, {
+      token: payload.token,
+      password: payload.password,
+    });
     return { message: res.message || "Password berhasil diatur ulang." };
   },
 

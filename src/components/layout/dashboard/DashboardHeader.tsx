@@ -1,28 +1,25 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import { DashboardBreadcrumb } from "./DashboardBreadcrumb";
 import { DashboardUserNav } from "./DashboardUserNav";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { LocaleSwitcher } from "@/components/layout/shared/LocaleSwitcher";
-import { useAuth } from "@/modules/iam/hooks/useAuth";
-import { Menu, Zap } from "lucide-react";
+import { Menu } from "lucide-react";
 
 interface DashboardHeaderProps {
   onOpenMobileNav?: () => void;
 }
 
 export function DashboardHeader({ onOpenMobileNav }: DashboardHeaderProps) {
-  const tenant = useAuth((s) => s.tenant);
-
   return (
-    <header className="sticky top-0 z-40 h-18 border-b border-border bg-background/80 backdrop-blur-md px-4 sm:px-8 flex items-center justify-between">
+    <header className="border-border bg-background/80 sticky top-0 z-40 flex h-18 items-center justify-between border-b px-4 backdrop-blur-md sm:px-8">
       {/* Kiri: Mobile Nav Button & Breadcrumb */}
       <div className="flex items-center gap-3">
         {onOpenMobileNav && (
           <button
             onClick={onOpenMobileNav}
-            className="lg:hidden p-2 rounded-full hover:bg-muted text-foreground-secondary hover:text-foreground cursor-pointer"
+            className="hover:bg-muted text-foreground-secondary hover:text-foreground cursor-pointer rounded-full p-2 lg:hidden"
             aria-label="Buka Menu"
           >
             <Menu className="size-5" />
@@ -31,20 +28,11 @@ export function DashboardHeader({ onOpenMobileNav }: DashboardHeaderProps) {
         <DashboardBreadcrumb />
       </div>
 
-      {/* Kanan: Quota Pill, Locale Switcher, Theme Toggle, & User Dropdown */}
+      {/* Kanan: Locale Switcher, Theme Toggle, & User Dropdown */}
       <div className="flex items-center gap-2.5">
-        {tenant && (
-          <div className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[rgba(159,232,112,0.15)] border border-[rgba(159,232,112,0.3)] text-xs font-bold text-dark-green dark:text-wise-green">
-            <Zap className="size-3.5" />
-            <span>
-              {tenant.usedQuota.toLocaleString("id-ID")} / {tenant.monthlyQuota.toLocaleString("id-ID")}
-            </span>
-          </div>
-        )}
-
         <LocaleSwitcher />
         <ThemeToggle />
-        <div className="h-6 w-px bg-border hidden sm:block" />
+        <div className="bg-border hidden h-6 w-px sm:block" />
         <DashboardUserNav />
       </div>
     </header>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { AdminUsersView } from "@/components/admin/AdminUsersView";
+import { AdminUsersView } from "@/modules/admin/views";
 
 export const metadata: Metadata = {
   title: "Kelola Pengguna Platform",

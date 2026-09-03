@@ -1,0 +1,523 @@
+"use client";
+
+import React, { useState, useMemo } from "react";
+import { useTeam } from "@/modules/team/hooks/useTeam";
+import { Agent } from "@/modules/team/types/team.types";
+import { DeleteTeamMemberModal } from "@/modules/team/components/modals/DeleteTeamMemberModal";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty";
+import { SearchInput } from "@/components/ui/search-input";
+import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
+import { useI18n } from "@/lib/i18n/context";
+import {
+  Users,
+  Plus,
+  Trash2,
+  X,
+  Loader2,
+  ShieldCheck,
+  Smartphone,
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+
+export function TeamView() {
+  const { t } = useI18n();
+  const { agents, createAgent, deleteAgent } = useTeam();
+
+  // Search & Pagination State
+  const [searchInput, setSearchInput] = useState("");
+  const [activeSearch, setActiveSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+
+  // Add Member Modal State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Delete Member Modal State
+  const [deletingMember, setDeletingMember] = useState<Agent | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const filteredAgents = useMemo(() => {
+    if (!activeSearch.trim()) return agents;
+    const term = activeSearch.toLowerCase().trim();
+    return agents.filter(
+      (agt) =>
+        agt.name.toLowerCase().includes(term) ||
+        agt.email.toLowerCase().includes(term) ||
+        agt.phone.includes(term) ||
+        agt.role.toLowerCase().includes(term)
+    );
+  }, [agents, activeSearch]);
+
+  const total = filteredAgents.length;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+  const paginatedAgents = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return filteredAgents.slice(start, start + pageSize);
+  }, [filteredAgents, page, pageSize]);
+
+  const startItem = total > 0 ? (page - 1) * pageSize + 1 : 0;
+  const endItem = total > 0 ? Math.min(page * pageSize, total) : 0;
+
+  const handleClearSearch = () => {
+    setSearchInput("");
+    setActiveSearch("");
+    setPage(1);
+  };
+
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim() || !email.trim() || !phone.trim()) return;
+
+    if (!password.trim() || password.trim().length < 6) {
+      setPasswordError("Password akun agen wajib diisi minimal 6 karakter");
+      return;
+    }
+
+    setPasswordError(null);
+    setIsSubmitting(true);
+    try {
+      await createAgent({
+        name: name.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
+        role: "AGENT",
+        password: password.trim(),
+      });
+      setName("");
+      setEmail("");
+      setPhone("");
+      setPassword("");
+      setIsModalOpen(false);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deletingMember) return;
+    setIsDeleting(true);
+    try {
+      await deleteAgent(deletingMember.id);
+      setDeletingMember(null);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  return (
+    <div className="mx-auto max-w-7xl space-y-6 p-3 sm:space-y-8 sm:p-6 lg:p-8">
+      {/* Header Section */}
+      <div className="border-border flex flex-col justify-between gap-4 border-b pb-5 sm:flex-row sm:items-center sm:pb-6">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2.5">
+            <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-8 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700 sm:size-9">
+              <Users className="size-4 sm:size-5" />
+            </div>
+            <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl lg:text-3xl">
+              {t("team.title")}
+            </h1>
+          </div>
+          <p className="text-foreground-secondary max-w-2xl text-xs font-semibold sm:text-sm">
+            {t("team.subtitle")}
+          </p>
+        </div>
+
+        <Button
+          variant="primaryPill"
+          onClick={() => setIsModalOpen(true)}
+          className="h-10 shrink-0 cursor-pointer gap-2 px-4 text-xs font-bold shadow-sm"
+        >
+          <Plus className="size-4" />
+          <span>{t("team.addAgent")}</span>
+        </Button>
+      </div>
+
+      {/* Filter Toolbar (Search Submit Form) */}
+      {/* Search Bar */}
+      <div className="border-border bg-surface rounded-md border p-3 sm:p-4 dark:bg-[#161715]">
+        <SearchInput
+          value={searchInput}
+          onChange={setSearchInput}
+          onSearch={(val) => {
+            setActiveSearch(val.trim());
+            setPage(1);
+          }}
+          onClear={handleClearSearch}
+          placeholder="Cari nama, email, atau nomor staf..."
+          buttonText="Cari"
+        />
+      </div>
+
+      {/* Agents Table with Error Boundary */}
+      <ErrorBoundary fallbackTitle="Gagal Memuat Daftar Tim Staf Agen">
+        <div className="border-border bg-surface overflow-hidden rounded-md border shadow-xs dark:bg-[#161715]">
+          {paginatedAgents.length === 0 ? (
+            <EmptyState
+              icon={<Users className="size-8" />}
+              title={t("team.noAgents")}
+              description={
+                activeSearch
+                  ? `Tidak ditemukan staf dengan kata kunci "${activeSearch}".`
+                  : t("team.noAgentsDesc")
+              }
+            />
+          ) : (
+            <div>
+              {/* Mobile View: Card-based Agent List (Visible on < 768px) */}
+              <div className="divide-border/50 divide-y md:hidden">
+                {paginatedAgents.map((agt) => (
+                  <div
+                    key={agt.id}
+                    className="bg-surface space-y-2.5 p-3.5 sm:p-4 dark:bg-[#161715]"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex min-w-0 items-center gap-2">
+                        <span className="text-foreground truncate text-sm font-bold">
+                          {agt.name}
+                        </span>
+                        {agt.role === "SELLER" ? (
+                          <Badge variant="warning">
+                            <ShieldCheck className="size-2.5" />
+                            <span>{t("team.roleOwner")}</span>
+                          </Badge>
+                        ) : (
+                          <Badge variant="wise">
+                            <ShieldCheck className="size-2.5" />
+                            <span>{t("team.roleAgent")}</span>
+                          </Badge>
+                        )}
+                      </div>
+
+                      <Badge variant="success">
+                        <CheckCircle2 className="size-3" />
+                        <span>{t("team.statusActive")}</span>
+                      </Badge>
+                    </div>
+
+                    <div className="text-foreground-secondary space-y-0.5 text-xs">
+                      <span className="text-foreground-muted block truncate font-mono text-[11px]">
+                        {agt.email}
+                      </span>
+                      <span className="block font-mono font-medium">+{agt.phone}</span>
+                    </div>
+
+                    <div className="border-border/50 flex items-center justify-between gap-2 border-t pt-2 text-xs">
+                      <div className="text-foreground-secondary flex items-center gap-1 font-mono text-xs">
+                        <Smartphone className="text-foreground-muted size-3.5" />
+                        <span>{agt.assignedDevicesCount} Slot Device</span>
+                      </div>
+
+                      {agt.role === "SELLER" ? (
+                        <span
+                          className="text-foreground-muted px-2 text-xs select-none"
+                          title="Akun Utama Pemilik"
+                        >
+                          -
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => setDeletingMember(agt)}
+                          className="text-foreground-muted flex size-8 cursor-pointer items-center justify-center rounded-full transition hover:bg-rose-500/10 hover:text-rose-500"
+                          aria-label={`${t("actions.delete")} ${agt.name}`}
+                          title="Hapus Anggota Tim"
+                        >
+                          <Trash2 className="size-4" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Desktop View: Tabular Grid (Visible on >= 768px) */}
+              <div className="hidden md:block">
+                {/* Table Header */}
+                <div className="bg-muted/60 border-border text-foreground-muted grid grid-cols-12 gap-3 border-b px-5 py-4 text-xs font-extrabold tracking-wider uppercase select-none">
+                  <div className="col-span-3">{t("team.tableHeaderName")}</div>
+                  <div className="col-span-3">{t("team.tableHeaderPhone")}</div>
+                  <div className="col-span-2">{t("team.tableHeaderRole")}</div>
+                  <div className="col-span-2 text-center">{t("team.tableHeaderDevices")}</div>
+                  <div className="col-span-1 text-center">{t("team.tableHeaderStatus")}</div>
+                  <div className="col-span-1 text-right">{t("team.tableHeaderAction")}</div>
+                </div>
+
+                {/* Table Body */}
+                <div className="divide-border/50 divide-y text-xs font-semibold">
+                  {paginatedAgents.map((agt) => (
+                    <div
+                      key={agt.id}
+                      className="hover:bg-muted/40 grid min-h-14.5 grid-cols-12 items-center gap-3 px-5 py-3.5 transition-colors"
+                    >
+                      {/* Name & Email */}
+                      <div className="col-span-3 space-y-0.5">
+                        <span className="text-foreground block truncate text-sm font-bold sm:text-base">
+                          {agt.name}
+                        </span>
+                        <span className="text-foreground-muted block truncate font-mono text-xs">
+                          {agt.email}
+                        </span>
+                      </div>
+
+                      {/* Phone */}
+                      <div className="text-foreground-secondary col-span-3 truncate font-mono text-xs sm:text-sm">
+                        +{agt.phone}
+                      </div>
+
+                      {/* Role */}
+                      <div className="col-span-2">
+                        {agt.role === "SELLER" ? (
+                          <Badge variant="warning">
+                            <ShieldCheck className="size-3" />
+                            <span>{t("team.roleOwner")}</span>
+                          </Badge>
+                        ) : (
+                          <Badge variant="wise">
+                            <ShieldCheck className="size-3" />
+                            <span>{t("team.roleAgent")}</span>
+                          </Badge>
+                        )}
+                      </div>
+
+                      {/* Devices */}
+                      <div className="text-foreground-secondary col-span-2 flex items-center justify-center gap-1 font-mono text-xs sm:text-sm">
+                        <Smartphone className="text-foreground-muted size-3.5" />
+                        <span>{agt.assignedDevicesCount} Slot</span>
+                      </div>
+
+                      {/* Status */}
+                      <div className="col-span-1 flex justify-center">
+                        <Badge variant="success">
+                          <CheckCircle2 className="size-3.5" />
+                          <span>{t("team.statusActive")}</span>
+                        </Badge>
+                      </div>
+
+                      {/* Action */}
+                      <div className="col-span-1 flex justify-end">
+                        {agt.role === "SELLER" ? (
+                          <span
+                            className="text-foreground-muted px-2 text-xs select-none"
+                            title="Akun Utama Pemilik"
+                          >
+                            -
+                          </span>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => setDeletingMember(agt)}
+                            className="text-foreground-muted flex size-8 cursor-pointer items-center justify-center rounded-full transition hover:bg-rose-500/10 hover:text-rose-500"
+                            aria-label={`${t("actions.delete")} ${agt.name}`}
+                            title="Hapus Anggota Tim"
+                          >
+                            <Trash2 className="size-4" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Pagination Footer */}
+          {total > 0 && (
+            <div className="border-border bg-muted/30 flex flex-col items-center justify-between gap-3 border-t p-3 sm:flex-row sm:px-5 sm:py-3.5">
+              {/* Item count summary */}
+              <div className="text-foreground-secondary text-xs font-semibold">
+                Menampilkan {startItem} - {endItem} dari {total} anggota tim
+              </div>
+
+              {/* Page navigation: Previous, Page Indicator, Next */}
+              {totalPages > 1 && (
+                <div className="flex items-center gap-2">
+                  <span className="text-foreground-muted px-1.5 text-xs font-bold select-none">
+                    Halaman {page} dari {totalPages}
+                  </span>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+                    disabled={page <= 1}
+                    className="border-border hover:border-foreground-muted h-8.5 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold disabled:opacity-40"
+                  >
+                    <ChevronLeft className="size-3.5" />
+                    <span>Sebelumnya</span>
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+                    disabled={page >= totalPages}
+                    className="border-border hover:border-foreground-muted h-8.5 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold disabled:opacity-40"
+                  >
+                    <span>Berikutnya</span>
+                    <ChevronRight className="size-3.5" />
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </ErrorBoundary>
+
+      {/* Modal Add Agent */}
+      {isModalOpen && (
+        <div className="animate-in fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm sm:p-6">
+          <div className="border-border bg-surface relative w-full max-w-md space-y-5 overflow-hidden rounded-md border p-6 shadow-2xl sm:p-8 dark:bg-[#161715]">
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-3">
+                <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-10 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
+                  <Users className="size-5" />
+                </div>
+                <div>
+                  <h2 className="text-foreground text-lg font-black">{t("team.modalTitle")}</h2>
+                  <p className="text-foreground-secondary text-xs font-semibold">
+                    {t("team.modalSubtitle")}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-8 cursor-pointer items-center justify-center rounded-full transition"
+                aria-label="Tutup"
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreate} className="space-y-4 pt-1">
+              <div>
+                <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
+                  {t("team.nameLabel")}
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder={t("team.namePlaceholder")}
+                  className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full rounded-full border px-4 text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
+                />
+              </div>
+
+              <div>
+                <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
+                  {t("team.emailLabel")}
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder={t("team.emailPlaceholder")}
+                  className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full rounded-full border px-4 text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
+                />
+              </div>
+
+              <div>
+                <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
+                  {t("team.phoneLabel")}
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder={t("team.phonePlaceholder")}
+                  className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full rounded-full border px-4 font-mono text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
+                />
+              </div>
+
+              <div>
+                <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
+                  {t("team.roleLabel")}
+                </label>
+                <div className="bg-muted/60 text-foreground border-border flex h-10 w-full items-center gap-2 rounded-full border px-4 text-xs font-bold select-none">
+                  <ShieldCheck className="text-wise-green size-4" />
+                  <span>{t("team.roleAgent")}</span>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
+                  {t("team.passwordLabel")} <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="password"
+                  required
+                  minLength={6}
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (passwordError) setPasswordError(null);
+                  }}
+                  placeholder={t("team.passwordPlaceholder")}
+                  className={`bg-surface text-foreground hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full rounded-full border px-4 text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e] ${
+                    passwordError ? "border-rose-500" : "border-border"
+                  }`}
+                />
+                {passwordError && (
+                  <p className="mt-1.5 pl-3 text-xs font-semibold text-rose-500">{passwordError}</p>
+                )}
+              </div>
+
+              <div className="border-border/80 flex items-center justify-end gap-2.5 border-t pt-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsModalOpen(false)}
+                  disabled={isSubmitting}
+                  className="border-border hover:border-foreground-muted rounded-full px-4 text-xs font-bold"
+                >
+                  {t("team.cancel")}
+                </Button>
+                <Button
+                  type="submit"
+                  variant="primaryPill"
+                  size="sm"
+                  disabled={isSubmitting}
+                  className="gap-1.5 px-6 text-xs font-bold shadow-sm"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="size-3.5 animate-spin" />
+                      <span>{t("team.submitting")}</span>
+                    </>
+                  ) : (
+                    <span>{t("team.submitCreate")}</span>
+                  )}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Dialog Delete Confirmation */}
+      <DeleteTeamMemberModal
+        isOpen={!!deletingMember}
+        onClose={() => setDeletingMember(null)}
+        onConfirm={handleConfirmDelete}
+        targetMember={deletingMember}
+        isDeleting={isDeleting}
+      />
+    </div>
+  );
+}

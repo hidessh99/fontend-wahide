@@ -55,8 +55,8 @@
 - [x] **3.1 Kartu Metrik KPI Ringkasan Bisnis** — `/dashboard` — Periksa 4 kartu ringkasan (Total Kontak, Kampanye Aktif, Sisa Kuota Pesan, Perangkat Terhubung) → Angka statistik sinkron dengan session tenant di Zustand.
 - [x] **3.2 Tabel Sesi Node WhatsApp Terkini** — `/dashboard` — Periksa tabel perangkat aktif di bawah widget ringkasan → Status badge (*CONNECTED / PAIRING / DISCONNECTED*) tampil dengan warna indikator yang tepat.
 - [x] **3.3 Widget Riwayat Kampanye Broadcast Terkini** — `/dashboard` — Periksa log pesan siaran terbaru → Tanggal, nama kampanye, persentase progress blast tampil realtime.
-- [ ] **3.4 Tombol Navigasi Cepat (Quick Action Pills)** — `/dashboard` — Klik tombol *Tambah Perangkat*, *Buat Kampanye*, *Top-Up Saldo* → Modal wizard terkait langsung terbuka seketika via dynamic code-splitting.
-- [ ] **3.5 Eliminasi Unnecessary Re-renders** — Buka React DevTools Profiler saat navigasi antar tab dasbor → Header dan Sidebar tidak mengalami re-render ulang berkat atomic Zustand selectors.
+- [x] **3.4 Tombol Navigasi Cepat (Quick Action Pills)** — `/dashboard` — Klik tombol *Tambah Perangkat*, *Buat Kampanye*, *Top-Up Saldo* → Modal wizard terkait langsung terbuka seketika via dynamic code-splitting.
+- [x] **3.5 Eliminasi Unnecessary Re-renders** — Buka React DevTools Profiler saat navigasi antar tab dasbor → Header dan Sidebar tidak mengalami re-render ulang berkat atomic Zustand selectors.
 
 ---
 
@@ -107,18 +107,18 @@
 
 ## 💎 8. Modul Langganan Paket & Webhook Gateway (`/subscription`)
 
-- [ ] **8.1 Katalog Pilihan Paket Langganan** — `/subscription` — Periksa kartu paket tier (**Starter**, **Pro**, **Enterprise**) → Rincian batas perangkat slot, kuota blast bulanan, dan fitur gateway tampil transparan.
-- [ ] **8.2 Status Paket Aktif Tenant Saya** — `/subscription` — Periksa kartu langganan aktif → Nama paket, masa berlaku (*Expires At*), dan bar persentase penggunaan kuota tampil akurat.
-- [ ] **8.3 Konfigurasi Webhook Event Inbound/Outbound** — `/subscription` — Masukkan URL Webhook endpoint (misal: `https://my-api.com/webhook`), centang toggle *Aktifkan Webhook* → Konfigurasi tersimpan sukses.
-- [ ] **8.4 Regenerasi Webhook Secret Kriptografi Aman (CSPRNG)** — `/subscription` — Klik tombol *Regenerate Secret* → Rahasia webhook baru terbentuk secara kriptografi aman (`whsec_live_...`), lolos uji GitHub CodeQL 0 warning.
-- [ ] **8.5 Tombol Test Ping Webhook** — `/subscription` — Klik *Kirim Ping Uji Coba* → Payload JSON simulasi terkirim ke URL webhook Anda, respon HTTP status code 200 OK tampil di popup notifikasi.
+- [x] **8.1 Katalog Pilihan Paket Langganan** — `/subscription` — Periksa kartu paket tier (**Starter**, **Pro**, **Enterprise**) → Rincian batas perangkat slot, kuota blast bulanan, dan fitur gateway tampil transparan.
+- [x] **8.2 Status Paket Aktif Tenant Saya** — `/subscription` — Periksa kartu langganan aktif → Nama paket, masa berlaku (*Expires At*), dan bar persentase penggunaan kuota tampil akurat.
+- [x] **8.3 Konfigurasi Webhook Event Inbound/Outbound** — `/subscription` — Masukkan URL Webhook endpoint (misal: `https://my-api.com/webhook`), centang toggle *Aktifkan Webhook* → Konfigurasi tersimpan sukses.
+- [x] **8.4 Regenerasi Webhook Secret Kriptografi Aman (CSPRNG)** — `/subscription` — Klik tombol *Regenerate Secret* → Rahasia webhook baru terbentuk secara kriptografi aman (`whsec_live_...`), lolos uji GitHub CodeQL 0 warning.
+- [x] **8.5 Tombol Test Ping Webhook** — `/subscription` — Klik *Kirim Ping Uji Coba* → Payload JSON simulasi terkirim ke URL webhook Anda, respon HTTP status code 200 OK tampil di popup notifikasi.
 
 ---
 
 ## 👥 9. Modul Manajemen Tim & Role-Based Access Control (`/team`)
 
-- [ ] **9.1 Daftar Anggota Tim Tenant** — `/team` — Buka daftar anggota tim → Nama, email, tanggal bergabung, badge role (*ADMIN, AGENT, OPERATOR*), dan status keaktifan tampil.
-- [ ] **9.2 Undang Anggota Tim Baru (Invite Modal)** — `/team` — Klik *Undang Anggota* → Masukkan email rekan kerja, pilih role hak akses, klik Kirim Undangan → Undangan terdaftar di tabel dengan status *PENDING*.
+- [x] **9.1 Daftar Anggota Tim Tenant** — `/team` — Buka daftar anggota tim → Nama, email, tanggal bergabung, badge role (*ADMIN, AGENT, OPERATOR*), dan status keaktifan tampil.
+- [x] **9.2 Undang Anggota Tim Baru (Invite Modal)** — `/team` — Klik *Undang Anggota* → Masukkan email rekan kerja, pilih role hak akses, klik Kirim Undangan → Undangan terdaftar di tabel dengan status *PENDING*.
 - [ ] **9.3 Perubahan Hak Akses Role Anggota** — `/team` — Ubah role salah satu anggota dari *AGENT* menjadi *ADMIN* → Konfirmasi simpan, hak akses pengguna langsung diperbarui.
 - [ ] **9.4 Cabut Akses / Hapus Anggota Tim** — `/team` — Klik *Hapus / Revoke Access* pada anggota tim → Konfirmasi dialog muncul, akses anggota dicabut permanen.
 
@@ -126,41 +126,41 @@
 
 ## 🎫 10. Modul Pusat Bantuan & Sistem Tiket Support (`/support`)
 
-- [ ] **10.1 Daftar Tiket Bantuan & Filter Status** — `/support` — Buka daftar tiket → Filter tiket berdasarkan status (*OPEN, IN_PROGRESS, RESOLVED, CLOSED*), nomor tiket format `TKT-xxxx` tampil rapi.
-- [ ] **10.2 Buat Tiket Bantuan Baru (Create Ticket Modal)** — `/support` — Klik *Buat Tiket* → Modal `CreateTicketModal` terbuka dinamis, isi Judul Kendala, Kategori (Teknis/Billing), Prioritas, dan Pesan Pengaduan → Tiket baru terbuat dengan status *OPEN*.
-- [ ] **10.3 Percakapan Live Thread Tiket (Thread Modal)** — `/support` — Klik pada salah satu tiket → Modal `TicketThreadModal` terbuka dinamis, riwayat percakapan antara pengguna dan tim support tampil kronologis.
-- [ ] **10.4 Balas Pesan Tiket & Penyelesaian Kendala** — `/support` — Ketik balasan pesan di thread modal, klik Kirim → Balasan langsung muncul di gelembung chat; klik *Tandai Selesai* → Status tiket berubah menjadi *RESOLVED*.
+- [x] **10.1 Daftar Tiket Bantuan & Filter Status** — `/support` — Buka daftar tiket → Filter tiket berdasarkan status (*OPEN, IN_PROGRESS, RESOLVED, CLOSED*), nomor tiket format `TKT-xxxx` tampil rapi.
+- [x] **10.2 Buat Tiket Bantuan Baru (Create Ticket Modal)** — `/support` — Klik *Buat Tiket* → Modal `CreateTicketModal` terbuka dinamis, isi Judul Kendala, Kategori (Teknis/Billing), Prioritas, dan Pesan Pengaduan → Tiket baru terbuat dengan status *OPEN*.
+- [x] **10.3 Percakapan Live Thread Tiket (Thread Modal)** — `/support` — Klik pada salah satu tiket → Modal `TicketThreadModal` terbuka dinamis, riwayat percakapan antara pengguna dan tim support tampil kronologis.
+- [x] **10.4 Balas Pesan Tiket & Penyelesaian Kendala** — `/support` — Ketik balasan pesan di thread modal, klik Kirim → Balasan langsung muncul di gelembung chat; klik *Tandai Selesai* → Status tiket berubah menjadi *RESOLVED*.
 
 ---
 
 ## ⚙️ 11. Modul Pengaturan Akun & Developer API Key (`/settings`)
 
-- [ ] **11.1 Pengaturan Profil Tenant & Informasi Bisnis** — `/settings` — Ubah nama workspace bisnis dan email kontak utama, klik Simpan → Data profil tenant di Zustand store dan antarmuka ter-update instan.
-- [ ] **11.2 Ganti Kata Sandi Akun** — `/settings` — Masukkan kata sandi lama, kata sandi baru (≥ 8 karakter), dan konfirmasi kata sandi baru → Validasi sukses, toast konfirmasi penggantian password muncul.
-- [ ] **11.3 Manajemen REST API Key Developer** — `/settings` — Periksa kotak kredensial API → Tombol *Salin API Key* menyalin token ke clipboard, toggle *Show/Hide* menampilkan/menyembunyikan string token.
-- [ ] **11.4 Regenerasi API Key dengan Kriptografi Aman (CSPRNG)** — `/settings` — Klik *Regenerate Key* → API Key baru terbentuk (`hide_live_...`) menggunakan Web Crypto API `crypto.getRandomValues()`, token lama di-invalidasi.
-- [ ] **11.5 Pencabutan Kunci API (Revoke Key)** — `/settings` — Klik *Revoke Key* → Konfirmasi peringatan muncul, token API dihapus total sehingga integrasi lama terhenti seketika.
+- [x] **11.1 Pengaturan Profil Tenant & Informasi Bisnis** — `/settings` — Ubah nama workspace bisnis dan email kontak utama, klik Simpan → Data profil tenant di Zustand store dan antarmuka ter-update instan.
+- [x] **11.2 Ganti Kata Sandi Akun** — `/settings` — Masukkan kata sandi lama, kata sandi baru (≥ 8 karakter), dan konfirmasi kata sandi baru → Validasi sukses, toast konfirmasi penggantian password muncul.
+- [x] **11.3 Manajemen REST API Key Developer** — `/settings` — Periksa kotak kredensial API → Tombol *Salin API Key* menyalin token ke clipboard, toggle *Show/Hide* menampilkan/menyembunyikan string token.
+- [x] **11.4 Regenerasi API Key dengan Kriptografi Aman (CSPRNG)** — `/settings` — Klik *Regenerate Key* → API Key baru terbentuk (`hide_live_...`) menggunakan Web Crypto API `crypto.getRandomValues()`, token lama di-invalidasi.
+- [x] **11.5 Pencabutan Kunci API (Revoke Key)** — `/settings` — Klik *Revoke Key* → Konfirmasi peringatan muncul, token API dihapus total sehingga integrasi lama terhenti seketika.
 
 ---
 
 ## 🛡️ 12. Modul Superadmin Control Panel & Audit Keamanan (`/admin/*`)
 
 - [ ] **12.1 Proteksi Rute Superadmin di Edge Runtime** — `/overview`, `/users`, `/plans`, `/logs` — Coba akses URL admin menggunakan akun dengan role *SELLER / AGENT* → Edge Proxy langsung menolak dan me-redirect ke `/dashboard` (Forbidden).
-- [ ] **12.2 Dashboard Overview Superadmin** — `/overview` — Login dengan akun `SUPERADMIN` → Metrik global sistem (Total Tenant Terdaftar, Total Pesan Terkirim Seluruh Server, Uptime Gateway, Revenue Bulanan) tampil akurat.
-- [ ] **12.3 Manajemen Pengguna & Penyesuaian Kuota Massal** — `/users` — Buka daftar seluruh pengguna tenant → Buka aksi *Adjust Quota*, tambah kuota pesan tenant → Kuota tenant bertambah seketika.
-- [ ] **12.4 Manajemen Master Paket Langganan Global** — `/plans` — Tambah/edit harga paket tier bulanan, limit slot perangkat, dan fitur watermark → Seluruh katalog harga sinkron.
+- [x] **12.2 Dashboard Overview Superadmin** — `/overview` — Login dengan akun `SUPERADMIN` → Metrik global sistem (Total Tenant Terdaftar, Total Pesan Terkirim Seluruh Server, Uptime Gateway, Revenue Bulanan) tampil akurat.
+- [x] **12.3 Manajemen Pengguna & Penyesuaian Kuota Massal** — `/users` — Buka daftar seluruh pengguna tenant → Buka aksi *Adjust Quota*, tambah kuota pesan tenant → Kuota tenant bertambah seketika.
+- [x] **12.4 Manajemen Master Paket Langganan Global** — `/plans` — Tambah/edit harga paket tier bulanan, limit slot perangkat, dan fitur watermark → Seluruh katalog harga sinkron.
 - [ ] **12.5 Virtual Scrolling Log Audit Sistem (AuditLogsTable)** — `/logs` — Buka tab *Log Autentikasi* & *Log Aktivitas Operasional* → Tabel virtual scrolling 60 FPS menampilkan ribuan catatan login IP, event timestamp, User Agent, dan indikator keamanan (*ShieldCheck / ShieldAlert*).
-- [ ] **12.6 Pusat Notifikasi & Broadcast Pengumuman Global** — `/notifications` — Kirim pesan banner pemeliharaan server (*Maintenance Alert*) ke seluruh tenant → Notifikasi muncul di header dashboard pengguna.
+- [x] **12.6 Pusat Notifikasi & Broadcast Pengumuman Global** — `/notifications` — Kirim pesan banner pemeliharaan server (*Maintenance Alert*) ke seluruh tenant → Notifikasi muncul di header dashboard pengguna.
 
 ---
 
 ## 🎨 13. Modul UI/UX Responsivitas, Wise Design System, & i18n
 
-- [ ] **13.1 Wise Design System Theme Standard** — Periksa seluruh halaman → Aksen neon `#9fe870`, hijau pekat `#163300`, shape language kapsul (*radius-pill*), tombol interaktif memiliki state hover dan fokus yang jelas.
-- [ ] **13.2 Standar Kontras Aksesibilitas WCAG 2.2 AAA** — Uji kontras teks terhadap latar belakang terang (`#fbfcf9`) dan gelap (`#0e0f0c`) → Rasio kontras melampaui **11.2:1 (AAA Compliant)**, teks sangat tajam dan mudah dibaca.
-- [ ] **13.3 Peralihan Tema Instan (Dark & Light Mode)** — Klik toggle tema di Navbar → Seluruh token warna berganti secara instan tanpa glitch, preferensi tema tersimpan di local storage.
-- [ ] **13.4 Peralihan Multi-Bahasa Instan (i18n ID ↔ EN)** — Klik switcher bahasa di Navbar → Seluruh label navigasi, tombol, judul form, dan placeholder berganti bahasa instan (Bahasa Indonesia ↔ English) tanpa refresh halaman.
-- [ ] **13.5 Responsivitas Mobile & Tablet Viewport** — Buka aplikasi di resolusi smartphone (360px–414px) dan tablet (768px–1024px) → Sidebar otomatis berubah menjadi drawer geser (*Sheet*), tabel dapat di-scroll horizontal tanpa merusak layout, ukuran tombol minimum 44px (`min-h-11`).
+- [x] **13.1 Wise Design System Theme Standard** — Periksa seluruh halaman → Aksen neon `#9fe870`, hijau pekat `#163300`, shape language kapsul (*radius-pill*), tombol interaktif memiliki state hover dan fokus yang jelas.
+- [x] **13.2 Standar Kontras Aksesibilitas WCAG 2.2 AAA** — Uji kontras teks terhadap latar belakang terang (`#fbfcf9`) dan gelap (`#0e0f0c`) → Rasio kontras melampaui **11.2:1 (AAA Compliant)**, teks sangat tajam dan mudah dibaca.
+- [x] **13.3 Peralihan Tema Instan (Dark & Light Mode)** — Klik toggle tema di Navbar → Seluruh token warna berganti secara instan tanpa glitch, preferensi tema tersimpan di local storage.
+- [x] **13.4 Peralihan Multi-Bahasa Instan (i18n ID ↔ EN)** — Klik switcher bahasa di Navbar → Seluruh label navigasi, tombol, judul form, dan placeholder berganti bahasa instan (Bahasa Indonesia ↔ English) tanpa refresh halaman.
+- [x] **13.5 Responsivitas Mobile & Tablet Viewport** — Buka aplikasi di resolusi smartphone (360px–414px) dan tablet (768px–1024px) → Sidebar otomatis berubah menjadi drawer geser (*Sheet*), tabel dapat di-scroll horizontal tanpa merusak layout, ukuran tombol minimum 44px (`min-h-11`).
 
 ---
 

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
 import { UserActivityItem } from "@/modules/iam/types/activity.types";
@@ -127,7 +127,7 @@ export function UserActivityForm({
 
     if (t.includes("TOPUP")) {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
           <CreditCard className="size-3" />
           <span>TOP-UP</span>
         </span>
@@ -135,7 +135,7 @@ export function UserActivityForm({
     }
     if (t.includes("PAYMENT") || t.includes("SUBSCRIPTION")) {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-500/20 bg-sky-500/10 px-2.5 py-0.5 text-[11px] font-bold text-sky-600 dark:text-sky-400">
           <Receipt className="size-3" />
           <span>PAYMENT</span>
         </span>
@@ -143,7 +143,7 @@ export function UserActivityForm({
     }
     if (t.includes("WITHDRAWAL")) {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-2.5 py-0.5 text-[11px] font-bold text-amber-600 dark:text-amber-400">
           <Wallet className="size-3" />
           <span>WITHDRAWAL</span>
         </span>
@@ -151,7 +151,7 @@ export function UserActivityForm({
     }
     if (t.includes("DEVICE")) {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-500/20 bg-indigo-500/10 px-2.5 py-0.5 text-[11px] font-bold text-indigo-600 dark:text-indigo-400">
           <Smartphone className="size-3" />
           <span>DEVICE</span>
         </span>
@@ -159,7 +159,7 @@ export function UserActivityForm({
     }
     if (t.includes("CAMPAIGN")) {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-2.5 py-0.5 text-[11px] font-bold text-cyan-600 dark:text-cyan-400">
           <Send className="size-3" />
           <span>CAMPAIGN</span>
         </span>
@@ -167,7 +167,7 @@ export function UserActivityForm({
     }
     if (t.includes("LOGIN")) {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
           <LogIn className="size-3" />
           <span>LOGIN</span>
         </span>
@@ -175,7 +175,7 @@ export function UserActivityForm({
     }
     if (t.includes("LOGOUT")) {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-zinc-500/10 text-zinc-600 dark:text-zinc-400 border border-zinc-500/20">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-zinc-500/20 bg-zinc-500/10 px-2.5 py-0.5 text-[11px] font-bold text-zinc-600 dark:text-zinc-400">
           <LogOut className="size-3" />
           <span>LOGOUT</span>
         </span>
@@ -183,7 +183,7 @@ export function UserActivityForm({
     }
     if (t.includes("REGISTER") || t.includes("SIGNUP")) {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-500/20 bg-sky-500/10 px-2.5 py-0.5 text-[11px] font-bold text-sky-600 dark:text-sky-400">
           <UserPlus className="size-3" />
           <span>REGISTER</span>
         </span>
@@ -191,7 +191,7 @@ export function UserActivityForm({
     }
     if (t.includes("PASSWORD") || t.includes("VERIFY")) {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-2.5 py-0.5 text-[11px] font-bold text-amber-600 dark:text-amber-400">
           <KeyRound className="size-3" />
           <span>SECURITY</span>
         </span>
@@ -199,14 +199,14 @@ export function UserActivityForm({
     }
     if (t.includes("TOKEN") || t.includes("APIKEY")) {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-purple-500/20 bg-purple-500/10 px-2.5 py-0.5 text-[11px] font-bold text-purple-600 dark:text-purple-400">
           <Shield className="size-3" />
           <span>API TOKEN</span>
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-muted text-foreground-secondary border border-border">
+      <span className="bg-muted text-foreground-secondary border-border inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-bold">
         <Activity className="size-3" />
         <span>{t}</span>
       </span>
@@ -219,24 +219,24 @@ export function UserActivityForm({
   return (
     <div className="space-y-4">
       {/* Toolbar Section: Search Bar & Filter Chips */}
-      <div className="space-y-3 p-4 rounded-xl border border-border bg-surface dark:bg-[#161715] shadow-xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="border-border bg-surface space-y-3 rounded-xl border p-4 shadow-xs dark:bg-[#161715]">
+        <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
           {/* Search Form */}
-          <form onSubmit={handleSearchSubmit} className="flex items-center gap-2 flex-1 max-w-lg">
+          <form onSubmit={handleSearchSubmit} className="flex max-w-lg flex-1 items-center gap-2">
             <div className="relative flex-1">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-muted pointer-events-none" />
+              <Search className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
               <input
                 type="text"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="Cari keterangan aktivitas akun Anda..."
-                className="w-full h-9.5 pl-10 pr-9 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-1 focus:ring-wise-green outline-none transition text-xs"
+                className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-9.5 w-full rounded-full border pr-9 pl-10 text-xs font-semibold transition outline-none focus:ring-1 dark:bg-[#10110e]"
               />
               {(searchInput || activeSearch) && (
                 <button
                   type="button"
                   onClick={handleClear}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 size-5 rounded-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-muted transition cursor-pointer"
+                  className="text-foreground-muted hover:text-foreground hover:bg-muted absolute top-1/2 right-3 flex size-5 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full transition"
                   title="Hapus Pencarian"
                   aria-label="Hapus Pencarian"
                 >
@@ -248,9 +248,9 @@ export function UserActivityForm({
               type="submit"
               variant="outline"
               size="sm"
-              className="h-9.5 px-4 text-xs font-bold rounded-full shrink-0 border-border hover:border-foreground-muted cursor-pointer"
+              className="border-border hover:border-foreground-muted h-9.5 shrink-0 cursor-pointer rounded-full px-4 text-xs font-bold"
             >
-              <Search className="size-3.5 mr-1" />
+              <Search className="mr-1 size-3.5" />
               <span>Cari</span>
             </Button>
           </form>
@@ -262,17 +262,19 @@ export function UserActivityForm({
             size="sm"
             onClick={onRefresh}
             disabled={isLoading}
-            className="h-9.5 px-3.5 text-xs font-bold rounded-full border-border hover:border-foreground-muted self-start sm:self-auto shrink-0 gap-1.5 cursor-pointer"
+            className="border-border hover:border-foreground-muted h-9.5 shrink-0 cursor-pointer gap-1.5 self-start rounded-full px-3.5 text-xs font-bold sm:self-auto"
             title="Muat Ulang Data"
           >
-            <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin text-wise-green" : ""}`} />
+            <RefreshCw
+              className={`size-3.5 ${isLoading ? "dark:text-wise-green animate-spin text-emerald-700" : ""}`}
+            />
             <span className="hidden sm:inline">Refresh</span>
           </Button>
         </div>
 
         {/* Filter Category Chips (Horizontal Scrollable) */}
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1 border-t border-border/50 scroll-smooth">
-          <div className="flex items-center gap-1 text-[11px] font-bold text-foreground-muted mr-1 shrink-0">
+        <div className="no-scrollbar border-border/50 flex items-center gap-1.5 overflow-x-auto scroll-smooth border-t pt-1">
+          <div className="text-foreground-muted mr-1 flex shrink-0 items-center gap-1 text-[11px] font-bold">
             <Filter className="size-3" />
             <span>Kategori:</span>
           </div>
@@ -283,10 +285,10 @@ export function UserActivityForm({
                 key={chip.value}
                 type="button"
                 onClick={() => onTypeFilterChange(chip.value)}
-                className={`px-3 py-1 rounded-full text-xs transition cursor-pointer whitespace-nowrap shrink-0 ${
+                className={`shrink-0 cursor-pointer rounded-full px-3 py-1 text-xs whitespace-nowrap transition ${
                   isActive
                     ? "bg-wise-green text-dark-green font-extrabold shadow-xs"
-                    : "bg-muted/70 hover:bg-muted text-foreground-secondary hover:text-foreground font-semibold border border-border/60"
+                    : "bg-muted/70 hover:bg-muted text-foreground-secondary hover:text-foreground border-border/60 border font-semibold"
                 }`}
               >
                 {chip.label}
@@ -297,19 +299,21 @@ export function UserActivityForm({
       </div>
 
       {/* Activities Table Container */}
-      <div className="rounded-xl border border-border bg-surface dark:bg-[#161715] overflow-hidden shadow-xs">
+      <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs dark:bg-[#161715]">
         {isLoading ? (
-          <div className="p-12 text-center space-y-3">
-            <div className="size-9 rounded-full bg-wise-green/15 text-wise-green flex items-center justify-center mx-auto animate-spin">
+          <div className="space-y-3 p-12 text-center">
+            <div className="dark:bg-wise-green/15 dark:text-wise-green mx-auto flex size-9 animate-spin items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
               <RefreshCw className="size-4.5" />
             </div>
-            <p className="text-xs font-bold text-foreground">Memuat rekaman log aktivitas akun...</p>
+            <p className="text-foreground text-xs font-bold">
+              Memuat rekaman log aktivitas akun...
+            </p>
           </div>
         ) : activities.length === 0 ? (
-          <div className="p-10 sm:p-14 text-center space-y-2.5">
-            <Activity className="size-10 text-foreground-muted mx-auto" />
-            <h3 className="font-bold text-sm text-foreground">Tidak Ada Aktivitas Ditemukan</h3>
-            <p className="text-xs text-foreground-secondary max-w-sm mx-auto">
+          <div className="space-y-2.5 p-10 text-center sm:p-14">
+            <Activity className="text-foreground-muted mx-auto size-10" />
+            <h3 className="text-foreground text-sm font-bold">Tidak Ada Aktivitas Ditemukan</h3>
+            <p className="text-foreground-secondary mx-auto max-w-sm text-xs">
               {activeSearch
                 ? `Tidak ada hasil yang sesuai dengan kata kunci "${activeSearch}". Silakan periksa kembali filter Anda.`
                 : "Belum ada rekaman aktivitas yang tercatat pada akun Anda."}
@@ -320,7 +324,7 @@ export function UserActivityForm({
                 variant="outline"
                 size="sm"
                 onClick={handleClear}
-                className="rounded-full text-xs font-bold mt-2 cursor-pointer"
+                className="mt-2 cursor-pointer rounded-full text-xs font-bold"
               >
                 Reset Pencarian
               </Button>
@@ -329,25 +333,25 @@ export function UserActivityForm({
         ) : (
           <div>
             {/* Mobile View: Card List (Visible on < 768px) */}
-            <div className="md:hidden divide-y divide-border/50">
+            <div className="divide-border/50 divide-y md:hidden">
               {activities.map((act) => {
                 const { fullHuman } = formatHumanActivityDate(act.createdAt);
                 return (
-                  <div key={act.id} className="p-4 space-y-2.5 bg-surface dark:bg-[#161715]">
+                  <div key={act.id} className="bg-surface space-y-2.5 p-4 dark:bg-[#161715]">
                     <div className="flex items-center justify-between gap-2">
                       {renderTypeBadge(act.activityType || act.type)}
-                      <span className="font-mono text-[9px] bg-muted px-1.5 py-0.5 rounded text-foreground-muted">
+                      <span className="bg-muted text-foreground-muted rounded px-1.5 py-0.5 font-mono text-[9px]">
                         ID: {act.id.slice(-6)}
                       </span>
                     </div>
 
-                    <p className="text-xs font-medium text-foreground-secondary leading-relaxed bg-muted/30 p-2.5 rounded-lg border border-border/40">
+                    <p className="text-foreground-secondary bg-muted/30 border-border/40 rounded-lg border p-2.5 text-xs leading-relaxed font-medium">
                       {act.description || "Tidak ada deskripsi rinci aktivitas."}
                     </p>
 
-                    <div className="flex items-center justify-between text-[11px] text-foreground-muted pt-1 border-t border-border/30">
-                      <div className="flex items-center gap-1.5 font-medium text-foreground-secondary">
-                        <Clock className="size-3 text-foreground-muted" />
+                    <div className="text-foreground-muted border-border/30 flex items-center justify-between border-t pt-1 text-[11px]">
+                      <div className="text-foreground-secondary flex items-center gap-1.5 font-medium">
+                        <Clock className="text-foreground-muted size-3" />
                         <span>{fullHuman}</span>
                       </div>
                     </div>
@@ -359,20 +363,20 @@ export function UserActivityForm({
             {/* Desktop View: Tabular Grid (Visible on >= 768px) */}
             <div className="hidden md:block">
               {/* Header (No Action Column, Generous Layout) */}
-              <div className="grid grid-cols-12 gap-3 px-5 py-3.5 bg-muted/60 border-b border-border text-xs font-extrabold uppercase tracking-wider text-foreground-muted select-none">
+              <div className="bg-muted/60 border-border text-foreground-muted grid grid-cols-12 gap-3 border-b px-5 py-3.5 text-xs font-extrabold tracking-wider uppercase select-none">
                 <div className="col-span-3">Tipe Aktivitas</div>
                 <div className="col-span-6">Deskripsi Kejadian</div>
                 <div className="col-span-3 text-right">Waktu Aktivitas</div>
               </div>
 
               {/* Rows */}
-              <div className="divide-y divide-border/50 text-xs font-semibold">
+              <div className="divide-border/50 divide-y text-xs font-semibold">
                 {activities.map((act) => {
                   const { formattedDate, formattedTime } = formatHumanActivityDate(act.createdAt);
                   return (
                     <div
                       key={act.id}
-                      className="grid grid-cols-12 gap-3 px-5 py-3.5 items-center hover:bg-muted/40 transition-colors min-h-13"
+                      className="hover:bg-muted/40 grid min-h-13 grid-cols-12 items-center gap-3 px-5 py-3.5 transition-colors"
                     >
                       {/* Col 1: Tipe */}
                       <div className="col-span-3 flex items-center">
@@ -380,19 +384,19 @@ export function UserActivityForm({
                       </div>
 
                       {/* Col 2: Deskripsi */}
-                      <div className="col-span-6 text-xs font-medium text-foreground-secondary pr-2">
+                      <div className="text-foreground-secondary col-span-6 pr-2 text-xs font-medium">
                         <span className="line-clamp-2 leading-relaxed">
                           {act.description || "Aktivitas tercatat pada akun."}
                         </span>
                       </div>
 
                       {/* Col 3: Waktu */}
-                      <div className="col-span-3 text-right space-y-0.5">
-                        <div className="font-bold text-foreground text-xs leading-tight">
+                      <div className="col-span-3 space-y-0.5 text-right">
+                        <div className="text-foreground text-xs leading-tight font-bold">
                           {formattedDate}
                         </div>
-                        <div className="flex items-center justify-end gap-1 font-mono text-[11px] text-foreground-muted">
-                          <Clock className="size-3 text-foreground-muted" />
+                        <div className="text-foreground-muted flex items-center justify-end gap-1 font-mono text-[11px]">
+                          <Clock className="text-foreground-muted size-3" />
                           <span>{formattedTime}</span>
                         </div>
                       </div>
@@ -406,15 +410,15 @@ export function UserActivityForm({
 
         {/* Pagination Footer */}
         {!isLoading && total > 0 && (
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-3.5 border-t border-border bg-muted/20 text-xs font-semibold text-foreground-secondary select-none">
+          <div className="border-border bg-muted/20 text-foreground-secondary flex flex-col justify-between gap-3 border-t px-5 py-3.5 text-xs font-semibold select-none sm:flex-row sm:items-center">
             <div>
-              Menampilkan <span className="font-bold text-foreground">{startItem}</span> -{" "}
-              <span className="font-bold text-foreground">{endItem}</span> dari{" "}
-              <span className="font-bold text-foreground">{total}</span> rekaman aktivitas
+              Menampilkan <span className="text-foreground font-bold">{startItem}</span> -{" "}
+              <span className="text-foreground font-bold">{endItem}</span> dari{" "}
+              <span className="text-foreground font-bold">{total}</span> rekaman aktivitas
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-[11px] text-foreground-muted mr-1">
+              <span className="text-foreground-muted mr-1 text-[11px]">
                 Halaman {page} dari {totalPages}
               </span>
               <Button
@@ -423,7 +427,7 @@ export function UserActivityForm({
                 size="sm"
                 onClick={onPrevPage}
                 disabled={page <= 1}
-                className="h-8 px-3 rounded-full text-xs font-bold gap-1 border-border hover:border-foreground-muted cursor-pointer disabled:opacity-40"
+                className="border-border hover:border-foreground-muted h-8 cursor-pointer gap-1 rounded-full px-3 text-xs font-bold disabled:opacity-40"
               >
                 <ChevronLeft className="size-3.5" />
                 <span>Sebelumnya</span>
@@ -434,7 +438,7 @@ export function UserActivityForm({
                 size="sm"
                 onClick={onNextPage}
                 disabled={page >= totalPages}
-                className="h-8 px-3 rounded-full text-xs font-bold gap-1 border-border hover:border-foreground-muted cursor-pointer disabled:opacity-40"
+                className="border-border hover:border-foreground-muted h-8 cursor-pointer gap-1 rounded-full px-3 text-xs font-bold disabled:opacity-40"
               >
                 <span>Berikutnya</span>
                 <ChevronRight className="size-3.5" />
