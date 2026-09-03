@@ -5,10 +5,32 @@ import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n/context";
-import { MessageSimulator } from "./MessageSimulator";
-import { SpintaxSandbox } from "./SpintaxSandbox";
-import { ApiCodeSandbox } from "./ApiCodeSandbox";
+import dynamic from "next/dynamic";
 import { FaqAccordion } from "./FaqAccordion";
+
+const MessageSimulator = dynamic(
+  () => import("./MessageSimulator").then((mod) => mod.MessageSimulator),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="border-border bg-muted/30 h-96 w-full animate-pulse rounded-2xl border" />
+    ),
+  }
+);
+
+const SpintaxSandbox = dynamic(() => import("./SpintaxSandbox").then((mod) => mod.SpintaxSandbox), {
+  ssr: false,
+  loading: () => (
+    <div className="border-border bg-muted/30 h-64 w-full animate-pulse rounded-2xl border" />
+  ),
+});
+
+const ApiCodeSandbox = dynamic(() => import("./ApiCodeSandbox").then((mod) => mod.ApiCodeSandbox), {
+  ssr: false,
+  loading: () => (
+    <div className="border-border bg-muted/30 h-96 w-full animate-pulse rounded-2xl border" />
+  ),
+});
 import {
   Zap,
   Layers,
@@ -392,7 +414,7 @@ export function HomeView() {
       </section>
 
       {/* 7. FAQ Accordion */}
-      <section id="faq" className="mx-auto max-w-3xl px-4 sm:px-6">
+      <section id="faq" className="content-visibility-auto mx-auto max-w-3xl px-4 sm:px-6">
         <FaqAccordion />
       </section>
 

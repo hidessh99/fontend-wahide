@@ -1,8 +1,14 @@
 import type { Metadata, Viewport } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
-import { NetworkStatusBanner } from "@/components/layout/shared/NetworkStatusBanner";
 import { env } from "@/lib/config/env";
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-sans",
+});
 
 const siteUrl = env.NEXT_PUBLIC_APP_URL || "https://wahide.id";
 
@@ -120,10 +126,12 @@ const jsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="id" className="h-full font-sans antialiased" suppressHydrationWarning>
+    <html
+      lang="id"
+      className={`h-full font-sans antialiased ${inter.variable}`}
+      suppressHydrationWarning
+    >
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {siteUrl && !siteUrl.includes("localhost") && (
           <>
             <link rel="preconnect" href={siteUrl} crossOrigin="anonymous" />
@@ -136,10 +144,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="bg-background text-foreground selection:bg-wise-green selection:text-dark-green flex min-h-full flex-col">
-        <Providers>
-          <NetworkStatusBanner />
-          {children}
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

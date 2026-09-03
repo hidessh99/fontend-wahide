@@ -59,7 +59,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   compress: true,
   experimental: {
-    optimizePackageImports: ["lucide-react", "sonner", "date-fns", "zod"],
+    optimizePackageImports: ["lucide-react", "sonner", "date-fns", "zod", "recharts"],
   },
   async headers() {
     return [

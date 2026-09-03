@@ -28,7 +28,7 @@ export function DashboardMobileNav({ open, onClose }: DashboardMobileNavProps) {
         <div className="absolute top-4 right-4 z-50">
           <button
             onClick={onClose}
-            className="hover:bg-muted text-foreground-secondary hover:text-foreground cursor-pointer rounded-full p-2"
+            className="text-foreground-secondary hover:text-foreground hover:bg-muted/60 flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-full p-2.5 transition"
             aria-label="Tutup Menu"
           >
             <X className="size-5" />
