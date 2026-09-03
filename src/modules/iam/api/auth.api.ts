@@ -37,7 +37,10 @@ export const authApi = {
   },
 
   resetPassword: async (payload: ResetPasswordInput): Promise<{ message: string }> => {
-    const res = await httpClient.post(`${IAM_BASE}/auth/reset-password`, payload);
+    const res = await httpClient.post(`${IAM_BASE}/auth/reset-password`, {
+      token: payload.token,
+      password: payload.password,
+    });
     return { message: res.message || "Password berhasil diatur ulang." };
   },
 

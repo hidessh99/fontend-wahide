@@ -22,26 +22,26 @@ export function AuthBanner({ badgeText, headline, subheadline, scaleTag }: AuthB
   const defaultBadge = isRegister
     ? t("auth.banner.register.badge")
     : isForgotPassword
-    ? t("auth.banner.forgotPassword.badge")
-    : t("auth.banner.login.badge");
+      ? t("auth.banner.forgotPassword.badge")
+      : t("auth.banner.login.badge");
 
   const defaultHeadline = isRegister
     ? t("auth.banner.register.headline")
     : isForgotPassword
-    ? t("auth.banner.forgotPassword.headline")
-    : t("auth.banner.login.headline");
+      ? t("auth.banner.forgotPassword.headline")
+      : t("auth.banner.login.headline");
 
   const defaultSubheadline = isRegister
     ? t("auth.banner.register.subheadline")
     : isForgotPassword
-    ? t("auth.banner.forgotPassword.subheadline")
-    : t("auth.banner.login.subheadline");
+      ? t("auth.banner.forgotPassword.subheadline")
+      : t("auth.banner.login.subheadline");
 
   const defaultScaleTag = isRegister
     ? t("auth.banner.register.scaleTag")
     : isForgotPassword
-    ? t("auth.banner.forgotPassword.scaleTag")
-    : t("auth.banner.login.scaleTag");
+      ? t("auth.banner.forgotPassword.scaleTag")
+      : t("auth.banner.login.scaleTag");
 
   const displayBadge = badgeText || defaultBadge;
   const displayHeadline = headline || defaultHeadline;

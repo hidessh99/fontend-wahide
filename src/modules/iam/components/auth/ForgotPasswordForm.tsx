@@ -1,7 +1,8 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { TurnstileWidget } from "@/components/ui/TurnstileWidget";
 import { TurnstileInstance } from "@marsidev/react-turnstile";
@@ -12,6 +13,7 @@ import { Mail, ArrowLeft, CheckCircle2, AlertCircle, Loader2 } from "lucide-reac
 
 export function ForgotPasswordForm() {
   const { t } = useI18n();
+  const router = useRouter();
   const turnstileRef = useRef<TurnstileInstance>(null);
 
   const [formData, setFormData] = useState<ForgotPasswordInput>({
@@ -36,7 +38,12 @@ export function ForgotPasswordForm() {
     setIsLoading(true);
     try {
       const res = await authApi.forgotPassword({ email: result.data.email });
-      setSuccessMessage(res.message || "Tautan pemulihan password telah dikirim ke email Anda.");
+      setSuccessMessage(res.message || t("auth.forgotPassword.redirectingNotice"));
+
+      // Auto redirect to /reset-password after 1.5s
+      setTimeout(() => {
+        router.push(`/reset-password?email=${encodeURIComponent(result.data.email)}`);
+      }, 1500);
     } catch (err: unknown) {
       turnstileRef.current?.reset();
       setFormData((prev) => ({ ...prev, turnstileToken: "" }));
@@ -63,9 +70,22 @@ export function ForgotPasswordForm() {
 
       <form onSubmit={handleSubmit} className="space-y-5">
         {successMessage && (
-          <div className="flex items-center gap-3 rounded-md border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-300">
-            <CheckCircle2 className="size-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
-            <span>{successMessage}</span>
+          <div className="space-y-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-300">
+            <div className="flex items-center gap-3">
+              <CheckCircle2 className="size-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+              <span>{successMessage}</span>
+            </div>
+            <Button
+              type="button"
+              variant="primaryPill"
+              size="sm"
+              onClick={() =>
+                router.push(`/reset-password?email=${encodeURIComponent(formData.email)}`)
+              }
+              className="w-full text-xs font-bold"
+            >
+              {t("auth.forgotPassword.proceedToTokenButton")} →
+            </Button>
           </div>
         )}
 
@@ -121,14 +141,25 @@ export function ForgotPasswordForm() {
           )}
         </Button>
 
-        <div className="pt-1 text-center">
-          <Link
-            href="/login"
-            className="text-foreground-secondary hover:text-foreground inline-flex items-center gap-2 text-sm font-bold"
-          >
-            <ArrowLeft className="size-4" />
-            <span>{t("auth.forgotPassword.backToLogin")}</span>
-          </Link>
+        <div className="space-y-2.5 pt-1 text-center text-xs font-semibold">
+          <p className="text-foreground-secondary">
+            {t("auth.forgotPassword.hasTokenPrompt")}{" "}
+            <Link
+              href={`/reset-password${formData.email ? `?email=${encodeURIComponent(formData.email)}` : ""}`}
+              className="text-foreground hover:text-wise-green underline"
+            >
+              {t("auth.forgotPassword.enterTokenLink")}
+            </Link>
+          </p>
+          <div>
+            <Link
+              href="/login"
+              className="text-foreground-secondary hover:text-foreground inline-flex items-center gap-1.5 transition"
+            >
+              <ArrowLeft className="size-3.5" />
+              <span>{t("auth.forgotPassword.backToLogin")}</span>
+            </Link>
+          </div>
         </div>
       </form>
     </div>
