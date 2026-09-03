@@ -26,6 +26,27 @@ import {
   Check,
 } from "lucide-react";
 
+/**
+ * Strict protocol sanitizer for media URLs (img src and a href)
+ * Prevents DOM-based XSS (CodeQL js/xss-through-dom) and rejects dangerous schemes (javascript:, vbscript:, data:text/html)
+ */
+function getSafeMediaUrl(url: string | null | undefined): string | null {
+  if (!url || typeof url !== "string") return null;
+  const trimmed = url.trim();
+
+  if (
+    trimmed.startsWith("blob:") ||
+    trimmed.startsWith("https://") ||
+    trimmed.startsWith("http://")
+  ) {
+    if (/^(javascript|vbscript|data:(?!image\/)):/i.test(trimmed)) {
+      return null;
+    }
+    return trimmed;
+  }
+  return null;
+}
+
 interface TicketDetailViewProps {
   ticketId: string;
 }
@@ -50,6 +71,15 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
 
   // Close Ticket State
   const [isClosing, setIsClosing] = useState(false);
+
+  // Clean up object URL on unmount to prevent browser memory leaks
+  useEffect(() => {
+    return () => {
+      if (previewUrl && previewUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   useEffect(() => {
     let isMounted = true;
@@ -98,6 +128,11 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
       return;
     }
 
+    // Revoke previous blob url if exists
+    if (previewUrl && previewUrl.startsWith("blob:")) {
+      URL.revokeObjectURL(previewUrl);
+    }
+
     setUploadError(null);
     setIsUploading(true);
     setAttachmentFile(file);
@@ -110,6 +145,9 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
       const msg = err instanceof Error ? err.message : t("support.errUploadFailed");
       setUploadError(msg);
       setAttachmentUrl("");
+      if (previewUrl && previewUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(previewUrl);
+      }
       setPreviewUrl("");
       setAttachmentFile(null);
     } finally {
@@ -121,6 +159,9 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
   };
 
   const handleRemoveAttachment = () => {
+    if (previewUrl && previewUrl.startsWith("blob:")) {
+      URL.revokeObjectURL(previewUrl);
+    }
     setAttachmentFile(null);
     setAttachmentUrl("");
     setPreviewUrl("");
@@ -370,13 +411,13 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
               <p className="whitespace-pre-wrap">{ticket.message || "-"}</p>
 
               {/* Initial Attachment */}
-              {ticket.attachment && (
+              {ticket.attachment && getSafeMediaUrl(ticket.attachment) && (
                 <div className="bg-muted/40 border-border flex items-center justify-between gap-3 rounded-md border p-3">
                   <div className="flex items-center gap-3 overflow-hidden">
                     <div className="bg-surface border-border flex size-12 shrink-0 items-center justify-center overflow-hidden rounded border">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={ticket.attachment}
+                        src={getSafeMediaUrl(ticket.attachment)!}
                         alt="Screenshot"
                         className="size-full object-cover"
                       />
@@ -392,7 +433,7 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
                   </div>
 
                   <a
-                    href={ticket.attachment}
+                    href={getSafeMediaUrl(ticket.attachment)!}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="dark:text-wise-green dark:bg-wise-green/10 dark:border-wise-green/20 inline-flex shrink-0 items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-xs font-bold text-emerald-700 hover:underline"
@@ -458,17 +499,17 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
 
               <div className="text-foreground space-y-4 p-5 text-xs leading-relaxed font-semibold sm:p-6">
                 {/* Reply Screenshot if any */}
-                {reply.attachment && (
+                {reply.attachment && getSafeMediaUrl(reply.attachment) && (
                   <div className="border-border max-w-md overflow-hidden rounded-md border bg-black/5 dark:bg-black/30">
                     <a
-                      href={reply.attachment}
+                      href={getSafeMediaUrl(reply.attachment)!}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="group relative block cursor-pointer overflow-hidden"
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={reply.attachment}
+                        src={getSafeMediaUrl(reply.attachment)!}
                         alt="Screenshot"
                         className="max-h-72 w-full object-cover transition duration-200 group-hover:scale-105"
                       />
@@ -516,13 +557,13 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
                           <X className="size-3.5" />
                         </button>
                       </div>
-                    ) : previewUrl ? (
+                    ) : getSafeMediaUrl(previewUrl) ? (
                       <div className="bg-muted/60 border-border flex items-center justify-between gap-3 rounded-md border p-2.5 px-3 text-xs">
                         <div className="flex items-center gap-2.5 overflow-hidden">
                           <div className="bg-surface border-border flex size-12 shrink-0 items-center justify-center overflow-hidden rounded border">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
-                              src={previewUrl}
+                              src={getSafeMediaUrl(previewUrl)!}
                               alt="Preview"
                               className="size-full object-cover"
                             />
@@ -663,20 +704,20 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
               </div>
             </div>
 
-            {ticket.attachment && (
+            {ticket.attachment && getSafeMediaUrl(ticket.attachment) && (
               <div className="border-border border-t pt-2">
                 <span className="text-foreground-muted mb-2 block text-[11px] font-bold">
                   {t("support.initialAttachmentSidebar")}
                 </span>
                 <a
-                  href={ticket.attachment}
+                  href={getSafeMediaUrl(ticket.attachment)!}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="border-border group relative block overflow-hidden rounded border"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={ticket.attachment}
+                    src={getSafeMediaUrl(ticket.attachment)!}
                     alt="Attachment"
                     className="h-32 w-full object-cover transition group-hover:scale-105"
                   />
