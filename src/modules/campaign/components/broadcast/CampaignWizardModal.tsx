@@ -181,7 +181,7 @@ export function CampaignWizardModal({ isOpen, onClose, onSubmit }: CampaignWizar
             ].map(({ num, label, icon: Icon }) => (
               <div
                 key={num}
-                className={`flex items-center gap-1.5 border-b-2 pb-1 transition-all ${
+                className={`flex min-w-0 items-center gap-1.5 overflow-hidden border-b-2 pb-1 transition-all ${
                   step === num
                     ? "border-wise-green text-foreground font-black"
                     : step > num
@@ -200,8 +200,8 @@ export function CampaignWizardModal({ isOpen, onClose, onSubmit }: CampaignWizar
                 >
                   {step > num ? "✓" : num}
                 </div>
-                <div className="hidden items-center gap-1 sm:flex">
-                  <Icon className="size-3.5" />
+                <div className="hidden min-w-0 items-center gap-1 overflow-hidden sm:flex">
+                  <Icon className="size-3.5 shrink-0" />
                   <span className="truncate">{label}</span>
                 </div>
               </div>
@@ -210,7 +210,7 @@ export function CampaignWizardModal({ isOpen, onClose, onSubmit }: CampaignWizar
         </DialogHeader>
 
         {/* Scrollable Wizard Steps Body */}
-        <div className="flex-1 space-y-4 overflow-y-auto p-5 sm:p-6">
+        <div className="flex-1 space-y-4 overflow-x-hidden overflow-y-auto p-5 sm:p-6">
           {error && (
             <div className="rounded-md border border-rose-500/20 bg-rose-500/10 p-3 text-xs font-semibold text-rose-600 dark:text-rose-400">
               {error}
