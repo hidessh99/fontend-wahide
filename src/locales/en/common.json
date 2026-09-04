@@ -4,6 +4,10 @@
   "cancel": "Cancel",
   "refresh": "Refresh",
   "close": "Close",
+  "breadcrumbHome": "Home",
+  "breadcrumbDashboard": "Dashboard",
+  "langIndonesian": "Bahasa Indonesia",
+  "langEnglish": "English",
   "nav": {
     "features": "Features",
     "pricing": "Pricing",

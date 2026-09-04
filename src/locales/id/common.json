@@ -4,6 +4,10 @@
   "cancel": "Batal",
   "refresh": "Refresh",
   "close": "Tutup",
+  "breadcrumbHome": "Beranda",
+  "breadcrumbDashboard": "Dasbor",
+  "langIndonesian": "Bahasa Indonesia",
+  "langEnglish": "English",
   "nav": {
     "features": "Fitur",
     "pricing": "Harga",
