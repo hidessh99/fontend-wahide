@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import { UserItem, UpdateUserInput } from "@/modules/admin/types/admin.types";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
 import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
@@ -107,14 +109,14 @@ function EditUserModalContent({ user, onClose, onSubmit }: EditUserModalContentP
               <User className="size-3.5" />
               <span>Nama Lengkap:</span>
             </label>
-            <input
+            <Input
               id="edit-user-name"
               type="text"
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Contoh: John Doe"
-              className="bg-surface border-border text-foreground focus:border-foreground h-10 w-full rounded-lg border px-3 text-xs font-semibold outline-none dark:bg-[#10110e]"
+              variant="pill"
             />
           </div>
 
@@ -127,14 +129,14 @@ function EditUserModalContent({ user, onClose, onSubmit }: EditUserModalContentP
               <Mail className="size-3.5" />
               <span>Alamat Email:</span>
             </label>
-            <input
+            <Input
               id="edit-user-email"
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="user@example.com"
-              className="bg-surface border-border text-foreground focus:border-foreground h-10 w-full rounded-lg border px-3 text-xs font-semibold outline-none dark:bg-[#10110e]"
+              variant="pill"
             />
           </div>
 
@@ -147,13 +149,14 @@ function EditUserModalContent({ user, onClose, onSubmit }: EditUserModalContentP
               <Phone className="size-3.5" />
               <span>Nomor WhatsApp:</span>
             </label>
-            <input
+            <Input
               id="edit-user-phone"
               type="tel"
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
               placeholder="6281234567890"
-              className="bg-surface border-border text-foreground focus:border-foreground h-10 w-full rounded-lg border px-3 font-mono text-xs font-semibold outline-none dark:bg-[#10110e]"
+              variant="pill"
+              className="font-mono"
             />
           </div>
 
@@ -166,16 +169,16 @@ function EditUserModalContent({ user, onClose, onSubmit }: EditUserModalContentP
               <Shield className="size-3.5" />
               <span>Peran Akun (Role):</span>
             </label>
-            <select
+            <NativeSelect
               id="edit-user-role"
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              className="bg-surface border-border text-foreground focus:border-foreground h-10 w-full rounded-lg border px-3 text-xs font-bold outline-none dark:bg-[#10110e]"
+              variant="pill"
             >
               <option value="SELLER">SELLER (Pengguna Standar)</option>
               <option value="ADMIN">ADMIN (Staf Pengelola Platform)</option>
               <option value="SUPERADMIN">SUPERADMIN (Akses Penuh)</option>
-            </select>
+            </NativeSelect>
           </div>
 
           {/* Status Toggle */}
@@ -213,13 +216,14 @@ function EditUserModalContent({ user, onClose, onSubmit }: EditUserModalContentP
               </button>
             </div>
             <div className="relative">
-              <input
+              <Input
                 id="edit-user-password"
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Kosongkan jika tidak ingin mengubah sandi"
-                className="bg-surface border-border text-foreground focus:border-foreground h-10 w-full rounded-lg border pr-10 pl-3 font-mono text-xs font-semibold outline-none dark:bg-[#10110e]"
+                variant="pill"
+                className="pr-10 font-mono"
               />
               <button
                 type="button"

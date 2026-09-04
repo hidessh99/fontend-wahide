@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { User, Tenant } from "@/modules/iam/types/auth.types";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { User as UserIcon, Mail, Smartphone, Building, Lock, Save, Loader2 } from "lucide-react";
 
@@ -64,7 +65,7 @@ export function ProfileInfoCard({ user, tenant, onSaveProfile }: ProfileInfoCard
           </label>
           <div className="relative">
             <UserIcon className="text-foreground-muted absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
-            <input
+            <Input
               type="text"
               value={name}
               onChange={(e) => {
@@ -73,9 +74,9 @@ export function ProfileInfoCard({ user, tenant, onSaveProfile }: ProfileInfoCard
               }}
               placeholder="Nama Lengkap Anda"
               required
-              className={`bg-surface text-foreground hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-full border pr-4 pl-10 text-xs font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e] ${
-                nameError ? "border-rose-500" : "border-border"
-              }`}
+              variant="pill"
+              isError={!!nameError}
+              className="pr-4 pl-10"
             />
           </div>
           {nameError && (
@@ -95,12 +96,13 @@ export function ProfileInfoCard({ user, tenant, onSaveProfile }: ProfileInfoCard
           </div>
           <div className="relative">
             <Mail className="text-foreground-muted absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
-            <input
+            <Input
               type="email"
               disabled
               readOnly
               value={email}
-              className="bg-muted/60 text-foreground-muted border-border h-10 w-full cursor-not-allowed rounded-full border pr-4 pl-10 text-xs font-semibold select-none"
+              variant="pill"
+              className="cursor-not-allowed bg-muted/60 text-foreground-muted pr-4 pl-10 select-none"
             />
           </div>
         </div>
@@ -117,12 +119,13 @@ export function ProfileInfoCard({ user, tenant, onSaveProfile }: ProfileInfoCard
           </div>
           <div className="relative">
             <Smartphone className="text-foreground-muted absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
-            <input
+            <Input
               type="text"
               disabled
               readOnly
               value={phone}
-              className="bg-muted/60 text-foreground-muted border-border h-10 w-full cursor-not-allowed rounded-full border pr-4 pl-10 font-mono text-xs font-semibold select-none"
+              variant="pill"
+              className="cursor-not-allowed bg-muted/60 text-foreground-muted pr-4 pl-10 font-mono select-none"
             />
           </div>
         </div>
@@ -133,12 +136,13 @@ export function ProfileInfoCard({ user, tenant, onSaveProfile }: ProfileInfoCard
           </label>
           <div className="relative">
             <Building className="text-foreground-muted absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
-            <input
+            <Input
               type="text"
               disabled
               readOnly
               value={tenantName}
-              className="bg-muted/60 text-foreground-muted border-border h-10 w-full cursor-not-allowed rounded-full border pr-4 pl-10 text-xs font-semibold select-none"
+              variant="pill"
+              className="cursor-not-allowed bg-muted/60 text-foreground-muted pr-4 pl-10 select-none"
             />
           </div>
         </div>

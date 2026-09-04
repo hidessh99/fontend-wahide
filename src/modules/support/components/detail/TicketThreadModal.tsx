@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Ticket, TicketMessage } from "@/modules/support/types/support.types";
 import { supportApi } from "@/modules/support/api/support.api";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -399,13 +400,13 @@ export function TicketThreadModal({
           )}
 
           <div className="space-y-2">
-            <textarea
+            <Textarea
               rows={3}
               value={replyText}
               onChange={(e) => setReplyText(e.target.value)}
               placeholder={t("support.replyPlaceholder")}
               disabled={isLoading}
-              className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green w-full rounded-md border p-3 text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
+              variant="rounded"
             />
 
             <div className="flex items-center justify-between gap-2">

@@ -5,6 +5,9 @@ import { Device } from "@/modules/whatsapp/types/whatsapp.types";
 import { formatPhoneNumber } from "@/modules/whatsapp/components/devices/DeviceCard";
 import { whatsappApi } from "@/modules/whatsapp/api/whatsapp.api";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -94,10 +97,10 @@ export function SendMessageModal({ devices, isOpen, onClose }: SendMessageModalP
               <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                 {t("whatsapp.selectSenderDevice")}
               </label>
-              <select
+              <NativeSelect
                 value={activeDeviceId}
                 onChange={(e) => setUserSelectedDeviceId(e.target.value)}
-                className="bg-surface text-foreground border-border focus:border-wise-green h-10 w-full rounded-md border px-3 text-xs font-semibold outline-none dark:bg-[#10110e]"
+                variant="rounded"
               >
                 {connectedDevices.length === 0 ? (
                   <option value="">{t("whatsapp.noConnectedDevices")}</option>
@@ -109,7 +112,7 @@ export function SendMessageModal({ devices, isOpen, onClose }: SendMessageModalP
                     </option>
                   ))
                 )}
-              </select>
+              </NativeSelect>
             </div>
 
             {/* Recipient Phone */}
@@ -117,12 +120,13 @@ export function SendMessageModal({ devices, isOpen, onClose }: SendMessageModalP
               <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                 {t("whatsapp.recipientPhoneLabel")}
               </label>
-              <input
+              <Input
                 type="tel"
                 value={recipient}
                 onChange={(e) => setRecipient(e.target.value)}
                 placeholder="6281234567890"
-                className="bg-surface text-foreground border-border focus:border-wise-green h-10 w-full rounded-md border px-3 font-mono text-xs font-semibold outline-none dark:bg-[#10110e]"
+                variant="rounded"
+                className="font-mono"
                 required
               />
               <span className="text-foreground-muted mt-1 block text-[11px]">
@@ -135,12 +139,13 @@ export function SendMessageModal({ devices, isOpen, onClose }: SendMessageModalP
               <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                 {t("whatsapp.messageTextLabel")}
               </label>
-              <textarea
+              <Textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 rows={4}
                 placeholder={t("whatsapp.messageTextPlaceholder")}
-                className="bg-surface text-foreground border-border focus:border-wise-green w-full resize-none rounded-md border p-3 text-xs font-semibold outline-none dark:bg-[#10110e]"
+                variant="rounded"
+                className="resize-none"
                 required
               />
             </div>

@@ -7,6 +7,7 @@ import { supportApi } from "../../api/support.api";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Textarea } from "@/components/ui/textarea";
 import { useI18n } from "@/lib/i18n/context";
 import { toast } from "sonner";
 import {
@@ -528,19 +529,20 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
 
           {/* Reply Composer Section */}
           {ticket.status !== "CLOSED" ? (
-            <div className="border-border bg-surface space-y-4 rounded-md border p-5 shadow-xs sm:p-6 dark:bg-[#161715]">
+            <div className="border-border bg-surface space-y-4 rounded-xl border p-5 shadow-xs sm:p-6 dark:bg-[#161715]">
               <div className="border-border flex items-center justify-between border-b pb-3">
                 <h3 className="text-foreground text-sm font-bold">{t("support.replyToTicket")}</h3>
               </div>
 
               <form onSubmit={handleSendReply} className="space-y-4">
-                <textarea
+                <Textarea
                   rows={5}
                   value={replyText}
                   onChange={(e) => setReplyText(e.target.value)}
                   placeholder={t("support.replyPlaceholder")}
                   disabled={isSending}
-                  className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green w-full rounded-md border p-4 text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
+                  variant="rounded"
+                  className="p-4"
                 />
 
                 {/* File Attachment Preview Chip */}

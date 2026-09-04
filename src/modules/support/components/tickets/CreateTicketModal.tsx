@@ -9,6 +9,8 @@ import {
 import { supportApi } from "@/modules/support/api/support.api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -191,35 +193,35 @@ export function CreateTicketModal({ isOpen, onClose, onSubmit }: CreateTicketMod
                 <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                   {t("support.categoryLabel")}
                 </label>
-                <select
+                <NativeSelect
                   value={category}
                   onChange={(e) => setCategory(e.target.value as TicketCategory)}
                   disabled={isLoading}
-                  className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full cursor-pointer rounded-md border px-3 text-xs font-semibold outline-none focus:ring-1 dark:bg-[#10110e]"
+                  variant="rounded"
                 >
                   <option value="WHATSAPP">{t("support.catWhatsApp")}</option>
                   <option value="BILLING">{t("support.catBilling")}</option>
                   <option value="ACCOUNT">{t("support.catAccount")}</option>
                   <option value="FEATURE_REQUEST">{t("support.catFeature")}</option>
                   <option value="OTHER">{t("support.catOther")}</option>
-                </select>
+                </NativeSelect>
               </div>
 
               <div>
                 <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                   {t("support.priorityLabel")}
                 </label>
-                <select
+                <NativeSelect
                   value={priority}
                   onChange={(e) => setPriority(e.target.value as TicketPriority)}
                   disabled={isLoading}
-                  className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full cursor-pointer rounded-md border px-3 text-xs font-semibold outline-none focus:ring-1 dark:bg-[#10110e]"
+                  variant="rounded"
                 >
                   <option value="LOW">{t("support.priorityLow")}</option>
                   <option value="MEDIUM">{t("support.priorityMedium")}</option>
                   <option value="HIGH">{t("support.priorityHigh")}</option>
                   <option value="URGENT">{t("support.priorityUrgent")}</option>
-                </select>
+                </NativeSelect>
               </div>
             </div>
 
@@ -228,13 +230,14 @@ export function CreateTicketModal({ isOpen, onClose, onSubmit }: CreateTicketMod
               <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                 {t("support.messageLabel")}
               </label>
-              <textarea
+              <Textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder={t("support.messagePlaceholder")}
                 disabled={isLoading}
                 rows={4}
-                className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green w-full resize-none rounded-md border p-3 text-xs font-semibold transition outline-none focus:ring-1 dark:bg-[#10110e]"
+                variant="rounded"
+                className="resize-none"
               />
             </div>
 

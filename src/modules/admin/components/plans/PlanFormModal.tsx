@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import { AdminPlanItem, CreatePlanInput } from "@/modules/admin/types/admin.types";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
@@ -121,14 +123,14 @@ function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentP
                 <Tag className="size-3.5" />
                 <span>Nama Paket Langganan:</span>
               </label>
-              <input
+              <Input
                 id="plan-name-input"
                 type="text"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Contoh: Pro Enterprise"
-                className="bg-surface border-border text-foreground focus:border-foreground h-10 w-full rounded-lg border px-3 text-xs font-semibold outline-none dark:bg-[#10110e]"
+                variant="rounded"
               />
             </div>
 
@@ -140,7 +142,7 @@ function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentP
                 <CreditCard className="size-3.5" />
                 <span>Harga / Bulan (Rp):</span>
               </label>
-              <input
+              <Input
                 id="plan-price-input"
                 type="number"
                 min={0}
@@ -149,7 +151,8 @@ function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentP
                 value={price}
                 onChange={(e) => setPrice(Number(e.target.value))}
                 placeholder="50000"
-                className="bg-surface border-border text-foreground focus:border-foreground h-10 w-full rounded-lg border px-3 font-mono text-xs font-black outline-none dark:bg-[#10110e]"
+                variant="rounded"
+                className="font-mono font-black"
               />
             </div>
           </div>
@@ -169,14 +172,15 @@ function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentP
                   <MessageSquare className="size-3.5" />
                   <span>Limit Pesan/Bulan:</span>
                 </label>
-                <input
+                <Input
                   id="plan-message-limit-input"
                   type="number"
                   min={100}
                   required
                   value={monthlyMessageLimit}
                   onChange={(e) => setMonthlyMessageLimit(Number(e.target.value))}
-                  className="bg-surface border-border text-foreground focus:border-foreground h-9 w-full rounded-lg border px-3 font-mono text-xs font-bold outline-none dark:bg-[#10110e]"
+                  variant="rounded"
+                  className="h-9 font-mono font-bold"
                 />
               </div>
 
@@ -188,14 +192,15 @@ function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentP
                   <Smartphone className="size-3.5" />
                   <span>Slot Nomor WhatsApp:</span>
                 </label>
-                <input
+                <Input
                   id="plan-max-devices-input"
                   type="number"
                   min={1}
                   required
                   value={maxDevices}
                   onChange={(e) => setMaxDevices(Number(e.target.value))}
-                  className="bg-surface border-border text-foreground focus:border-foreground h-9 w-full rounded-lg border px-3 font-mono text-xs font-bold outline-none dark:bg-[#10110e]"
+                  variant="rounded"
+                  className="h-9 font-mono font-bold"
                 />
               </div>
 
@@ -207,14 +212,15 @@ function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentP
                   <Users className="size-3.5" />
                   <span>Maks Anggota CS:</span>
                 </label>
-                <input
+                <Input
                   id="plan-max-agents-input"
                   type="number"
                   min={0}
                   required
                   value={maxAgents}
                   onChange={(e) => setMaxAgents(Number(e.target.value))}
-                  className="bg-surface border-border text-foreground focus:border-foreground h-9 w-full rounded-lg border px-3 font-mono text-xs font-bold outline-none dark:bg-[#10110e]"
+                  variant="rounded"
+                  className="h-9 font-mono font-bold"
                 />
               </div>
             </div>
@@ -328,13 +334,14 @@ function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentP
                 >
                   Isi Teks Watermark:
                 </label>
-                <textarea
+                <Textarea
                   id="plan-watermark-text-input"
                   rows={2}
                   value={watermarkText}
                   onChange={(e) => setWatermarkText(e.target.value)}
                   placeholder="_Sent via Wahide WhatsApp Gateway_"
-                  className="bg-surface border-border text-foreground focus:border-foreground w-full rounded-lg border p-2.5 font-mono text-[11px] outline-none dark:bg-[#10110e]"
+                  variant="rounded"
+                  className="p-2.5 font-mono text-[11px]"
                 />
               </div>
             )}

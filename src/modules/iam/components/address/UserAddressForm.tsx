@@ -4,6 +4,9 @@ import React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useUserAddress } from "../../hooks/useUserAddress";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
+import { Textarea } from "@/components/ui/textarea";
 import { useI18n } from "@/lib/i18n/context";
 import {
   MapPin,
@@ -137,12 +140,13 @@ export function UserAddressForm() {
             </label>
             <div className="relative">
               <Globe className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
-              <input
+              <Input
                 type="text"
                 value={formState.country}
                 disabled
                 readOnly
-                className="bg-muted/50 text-foreground border-border/70 h-11 w-full cursor-not-allowed rounded-xl border pr-4 pl-10 text-xs font-semibold outline-none select-none sm:text-sm dark:bg-[#10110e]"
+                variant="rounded"
+                className="h-11 cursor-not-allowed bg-muted/50 pr-4 pl-10 sm:text-sm"
               />
             </div>
           </div>
@@ -154,11 +158,12 @@ export function UserAddressForm() {
             </label>
             <div className="relative">
               <Building className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
-              <select
+              <NativeSelect
                 value={formState.state}
                 onChange={(e) => handleProvinceChange(e.target.value)}
                 required
-                className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-11 w-full cursor-pointer appearance-none rounded-xl border pr-8 pl-10 text-xs font-semibold transition outline-none focus:ring-1 sm:text-sm dark:bg-[#10110e]"
+                variant="rounded"
+                className="h-11 pr-8 pl-10 sm:text-sm"
               >
                 <option value="">{t("address.provincePlaceholder")}</option>
                 {provinces.map((prov) => (
@@ -166,10 +171,7 @@ export function UserAddressForm() {
                     {prov.name}
                   </option>
                 ))}
-              </select>
-              <div className="text-foreground-muted pointer-events-none absolute top-1/2 right-3.5 -translate-y-1/2 text-xs">
-                ▼
-              </div>
+              </NativeSelect>
             </div>
           </div>
 
@@ -188,12 +190,13 @@ export function UserAddressForm() {
             </div>
             <div className="relative">
               <Navigation className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
-              <select
+              <NativeSelect
                 value={formState.city}
                 onChange={(e) => handleCityChange(e.target.value)}
                 disabled={!formState.state || isLoadingCities}
                 required
-                className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-11 w-full cursor-pointer appearance-none rounded-xl border pr-8 pl-10 text-xs font-semibold transition outline-none focus:ring-1 disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm dark:bg-[#10110e]"
+                variant="rounded"
+                className="h-11 pr-8 pl-10 sm:text-sm"
               >
                 <option value="">
                   {!formState.state
@@ -207,10 +210,7 @@ export function UserAddressForm() {
                     {city.name}
                   </option>
                 ))}
-              </select>
-              <div className="text-foreground-muted pointer-events-none absolute top-1/2 right-3.5 -translate-y-1/2 text-xs">
-                ▼
-              </div>
+              </NativeSelect>
             </div>
           </div>
 
@@ -229,11 +229,12 @@ export function UserAddressForm() {
             </div>
             <div className="relative">
               <Building className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
-              <select
+              <NativeSelect
                 value={formState.district}
                 onChange={(e) => handleDistrictChange(e.target.value)}
                 disabled={!formState.city || isLoadingDistricts}
-                className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-11 w-full cursor-pointer appearance-none rounded-xl border pr-8 pl-10 text-xs font-semibold transition outline-none focus:ring-1 disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm dark:bg-[#10110e]"
+                variant="rounded"
+                className="h-11 pr-8 pl-10 sm:text-sm"
               >
                 <option value="">
                   {!formState.city
@@ -247,10 +248,7 @@ export function UserAddressForm() {
                     {dist.name}
                   </option>
                 ))}
-              </select>
-              <div className="text-foreground-muted pointer-events-none absolute top-1/2 right-3.5 -translate-y-1/2 text-xs">
-                ▼
-              </div>
+              </NativeSelect>
             </div>
           </div>
 
@@ -261,14 +259,15 @@ export function UserAddressForm() {
             </label>
             <div className="relative">
               <Mail className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
-              <input
+              <Input
                 type="text"
                 value={formState.postal_code}
                 onChange={(e) => handleFieldChange("postal_code", e.target.value)}
                 placeholder={t("address.postalCodePlaceholder")}
                 maxLength={10}
                 required
-                className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-11 w-full rounded-xl border pr-4 pl-10 text-xs font-semibold transition outline-none focus:ring-1 sm:text-sm dark:bg-[#10110e]"
+                variant="rounded"
+                className="h-11 pr-4 pl-10 sm:text-sm"
               />
             </div>
           </div>
@@ -280,13 +279,14 @@ export function UserAddressForm() {
             {t("address.streetAddressLabel")} <span className="text-rose-500">*</span>
           </label>
           <div className="relative">
-            <textarea
+            <Textarea
               rows={3}
               value={formState.address}
               onChange={(e) => handleFieldChange("address", e.target.value)}
               placeholder={t("address.streetAddressPlaceholder")}
               required
-              className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green w-full rounded-xl border p-3.5 text-xs leading-relaxed font-medium transition outline-none focus:ring-1 sm:text-sm dark:bg-[#10110e]"
+              variant="rounded"
+              className="p-3.5 leading-relaxed font-medium sm:text-sm"
             />
           </div>
           <p className="text-foreground-muted text-[11px]">{t("address.streetAddressHelp")}</p>

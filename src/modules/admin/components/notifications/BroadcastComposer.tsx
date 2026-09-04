@@ -4,6 +4,8 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import { UserItem } from "@/modules/admin/types/admin.types";
 import { adminApi } from "@/modules/admin/api/admin.api";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Megaphone,
   Send,
@@ -456,7 +458,7 @@ export function BroadcastComposer({
                   <label className="text-foreground-secondary mb-1 block text-[11px] font-bold">
                     Alamat Email: <span className="text-rose-500">*</span>
                   </label>
-                  <input
+                  <Input
                     type="email"
                     required={isManualMode}
                     value={manualEmail}
@@ -466,9 +468,9 @@ export function BroadcastComposer({
                         setFormErrors((prev) => ({ ...prev, email: undefined }));
                     }}
                     placeholder="contoh: user@tokoonline.com"
-                    className={`bg-surface text-foreground dark:focus:border-wise-green h-9 w-full rounded-lg border px-3 text-xs font-semibold outline-none focus:border-emerald-600 dark:bg-[#10110e] ${
-                      formErrors.email ? "border-rose-500" : "border-border"
-                    }`}
+                    variant="rounded"
+                    isError={!!formErrors.email}
+                    className="h-9"
                   />
                   {formErrors.email && (
                     <p className="mt-1 text-xs font-semibold text-rose-500">{formErrors.email}</p>
@@ -479,12 +481,13 @@ export function BroadcastComposer({
                   <label className="text-foreground-secondary mb-1 block text-[11px] font-bold">
                     Nama Penerima (Opsional):
                   </label>
-                  <input
+                  <Input
                     type="text"
                     value={manualName}
                     onChange={(e) => setManualName(e.target.value)}
                     placeholder="contoh: Budi Santoso"
-                    className="bg-surface text-foreground border-border dark:focus:border-wise-green h-9 w-full rounded-lg border px-3 text-xs font-semibold outline-none focus:border-emerald-600 dark:bg-[#10110e]"
+                    variant="rounded"
+                    className="h-9"
                   />
                 </div>
               </div>
@@ -497,7 +500,7 @@ export function BroadcastComposer({
           <label className="text-foreground-secondary mb-1 block text-[11px] font-bold tracking-wider uppercase">
             Subjek Email: <span className="text-rose-500">*</span>
           </label>
-          <input
+          <Input
             type="text"
             required
             value={subject}
@@ -506,9 +509,8 @@ export function BroadcastComposer({
               if (formErrors.subject) setFormErrors((prev) => ({ ...prev, subject: undefined }));
             }}
             placeholder="contoh: Pengumuman Pemeliharaan Server & Fitur Baru"
-            className={`bg-surface text-foreground hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-lg border px-3.5 text-xs font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e] ${
-              formErrors.subject ? "border-rose-500" : "border-border"
-            }`}
+            variant="rounded"
+            isError={!!formErrors.subject}
           />
           {formErrors.subject && (
             <p className="mt-1 text-xs font-semibold text-rose-500">{formErrors.subject}</p>
@@ -520,7 +522,7 @@ export function BroadcastComposer({
           <label className="text-foreground-secondary mb-1 block text-[11px] font-bold tracking-wider uppercase">
             Isi Pesan Siaran: <span className="text-rose-500">*</span>
           </label>
-          <textarea
+          <Textarea
             rows={5}
             required
             value={message}
@@ -529,9 +531,8 @@ export function BroadcastComposer({
               if (formErrors.message) setFormErrors((prev) => ({ ...prev, message: undefined }));
             }}
             placeholder="Tuliskan pesan lengkap yang akan dikirimkan ke email penerima..."
-            className={`bg-surface text-foreground hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 w-full rounded-lg border p-3 text-xs font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e] ${
-              formErrors.message ? "border-rose-500" : "border-border"
-            }`}
+            variant="rounded"
+            isError={!!formErrors.message}
           />
           {formErrors.message && (
             <p className="mt-1 text-xs font-semibold text-rose-500">{formErrors.message}</p>

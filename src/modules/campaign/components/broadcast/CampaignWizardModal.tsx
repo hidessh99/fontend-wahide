@@ -9,6 +9,8 @@ import { useContacts } from "@/modules/contact/hooks/useContacts";
 import { useSpintax } from "@/modules/campaign/hooks/useSpintax";
 import { SpintaxVisualizer } from "@/modules/campaign/components/spintax/SpintaxVisualizer";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
@@ -257,12 +259,13 @@ export function CampaignWizardModal({ isOpen, onClose, onSubmit }: CampaignWizar
                 <label className="text-foreground-secondary mb-1.5 block font-bold tracking-wider uppercase">
                   {t("campaign.campaignNameLabel")}
                 </label>
-                <input
+                <Input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder={t("campaign.campaignNamePlaceholder")}
-                  className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-11 w-full rounded-md border px-4 font-semibold outline-none focus:ring-1 dark:bg-[#10110e]"
+                  variant="rounded"
+                  className="h-11 font-semibold"
                   autoFocus
                 />
               </div>
@@ -419,12 +422,13 @@ export function CampaignWizardModal({ isOpen, onClose, onSubmit }: CampaignWizar
                   <label className="text-foreground-secondary block text-[11px] font-bold uppercase">
                     {t("campaign.customNumbersLabel")}
                   </label>
-                  <textarea
+                  <Textarea
                     rows={4}
                     value={customNumbersStr}
                     onChange={(e) => setCustomNumbersStr(e.target.value)}
                     placeholder={"6281234567890\n6289876543210"}
-                    className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green w-full rounded-md border p-3 font-mono text-xs font-semibold outline-none focus:ring-1 dark:bg-[#10110e]"
+                    variant="rounded"
+                    className="font-mono"
                   />
                   <div className="flex items-center justify-between text-[11px]">
                     <span className="text-foreground-muted">
@@ -467,12 +471,12 @@ export function CampaignWizardModal({ isOpen, onClose, onSubmit }: CampaignWizar
                     + {t("campaign.insertSampleSpintax")}
                   </button>
                 </div>
-                <textarea
+                <Textarea
                   rows={5}
                   value={template}
                   onChange={(e) => setTemplate(e.target.value)}
                   placeholder={t("campaign.spintaxPlaceholder")}
-                  className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green w-full rounded-md border p-3 text-xs font-semibold outline-none focus:ring-1 dark:bg-[#10110e]"
+                  variant="rounded"
                 />
                 <div className="text-foreground-muted mt-1 flex justify-between text-[11px]">
                   <span>{t("campaign.spintaxSyntaxHint")}</span>
@@ -559,11 +563,12 @@ export function CampaignWizardModal({ isOpen, onClose, onSubmit }: CampaignWizar
                     <label className="text-foreground-secondary mb-1 block text-[11px]">
                       {t("campaign.selectDateTimeLabel")}
                     </label>
-                    <input
+                    <Input
                       type="datetime-local"
                       value={scheduledAt}
                       onChange={(e) => setScheduledAt(e.target.value)}
-                      className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green h-10 w-full rounded-md border px-3 font-mono text-xs font-semibold outline-none dark:bg-[#10110e]"
+                      variant="rounded"
+                      className="font-mono"
                     />
                   </div>
                 )}

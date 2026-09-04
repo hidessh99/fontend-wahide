@@ -6,6 +6,7 @@ import { authApi } from "@/modules/iam/api/auth.api";
 import { userApi } from "@/modules/iam/api/user.api";
 import { generateSecureRandomString } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { ApiKeyConfirmModal } from "@/modules/iam/components/settings/ApiKeyConfirmModal";
 import { ProfileInfoCard } from "@/modules/iam/components/settings/ProfileInfoCard";
 import { ActiveSessionsCard } from "@/modules/iam/components/settings/ActiveSessionsCard";
@@ -287,7 +288,7 @@ export function SettingsView() {
                 Kata Sandi Saat Ini
               </label>
               <div className="relative">
-                <input
+                <Input
                   type={showCurrentPassword ? "text" : "password"}
                   value={currentPassword}
                   onChange={(e) => {
@@ -297,9 +298,9 @@ export function SettingsView() {
                   }}
                   placeholder="••••••••"
                   required
-                  className={`bg-surface text-foreground hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-full border pr-10 pl-4 text-xs font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e] ${
-                    passwordErrors.current ? "border-rose-500" : "border-border"
-                  }`}
+                  variant="pill"
+                  isError={!!passwordErrors.current}
+                  className="pr-10"
                 />
                 <button
                   type="button"
@@ -322,7 +323,7 @@ export function SettingsView() {
                 Kata Sandi Baru
               </label>
               <div className="relative">
-                <input
+                <Input
                   type={showNewPassword ? "text" : "password"}
                   value={newPassword}
                   onChange={(e) => {
@@ -332,9 +333,9 @@ export function SettingsView() {
                   }}
                   placeholder="Minimal 8 karakter"
                   required
-                  className={`bg-surface text-foreground hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-full border pr-10 pl-4 text-xs font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e] ${
-                    passwordErrors.new ? "border-rose-500" : "border-border"
-                  }`}
+                  variant="pill"
+                  isError={!!passwordErrors.new}
+                  className="pr-10"
                 />
                 <button
                   type="button"
@@ -357,7 +358,7 @@ export function SettingsView() {
                 Konfirmasi Kata Sandi Baru
               </label>
               <div className="relative">
-                <input
+                <Input
                   type={showConfirmPassword ? "text" : "password"}
                   value={confirmPassword}
                   onChange={(e) => {
@@ -367,9 +368,9 @@ export function SettingsView() {
                   }}
                   placeholder="Ulangi kata sandi baru"
                   required
-                  className={`bg-surface text-foreground hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-full border pr-10 pl-4 text-xs font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e] ${
-                    passwordErrors.confirm ? "border-rose-500" : "border-border"
-                  }`}
+                  variant="pill"
+                  isError={!!passwordErrors.confirm}
+                  className="pr-10"
                 />
                 <button
                   type="button"
