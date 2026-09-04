@@ -20,6 +20,16 @@ const CreateTicketModal = dynamic(
 import { useAuth } from "@/modules/iam/hooks/useAuth";
 import { isAdmin } from "@/modules/iam/types/auth.types";
 import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
+import { useTableSort } from "@/hooks/useTableSort";
+import {
   LifeBuoy,
   Plus,
   MessageSquare,
@@ -60,6 +70,13 @@ export function TicketList() {
 
   const [searchInput, setSearchInput] = useState("");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+
+  const { sortKey, sortOrder, handleSort, sortData } = useTableSort<Ticket>({
+    initialKey: "updatedAt",
+    initialOrder: "desc",
+  });
+
+  const sortedTickets = sortData(filteredTickets);
 
   const handleClearSearch = () => {
     setSearchInput("");
@@ -230,7 +247,7 @@ export function TicketList() {
         <div className="space-y-3">
           {/* Mobile View: Card-based Ticket List (Visible on < 768px) */}
           <div className="space-y-3 md:hidden">
-            {filteredTickets.map((tkt) => (
+            {sortedTickets.map((tkt) => (
               <div
                 key={tkt.id}
                 className="border-border bg-surface space-y-2.5 rounded-md border p-3.5 shadow-xs sm:p-4 dark:bg-[#161715]"
@@ -243,48 +260,57 @@ export function TicketList() {
                   <div>{renderStatusBadge(tkt.status)}</div>
                 </div>
 
-                {/* Customer Identity Row (Only for Superadmin) */}
-                {isSuperAdmin && (
-                  <div className="bg-muted/50 border-border/60 flex items-center gap-2 rounded border px-2.5 py-1.5 text-xs">
+                {/* Subject & Category */}
+                <div className="space-y-1">
+                  <Link
+                    href={`/support/${tkt.id}`}
+                    className="text-foreground dark:hover:text-wise-green line-clamp-1 block text-sm font-bold transition hover:text-emerald-700 hover:underline"
+                  >
+                    {tkt.subject}
+                  </Link>
+                  {(tkt.message || tkt.messages?.[0]?.content) && (
+                    <p className="text-foreground-secondary line-clamp-2 text-xs leading-relaxed">
+                      {tkt.message || tkt.messages?.[0]?.content}
+                    </p>
+                  )}
+                </div>
+
+                {/* Extra Meta for SuperAdmin on Mobile */}
+                {isSuperAdmin && tkt.user && (
+                  <div className="bg-muted/40 border-border/50 flex items-center gap-1.5 rounded-md border p-2 text-xs">
                     <UserIcon className="dark:text-wise-green size-3.5 shrink-0 text-emerald-700" />
-                    <div className="min-w-0 truncate">
-                      <span className="text-foreground font-bold">
-                        {tkt.user?.name || t("support.customerUnknown")}
+                    <span className="text-foreground truncate font-bold">{tkt.user.name}</span>
+                    {tkt.user.email && (
+                      <span className="text-foreground-muted truncate font-mono text-[11px]">
+                        ({tkt.user.email})
                       </span>
-                      {tkt.user?.email && (
-                        <span className="text-foreground-secondary ml-1.5 font-mono text-[11px]">
-                          ({tkt.user.email})
-                        </span>
-                      )}
-                    </div>
+                    )}
                   </div>
                 )}
 
-                {/* Subject Title (Clickable) */}
-                <Link
-                  href={`/support/${tkt.id}`}
-                  className="text-foreground dark:hover:text-wise-green line-clamp-2 block text-sm font-bold transition hover:text-emerald-700 hover:underline"
-                >
-                  {tkt.subject}
-                </Link>
-
-                {/* Metadata & Actions */}
-                <div className="border-border/50 text-foreground-secondary flex flex-wrap items-center justify-between gap-2 border-t pt-2 text-xs font-semibold">
-                  <div className="flex items-center gap-2 truncate text-[11px]">
-                    <span>{tkt.category}</span>
-                    <span>•</span>
-                    <div>{renderPriorityBadge(tkt.priority)}</div>
+                {/* Footer: Priority, Date, & Detail Action */}
+                <div className="border-border/50 flex items-center justify-between border-t pt-2.5">
+                  <div className="flex items-center gap-2">
+                    {renderPriorityBadge(tkt.priority)}
+                    <span className="text-foreground-muted text-[11px]">
+                      {tkt.updatedAt
+                        ? new Date(tkt.updatedAt).toLocaleDateString("id-ID", {
+                            day: "numeric",
+                            month: "short",
+                          })
+                        : "-"}
+                    </span>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    {/* Quick Status Modal Trigger for Admin */}
+                  <div className="flex items-center gap-1.5">
                     {isSuperAdmin && (
                       <Button
                         type="button"
                         variant="outline"
                         size="sm"
                         onClick={() => setStatusModalTicket(tkt)}
-                        className="border-border hover:border-foreground-muted text-foreground h-7 cursor-pointer gap-1 rounded-full px-2.5 text-[11px] font-bold transition"
+                        className="border-border bg-surface hover:bg-muted hover:border-foreground-muted text-foreground inline-flex h-7 shrink-0 cursor-pointer items-center gap-1 rounded-full border px-2.5 text-xs font-bold shadow-2xs transition"
+                        title={t("support.editStatus")}
                       >
                         <SlidersHorizontal className="dark:text-wise-green size-3 text-emerald-700" />
                         <span>{t("support.editStatus")}</span>
@@ -304,149 +330,234 @@ export function TicketList() {
             ))}
           </div>
 
-          {/* Desktop View: Tabular Grid (Visible on >= 768px) */}
-          <div className="border-border bg-surface hidden overflow-x-auto rounded-md border shadow-xs md:block dark:bg-[#161715]">
-            <div className="min-w-190">
-              {/* Table Header */}
-              <div className="bg-muted/60 border-border text-foreground-muted grid grid-cols-12 gap-3 border-b px-5 py-4 text-xs font-extrabold tracking-wider uppercase select-none">
-                {isSuperAdmin ? (
-                  <>
-                    <div className="col-span-3">{t("support.tableHeaderTicket")}</div>
-                    <div className="col-span-2">{t("support.tableHeaderCustomer")}</div>
-                    <div className="col-span-1">{t("support.tableHeaderCategory")}</div>
-                    <div className="col-span-1">{t("support.tableHeaderPriority")}</div>
-                    <div className="col-span-2 text-center">{t("support.tableHeaderStatus")}</div>
-                    <div className="col-span-3 text-right">{t("support.tableHeaderAction")}</div>
-                  </>
-                ) : (
-                  <>
-                    <div className="col-span-5">{t("support.tableHeaderTicket")}</div>
-                    <div className="col-span-2">{t("support.tableHeaderCategory")}</div>
-                    <div className="col-span-2">{t("support.tableHeaderPriority")}</div>
-                    <div className="col-span-2 text-center">{t("support.tableHeaderStatus")}</div>
-                    <div className="col-span-1 text-right">{t("support.tableHeaderAction")}</div>
-                  </>
-                )}
-              </div>
+          {/* Desktop View: shadcn/ui Table (Visible on >= 768px) */}
+          <div className="border-border bg-surface hidden overflow-hidden rounded-md border shadow-xs md:block dark:bg-[#161715]">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/50 border-border hover:bg-muted/50">
+                  {isSuperAdmin ? (
+                    <>
+                      <TableHead className="w-[28%] px-5 py-3.5">
+                        <DataTableColumnHeader
+                          title={t("support.tableHeaderTicket")}
+                          columnKey="ticketNumber"
+                          currentSortKey={sortKey as string}
+                          currentSortOrder={sortOrder}
+                          onSort={handleSort}
+                        />
+                      </TableHead>
+                      <TableHead className="w-[20%] px-4 py-3.5">
+                        <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
+                          {t("support.tableHeaderCustomer")}
+                        </div>
+                      </TableHead>
+                      <TableHead className="w-[12%] px-3 py-3.5">
+                        <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
+                          {t("support.tableHeaderCategory")}
+                        </div>
+                      </TableHead>
+                      <TableHead className="w-[12%] px-3 py-3.5">
+                        <DataTableColumnHeader
+                          title={t("support.tableHeaderPriority")}
+                          columnKey="priority"
+                          currentSortKey={sortKey as string}
+                          currentSortOrder={sortOrder}
+                          onSort={handleSort}
+                        />
+                      </TableHead>
+                      <TableHead className="w-[12%] px-3 py-3.5 text-center">
+                        <DataTableColumnHeader
+                          title={t("support.tableHeaderStatus")}
+                          columnKey="status"
+                          currentSortKey={sortKey as string}
+                          currentSortOrder={sortOrder}
+                          onSort={handleSort}
+                          align="center"
+                        />
+                      </TableHead>
+                      <TableHead className="w-[16%] px-5 py-3.5 text-right">
+                        <div className="text-foreground-muted text-right text-[11px] font-extrabold tracking-wider uppercase select-none">
+                          {t("support.tableHeaderAction")}
+                        </div>
+                      </TableHead>
+                    </>
+                  ) : (
+                    <>
+                      <TableHead className="w-[45%] px-5 py-3.5">
+                        <DataTableColumnHeader
+                          title={t("support.tableHeaderTicket")}
+                          columnKey="ticketNumber"
+                          currentSortKey={sortKey as string}
+                          currentSortOrder={sortOrder}
+                          onSort={handleSort}
+                        />
+                      </TableHead>
+                      <TableHead className="w-[18%] px-4 py-3.5">
+                        <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
+                          {t("support.tableHeaderCategory")}
+                        </div>
+                      </TableHead>
+                      <TableHead className="w-[15%] px-3 py-3.5">
+                        <DataTableColumnHeader
+                          title={t("support.tableHeaderPriority")}
+                          columnKey="priority"
+                          currentSortKey={sortKey as string}
+                          currentSortOrder={sortOrder}
+                          onSort={handleSort}
+                        />
+                      </TableHead>
+                      <TableHead className="w-[12%] px-3 py-3.5 text-center">
+                        <DataTableColumnHeader
+                          title={t("support.tableHeaderStatus")}
+                          columnKey="status"
+                          currentSortKey={sortKey as string}
+                          currentSortOrder={sortOrder}
+                          onSort={handleSort}
+                          align="center"
+                        />
+                      </TableHead>
+                      <TableHead className="w-[10%] px-5 py-3.5 text-right">
+                        <div className="text-foreground-muted text-right text-[11px] font-extrabold tracking-wider uppercase select-none">
+                          {t("support.tableHeaderAction")}
+                        </div>
+                      </TableHead>
+                    </>
+                  )}
+                </TableRow>
+              </TableHeader>
 
-              {/* Table Body */}
-              <div className="divide-border/50 divide-y text-xs font-semibold">
-                {filteredTickets.map((tkt) => (
-                  <div
-                    key={tkt.id}
-                    className="hover:bg-muted/40 grid min-h-14.5 grid-cols-12 items-center gap-3 px-5 py-3.5 transition-colors"
-                  >
+              <TableBody>
+                {sortedTickets.map((tkt) => (
+                  <TableRow key={tkt.id} className="hover:bg-muted/30 transition-colors">
                     {isSuperAdmin ? (
                       <>
-                        {/* Col 3: Ticket No & Subject */}
-                        <div className="col-span-3 space-y-1 pr-1">
-                          <div className="flex items-center gap-2">
-                            <span className="text-dark-green dark:text-wise-green bg-light-mint dark:bg-wise-green/15 border-wise-green/30 rounded-full border px-2.5 py-0.5 font-mono text-xs font-bold">
+                        {/* Ticket No & Subject */}
+                        <TableCell className="px-5 py-3.5 align-middle">
+                          <div className="space-y-1">
+                            <span className="text-dark-green dark:text-wise-green bg-light-mint dark:bg-wise-green/15 border-wise-green/30 inline-block rounded-full border px-2.5 py-0.5 font-mono text-xs font-bold">
                               {tkt.ticketNumber}
                             </span>
+                            <Link
+                              href={`/support/${tkt.id}`}
+                              className="text-foreground dark:hover:text-wise-green line-clamp-1 block text-sm font-bold transition hover:text-emerald-700 hover:underline"
+                            >
+                              {tkt.subject}
+                            </Link>
                           </div>
-                          <Link
-                            href={`/support/${tkt.id}`}
-                            className="text-foreground dark:hover:text-wise-green line-clamp-1 block text-sm font-bold transition hover:text-emerald-700 hover:underline"
-                          >
-                            {tkt.subject}
-                          </Link>
-                        </div>
+                        </TableCell>
 
-                        {/* Col 2: Customer (Name & Email) */}
-                        <div className="col-span-2 min-w-0 space-y-0.5 pr-1">
-                          <div className="text-foreground flex items-center gap-1.5 truncate text-xs font-bold">
-                            <UserIcon className="dark:text-wise-green size-3 shrink-0 text-emerald-700" />
-                            <span className="truncate">
-                              {tkt.user?.name || t("support.customerUnknown")}
-                            </span>
+                        {/* Customer */}
+                        <TableCell className="px-4 py-3.5 align-middle">
+                          <div className="min-w-0 space-y-0.5">
+                            <div className="text-foreground flex items-center gap-1.5 truncate text-xs font-bold">
+                              <UserIcon className="dark:text-wise-green size-3 shrink-0 text-emerald-700" />
+                              <span className="truncate">
+                                {tkt.user?.name || t("support.customerUnknown")}
+                              </span>
+                            </div>
+                            {tkt.user?.email && (
+                              <p className="text-foreground-secondary truncate pl-4.5 font-mono text-[11px]">
+                                {tkt.user.email}
+                              </p>
+                            )}
                           </div>
-                          {tkt.user?.email && (
-                            <p className="text-foreground-secondary truncate pl-4.5 font-mono text-[11px]">
-                              {tkt.user.email}
-                            </p>
-                          )}
-                        </div>
+                        </TableCell>
 
-                        {/* Col 1: Category */}
-                        <div className="text-foreground-secondary col-span-1 truncate text-xs font-semibold">
+                        {/* Category */}
+                        <TableCell className="text-foreground-secondary px-3 py-3.5 align-middle text-xs font-semibold">
                           {tkt.category}
-                        </div>
+                        </TableCell>
 
-                        {/* Col 1: Priority */}
-                        <div className="col-span-1">{renderPriorityBadge(tkt.priority)}</div>
+                        {/* Priority */}
+                        <TableCell className="px-3 py-3.5 align-middle">
+                          {renderPriorityBadge(tkt.priority)}
+                        </TableCell>
 
-                        {/* Col 2: Status */}
-                        <div className="col-span-2 flex justify-center">
-                          {renderStatusBadge(tkt.status)}
-                        </div>
+                        {/* Status */}
+                        <TableCell className="px-3 py-3.5 text-center align-middle">
+                          <div className="inline-flex items-center justify-center">
+                            {renderStatusBadge(tkt.status)}
+                          </div>
+                        </TableCell>
 
-                        {/* Col 3: Actions (Edit Status & Open) */}
-                        <div className="col-span-3 flex items-center justify-end gap-2">
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setStatusModalTicket(tkt)}
-                            className="border-border bg-surface hover:bg-muted hover:border-foreground-muted text-foreground inline-flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-full border px-2.5 text-xs font-bold shadow-2xs transition"
-                            title={t("support.editStatus")}
-                          >
-                            <SlidersHorizontal className="dark:text-wise-green size-3.5 text-emerald-700" />
-                            <span>{t("support.editStatus")}</span>
-                          </Button>
+                        {/* Actions */}
+                        <TableCell className="px-5 py-3.5 text-right align-middle">
+                          <div className="flex items-center justify-end gap-2">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setStatusModalTicket(tkt)}
+                              className="border-border bg-surface hover:bg-muted hover:border-foreground-muted text-foreground inline-flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-full border px-2.5 text-xs font-bold shadow-2xs transition"
+                              title={t("support.editStatus")}
+                            >
+                              <SlidersHorizontal className="dark:text-wise-green size-3.5 text-emerald-700" />
+                              <span>{t("support.editStatus")}</span>
+                            </Button>
 
-                          <Link
-                            href={`/support/${tkt.id}`}
-                            className="border-border bg-muted/60 hover:bg-muted hover:border-foreground-muted text-foreground inline-flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-full border px-3 text-xs font-bold shadow-2xs transition"
-                            title={t("support.viewThread")}
-                          >
-                            <MessageSquare className="dark:text-wise-green size-3.5 text-emerald-700" />
-                            <span>{t("support.viewThread")}</span>
-                          </Link>
-                        </div>
+                            <Link
+                              href={`/support/${tkt.id}`}
+                              className="border-border bg-muted/60 hover:bg-muted hover:border-foreground-muted text-foreground inline-flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-full border px-3 text-xs font-bold shadow-2xs transition"
+                              title={t("support.viewThread")}
+                            >
+                              <MessageSquare className="dark:text-wise-green size-3.5 text-emerald-700" />
+                              <span>{t("support.viewThread")}</span>
+                            </Link>
+                          </div>
+                        </TableCell>
                       </>
                     ) : (
                       <>
                         {/* Standard Non-Admin Row */}
-                        <div className="col-span-5 space-y-1">
-                          <div className="flex items-center gap-2">
-                            <span className="text-dark-green dark:text-wise-green bg-light-mint dark:bg-wise-green/15 border-wise-green/30 rounded-full border px-2.5 py-0.5 font-mono text-xs font-bold">
+                        <TableCell className="px-5 py-3.5 align-middle">
+                          <div className="space-y-1">
+                            <span className="text-dark-green dark:text-wise-green bg-light-mint dark:bg-wise-green/15 border-wise-green/30 inline-block rounded-full border px-2.5 py-0.5 font-mono text-xs font-bold">
                               {tkt.ticketNumber}
                             </span>
+                            <Link
+                              href={`/support/${tkt.id}`}
+                              className="text-foreground dark:hover:text-wise-green line-clamp-1 block text-sm font-bold transition hover:text-emerald-700 hover:underline sm:text-base"
+                            >
+                              {tkt.subject}
+                            </Link>
                           </div>
-                          <Link
-                            href={`/support/${tkt.id}`}
-                            className="text-foreground dark:hover:text-wise-green line-clamp-1 block text-sm font-bold transition hover:text-emerald-700 hover:underline sm:text-base"
-                          >
-                            {tkt.subject}
-                          </Link>
-                        </div>
+                        </TableCell>
 
-                        <div className="text-foreground-secondary col-span-2 text-sm font-semibold">
+                        {/* Category */}
+                        <TableCell className="text-foreground-secondary px-4 py-3.5 align-middle text-sm font-semibold">
                           {tkt.category}
-                        </div>
+                        </TableCell>
 
-                        <div className="col-span-2">{renderPriorityBadge(tkt.priority)}</div>
+                        {/* Priority */}
+                        <TableCell className="px-3 py-3.5 align-middle">
+                          {renderPriorityBadge(tkt.priority)}
+                        </TableCell>
 
-                        <div className="col-span-2 flex justify-center">
-                          {renderStatusBadge(tkt.status)}
-                        </div>
+                        {/* Status */}
+                        <TableCell className="px-3 py-3.5 text-center align-middle">
+                          <div className="inline-flex items-center justify-center">
+                            {renderStatusBadge(tkt.status)}
+                          </div>
+                        </TableCell>
 
-                        <div className="col-span-1 flex justify-end">
-                          <Link
-                            href={`/support/${tkt.id}`}
-                            className="border-border bg-surface hover:bg-muted hover:border-foreground-muted text-foreground inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-full border px-3 text-xs font-bold shadow-2xs transition"
-                          >
-                            <MessageSquare className="dark:text-wise-green size-3.5 text-emerald-700" />
-                            <span className="hidden sm:inline">{t("support.viewThread")}</span>
-                          </Link>
-                        </div>
+                        {/* Actions */}
+                        <TableCell className="px-5 py-3.5 text-right align-middle">
+                          <div className="flex items-center justify-end">
+                            <Link
+                              href={`/support/${tkt.id}`}
+                              className="border-border bg-surface hover:bg-muted hover:border-foreground-muted text-foreground inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-full border px-3 text-xs font-bold shadow-2xs transition"
+                            >
+                              <MessageSquare className="dark:text-wise-green size-3.5 text-emerald-700" />
+                              <span className="hidden sm:inline">{t("support.viewThread")}</span>
+                            </Link>
+                          </div>
+                        </TableCell>
                       </>
                     )}
-                  </div>
+                  </TableRow>
                 ))}
-              </div>
-            </div>
+              </TableBody>
+            </Table>
           </div>
 
           {/* Pagination Footer */}

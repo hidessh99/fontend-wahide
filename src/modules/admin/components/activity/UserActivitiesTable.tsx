@@ -26,6 +26,16 @@ import {
   Send,
   Trash2,
 } from "lucide-react";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
+import { useTableSort } from "@/hooks/useTableSort";
 
 export function formatHumanActivityDate(rawDate?: string): {
   formattedDate: string;
@@ -108,6 +118,13 @@ export function UserActivitiesTable({
 }: UserActivitiesTableProps) {
   const [searchInput, setSearchInput] = useState("");
   const [activityToDelete, setActivityToDelete] = useState<UserActivityItem | null>(null);
+
+  const { sortKey, sortOrder, handleSort, sortData } = useTableSort<UserActivityItem>({
+    initialKey: "createdAt",
+    initialOrder: "desc",
+  });
+
+  const sortedActivities = sortData(activities);
 
   const handleClear = () => {
     setSearchInput("");
@@ -339,7 +356,7 @@ export function UserActivitiesTable({
           <div>
             {/* Mobile View: Card List (Visible on < 768px) */}
             <div className="divide-border/50 w-full min-w-0 divide-y md:hidden">
-              {activities.map((act) => {
+              {sortedActivities.map((act) => {
                 const { fullHuman } = formatHumanActivityDate(act.createdAt);
                 return (
                   <div
@@ -394,84 +411,120 @@ export function UserActivitiesTable({
               })}
             </div>
 
-            {/* Desktop View: Tabular Grid (Visible on >= 768px) */}
+            {/* Desktop View: shadcn Table (Visible on >= 768px) */}
             <div className="hidden md:block">
-              {/* Header */}
-              <div className="bg-muted/60 border-border text-foreground-muted grid grid-cols-12 gap-3 border-b px-5 py-3.5 text-xs font-extrabold tracking-wider uppercase select-none">
-                <div className="col-span-3">Pengguna / Akun</div>
-                <div className="col-span-2 text-center">Tipe Aktivitas</div>
-                <div className="col-span-4">Deskripsi Kejadian</div>
-                <div className="col-span-2 text-right">Waktu Aktivitas</div>
-                <div className="col-span-1 text-right">Aksi</div>
-              </div>
-
-              {/* Rows */}
-              <div className="divide-border/50 divide-y text-xs font-semibold">
-                {activities.map((act) => {
-                  const { formattedDate, formattedTime } = formatHumanActivityDate(act.createdAt);
-                  return (
-                    <div
-                      key={act.id}
-                      className="hover:bg-muted/40 grid min-h-14 grid-cols-12 items-center gap-3 px-5 py-3.5 transition-colors"
-                    >
-                      {/* Col 1: Pengguna */}
-                      <div className="col-span-3 flex min-w-0 items-center gap-2.5">
-                        <div className="flex size-7.5 shrink-0 items-center justify-center rounded-full bg-rose-500/15 text-xs font-bold text-rose-600 dark:text-rose-400">
-                          {act.user?.name ? (
-                            act.user.name.charAt(0).toUpperCase()
-                          ) : (
-                            <User className="size-3.5" />
-                          )}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="text-foreground truncate text-xs font-bold sm:text-sm">
-                            {act.user?.name || "Pengguna Tanpa Nama"}
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-border bg-muted/60 hover:bg-muted/60">
+                    <TableHead className="w-[28%] px-5 py-3.5">
+                      <div className="text-foreground-muted text-xs font-extrabold tracking-wider uppercase select-none">
+                        Pengguna / Akun
+                      </div>
+                    </TableHead>
+                    <TableHead className="w-[18%] px-4 py-3.5 text-center">
+                      <DataTableColumnHeader
+                        title="Tipe Aktivitas"
+                        columnKey="type"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                        align="center"
+                      />
+                    </TableHead>
+                    <TableHead className="w-[30%] px-4 py-3.5">
+                      <div className="text-foreground-muted text-xs font-extrabold tracking-wider uppercase select-none">
+                        Deskripsi Kejadian
+                      </div>
+                    </TableHead>
+                    <TableHead className="w-[16%] px-4 py-3.5 text-right">
+                      <DataTableColumnHeader
+                        title="Waktu Aktivitas"
+                        columnKey="createdAt"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                        align="right"
+                      />
+                    </TableHead>
+                    <TableHead className="w-[8%] px-5 py-3.5 text-right">
+                      <div className="text-foreground-muted text-right text-xs font-extrabold tracking-wider uppercase select-none">
+                        Aksi
+                      </div>
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {sortedActivities.map((act) => {
+                    const { formattedDate, formattedTime } = formatHumanActivityDate(act.createdAt);
+                    return (
+                      <TableRow key={act.id} className="hover:bg-muted/40 transition-colors">
+                        {/* Col 1: Pengguna */}
+                        <TableCell className="px-5 py-3.5 align-middle">
+                          <div className="flex min-w-0 items-center gap-2.5">
+                            <div className="flex size-7.5 shrink-0 items-center justify-center rounded-full bg-rose-500/15 text-xs font-bold text-rose-600 dark:text-rose-400">
+                              {act.user?.name ? (
+                                act.user.name.charAt(0).toUpperCase()
+                              ) : (
+                                <User className="size-3.5" />
+                              )}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <div className="text-foreground truncate text-xs font-bold sm:text-sm">
+                                {act.user?.name || "Pengguna Tanpa Nama"}
+                              </div>
+                              <div className="text-foreground-muted truncate font-mono text-[11px]">
+                                {act.user?.email || act.userId}
+                              </div>
+                            </div>
                           </div>
-                          <div className="text-foreground-muted truncate font-mono text-[11px]">
-                            {act.user?.email || act.userId}
+                        </TableCell>
+
+                        {/* Col 2: Tipe */}
+                        <TableCell className="px-4 py-3.5 text-center align-middle">
+                          <div className="inline-flex items-center justify-center">
+                            {renderTypeBadge(act.activityType || act.type)}
                           </div>
-                        </div>
-                      </div>
+                        </TableCell>
 
-                      {/* Col 2: Tipe */}
-                      <div className="col-span-2 flex justify-center">
-                        {renderTypeBadge(act.activityType || act.type)}
-                      </div>
+                        {/* Col 3: Deskripsi */}
+                        <TableCell className="text-foreground-secondary px-4 py-3.5 align-middle text-xs font-medium">
+                          <span className="line-clamp-2 leading-relaxed">
+                            {act.description || "Aktivitas tercatat pada sistem."}
+                          </span>
+                        </TableCell>
 
-                      {/* Col 3: Deskripsi */}
-                      <div className="text-foreground-secondary col-span-4 pr-2 text-xs font-medium">
-                        <span className="line-clamp-2 leading-relaxed">
-                          {act.description || "Aktivitas tercatat pada sistem."}
-                        </span>
-                      </div>
+                        {/* Col 4: Waktu */}
+                        <TableCell className="px-4 py-3.5 text-right align-middle">
+                          <div className="space-y-0.5">
+                            <div className="text-foreground text-xs leading-tight font-bold">
+                              {formattedDate}
+                            </div>
+                            <div className="text-foreground-muted flex items-center justify-end gap-1 font-mono text-[11px]">
+                              <Clock className="text-foreground-muted size-3" />
+                              <span>{formattedTime}</span>
+                            </div>
+                          </div>
+                        </TableCell>
 
-                      {/* Col 4: Waktu */}
-                      <div className="col-span-2 space-y-0.5 text-right">
-                        <div className="text-foreground text-xs leading-tight font-bold">
-                          {formattedDate}
-                        </div>
-                        <div className="text-foreground-muted flex items-center justify-end gap-1 font-mono text-[11px]">
-                          <Clock className="text-foreground-muted size-3" />
-                          <span>{formattedTime}</span>
-                        </div>
-                      </div>
-
-                      {/* Col 5: Aksi Hapus */}
-                      <div className="col-span-1 flex items-center justify-end">
-                        <button
-                          type="button"
-                          onClick={() => setActivityToDelete(act)}
-                          className="text-foreground-muted flex size-8 cursor-pointer items-center justify-center rounded-full border border-transparent transition hover:border-rose-500/30 hover:bg-rose-500/10 hover:text-rose-600"
-                          title="Hapus Rekaman Aktivitas"
-                          aria-label="Hapus Rekaman Aktivitas"
-                        >
-                          <Trash2 className="size-3.5" />
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+                        {/* Col 5: Aksi Hapus */}
+                        <TableCell className="px-5 py-3.5 text-right align-middle">
+                          <div className="flex items-center justify-end">
+                            <button
+                              type="button"
+                              onClick={() => setActivityToDelete(act)}
+                              className="text-foreground-muted flex size-8 cursor-pointer items-center justify-center rounded-full border border-transparent transition hover:border-rose-500/30 hover:bg-rose-500/10 hover:text-rose-600"
+                              title="Hapus Rekaman Log Aktivitas"
+                              aria-label="Hapus Rekaman Log Aktivitas"
+                            >
+                              <Trash2 className="size-3.5" />
+                            </button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
             </div>
           </div>
         )}

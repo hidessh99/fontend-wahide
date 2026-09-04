@@ -22,6 +22,16 @@ import {
   Loader2,
   ExternalLink,
 } from "lucide-react";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
+import { useTableSort } from "@/hooks/useTableSort";
 
 function getStatusBadge(status: string) {
   const upper = (status || "").toUpperCase();
@@ -108,6 +118,13 @@ export function BillingManagementTable() {
     null
   );
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+
+  const { sortKey, sortOrder, handleSort, sortData } = useTableSort<AdminBillingItem>({
+    initialKey: "createdAt",
+    initialOrder: "desc",
+  });
+
+  const sortedBillings = sortData(billings);
 
   const handleOpenStatusModal = (b: AdminBillingItem) => {
     setSelectedBillingForStatus(b);
@@ -239,7 +256,7 @@ export function BillingManagementTable() {
           <div>
             {/* Mobile View: Cards (< 1024px) */}
             <div className="divide-border/60 divide-y lg:hidden">
-              {billings.map((b) => {
+              {sortedBillings.map((b) => {
                 const canChangeStatus = b.status === "PENDING" || b.status === "PROCESSING";
 
                 return (
@@ -326,27 +343,69 @@ export function BillingManagementTable() {
             </div>
 
             {/* Desktop Table View (>= 1024px) */}
-            <div className="hidden overflow-x-auto lg:block">
-              <table className="w-full border-collapse text-left">
-                <thead>
-                  <tr className="border-border bg-muted/50 text-foreground-muted border-b text-[11px] font-extrabold tracking-wider uppercase select-none">
-                    <th className="px-5 py-3.5 font-extrabold">ID Transaksi</th>
-                    <th className="px-4 py-3.5 font-extrabold">Pengguna / Seller</th>
-                    <th className="px-4 py-3.5 text-right font-extrabold">Nominal Topup</th>
-                    <th className="px-4 py-3.5 font-extrabold">Metode Pembayaran</th>
-                    <th className="px-3 py-3.5 text-center font-extrabold">Status</th>
-                    <th className="px-4 py-3.5 font-extrabold">Tanggal Transaksi</th>
-                    <th className="px-5 py-3.5 text-right font-extrabold">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-border/50 divide-y text-xs font-semibold">
-                  {billings.map((b) => {
+            <div className="hidden lg:block">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-border bg-muted/50 hover:bg-muted/50">
+                    <TableHead className="w-[18%] px-5 py-3.5">
+                      <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        ID Transaksi
+                      </div>
+                    </TableHead>
+                    <TableHead className="w-[20%] px-4 py-3.5">
+                      <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        Pengguna / Seller
+                      </div>
+                    </TableHead>
+                    <TableHead className="w-[15%] px-4 py-3.5 text-right">
+                      <DataTableColumnHeader
+                        title="Nominal Topup"
+                        columnKey="amount"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                        align="right"
+                      />
+                    </TableHead>
+                    <TableHead className="w-[15%] px-4 py-3.5">
+                      <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        Metode Pembayaran
+                      </div>
+                    </TableHead>
+                    <TableHead className="w-[12%] px-3 py-3.5 text-center">
+                      <DataTableColumnHeader
+                        title="Status"
+                        columnKey="status"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                        align="center"
+                      />
+                    </TableHead>
+                    <TableHead className="w-[12%] px-4 py-3.5">
+                      <DataTableColumnHeader
+                        title="Tanggal Transaksi"
+                        columnKey="createdAt"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                      />
+                    </TableHead>
+                    <TableHead className="w-[8%] px-5 py-3.5 text-right">
+                      <div className="text-foreground-muted text-right text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        Aksi
+                      </div>
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {sortedBillings.map((b) => {
                     const canChangeStatus = b.status === "PENDING" || b.status === "PROCESSING";
 
                     return (
-                      <tr key={b.id} className="hover:bg-muted/30 group transition-colors">
+                      <TableRow key={b.id} className="hover:bg-muted/30 transition-colors">
                         {/* 1. ID Transaksi */}
-                        <td className="px-5 py-3.5 font-mono text-xs">
+                        <TableCell className="px-5 py-3.5 align-middle font-mono text-xs">
                           <div className="flex items-center gap-1.5">
                             <span className="text-foreground font-bold">{b.id.slice(0, 16)}</span>
                             {b.invoiceUrl && (
@@ -361,10 +420,10 @@ export function BillingManagementTable() {
                               </a>
                             )}
                           </div>
-                        </td>
+                        </TableCell>
 
                         {/* 2. Pengguna / Seller */}
-                        <td className="px-4 py-3.5">
+                        <TableCell className="px-4 py-3.5 align-middle">
                           <div className="flex items-center gap-2.5">
                             <div className="bg-muted text-foreground border-border flex size-8 shrink-0 items-center justify-center rounded-full border text-xs font-black uppercase">
                               {b.user?.name ? b.user.name.charAt(0) : "U"}
@@ -378,33 +437,37 @@ export function BillingManagementTable() {
                               </span>
                             </div>
                           </div>
-                        </td>
+                        </TableCell>
 
                         {/* 3. Nominal Topup */}
-                        <td className="px-4 py-3.5 text-right font-mono font-bold">
+                        <TableCell className="px-4 py-3.5 text-right align-middle font-mono font-bold">
                           <span className="dark:text-wise-green text-sm text-emerald-700">
                             Rp {b.amount.toLocaleString("id-ID")}
                           </span>
-                        </td>
+                        </TableCell>
 
                         {/* 4. Metode Pembayaran */}
-                        <td className="px-4 py-3.5">
+                        <TableCell className="px-4 py-3.5 align-middle">
                           <div className="text-foreground flex items-center gap-1.5 font-semibold">
                             <CreditCard className="text-foreground-muted size-3.5 shrink-0" />
                             <span>{formatPaymentMethod(b.method)}</span>
                           </div>
-                        </td>
+                        </TableCell>
 
                         {/* 5. Status Pembayaran */}
-                        <td className="px-3 py-3.5 text-center">{getStatusBadge(b.status)}</td>
+                        <TableCell className="px-3 py-3.5 text-center align-middle">
+                          <div className="inline-flex items-center justify-center">
+                            {getStatusBadge(b.status)}
+                          </div>
+                        </TableCell>
 
                         {/* 6. Tanggal Transaksi */}
-                        <td className="text-foreground-secondary px-4 py-3.5 font-mono text-[11px]">
+                        <TableCell className="text-foreground-secondary px-4 py-3.5 align-middle font-mono text-[11px]">
                           {formatDateTime(b.createdAt)}
-                        </td>
+                        </TableCell>
 
                         {/* 7. Aksi */}
-                        <td className="px-5 py-3.5 text-right">
+                        <TableCell className="px-5 py-3.5 text-right align-middle">
                           <div className="flex items-center justify-end gap-1.5">
                             <Button
                               type="button"
@@ -423,12 +486,12 @@ export function BillingManagementTable() {
                               <span>Batal / Expired</span>
                             </Button>
                           </div>
-                        </td>
-                      </tr>
+                        </TableCell>
+                      </TableRow>
                     );
                   })}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           </div>
         )}

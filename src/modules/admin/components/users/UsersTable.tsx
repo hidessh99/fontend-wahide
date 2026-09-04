@@ -20,6 +20,16 @@ import {
   User,
   Loader2,
 } from "lucide-react";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
+import { useTableSort } from "@/hooks/useTableSort";
 
 interface UsersTableProps {
   users: UserItem[];
@@ -85,6 +95,13 @@ export function UsersTable({
   const [selectedUserForEdit, setSelectedUserForEdit] = useState<UserItem | null>(null);
   const [isAdjustModalOpen, setIsAdjustModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const { sortKey, sortOrder, handleSort, sortData } = useTableSort<UserItem>({
+    initialKey: "createdAt",
+    initialOrder: "desc",
+  });
+
+  const sortedUsers = sortData(users);
 
   const handleOpenAdjust = (user: UserItem) => {
     setSelectedUserForAdjust(user);
@@ -180,7 +197,7 @@ export function UsersTable({
           <div>
             {/* Mobile View: Card-based list for screen < 1024px */}
             <div className="divide-border/60 divide-y lg:hidden">
-              {users.map((u) => {
+              {sortedUsers.map((u) => {
                 const balance = u.balance ?? u.depositBalance ?? 0;
                 const isActive = u.status === "ACTIVE" || u.isActive === true;
                 const phone = u.phoneNumber || u.phone || "-";
@@ -268,30 +285,71 @@ export function UsersTable({
               })}
             </div>
 
-            {/* Desktop View: Tabular Grid for screen >= 1024px */}
-            <div className="hidden overflow-x-auto lg:block">
-              <table className="w-full border-collapse text-left">
-                <thead>
-                  <tr className="border-border bg-muted/50 text-foreground-muted border-b text-[11px] font-extrabold tracking-wider uppercase select-none">
-                    <th className="px-5 py-3.5 font-extrabold">Nama Lengkap</th>
-                    <th className="px-4 py-3.5 font-extrabold">Email</th>
-                    <th className="px-4 py-3.5 font-extrabold">Nomor Telepon / WhatsApp</th>
-                    <th className="px-3 py-3.5 text-center font-extrabold">Role / Peran</th>
-                    <th className="px-3 py-3.5 text-center font-extrabold">Status Akun</th>
-                    <th className="px-4 py-3.5 text-right font-extrabold">Saldo Dompet</th>
-                    <th className="px-5 py-3.5 text-right font-extrabold">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-border/50 divide-y text-xs font-semibold">
-                  {users.map((u) => {
+            {/* Desktop View: shadcn/ui Table for screen >= 1024px */}
+            <div className="hidden lg:block">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-border bg-muted/50 hover:bg-muted/50">
+                    <TableHead className="w-[25%] px-5 py-3.5">
+                      <DataTableColumnHeader
+                        title="Nama Lengkap"
+                        columnKey="name"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                      />
+                    </TableHead>
+                    <TableHead className="w-[20%] px-4 py-3.5">
+                      <DataTableColumnHeader
+                        title="Email"
+                        columnKey="email"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                      />
+                    </TableHead>
+                    <TableHead className="w-[18%] px-4 py-3.5">
+                      <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        Nomor Telepon / WhatsApp
+                      </div>
+                    </TableHead>
+                    <TableHead className="w-[10%] px-3 py-3.5 text-center">
+                      <div className="text-foreground-muted text-center text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        Role / Peran
+                      </div>
+                    </TableHead>
+                    <TableHead className="w-[10%] px-3 py-3.5 text-center">
+                      <div className="text-foreground-muted text-center text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        Status Akun
+                      </div>
+                    </TableHead>
+                    <TableHead className="w-[12%] px-4 py-3.5 text-right">
+                      <DataTableColumnHeader
+                        title="Saldo Dompet"
+                        columnKey="depositBalance"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                        align="right"
+                      />
+                    </TableHead>
+                    <TableHead className="w-[10%] px-5 py-3.5 text-right">
+                      <div className="text-foreground-muted text-right text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        Aksi
+                      </div>
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {sortedUsers.map((u) => {
                     const balance = u.balance ?? u.depositBalance ?? 0;
                     const isActive = u.status === "ACTIVE" || u.isActive === true;
                     const phone = u.phoneNumber || u.phone || "-";
 
                     return (
-                      <tr key={u.id} className="hover:bg-muted/30 group transition-colors">
+                      <TableRow key={u.id} className="hover:bg-muted/30 transition-colors">
                         {/* 1. Nama Lengkap with Avatar */}
-                        <td className="px-5 py-3.5">
+                        <TableCell className="px-5 py-3.5 align-middle">
                           <div className="flex items-center gap-2.5">
                             <div className="bg-muted text-foreground border-border flex size-8 shrink-0 items-center justify-center rounded-full border text-xs font-black uppercase">
                               {u.name ? u.name.charAt(0) : "U"}
@@ -300,53 +358,57 @@ export function UsersTable({
                               {u.name}
                             </span>
                           </div>
-                        </td>
+                        </TableCell>
 
                         {/* 2. Email */}
-                        <td className="px-4 py-3.5">
+                        <TableCell className="px-4 py-3.5 align-middle">
                           <div className="text-foreground-secondary flex max-w-50 items-center gap-1.5 truncate font-mono text-xs">
                             <Mail className="text-foreground-muted size-3 shrink-0" />
                             <span className="truncate">{u.email}</span>
                           </div>
-                        </td>
+                        </TableCell>
 
                         {/* 3. Nomor Telepon / WhatsApp */}
-                        <td className="px-4 py-3.5">
+                        <TableCell className="px-4 py-3.5 align-middle">
                           <div className="text-foreground flex max-w-40 items-center gap-1.5 truncate font-mono text-xs">
                             <Phone className="text-foreground-muted size-3 shrink-0" />
                             <span>{phone}</span>
                           </div>
-                        </td>
+                        </TableCell>
 
                         {/* 4. Role / Peran */}
-                        <td className="px-3 py-3.5 text-center">
-                          {getRoleBadge(u.role || u.roleName || "USER")}
-                        </td>
+                        <TableCell className="px-3 py-3.5 text-center align-middle">
+                          <div className="inline-flex items-center justify-center">
+                            {getRoleBadge(u.role || u.roleName || "USER")}
+                          </div>
+                        </TableCell>
 
                         {/* 5. Status Akun */}
-                        <td className="px-3 py-3.5 text-center">
-                          {isActive ? (
-                            <span className="dark:text-wise-green inline-flex items-center gap-1 text-xs font-bold text-emerald-600">
-                              <CheckCircle2 className="size-3.5" />
-                              <span>Aktif</span>
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1 text-xs font-bold text-rose-600 dark:text-rose-400">
-                              <ShieldAlert className="size-3.5" />
-                              <span>Ditangguhkan</span>
-                            </span>
-                          )}
-                        </td>
+                        <TableCell className="px-3 py-3.5 text-center align-middle">
+                          <div className="inline-flex items-center justify-center">
+                            {isActive ? (
+                              <span className="dark:text-wise-green inline-flex items-center gap-1 text-xs font-bold text-emerald-600">
+                                <CheckCircle2 className="size-3.5" />
+                                <span>Aktif</span>
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 text-xs font-bold text-rose-600 dark:text-rose-400">
+                                <ShieldAlert className="size-3.5" />
+                                <span>Ditangguhkan</span>
+                              </span>
+                            )}
+                          </div>
+                        </TableCell>
 
                         {/* 6. Saldo Dompet */}
-                        <td className="text-foreground px-4 py-3.5 text-right font-mono font-bold">
+                        <TableCell className="text-foreground px-4 py-3.5 text-right align-middle font-mono font-bold">
                           <span className="dark:text-wise-green text-emerald-700">
                             Rp {balance.toLocaleString("id-ID")}
                           </span>
-                        </td>
+                        </TableCell>
 
                         {/* 7. Aksi (Ubah & Sesuaikan Saldo) */}
-                        <td className="px-5 py-3.5 text-right">
+                        <TableCell className="px-5 py-3.5 text-right align-middle">
                           <div className="flex items-center justify-end gap-1.5">
                             <Button
                               type="button"
@@ -372,12 +434,12 @@ export function UsersTable({
                               <span>Saldo</span>
                             </Button>
                           </div>
-                        </td>
-                      </tr>
+                        </TableCell>
+                      </TableRow>
                     );
                   })}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           </div>
         )}

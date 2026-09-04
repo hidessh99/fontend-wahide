@@ -22,6 +22,16 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
+import { useTableSort } from "@/hooks/useTableSort";
 
 export function TeamView() {
   const { t } = useI18n();
@@ -58,13 +68,22 @@ export function TeamView() {
     );
   }, [agents, activeSearch]);
 
-  const total = filteredAgents.length;
+  const { sortKey, sortOrder, handleSort, sortData } = useTableSort<Agent>({
+    initialKey: "name",
+    initialOrder: "asc",
+  });
+
+  const sortedFilteredAgents = useMemo(() => {
+    return sortData(filteredAgents);
+  }, [filteredAgents, sortData]);
+
+  const total = sortedFilteredAgents.length;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   const paginatedAgents = useMemo(() => {
     const start = (page - 1) * pageSize;
-    return filteredAgents.slice(start, start + pageSize);
-  }, [filteredAgents, page, pageSize]);
+    return sortedFilteredAgents.slice(start, start + pageSize);
+  }, [sortedFilteredAgents, page, pageSize]);
 
   const startItem = total > 0 ? (page - 1) * pageSize + 1 : 0;
   const endItem = total > 0 ? Math.min(page * pageSize, total) : 0;
@@ -241,93 +260,140 @@ export function TeamView() {
                 ))}
               </div>
 
-              {/* Desktop View: Tabular Grid (Visible on >= 768px) */}
+              {/* Desktop View: shadcn/ui Table (Visible on >= 768px) */}
               <div className="hidden md:block">
-                {/* Table Header */}
-                <div className="bg-muted/60 border-border text-foreground-muted grid grid-cols-12 gap-3 border-b px-5 py-4 text-xs font-extrabold tracking-wider uppercase select-none">
-                  <div className="col-span-3">{t("team.tableHeaderName")}</div>
-                  <div className="col-span-3">{t("team.tableHeaderPhone")}</div>
-                  <div className="col-span-2">{t("team.tableHeaderRole")}</div>
-                  <div className="col-span-2 text-center">{t("team.tableHeaderDevices")}</div>
-                  <div className="col-span-1 text-center">{t("team.tableHeaderStatus")}</div>
-                  <div className="col-span-1 text-right">{t("team.tableHeaderAction")}</div>
-                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-muted/50 border-border hover:bg-muted/50">
+                      <TableHead className="w-[30%] px-5 py-3.5">
+                        <DataTableColumnHeader
+                          title={t("team.tableHeaderName")}
+                          columnKey="name"
+                          currentSortKey={sortKey as string}
+                          currentSortOrder={sortOrder}
+                          onSort={handleSort}
+                        />
+                      </TableHead>
+                      <TableHead className="w-[25%] px-4 py-3.5">
+                        <DataTableColumnHeader
+                          title={t("team.tableHeaderPhone")}
+                          columnKey="phone"
+                          currentSortKey={sortKey as string}
+                          currentSortOrder={sortOrder}
+                          onSort={handleSort}
+                        />
+                      </TableHead>
+                      <TableHead className="w-[15%] px-3 py-3.5">
+                        <DataTableColumnHeader
+                          title={t("team.tableHeaderRole")}
+                          columnKey="role"
+                          currentSortKey={sortKey as string}
+                          currentSortOrder={sortOrder}
+                          onSort={handleSort}
+                        />
+                      </TableHead>
+                      <TableHead className="w-[15%] px-3 py-3.5 text-center">
+                        <DataTableColumnHeader
+                          title={t("team.tableHeaderDevices")}
+                          columnKey="assignedDevicesCount"
+                          currentSortKey={sortKey as string}
+                          currentSortOrder={sortOrder}
+                          onSort={handleSort}
+                          align="center"
+                        />
+                      </TableHead>
+                      <TableHead className="w-[10%] px-3 py-3.5 text-center">
+                        <div className="text-foreground-muted text-center text-[11px] font-extrabold tracking-wider uppercase select-none">
+                          {t("team.tableHeaderStatus")}
+                        </div>
+                      </TableHead>
+                      <TableHead className="w-[5%] px-5 py-3.5 text-right">
+                        <div className="text-foreground-muted text-right text-[11px] font-extrabold tracking-wider uppercase select-none">
+                          {t("team.tableHeaderAction")}
+                        </div>
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {paginatedAgents.map((agt) => (
+                      <TableRow key={agt.id} className="hover:bg-muted/30 transition-colors">
+                        {/* Name & Email */}
+                        <TableCell className="px-5 py-3.5 align-middle">
+                          <div className="space-y-0.5">
+                            <span className="text-foreground block truncate text-sm font-bold sm:text-base">
+                              {agt.name}
+                            </span>
+                            <span className="text-foreground-muted block truncate font-mono text-xs">
+                              {agt.email}
+                            </span>
+                          </div>
+                        </TableCell>
 
-                {/* Table Body */}
-                <div className="divide-border/50 divide-y text-xs font-semibold">
-                  {paginatedAgents.map((agt) => (
-                    <div
-                      key={agt.id}
-                      className="hover:bg-muted/40 grid min-h-14.5 grid-cols-12 items-center gap-3 px-5 py-3.5 transition-colors"
-                    >
-                      {/* Name & Email */}
-                      <div className="col-span-3 space-y-0.5">
-                        <span className="text-foreground block truncate text-sm font-bold sm:text-base">
-                          {agt.name}
-                        </span>
-                        <span className="text-foreground-muted block truncate font-mono text-xs">
-                          {agt.email}
-                        </span>
-                      </div>
+                        {/* Phone */}
+                        <TableCell className="text-foreground-secondary truncate px-4 py-3.5 align-middle font-mono text-xs sm:text-sm">
+                          +{agt.phone}
+                        </TableCell>
 
-                      {/* Phone */}
-                      <div className="text-foreground-secondary col-span-3 truncate font-mono text-xs sm:text-sm">
-                        +{agt.phone}
-                      </div>
+                        {/* Role */}
+                        <TableCell className="px-3 py-3.5 align-middle">
+                          {agt.role === "SELLER" ? (
+                            <Badge variant="warning">
+                              <ShieldCheck className="size-3" />
+                              <span>{t("team.roleOwner")}</span>
+                            </Badge>
+                          ) : (
+                            <Badge variant="wise">
+                              <ShieldCheck className="size-3" />
+                              <span>{t("team.roleAgent")}</span>
+                            </Badge>
+                          )}
+                        </TableCell>
 
-                      {/* Role */}
-                      <div className="col-span-2">
-                        {agt.role === "SELLER" ? (
-                          <Badge variant="warning">
-                            <ShieldCheck className="size-3" />
-                            <span>{t("team.roleOwner")}</span>
-                          </Badge>
-                        ) : (
-                          <Badge variant="wise">
-                            <ShieldCheck className="size-3" />
-                            <span>{t("team.roleAgent")}</span>
-                          </Badge>
-                        )}
-                      </div>
+                        {/* Devices */}
+                        <TableCell className="px-3 py-3.5 text-center align-middle">
+                          <div className="text-foreground-secondary inline-flex items-center justify-center gap-1 font-mono text-xs sm:text-sm">
+                            <Smartphone className="text-foreground-muted size-3.5" />
+                            <span>{agt.assignedDevicesCount} Slot</span>
+                          </div>
+                        </TableCell>
 
-                      {/* Devices */}
-                      <div className="text-foreground-secondary col-span-2 flex items-center justify-center gap-1 font-mono text-xs sm:text-sm">
-                        <Smartphone className="text-foreground-muted size-3.5" />
-                        <span>{agt.assignedDevicesCount} Slot</span>
-                      </div>
+                        {/* Status */}
+                        <TableCell className="px-3 py-3.5 text-center align-middle">
+                          <div className="inline-flex items-center justify-center">
+                            <Badge variant="success">
+                              <CheckCircle2 className="size-3.5" />
+                              <span>{t("team.statusActive")}</span>
+                            </Badge>
+                          </div>
+                        </TableCell>
 
-                      {/* Status */}
-                      <div className="col-span-1 flex justify-center">
-                        <Badge variant="success">
-                          <CheckCircle2 className="size-3.5" />
-                          <span>{t("team.statusActive")}</span>
-                        </Badge>
-                      </div>
-
-                      {/* Action */}
-                      <div className="col-span-1 flex justify-end">
-                        {agt.role === "SELLER" ? (
-                          <span
-                            className="text-foreground-muted px-2 text-xs select-none"
-                            title="Akun Utama Pemilik"
-                          >
-                            -
-                          </span>
-                        ) : (
-                          <button
-                            type="button"
-                            onClick={() => setDeletingMember(agt)}
-                            className="text-foreground-muted flex size-8 cursor-pointer items-center justify-center rounded-full transition hover:bg-rose-500/10 hover:text-rose-500"
-                            aria-label={`${t("actions.delete")} ${agt.name}`}
-                            title="Hapus Anggota Tim"
-                          >
-                            <Trash2 className="size-4" />
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                        {/* Action */}
+                        <TableCell className="px-5 py-3.5 text-right align-middle">
+                          <div className="flex items-center justify-end">
+                            {agt.role === "SELLER" ? (
+                              <span
+                                className="text-foreground-muted px-2 text-xs select-none"
+                                title="Akun Utama Pemilik"
+                              >
+                                -
+                              </span>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => setDeletingMember(agt)}
+                                className="text-foreground-muted flex size-8 cursor-pointer items-center justify-center rounded-full transition hover:bg-rose-500/10 hover:text-rose-500"
+                                aria-label={`${t("actions.delete")} ${agt.name}`}
+                                title="Hapus Anggota Tim"
+                              >
+                                <Trash2 className="size-4" />
+                              </button>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
             </div>
           )}

@@ -22,6 +22,16 @@ import {
   Ban,
   Building2,
 } from "lucide-react";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
+import { useTableSort } from "@/hooks/useTableSort";
 
 interface SubscriptionsTableProps {
   subscriptions: AdminSubscriptionItem[];
@@ -112,6 +122,13 @@ export function SubscriptionsTable({
   const [isExpireModalOpen, setIsExpireModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
+  const { sortKey, sortOrder, handleSort, sortData } = useTableSort<AdminSubscriptionItem>({
+    initialKey: "createdAt",
+    initialOrder: "desc",
+  });
+
+  const sortedSubscriptions = sortData(subscriptions);
+
   const handleResetSearch = () => {
     setSearchInput("");
     onClearSearch();
@@ -193,7 +210,7 @@ export function SubscriptionsTable({
           <div>
             {/* Mobile View: Cards (< 1024px) */}
             <div className="divide-border/60 divide-y lg:hidden">
-              {subscriptions.map((s) => {
+              {sortedSubscriptions.map((s) => {
                 const planName = s.plan?.name || `Plan ${s.planId.slice(0, 8)}`;
                 const tenantName = s.tenant?.name || s.tenantId;
                 const quotaLimit = s.plan?.monthly_message_limit ?? 1000;
@@ -265,21 +282,66 @@ export function SubscriptionsTable({
             </div>
 
             {/* Desktop Table View (>= 1024px) */}
-            <div className="hidden overflow-x-auto lg:block">
-              <table className="w-full border-collapse text-left">
-                <thead>
-                  <tr className="border-border bg-muted/50 text-foreground-muted border-b text-[11px] font-extrabold tracking-wider uppercase select-none">
-                    <th className="px-5 py-3.5 font-extrabold">Tenant &amp; ID Langganan</th>
-                    <th className="px-4 py-3.5 font-extrabold">Paket Langganan</th>
-                    <th className="px-4 py-3.5 font-extrabold">Penggunaan Kuota</th>
-                    <th className="px-4 py-3.5 font-extrabold">Masa Berlaku</th>
-                    <th className="px-3 py-3.5 text-center font-extrabold">Status</th>
-                    <th className="px-3 py-3.5 font-extrabold">Dibuat Pada</th>
-                    <th className="px-5 py-3.5 text-right font-extrabold">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-border/50 divide-y text-xs font-semibold">
-                  {subscriptions.map((s) => {
+            <div className="hidden lg:block">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-border bg-muted/50 hover:bg-muted/50">
+                    <TableHead className="w-[25%] px-5 py-3.5">
+                      <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        Tenant &amp; ID Langganan
+                      </div>
+                    </TableHead>
+                    <TableHead className="w-[18%] px-4 py-3.5">
+                      <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        Paket Langganan
+                      </div>
+                    </TableHead>
+                    <TableHead className="w-[18%] px-4 py-3.5">
+                      <DataTableColumnHeader
+                        title="Penggunaan Kuota"
+                        columnKey="currentMonthUsage"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                      />
+                    </TableHead>
+                    <TableHead className="w-[15%] px-4 py-3.5">
+                      <DataTableColumnHeader
+                        title="Masa Berlaku"
+                        columnKey="expiredAt"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                      />
+                    </TableHead>
+                    <TableHead className="w-[10%] px-3 py-3.5 text-center">
+                      <DataTableColumnHeader
+                        title="Status"
+                        columnKey="status"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                        align="center"
+                      />
+                    </TableHead>
+                    <TableHead className="w-[10%] px-3 py-3.5">
+                      <DataTableColumnHeader
+                        title="Dibuat Pada"
+                        columnKey="createdAt"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                      />
+                    </TableHead>
+                    <TableHead className="w-[10%] px-5 py-3.5 text-right">
+                      <div className="text-foreground-muted text-right text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        Aksi
+                      </div>
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {sortedSubscriptions.map((s) => {
                     const planName = s.plan?.name || `Plan ${s.planId.slice(0, 8)}`;
                     const tenantName = s.tenant?.name || s.tenantId;
                     const quotaLimit = s.plan?.monthly_message_limit ?? 1000;
@@ -290,9 +352,9 @@ export function SubscriptionsTable({
                     const isExpired = s.status === "EXPIRED";
 
                     return (
-                      <tr key={s.id} className="hover:bg-muted/30 group transition-colors">
+                      <TableRow key={s.id} className="hover:bg-muted/30 transition-colors">
                         {/* 1. Tenant & ID */}
-                        <td className="px-5 py-3.5">
+                        <TableCell className="px-5 py-3.5 align-middle">
                           <div className="space-y-0.5">
                             <div className="text-foreground flex items-center gap-1.5 text-xs font-bold">
                               <Building2 className="text-foreground-muted size-3 shrink-0" />
@@ -302,20 +364,20 @@ export function SubscriptionsTable({
                               {s.id.slice(0, 16)}...
                             </span>
                           </div>
-                        </td>
+                        </TableCell>
 
                         {/* 2. Paket */}
-                        <td className="px-4 py-3.5">
+                        <TableCell className="px-4 py-3.5 align-middle">
                           <div className="space-y-0.5">
                             <span className="text-foreground block font-bold">{planName}</span>
                             <span className="dark:text-wise-green block font-mono text-[11px] text-emerald-700">
                               {formatCurrency(s.plan?.price ?? 0)}
                             </span>
                           </div>
-                        </td>
+                        </TableCell>
 
                         {/* 3. Penggunaan Kuota */}
-                        <td className="max-w-xs px-4 py-3.5">
+                        <TableCell className="max-w-xs px-4 py-3.5 align-middle">
                           <div className="space-y-1">
                             <div className="flex items-center justify-between font-mono text-[11px]">
                               <span className="text-foreground font-bold">
@@ -332,10 +394,10 @@ export function SubscriptionsTable({
                               />
                             </div>
                           </div>
-                        </td>
+                        </TableCell>
 
                         {/* 4. Masa Berlaku */}
-                        <td className="px-4 py-3.5">
+                        <TableCell className="px-4 py-3.5 align-middle">
                           <div className="space-y-0.5 font-mono text-[11px]">
                             <span className="text-foreground-muted block text-[10px]">
                               Mulai: {formatDateTime(s.startedAt)}
@@ -344,22 +406,24 @@ export function SubscriptionsTable({
                               Hingga: {formatDateTime(s.expiredAt)}
                             </span>
                           </div>
-                        </td>
+                        </TableCell>
 
                         {/* 5. Status */}
-                        <td className="px-3 py-3.5 text-center">
-                          {getSubscriptionStatusBadge(s.status)}
-                        </td>
+                        <TableCell className="px-3 py-3.5 text-center align-middle">
+                          <div className="inline-flex items-center justify-center">
+                            {getSubscriptionStatusBadge(s.status)}
+                          </div>
+                        </TableCell>
 
                         {/* 6. Dibuat Pada */}
-                        <td className="px-3 py-3.5">
+                        <TableCell className="px-3 py-3.5 align-middle">
                           <span className="text-foreground-secondary block font-mono text-[11px]">
                             {formatDateTime(s.createdAt)}
                           </span>
-                        </td>
+                        </TableCell>
 
                         {/* 7. Aksi */}
-                        <td className="px-5 py-3.5 text-right">
+                        <TableCell className="px-5 py-3.5 text-right align-middle">
                           <div className="flex items-center justify-end gap-1.5">
                             <Button
                               type="button"
@@ -387,12 +451,12 @@ export function SubscriptionsTable({
                               </Button>
                             )}
                           </div>
-                        </td>
-                      </tr>
+                        </TableCell>
+                      </TableRow>
                     );
                   })}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           </div>
         )}

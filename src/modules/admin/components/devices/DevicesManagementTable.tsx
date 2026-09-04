@@ -22,6 +22,16 @@ import {
   Moon,
   Ban,
 } from "lucide-react";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
+import { useTableSort } from "@/hooks/useTableSort";
 
 interface DevicesManagementTableProps {
   devices: AdminDeviceItem[];
@@ -119,6 +129,13 @@ export function DevicesManagementTable({
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
+  const { sortKey, sortOrder, handleSort, sortData } = useTableSort<AdminDeviceItem>({
+    initialKey: "createdAt",
+    initialOrder: "desc",
+  });
+
+  const sortedDevices = sortData(devices);
+
   const handleResetSearch = () => {
     setSearchInput("");
     onClearSearch();
@@ -201,7 +218,7 @@ export function DevicesManagementTable({
           <div>
             {/* Mobile View: Cards (< 1024px) */}
             <div className="divide-border/60 divide-y lg:hidden">
-              {devices.map((d) => (
+              {sortedDevices.map((d) => (
                 <div key={d.id} className="bg-surface space-y-3 p-4 dark:bg-[#161715]">
                   <div className="flex items-start justify-between gap-2">
                     <div className="space-y-0.5">
@@ -276,24 +293,71 @@ export function DevicesManagementTable({
             </div>
 
             {/* Desktop Table View (>= 1024px) */}
-            <div className="hidden overflow-x-auto lg:block">
-              <table className="w-full border-collapse text-left">
-                <thead>
-                  <tr className="border-border bg-muted/50 text-foreground-muted border-b text-[11px] font-extrabold tracking-wider uppercase select-none">
-                    <th className="px-5 py-3.5 font-extrabold">Nama &amp; ID Perangkat</th>
-                    <th className="px-4 py-3.5 font-extrabold">Nomor WhatsApp (JID)</th>
-                    <th className="px-3 py-3.5 font-extrabold">Tenant ID</th>
-                    <th className="px-3 py-3.5 text-center font-extrabold">Trust &amp; Warmup</th>
-                    <th className="px-3 py-3.5 text-center font-extrabold">Kirim Hari Ini</th>
-                    <th className="px-3 py-3.5 text-center font-extrabold">Status Live</th>
-                    <th className="px-5 py-3.5 text-right font-extrabold">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-border/50 divide-y text-xs font-semibold">
-                  {devices.map((d) => (
-                    <tr key={d.id} className="hover:bg-muted/30 group transition-colors">
+            <div className="hidden lg:block">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-border bg-muted/50 hover:bg-muted/50">
+                    <TableHead className="w-[22%] px-5 py-3.5">
+                      <DataTableColumnHeader
+                        title="Nama & ID Perangkat"
+                        columnKey="pushName"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                      />
+                    </TableHead>
+                    <TableHead className="w-[20%] px-4 py-3.5">
+                      <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        Nomor WhatsApp (JID)
+                      </div>
+                    </TableHead>
+                    <TableHead className="w-[14%] px-3 py-3.5">
+                      <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        Tenant ID
+                      </div>
+                    </TableHead>
+                    <TableHead className="w-[14%] px-3 py-3.5 text-center">
+                      <DataTableColumnHeader
+                        title="Trust & Warmup"
+                        columnKey="trustScore"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                        align="center"
+                      />
+                    </TableHead>
+                    <TableHead className="w-[10%] px-3 py-3.5 text-center">
+                      <DataTableColumnHeader
+                        title="Kirim Hari Ini"
+                        columnKey="dailySentCount"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                        align="center"
+                      />
+                    </TableHead>
+                    <TableHead className="w-[10%] px-3 py-3.5 text-center">
+                      <DataTableColumnHeader
+                        title="Status Live"
+                        columnKey="status"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                        align="center"
+                      />
+                    </TableHead>
+                    <TableHead className="w-[10%] px-5 py-3.5 text-right">
+                      <div className="text-foreground-muted text-right text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        Aksi
+                      </div>
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {sortedDevices.map((d) => (
+                    <TableRow key={d.id} className="hover:bg-muted/30 transition-colors">
                       {/* 1. Nama & ID */}
-                      <td className="px-5 py-3.5">
+                      <TableCell className="px-5 py-3.5 align-middle">
                         <div className="space-y-0.5">
                           <span className="text-foreground block text-xs font-bold">
                             {d.pushName}
@@ -302,25 +366,25 @@ export function DevicesManagementTable({
                             {d.id.slice(0, 16)}...
                           </span>
                         </div>
-                      </td>
+                      </TableCell>
 
                       {/* 2. Nomor / WhatsApp JID */}
-                      <td className="px-4 py-3.5">
+                      <TableCell className="px-4 py-3.5 align-middle">
                         <div className="text-foreground flex items-center gap-1.5 font-mono text-xs font-bold">
                           <Smartphone className="text-foreground-muted size-3 shrink-0" />
                           <span className="max-w-45 truncate">{d.jid || "(Belum terhubung)"}</span>
                         </div>
-                      </td>
+                      </TableCell>
 
                       {/* 3. Tenant ID */}
-                      <td className="px-3 py-3.5">
+                      <TableCell className="px-3 py-3.5 align-middle">
                         <span className="text-foreground-secondary block max-w-28 truncate font-mono text-[11px]">
                           {d.tenantId}
                         </span>
-                      </td>
+                      </TableCell>
 
                       {/* 4. Trust & Warmup */}
-                      <td className="px-3 py-3.5 text-center">
+                      <TableCell className="px-3 py-3.5 text-center align-middle">
                         <div className="inline-flex items-center gap-2 font-mono text-[11px]">
                           <span className="dark:text-wise-green rounded bg-emerald-500/10 px-1.5 py-0.5 font-bold text-emerald-700">
                             {d.trustScore}/100
@@ -329,20 +393,24 @@ export function DevicesManagementTable({
                             H-{d.warmupDay}
                           </span>
                         </div>
-                      </td>
+                      </TableCell>
 
                       {/* 5. Kirim Hari Ini */}
-                      <td className="px-3 py-3.5 text-center">
+                      <TableCell className="px-3 py-3.5 text-center align-middle">
                         <span className="font-mono font-bold text-teal-600 dark:text-teal-400">
                           {d.dailySentCount}
                         </span>
-                      </td>
+                      </TableCell>
 
                       {/* 6. Status Live */}
-                      <td className="px-3 py-3.5 text-center">{getDeviceStatusBadge(d.status)}</td>
+                      <TableCell className="px-3 py-3.5 text-center align-middle">
+                        <div className="inline-flex items-center justify-center">
+                          {getDeviceStatusBadge(d.status)}
+                        </div>
+                      </TableCell>
 
                       {/* 7. Aksi */}
-                      <td className="px-5 py-3.5 text-right">
+                      <TableCell className="px-5 py-3.5 text-right align-middle">
                         <div className="flex items-center justify-end gap-1.5">
                           <Button
                             type="button"
@@ -367,11 +435,11 @@ export function DevicesManagementTable({
                             <Trash2 className="size-3.5" />
                           </Button>
                         </div>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           </div>
         )}

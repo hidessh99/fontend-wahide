@@ -22,6 +22,16 @@ import {
   Loader2,
   Mail,
 } from "lucide-react";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
+import { useTableSort } from "@/hooks/useTableSort";
 
 interface QueueMonitorTableProps {
   queues: AdminQueueItem[];
@@ -108,6 +118,13 @@ export function QueueMonitorTable({
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
+  const { sortKey, sortOrder, handleSort, sortData } = useTableSort<AdminQueueItem>({
+    initialKey: "createdAt",
+    initialOrder: "desc",
+  });
+
+  const sortedQueues = sortData(queues);
+
   const handleResetSearch = () => {
     setSearchInput("");
     onClearSearch();
@@ -189,7 +206,7 @@ export function QueueMonitorTable({
           <div>
             {/* Mobile View: Cards (< 1024px) */}
             <div className="divide-border/60 divide-y lg:hidden">
-              {queues.map((q) => (
+              {sortedQueues.map((q) => (
                 <div key={q.id} className="bg-surface space-y-3 p-4 dark:bg-[#161715]">
                   <div className="flex items-start justify-between gap-2">
                     <div>
@@ -245,23 +262,65 @@ export function QueueMonitorTable({
             </div>
 
             {/* Desktop Table View (>= 1024px) */}
-            <div className="hidden overflow-x-auto lg:block">
-              <table className="w-full border-collapse text-left">
-                <thead>
-                  <tr className="border-border bg-muted/50 text-foreground-muted border-b text-[11px] font-extrabold tracking-wider uppercase select-none">
-                    <th className="px-5 py-3.5 font-extrabold">Tipe Tugas &amp; ID</th>
-                    <th className="px-4 py-3.5 font-extrabold">Target Penerima</th>
-                    <th className="px-3 py-3.5 text-center font-extrabold">Percobaan</th>
-                    <th className="px-3 py-3.5 text-center font-extrabold">Status</th>
-                    <th className="px-4 py-3.5 font-extrabold">Jadwal / Waktu</th>
-                    <th className="px-5 py-3.5 text-right font-extrabold">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-border/50 divide-y text-xs font-semibold">
-                  {queues.map((q) => (
-                    <tr key={q.id} className="hover:bg-muted/30 group transition-colors">
+            <div className="hidden lg:block">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-border bg-muted/50 hover:bg-muted/50">
+                    <TableHead className="w-[20%] px-5 py-3.5">
+                      <DataTableColumnHeader
+                        title="Tipe Tugas & ID"
+                        columnKey="taskType"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                      />
+                    </TableHead>
+                    <TableHead className="w-[25%] px-4 py-3.5">
+                      <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        Target Penerima
+                      </div>
+                    </TableHead>
+                    <TableHead className="w-[15%] px-3 py-3.5 text-center">
+                      <DataTableColumnHeader
+                        title="Percobaan"
+                        columnKey="attempts"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                        align="center"
+                      />
+                    </TableHead>
+                    <TableHead className="w-[12%] px-3 py-3.5 text-center">
+                      <DataTableColumnHeader
+                        title="Status"
+                        columnKey="status"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                        align="center"
+                      />
+                    </TableHead>
+                    <TableHead className="w-[16%] px-4 py-3.5">
+                      <DataTableColumnHeader
+                        title="Jadwal / Waktu"
+                        columnKey="createdAt"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                      />
+                    </TableHead>
+                    <TableHead className="w-[12%] px-5 py-3.5 text-right">
+                      <div className="text-foreground-muted text-right text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        Aksi
+                      </div>
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {sortedQueues.map((q) => (
+                    <TableRow key={q.id} className="hover:bg-muted/30 transition-colors">
                       {/* 1. Tipe Tugas & ID */}
-                      <td className="px-5 py-3.5">
+                      <TableCell className="px-5 py-3.5 align-middle">
                         <div className="space-y-0.5">
                           <span className="dark:text-wise-green inline-block rounded border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 font-mono text-[10px] font-black tracking-wider text-emerald-700 uppercase">
                             {q.taskType}
@@ -270,10 +329,10 @@ export function QueueMonitorTable({
                             {q.id.slice(0, 16)}...
                           </span>
                         </div>
-                      </td>
+                      </TableCell>
 
                       {/* 2. Target Penerima */}
-                      <td className="px-4 py-3.5">
+                      <TableCell className="px-4 py-3.5 align-middle">
                         <div className="space-y-0.5">
                           <span className="text-foreground block font-mono font-bold">
                             {q.targetEmail || "-"}
@@ -284,28 +343,32 @@ export function QueueMonitorTable({
                             </span>
                           )}
                         </div>
-                      </td>
+                      </TableCell>
 
                       {/* 3. Percobaan & Prioritas */}
-                      <td className="px-3 py-3.5 text-center font-mono">
+                      <TableCell className="px-3 py-3.5 text-center align-middle font-mono">
                         <span className="text-foreground font-bold">
                           {q.attempts} / {q.maxAttempts}
                         </span>
                         <span className="text-foreground-muted block text-[10px]">
                           Prioritas: {q.priority}
                         </span>
-                      </td>
+                      </TableCell>
 
                       {/* 4. Status */}
-                      <td className="px-3 py-3.5 text-center">{getQueueStatusBadge(q.status)}</td>
+                      <TableCell className="px-3 py-3.5 text-center align-middle">
+                        <div className="inline-flex items-center justify-center">
+                          {getQueueStatusBadge(q.status)}
+                        </div>
+                      </TableCell>
 
                       {/* 5. Jadwal / Waktu */}
-                      <td className="text-foreground-secondary px-4 py-3.5 font-mono text-[11px]">
+                      <TableCell className="text-foreground-secondary px-4 py-3.5 align-middle font-mono text-[11px]">
                         {formatDateTime(q.createdAt)}
-                      </td>
+                      </TableCell>
 
                       {/* 6. Aksi */}
-                      <td className="px-5 py-3.5 text-right">
+                      <TableCell className="px-5 py-3.5 text-right align-middle">
                         <div className="flex items-center justify-end gap-1.5">
                           <Button
                             type="button"
@@ -313,7 +376,7 @@ export function QueueMonitorTable({
                             size="sm"
                             onClick={() => handleOpenDetail(q)}
                             className="border-border hover:bg-muted h-8 gap-1 rounded-full px-2.5 text-xs font-bold"
-                            title="Lihat Detail Payload &amp; Error"
+                            title="Lihat Detail Payload & Error"
                           >
                             <Eye className="text-foreground-secondary size-3.5" />
                             <span>Detail</span>
@@ -330,11 +393,11 @@ export function QueueMonitorTable({
                             <Trash2 className="size-3.5" />
                           </Button>
                         </div>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           </div>
         )}

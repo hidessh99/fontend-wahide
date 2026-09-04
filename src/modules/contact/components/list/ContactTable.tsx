@@ -1,12 +1,21 @@
 "use client";
 
-import React, { useRef } from "react";
-import { useVirtualizer } from "@tanstack/react-virtual";
+import React from "react";
 import { Contact } from "@/modules/contact/types/contact.types";
 import { useI18n } from "@/lib/i18n/context";
 import { Edit2, Trash2 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DataTablePagination } from "@/components/ui/pagination";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
+import { useTableSort } from "@/hooks/useTableSort";
 
 interface ContactTableProps {
   contacts: Contact[];
@@ -38,34 +47,32 @@ export function ContactTable({
   onDelete,
 }: ContactTableProps) {
   const { t } = useI18n();
-  const parentRef = useRef<HTMLDivElement>(null);
 
-  // eslint-disable-next-line react-hooks/incompatible-library
-  const rowVirtualizer = useVirtualizer({
-    count: contacts.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 64,
-    overscan: 5,
+  const { sortKey, sortOrder, handleSort, sortData } = useTableSort<Contact>({
+    initialKey: "name",
+    initialOrder: "asc",
   });
 
-  const isAllSelected = contacts.length > 0 && selectedIds.size === contacts.length;
+  const sortedContacts = sortData(contacts);
+
+  const isAllSelected = sortedContacts.length > 0 && selectedIds.size === sortedContacts.length;
 
   const startItem = total > 0 ? (page - 1) * pageSize + 1 : 0;
   const endItem = total > 0 ? Math.min(page * pageSize, total) : 0;
 
   return (
     <div className="border-border bg-surface overflow-hidden rounded-md border shadow-xs dark:bg-[#161715]">
-      {/* Mobile View: Card-based Contact List (Visible on < 768px) */}
-      <div className="divide-border/40 divide-y md:hidden">
+      {/* Mobile View: Card-based Contact List (Visible on < 1024px) */}
+      <div className="divide-border/40 divide-y lg:hidden">
         {/* Select All Bar on Mobile */}
         <div className="bg-muted/50 border-border text-foreground-muted flex items-center justify-between border-b p-3 text-xs font-bold">
           <div className="flex items-center gap-2">
             <Checkbox
               checked={isAllSelected}
-              onCheckedChange={() => onToggleSelectAll(contacts.map((c) => c.id))}
+              onCheckedChange={() => onToggleSelectAll(sortedContacts.map((c) => c.id))}
               aria-label="Pilih Semua Kontak"
             />
-            <span>Pilih Semua ({contacts.length})</span>
+            <span>Pilih Semua ({sortedContacts.length})</span>
           </div>
           {selectedIds.size > 0 && (
             <span className="dark:text-wise-green font-bold text-emerald-700">
@@ -75,7 +82,7 @@ export function ContactTable({
         </div>
 
         {/* Contact Cards */}
-        {contacts.map((contact) => {
+        {sortedContacts.map((contact) => {
           const isSelected = selectedIds.has(contact.id);
           return (
             <div
@@ -116,18 +123,20 @@ export function ContactTable({
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-2 pl-7">
-                <span className="text-foreground-secondary font-mono text-xs">
+              {/* Phone and Tags */}
+              <div className="space-y-1.5 pl-6.5">
+                <div className="text-foreground-secondary font-mono text-xs font-semibold">
                   +{contact.phone}
-                </span>
+                </div>
+
                 {contact.tags && contact.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1">
+                  <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
                     {contact.tags.map((tag, idx) => {
                       const tagName = typeof tag === "string" ? tag : tag.name;
                       return (
                         <span
                           key={idx}
-                          className="bg-wise-green/15 dark:text-wise-green border-wise-green/30 inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-bold text-emerald-800"
+                          className="bg-wise-green/15 dark:text-wise-green border-wise-green/30 inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-bold text-emerald-800"
                         >
                           #{tagName}
                         </span>
@@ -141,79 +150,86 @@ export function ContactTable({
         })}
       </div>
 
-      {/* Desktop View: Tabular Virtualized Grid (Visible on >= 768px) */}
-      <div className="hidden md:block">
-        {/* Table Header */}
-        <div className="bg-muted/60 border-border text-foreground-muted grid grid-cols-12 items-center gap-3 border-b px-5 py-4 text-xs font-extrabold tracking-wider uppercase select-none">
-          <div className="col-span-1 flex items-center justify-center">
-            <Checkbox
-              checked={isAllSelected}
-              onCheckedChange={() => onToggleSelectAll(contacts.map((c) => c.id))}
-              aria-label="Pilih Semua Kontak"
-            />
-          </div>
-          <div className="col-span-3">{t("contact.tableHeaderName")}</div>
-          <div className="col-span-3">{t("contact.tableHeaderPhone")}</div>
-          <div className="col-span-3">{t("contact.tableHeaderTags")}</div>
-          <div className="col-span-2 text-right">{t("contact.tableHeaderActions")}</div>
-        </div>
-
-        {/* Virtualized Table Body */}
-        <div
-          ref={parentRef}
-          className="divide-border/40 relative max-h-135 scrollbar-thin divide-y overflow-auto"
-        >
-          <div
-            style={{
-              height: `${rowVirtualizer.getTotalSize()}px`,
-              width: "100%",
-              position: "relative",
-            }}
-          >
-            {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-              const contact = contacts[virtualRow.index];
-              if (!contact) return null;
+      {/* Desktop View: Unified Table using shadcn/ui (Visible on >= 1024px) */}
+      <div className="hidden lg:block">
+        <Table className="min-w-[750px]">
+          <TableHeader>
+            <TableRow className="bg-muted/50 border-border hover:bg-muted/50">
+              <TableHead className="w-[50px] text-center">
+                <div className="flex items-center justify-center">
+                  <Checkbox
+                    checked={isAllSelected}
+                    onCheckedChange={() => onToggleSelectAll(sortedContacts.map((c) => c.id))}
+                    aria-label="Pilih Semua Kontak"
+                  />
+                </div>
+              </TableHead>
+              <TableHead className="w-[28%] px-4 py-3.5">
+                <DataTableColumnHeader
+                  title={t("contact.tableHeaderName")}
+                  columnKey="name"
+                  currentSortKey={sortKey as string}
+                  currentSortOrder={sortOrder}
+                  onSort={handleSort}
+                />
+              </TableHead>
+              <TableHead className="w-[24%] px-4 py-3.5">
+                <DataTableColumnHeader
+                  title={t("contact.tableHeaderPhone")}
+                  columnKey="phone"
+                  currentSortKey={sortKey as string}
+                  currentSortOrder={sortOrder}
+                  onSort={handleSort}
+                />
+              </TableHead>
+              <TableHead className="w-[32%] px-4 py-3.5">
+                <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
+                  {t("contact.tableHeaderTags")}
+                </div>
+              </TableHead>
+              <TableHead className="w-[16%] px-5 py-3.5 text-right">
+                <div className="text-foreground-muted text-right text-[11px] font-extrabold tracking-wider uppercase select-none">
+                  {t("contact.tableHeaderActions")}
+                </div>
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {sortedContacts.map((contact) => {
               const isSelected = selectedIds.has(contact.id);
-
               return (
-                <div
+                <TableRow
                   key={contact.id}
-                  data-index={virtualRow.index}
-                  ref={rowVirtualizer.measureElement}
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    transform: `translateY(${virtualRow.start}px)`,
-                  }}
-                  className={`grid min-h-14.5 grid-cols-12 items-center gap-3 px-5 py-3.5 transition-colors ${
+                  data-state={isSelected ? "selected" : undefined}
+                  className={`border-border/40 border-b transition-colors ${
                     isSelected ? "bg-wise-green/10 dark:bg-wise-green/5" : "hover:bg-muted/40"
                   }`}
                 >
                   {/* Select Checkbox */}
-                  <div className="col-span-1 flex items-center justify-center">
-                    <Checkbox
-                      checked={isSelected}
-                      onCheckedChange={() => onToggleSelectOne(contact.id)}
-                      aria-label={`Pilih ${contact.name}`}
-                    />
-                  </div>
+                  <TableCell className="w-[50px] text-center align-middle">
+                    <div className="flex items-center justify-center">
+                      <Checkbox
+                        checked={isSelected}
+                        onCheckedChange={() => onToggleSelectOne(contact.id)}
+                        aria-label={`Pilih ${contact.name}`}
+                      />
+                    </div>
+                  </TableCell>
 
                   {/* Name Column */}
-                  <div className="col-span-3 min-w-0 pr-2">
-                    <span className="text-foreground block truncate text-sm font-bold tracking-tight sm:text-base">
+                  <TableCell className="px-4 py-3.5 align-middle">
+                    <span className="text-foreground block truncate text-sm font-bold tracking-tight">
                       {contact.name}
                     </span>
-                  </div>
+                  </TableCell>
 
                   {/* Phone Column */}
-                  <div className="text-foreground-secondary col-span-3 truncate font-mono text-xs font-medium tracking-wide sm:text-sm">
+                  <TableCell className="text-foreground-secondary px-4 py-3.5 align-middle font-mono text-xs font-semibold tracking-wide">
                     +{contact.phone}
-                  </div>
+                  </TableCell>
 
                   {/* Dedicated Tags Column */}
-                  <div className="col-span-3 min-w-0 pr-2">
+                  <TableCell className="px-4 py-3.5 align-middle">
                     {contact.tags && contact.tags.length > 0 ? (
                       <div className="flex flex-wrap items-center gap-1.5">
                         {contact.tags.map((tag, idx) => {
@@ -231,32 +247,34 @@ export function ContactTable({
                     ) : (
                       <span className="text-foreground-muted/60 text-xs font-medium italic">-</span>
                     )}
-                  </div>
+                  </TableCell>
 
                   {/* Action Buttons */}
-                  <div className="col-span-2 flex items-center justify-end gap-1.5">
-                    <button
-                      type="button"
-                      onClick={() => onEdit(contact)}
-                      className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-8 cursor-pointer items-center justify-center rounded-full transition"
-                      aria-label={`Ubah ${contact.name}`}
-                    >
-                      <Edit2 className="size-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => onDelete(contact)}
-                      className="flex size-8 cursor-pointer items-center justify-center rounded-full text-rose-500 transition hover:bg-rose-500/10"
-                      aria-label={`Hapus ${contact.name}`}
-                    >
-                      <Trash2 className="size-4" />
-                    </button>
-                  </div>
-                </div>
+                  <TableCell className="px-5 py-3.5 text-right align-middle">
+                    <div className="flex items-center justify-end gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => onEdit(contact)}
+                        className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-8 cursor-pointer items-center justify-center rounded-full transition"
+                        aria-label={`Ubah ${contact.name}`}
+                      >
+                        <Edit2 className="size-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => onDelete(contact)}
+                        className="flex size-8 cursor-pointer items-center justify-center rounded-full text-rose-500 transition hover:bg-rose-500/10"
+                        aria-label={`Hapus ${contact.name}`}
+                      >
+                        <Trash2 className="size-4" />
+                      </button>
+                    </div>
+                  </TableCell>
+                </TableRow>
               );
             })}
-          </div>
-        </div>
+          </TableBody>
+        </Table>
       </div>
 
       {/* Pagination Footer */}

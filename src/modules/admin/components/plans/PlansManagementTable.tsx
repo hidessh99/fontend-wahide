@@ -24,6 +24,16 @@ import {
   Sparkles,
   Loader2,
 } from "lucide-react";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
+import { useTableSort } from "@/hooks/useTableSort";
 
 export function PlansManagementTable() {
   const {
@@ -51,6 +61,13 @@ export function PlansManagementTable() {
   const [selectedPlanForDelete, setSelectedPlanForDelete] = useState<AdminPlanItem | null>(null);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const { sortKey, sortOrder, handleSort, sortData } = useTableSort<AdminPlanItem>({
+    initialKey: "price",
+    initialOrder: "asc",
+  });
+
+  const sortedPlans = sortData(paginatedPlans);
 
   const handleOpenCreate = () => {
     setSelectedPlanForEdit(null);
@@ -150,7 +167,7 @@ export function PlansManagementTable() {
           <div>
             {/* Mobile View: Cards (< 1024px) */}
             <div className="divide-border/60 divide-y lg:hidden">
-              {paginatedPlans.map((p) => {
+              {sortedPlans.map((p) => {
                 const isFree = p.price === 0;
 
                 return (
@@ -274,27 +291,79 @@ export function PlansManagementTable() {
             </div>
 
             {/* Desktop Table View (>= 1024px) */}
-            <div className="hidden overflow-x-auto lg:block">
-              <table className="w-full border-collapse text-left">
-                <thead>
-                  <tr className="border-border bg-muted/50 text-foreground-muted border-b text-[11px] font-extrabold tracking-wider uppercase select-none">
-                    <th className="px-5 py-3.5 font-extrabold">Nama Paket</th>
-                    <th className="px-4 py-3.5 text-right font-extrabold">Harga / Bulan</th>
-                    <th className="px-4 py-3.5 text-right font-extrabold">Batas Kuota Pesan</th>
-                    <th className="px-3 py-3.5 text-center font-extrabold">Slot WhatsApp</th>
-                    <th className="px-3 py-3.5 text-center font-extrabold">Batas CS Agent</th>
-                    <th className="px-4 py-3.5 font-extrabold">Fitur &amp; Kemampuan</th>
-                    <th className="px-5 py-3.5 text-right font-extrabold">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-border/50 divide-y text-xs font-semibold">
-                  {paginatedPlans.map((p) => {
+            <div className="hidden lg:block">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-border bg-muted/50 hover:bg-muted/50">
+                    <TableHead className="w-[20%] px-5 py-3.5">
+                      <DataTableColumnHeader
+                        title="Nama Paket"
+                        columnKey="name"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                      />
+                    </TableHead>
+                    <TableHead className="w-[15%] px-4 py-3.5 text-right">
+                      <DataTableColumnHeader
+                        title="Harga / Bulan"
+                        columnKey="price"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                        align="right"
+                      />
+                    </TableHead>
+                    <TableHead className="w-[16%] px-4 py-3.5 text-right">
+                      <DataTableColumnHeader
+                        title="Batas Kuota Pesan"
+                        columnKey="monthly_message_limit"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                        align="right"
+                      />
+                    </TableHead>
+                    <TableHead className="w-[12%] px-3 py-3.5 text-center">
+                      <DataTableColumnHeader
+                        title="Slot WhatsApp"
+                        columnKey="max_devices"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                        align="center"
+                      />
+                    </TableHead>
+                    <TableHead className="w-[12%] px-3 py-3.5 text-center">
+                      <DataTableColumnHeader
+                        title="Batas CS Agent"
+                        columnKey="max_agents"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                        align="center"
+                      />
+                    </TableHead>
+                    <TableHead className="w-[15%] px-4 py-3.5">
+                      <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        Fitur &amp; Kemampuan
+                      </div>
+                    </TableHead>
+                    <TableHead className="w-[10%] px-5 py-3.5 text-right">
+                      <div className="text-foreground-muted text-right text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        Aksi
+                      </div>
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {sortedPlans.map((p) => {
                     const isFree = p.price === 0;
 
                     return (
-                      <tr key={p.id} className="hover:bg-muted/30 group transition-colors">
+                      <TableRow key={p.id} className="hover:bg-muted/30 transition-colors">
                         {/* 1. Nama Paket */}
-                        <td className="px-5 py-3.5">
+                        <TableCell className="px-5 py-3.5 align-middle">
                           <div className="flex items-center gap-2.5">
                             <div className="bg-muted text-foreground border-border flex size-8 shrink-0 items-center justify-center rounded-full border text-xs font-black">
                               <Layers className="size-4" />
@@ -310,38 +379,38 @@ export function PlansManagementTable() {
                               </div>
                             </div>
                           </div>
-                        </td>
+                        </TableCell>
 
                         {/* 2. Harga / Bulan */}
-                        <td className="px-4 py-3.5 text-right font-mono font-bold">
+                        <TableCell className="px-4 py-3.5 text-right align-middle font-mono font-bold">
                           <span className="dark:text-wise-green text-sm text-emerald-700">
                             Rp {p.price.toLocaleString("id-ID")}
                           </span>
                           <span className="text-foreground-muted block text-[10px] font-normal">
                             / bulan
                           </span>
-                        </td>
+                        </TableCell>
 
                         {/* 3. Batas Kuota Pesan */}
-                        <td className="text-foreground px-4 py-3.5 text-right font-mono font-bold">
+                        <TableCell className="text-foreground px-4 py-3.5 text-right align-middle font-mono font-bold">
                           <span>{p.monthly_message_limit.toLocaleString("id-ID")}</span>
                           <span className="text-foreground-muted block text-[10px] font-normal">
                             Pesan / bln
                           </span>
-                        </td>
+                        </TableCell>
 
                         {/* 4. Slot WhatsApp */}
-                        <td className="text-foreground px-3 py-3.5 text-center font-mono font-bold">
+                        <TableCell className="text-foreground px-3 py-3.5 text-center align-middle font-mono font-bold">
                           <span>{p.max_devices} Device</span>
-                        </td>
+                        </TableCell>
 
                         {/* 5. Batas CS Agent */}
-                        <td className="text-foreground px-3 py-3.5 text-center font-mono font-bold">
+                        <TableCell className="text-foreground px-3 py-3.5 text-center align-middle font-mono font-bold">
                           <span>{p.max_agents} Agent</span>
-                        </td>
+                        </TableCell>
 
                         {/* 6. Fitur & Kemampuan */}
-                        <td className="px-4 py-3.5">
+                        <TableCell className="px-4 py-3.5 align-middle">
                           <div className="flex max-w-70 flex-wrap items-center gap-1">
                             {p.allow_attachment && (
                               <span
@@ -397,10 +466,10 @@ export function PlansManagementTable() {
                               </span>
                             )}
                           </div>
-                        </td>
+                        </TableCell>
 
                         {/* 7. Aksi */}
-                        <td className="px-5 py-3.5 text-right">
+                        <TableCell className="px-5 py-3.5 text-right align-middle">
                           <div className="flex items-center justify-end gap-1.5">
                             <Button
                               type="button"
@@ -426,12 +495,12 @@ export function PlansManagementTable() {
                               <span>Hapus</span>
                             </Button>
                           </div>
-                        </td>
-                      </tr>
+                        </TableCell>
+                      </TableRow>
                     );
                   })}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           </div>
         )}

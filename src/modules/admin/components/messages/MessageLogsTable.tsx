@@ -24,6 +24,16 @@ import {
   Smartphone,
   CheckCheck,
 } from "lucide-react";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
+import { useTableSort } from "@/hooks/useTableSort";
 
 interface MessageLogsTableProps {
   logs: AdminMessageLogItem[];
@@ -126,6 +136,13 @@ export function MessageLogsTable({
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
+  const { sortKey, sortOrder, handleSort, sortData } = useTableSort<AdminMessageLogItem>({
+    initialKey: "createdAt",
+    initialOrder: "desc",
+  });
+
+  const sortedLogs = sortData(logs);
+
   const handleResetSearch = () => {
     setSearchInput("");
     onClearSearch();
@@ -220,7 +237,7 @@ export function MessageLogsTable({
           <div>
             {/* Mobile View: Cards (< 1024px) */}
             <div className="divide-border/60 divide-y lg:hidden">
-              {logs.map((m) => (
+              {sortedLogs.map((m) => (
                 <div key={m.id} className="bg-surface space-y-3 p-4 dark:bg-[#161715]">
                   <div className="flex items-start justify-between gap-2">
                     <div>
@@ -292,24 +309,65 @@ export function MessageLogsTable({
             </div>
 
             {/* Desktop Table View (>= 1024px) */}
-            <div className="hidden overflow-x-auto lg:block">
-              <table className="w-full border-collapse text-left">
-                <thead>
-                  <tr className="border-border bg-muted/50 text-foreground-muted border-b text-[11px] font-extrabold tracking-wider uppercase select-none">
-                    <th className="px-5 py-3.5 font-extrabold">Waktu &amp; ID</th>
-                    <th className="px-4 py-3.5 font-extrabold">Penerima (Nomor/JID)</th>
-                    <th className="px-3 py-3.5 text-center font-extrabold">Arah</th>
-                    <th className="px-4 py-3.5 font-extrabold">Cuplikan Pesan</th>
-                    <th className="px-3 py-3.5 font-extrabold">Perangkat</th>
-                    <th className="px-3 py-3.5 text-center font-extrabold">Status</th>
-                    <th className="px-5 py-3.5 text-right font-extrabold">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-border/50 divide-y text-xs font-semibold">
-                  {logs.map((m) => (
-                    <tr key={m.id} className="hover:bg-muted/30 group transition-colors">
+            <div className="hidden lg:block">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-border bg-muted/50 hover:bg-muted/50">
+                    <TableHead className="w-[18%] px-5 py-3.5">
+                      <DataTableColumnHeader
+                        title="Waktu & ID"
+                        columnKey="createdAt"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                      />
+                    </TableHead>
+                    <TableHead className="w-[18%] px-4 py-3.5">
+                      <DataTableColumnHeader
+                        title="Penerima (Nomor/JID)"
+                        columnKey="recipientJid"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                      />
+                    </TableHead>
+                    <TableHead className="w-[10%] px-3 py-3.5 text-center">
+                      <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        Arah
+                      </div>
+                    </TableHead>
+                    <TableHead className="w-[26%] px-4 py-3.5">
+                      <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        Cuplikan Pesan
+                      </div>
+                    </TableHead>
+                    <TableHead className="w-[10%] px-3 py-3.5">
+                      <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        Perangkat
+                      </div>
+                    </TableHead>
+                    <TableHead className="w-[10%] px-3 py-3.5 text-center">
+                      <DataTableColumnHeader
+                        title="Status"
+                        columnKey="status"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                        align="center"
+                      />
+                    </TableHead>
+                    <TableHead className="w-[8%] px-5 py-3.5 text-right">
+                      <div className="text-foreground-muted text-right text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        Aksi
+                      </div>
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {sortedLogs.map((m) => (
+                    <TableRow key={m.id} className="hover:bg-muted/30 transition-colors">
                       {/* 1. Waktu & ID */}
-                      <td className="px-5 py-3.5">
+                      <TableCell className="px-5 py-3.5 align-middle">
                         <div className="space-y-0.5">
                           <span className="text-foreground block font-mono text-[11px] font-bold">
                             {formatDateTime(m.createdAt)}
@@ -318,18 +376,18 @@ export function MessageLogsTable({
                             {m.id.slice(0, 16)}...
                           </span>
                         </div>
-                      </td>
+                      </TableCell>
 
                       {/* 2. Target Nomor / JID */}
-                      <td className="px-4 py-3.5">
+                      <TableCell className="px-4 py-3.5 align-middle">
                         <div className="text-foreground flex items-center gap-1.5 font-mono text-xs font-bold">
                           <Smartphone className="text-foreground-muted size-3 shrink-0" />
                           <span className="max-w-45 truncate">{m.recipientJid}</span>
                         </div>
-                      </td>
+                      </TableCell>
 
                       {/* 3. Arah Pesan */}
-                      <td className="px-3 py-3.5 text-center">
+                      <TableCell className="px-3 py-3.5 text-center align-middle">
                         <span
                           className={`inline-flex items-center gap-1 rounded border px-2 py-0.5 text-[10px] font-black tracking-wider uppercase ${
                             m.direction === "OUTBOUND"
@@ -339,10 +397,10 @@ export function MessageLogsTable({
                         >
                           {m.direction === "OUTBOUND" ? "↗️ OUT" : "↙️ IN"}
                         </span>
-                      </td>
+                      </TableCell>
 
                       {/* 4. Cuplikan Pesan */}
-                      <td className="max-w-xs px-4 py-3.5">
+                      <TableCell className="max-w-xs px-4 py-3.5 align-middle">
                         <div className="space-y-1">
                           <p className="text-foreground max-w-65 truncate text-xs font-medium">
                             {m.messageBody || "(Pesan kosong)"}
@@ -354,20 +412,24 @@ export function MessageLogsTable({
                             </span>
                           )}
                         </div>
-                      </td>
+                      </TableCell>
 
                       {/* 5. Perangkat */}
-                      <td className="px-3 py-3.5">
+                      <TableCell className="px-3 py-3.5 align-middle">
                         <span className="text-foreground-secondary block max-w-24 truncate font-mono text-[11px]">
                           {m.deviceId || "-"}
                         </span>
-                      </td>
+                      </TableCell>
 
                       {/* 6. Status */}
-                      <td className="px-3 py-3.5 text-center">{getMessageStatusBadge(m.status)}</td>
+                      <TableCell className="px-3 py-3.5 text-center align-middle">
+                        <div className="inline-flex items-center justify-center">
+                          {getMessageStatusBadge(m.status)}
+                        </div>
+                      </TableCell>
 
                       {/* 7. Aksi */}
-                      <td className="px-5 py-3.5 text-right">
+                      <TableCell className="px-5 py-3.5 text-right align-middle">
                         <div className="flex items-center justify-end gap-1.5">
                           <Button
                             type="button"
@@ -392,11 +454,11 @@ export function MessageLogsTable({
                             <Trash2 className="size-3.5" />
                           </Button>
                         </div>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           </div>
         )}
