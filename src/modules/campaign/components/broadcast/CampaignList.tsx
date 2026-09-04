@@ -169,7 +169,7 @@ export function CampaignList() {
   return (
     <div className="space-y-6">
       {/* Top Action Bar */}
-      <div className="border-border bg-surface flex flex-col justify-between gap-3 rounded-md border p-3 sm:flex-row sm:items-center sm:p-4 dark:bg-[#161715]">
+      <div className="border-border bg-surface flex flex-col justify-between gap-3 rounded-xl border p-3.5 shadow-xs sm:flex-row sm:items-center sm:p-4 dark:bg-[#161715]">
         <div className="flex items-center gap-3">
           <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-8 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700 sm:size-10">
             <Zap className="size-4 sm:size-5" />
@@ -190,10 +190,12 @@ export function CampaignList() {
             size="sm"
             onClick={fetchCampaigns}
             disabled={isLoading}
-            className="border-border hover:border-foreground-muted size-9 rounded-full p-0"
+            className="border-border hover:border-foreground-muted h-10 shrink-0 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold transition"
             aria-label="Refresh Kampanye"
+            title="Refresh Kampanye"
           >
             <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin" : ""}`} />
+            <span className="hidden sm:inline">Refresh</span>
           </Button>
 
           <Button
@@ -201,7 +203,7 @@ export function CampaignList() {
             size="sm"
             onClick={handleCreateCampaignClick}
             disabled={isLoading || isCheckingDevices}
-            className="h-9 gap-2 px-4 text-xs font-bold shadow-sm"
+            className="h-10 shrink-0 cursor-pointer gap-2 px-4 text-xs font-bold shadow-sm"
           >
             {isCheckingDevices ? (
               <Loader2 className="size-4 animate-spin" />

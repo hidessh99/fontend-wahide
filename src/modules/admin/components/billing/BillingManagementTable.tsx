@@ -221,10 +221,11 @@ export function BillingManagementTable() {
               size="sm"
               onClick={fetchBillings}
               disabled={isLoading}
-              className="border-border hover:border-foreground-muted size-10 shrink-0 cursor-pointer rounded-full p-0"
+              className="border-border hover:border-foreground-muted h-10 shrink-0 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold transition"
               aria-label="Refresh Data Billing"
             >
-              <RefreshCw className={`size-4 ${isLoading ? "animate-spin" : ""}`} />
+              <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin" : ""}`} />
+              <span className="hidden sm:inline">Refresh</span>
             </Button>
           </div>
         </div>

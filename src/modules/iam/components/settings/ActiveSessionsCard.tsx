@@ -137,7 +137,7 @@ export function ActiveSessionsCard() {
   const otherSessionsCount = sessions.filter((s) => !s.is_current).length;
 
   return (
-    <div className="border-border bg-surface space-y-5 rounded-md border p-6 shadow-sm sm:p-8 dark:bg-[#161715]">
+    <div className="border-border bg-surface space-y-5 rounded-xl border p-6 shadow-sm sm:p-8 dark:bg-[#161715]">
       <div className="border-border flex flex-col justify-between gap-3 border-b pb-4 sm:flex-row sm:items-center">
         <div className="flex items-center gap-3">
           <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-9 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
@@ -158,10 +158,11 @@ export function ActiveSessionsCard() {
             size="sm"
             onClick={loadSessions}
             disabled={isLoading}
-            className="border-border text-foreground-muted hover:text-foreground hover:bg-muted size-8 rounded-full p-0"
+            className="border-border text-foreground-muted hover:text-foreground hover:bg-muted h-9 shrink-0 cursor-pointer gap-1.5 rounded-full px-3 text-xs font-bold transition"
             aria-label="Refresh Sesi"
           >
             <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin" : ""}`} />
+            <span className="hidden sm:inline">Refresh</span>
           </Button>
 
           {otherSessionsCount > 0 && (

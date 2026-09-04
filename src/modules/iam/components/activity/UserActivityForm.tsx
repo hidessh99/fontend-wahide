@@ -3,9 +3,9 @@
 import React, { useState } from "react";
 import { UserActivityItem } from "@/modules/iam/types/activity.types";
 import { Button } from "@/components/ui/button";
+import { SearchInput } from "@/components/ui/search-input";
+import { DataTablePagination } from "@/components/ui/pagination";
 import {
-  Search,
-  X,
   RefreshCw,
   Activity,
   LogIn,
@@ -14,8 +14,6 @@ import {
   KeyRound,
   Shield,
   Clock,
-  ChevronLeft,
-  ChevronRight,
   Filter,
   CreditCard,
   Receipt,
@@ -102,11 +100,6 @@ export function UserActivityForm({
   onRefresh,
 }: UserActivityFormProps) {
   const [searchInput, setSearchInput] = useState("");
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSearch(searchInput);
-  };
 
   const handleClear = () => {
     setSearchInput("");
@@ -213,47 +206,22 @@ export function UserActivityForm({
     );
   };
 
-  const startItem = total > 0 ? (page - 1) * pageSize + 1 : 0;
-  const endItem = total > 0 ? Math.min(page * pageSize, total) : 0;
-
   return (
     <div className="space-y-4">
       {/* Toolbar Section: Search Bar & Filter Chips */}
       <div className="border-border bg-surface space-y-3 rounded-xl border p-4 shadow-xs dark:bg-[#161715]">
         <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
           {/* Search Form */}
-          <form onSubmit={handleSearchSubmit} className="flex max-w-lg flex-1 items-center gap-2">
-            <div className="relative flex-1">
-              <Search className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
-              <input
-                type="text"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                placeholder="Cari keterangan aktivitas akun Anda..."
-                className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-9.5 w-full rounded-full border pr-9 pl-10 text-xs font-semibold transition outline-none focus:ring-1 dark:bg-[#10110e]"
-              />
-              {(searchInput || activeSearch) && (
-                <button
-                  type="button"
-                  onClick={handleClear}
-                  className="text-foreground-muted hover:text-foreground hover:bg-muted absolute top-1/2 right-3 flex size-5 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full transition"
-                  title="Hapus Pencarian"
-                  aria-label="Hapus Pencarian"
-                >
-                  <X className="size-3.5" />
-                </button>
-              )}
-            </div>
-            <Button
-              type="submit"
-              variant="outline"
-              size="sm"
-              className="border-border hover:border-foreground-muted h-9.5 shrink-0 cursor-pointer rounded-full px-4 text-xs font-bold"
-            >
-              <Search className="mr-1 size-3.5" />
-              <span>Cari</span>
-            </Button>
-          </form>
+          <div className="w-full flex-1 sm:max-w-lg">
+            <SearchInput
+              value={searchInput}
+              onChange={setSearchInput}
+              onSearch={(val) => onSearch(val.trim())}
+              onClear={handleClear}
+              placeholder="Cari keterangan aktivitas akun Anda..."
+              buttonText="Cari"
+            />
+          </div>
 
           {/* Refresh Button */}
           <Button
@@ -262,7 +230,8 @@ export function UserActivityForm({
             size="sm"
             onClick={onRefresh}
             disabled={isLoading}
-            className="border-border hover:border-foreground-muted h-9.5 shrink-0 cursor-pointer gap-1.5 self-start rounded-full px-3.5 text-xs font-bold sm:self-auto"
+            className="border-border hover:border-foreground-muted h-10 shrink-0 cursor-pointer gap-1.5 self-start rounded-full px-3.5 text-xs font-bold transition sm:self-auto"
+            aria-label="Refresh Rekaman Aktivitas"
             title="Muat Ulang Data"
           >
             <RefreshCw
@@ -410,41 +379,15 @@ export function UserActivityForm({
 
         {/* Pagination Footer */}
         {!isLoading && total > 0 && (
-          <div className="border-border bg-muted/20 text-foreground-secondary flex flex-col justify-between gap-3 border-t px-5 py-3.5 text-xs font-semibold select-none sm:flex-row sm:items-center">
-            <div>
-              Menampilkan <span className="text-foreground font-bold">{startItem}</span> -{" "}
-              <span className="text-foreground font-bold">{endItem}</span> dari{" "}
-              <span className="text-foreground font-bold">{total}</span> rekaman aktivitas
-            </div>
-
-            <div className="flex items-center gap-2">
-              <span className="text-foreground-muted mr-1 text-[11px]">
-                Halaman {page} dari {totalPages}
-              </span>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={onPrevPage}
-                disabled={page <= 1}
-                className="border-border hover:border-foreground-muted h-8 cursor-pointer gap-1 rounded-full px-3 text-xs font-bold disabled:opacity-40"
-              >
-                <ChevronLeft className="size-3.5" />
-                <span>Sebelumnya</span>
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={onNextPage}
-                disabled={page >= totalPages}
-                className="border-border hover:border-foreground-muted h-8 cursor-pointer gap-1 rounded-full px-3 text-xs font-bold disabled:opacity-40"
-              >
-                <span>Berikutnya</span>
-                <ChevronRight className="size-3.5" />
-              </Button>
-            </div>
-          </div>
+          <DataTablePagination
+            page={page}
+            totalPages={totalPages}
+            total={total}
+            pageSize={pageSize}
+            onPrevPage={onPrevPage}
+            onNextPage={onNextPage}
+            entityName="rekaman aktivitas"
+          />
         )}
       </div>
     </div>

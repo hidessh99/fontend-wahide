@@ -244,9 +244,9 @@ export function UserActivitiesTable({
     <div className="w-full min-w-0 space-y-4">
       {/* Toolbar Section: Search Bar & Filter Chips */}
       <div className="border-border bg-surface w-full min-w-0 space-y-3 overflow-hidden rounded-xl border p-3.5 shadow-xs sm:p-4 dark:bg-[#161715]">
-        <div className="flex w-full min-w-0 flex-col justify-between gap-2.5 sm:flex-row sm:items-center sm:gap-3">
+        <div className="flex w-full min-w-0 flex-col justify-between gap-3 sm:flex-row sm:items-center">
           {/* Search Form */}
-          <div className="flex w-full max-w-lg min-w-0 flex-1 items-center gap-2">
+          <div className="w-full flex-1 sm:max-w-lg">
             <SearchInput
               value={searchInput}
               onChange={setSearchInput}
@@ -254,32 +254,21 @@ export function UserActivitiesTable({
               onClear={handleClear}
               placeholder="Cari nama, email, atau deskripsi aktivitas..."
             />
-            {/* Refresh Button on Mobile (Inline inside form container row) */}
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={onRefresh}
-              disabled={isLoading}
-              className="border-border hover:border-foreground-muted h-10 shrink-0 cursor-pointer gap-1 rounded-full px-3 text-xs font-bold sm:hidden"
-              title="Muat Ulang Data"
-            >
-              <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin text-rose-500" : ""}`} />
-            </Button>
           </div>
 
-          {/* Refresh Button on Desktop */}
+          {/* Refresh Action */}
           <Button
             type="button"
             variant="outline"
             size="sm"
             onClick={onRefresh}
             disabled={isLoading}
-            className="border-border hover:border-foreground-muted hidden h-9.5 shrink-0 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold sm:flex"
+            className="border-border hover:border-foreground-muted h-10 shrink-0 cursor-pointer gap-1.5 self-start rounded-full px-3.5 text-xs font-bold transition sm:self-auto"
             title="Muat Ulang Data"
+            aria-label="Refresh Data Aktivitas"
           >
             <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin text-rose-500" : ""}`} />
-            <span>Refresh</span>
+            <span className="hidden sm:inline">Refresh</span>
           </Button>
         </div>
 

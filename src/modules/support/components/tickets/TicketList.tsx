@@ -144,7 +144,7 @@ export function TicketList() {
       )}
 
       {/* Action Toolbar (Search Form, Create Ticket CTA & Scrollable Filter Chips) */}
-      <div className="border-border bg-surface space-y-3 rounded-md border p-3 sm:space-y-4 sm:p-4 dark:bg-[#161715]">
+      <div className="border-border bg-surface space-y-3 rounded-xl border p-3.5 shadow-xs sm:space-y-4 sm:p-4 dark:bg-[#161715]">
         {/* Top Row: Search Form + Primary CTA */}
         <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
           {/* Search Form */}
@@ -212,10 +212,11 @@ export function TicketList() {
             size="sm"
             onClick={() => fetchTickets()}
             disabled={isLoading}
-            className="border-border hover:border-foreground-muted size-8.5 shrink-0 cursor-pointer rounded-full p-0"
+            className="border-border hover:border-foreground-muted h-10 shrink-0 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold transition"
             aria-label={t("support.refreshAria")}
           >
             <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin" : ""}`} />
+            <span className="hidden sm:inline">Refresh</span>
           </Button>
         </div>
       </div>

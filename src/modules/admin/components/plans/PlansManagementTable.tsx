@@ -124,10 +124,11 @@ export function PlansManagementTable() {
               size="sm"
               onClick={fetchPlans}
               disabled={isLoading}
-              className="border-border hover:border-foreground-muted size-10 shrink-0 cursor-pointer rounded-full p-0"
+              className="border-border hover:border-foreground-muted h-10 shrink-0 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold transition"
               aria-label="Refresh Data Paket"
             >
-              <RefreshCw className={`size-4 ${isLoading ? "animate-spin" : ""}`} />
+              <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin" : ""}`} />
+              <span className="hidden sm:inline">Refresh</span>
             </Button>
 
             <Button

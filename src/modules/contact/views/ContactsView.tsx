@@ -184,7 +184,7 @@ export function ContactsView() {
       </div>
 
       {/* Filter Toolbar & Actions */}
-      <div className="border-border bg-surface flex flex-col justify-between gap-3 rounded-md border p-3 sm:flex-row sm:items-center sm:p-4 dark:bg-[#161715]">
+      <div className="border-border bg-surface flex flex-col justify-between gap-3 rounded-xl border p-3.5 shadow-xs sm:flex-row sm:items-center sm:p-4 dark:bg-[#161715]">
         {/* Search Form with Submit Button */}
         <SearchInput
           value={searchInput}
@@ -217,10 +217,12 @@ export function ContactsView() {
             size="sm"
             onClick={() => fetchContacts()}
             disabled={isLoading}
-            className="border-border hover:border-foreground-muted ml-auto size-8.5 shrink-0 cursor-pointer rounded-full p-0 sm:ml-0"
+            className="border-border hover:border-foreground-muted ml-auto h-10 shrink-0 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold transition sm:ml-0"
             aria-label="Refresh Kontak"
+            title="Refresh Kontak"
           >
             <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin" : ""}`} />
+            <span className="hidden sm:inline">Refresh</span>
           </Button>
         </div>
       </div>

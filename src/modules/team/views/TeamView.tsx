@@ -20,6 +20,7 @@ import {
   ShieldCheck,
   Smartphone,
   CheckCircle2,
+  RefreshCw,
 } from "lucide-react";
 import {
   Table,
@@ -34,7 +35,7 @@ import { useTableSort } from "@/hooks/useTableSort";
 
 export function TeamView() {
   const { t } = useI18n();
-  const { agents, createAgent, deleteAgent } = useTeam();
+  const { agents, isLoading, fetchAgents, createAgent, deleteAgent } = useTeam();
 
   // Search & Pagination State
   const [searchInput, setSearchInput] = useState("");
@@ -158,20 +159,37 @@ export function TeamView() {
         </Button>
       </div>
 
-      {/* Filter Toolbar (Search Submit Form) */}
-      {/* Search Bar */}
-      <div className="border-border bg-surface rounded-md border p-3 sm:p-4 dark:bg-[#161715]">
-        <SearchInput
-          value={searchInput}
-          onChange={setSearchInput}
-          onSearch={(val) => {
-            setActiveSearch(val.trim());
-            setPage(1);
-          }}
-          onClear={handleClearSearch}
-          placeholder="Cari nama, email, atau nomor staf..."
-          buttonText="Cari"
-        />
+      {/* Filter & Search Toolbar */}
+      <div className="border-border bg-surface flex flex-col justify-between gap-3 rounded-xl border p-3.5 shadow-xs sm:flex-row sm:items-center sm:p-4 dark:bg-[#161715]">
+        <div className="w-full flex-1 sm:max-w-lg">
+          <SearchInput
+            value={searchInput}
+            onChange={setSearchInput}
+            onSearch={(val) => {
+              setActiveSearch(val.trim());
+              setPage(1);
+            }}
+            onClear={handleClearSearch}
+            placeholder="Cari nama, email, atau nomor staf..."
+            buttonText="Cari"
+          />
+        </div>
+
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={fetchAgents}
+          disabled={isLoading}
+          className="border-border hover:border-foreground-muted h-10 shrink-0 cursor-pointer gap-1.5 self-start rounded-full px-3.5 text-xs font-bold transition sm:self-auto"
+          aria-label="Refresh Anggota Tim"
+          title="Refresh Anggota Tim"
+        >
+          <RefreshCw
+            className={`size-3.5 ${isLoading ? "dark:text-wise-green animate-spin text-emerald-700" : ""}`}
+          />
+          <span className="hidden sm:inline">Refresh</span>
+        </Button>
       </div>
 
       {/* Agents Table with Error Boundary */}

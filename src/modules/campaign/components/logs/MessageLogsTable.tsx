@@ -141,7 +141,7 @@ export function MessageLogsTable() {
   return (
     <div className="space-y-4">
       {/* Search Form with Submit Button & Status Filter */}
-      <div className="border-border bg-surface flex flex-col justify-between gap-3 rounded-md border p-3 sm:flex-row sm:items-center sm:p-4 dark:bg-[#161715]">
+      <div className="border-border bg-surface flex flex-col justify-between gap-3 rounded-xl border p-3.5 shadow-xs sm:flex-row sm:items-center sm:p-4 dark:bg-[#161715]">
         <SearchInput
           value={searchInput}
           onChange={setSearchInput}
