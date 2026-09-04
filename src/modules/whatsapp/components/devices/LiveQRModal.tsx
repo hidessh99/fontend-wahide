@@ -40,7 +40,20 @@ export function LiveQRModal({ device, isOpen, onClose, onSuccess }: LiveQRModalP
   const { t } = useI18n();
   const authUserPhone = useAuth((s) => s.user?.phone || "");
   const [customPhone, setCustomPhone] = useState<string | null>(null);
-  const phoneNumber = customPhone !== null ? customPhone : authUserPhone;
+
+  // Normalisasi nomor lokal: hapus karakter non-digit dan buang awalan 62 / +62 / 0
+  const cleanSubscriberNumber = (val: string): string => {
+    let clean = val.replace(/\D/g, "");
+    if (clean.startsWith("62")) {
+      clean = clean.slice(2);
+    } else if (clean.startsWith("0")) {
+      clean = clean.slice(1);
+    }
+    return clean;
+  };
+
+  const rawPhone = customPhone !== null ? customPhone : authUserPhone;
+  const subscriberPhone = cleanSubscriberNumber(rawPhone);
   const { isCopied: copied, copy } = useClipboard();
 
   const handlePairingSuccess = () => {
@@ -73,8 +86,9 @@ export function LiveQRModal({ device, isOpen, onClose, onSuccess }: LiveQRModalP
 
   const handleRequestCode = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!phoneNumber.trim()) return;
-    await requestPairingCode(phoneNumber);
+    if (!subscriberPhone.trim()) return;
+    const fullE164Phone = `62${subscriberPhone.trim()}`;
+    await requestPairingCode(fullE164Phone);
   };
 
   const handleCopyCode = async () => {
@@ -276,8 +290,8 @@ export function LiveQRModal({ device, isOpen, onClose, onSuccess }: LiveQRModalP
                         <input
                           type="tel"
                           placeholder="81234567890"
-                          value={phoneNumber}
-                          onChange={(e) => setCustomPhone(e.target.value)}
+                          value={subscriberPhone}
+                          onChange={(e) => setCustomPhone(cleanSubscriberNumber(e.target.value))}
                           className="text-foreground flex-1 bg-transparent px-3 py-2 text-xs font-semibold focus:outline-none"
                           autoFocus
                           required
@@ -289,7 +303,7 @@ export function LiveQRModal({ device, isOpen, onClose, onSuccess }: LiveQRModalP
                       type="submit"
                       variant="primaryPill"
                       size="sm"
-                      disabled={isLoadingCode || !phoneNumber.trim()}
+                      disabled={isLoadingCode || !subscriberPhone.trim()}
                       className="w-full gap-2 text-xs font-bold"
                     >
                       {isLoadingCode ? (
