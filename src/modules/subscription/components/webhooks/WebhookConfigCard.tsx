@@ -220,7 +220,7 @@ export function WebhookConfigCard({
             memverifikasi header signature webhook harus diperbarui dengan kunci baru ini.
           </p>
 
-          <AlertDialogFooter className="border-border/60 -mx-6 -mb-6 sm:-mx-8 sm:-mb-8 flex flex-row items-center justify-end gap-2 border-t p-4 pt-3 sm:p-6 sm:pt-4">
+          <AlertDialogFooter className="border-border/60 -mx-6 -mb-6 flex flex-row items-center justify-end gap-2 border-t p-4 pt-3 sm:-mx-8 sm:-mb-8 sm:p-6 sm:pt-4">
             <AlertDialogCancel
               disabled={isRegenerating}
               className="border-border hover:border-foreground-muted rounded-full text-xs font-bold"

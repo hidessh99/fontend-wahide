@@ -102,7 +102,7 @@ export function ProfileInfoCard({ user, tenant, onSaveProfile }: ProfileInfoCard
               readOnly
               value={email}
               variant="pill"
-              className="cursor-not-allowed bg-muted/60 text-foreground-muted pr-4 pl-10 select-none"
+              className="bg-muted/60 text-foreground-muted cursor-not-allowed pr-4 pl-10 select-none"
             />
           </div>
         </div>
@@ -125,7 +125,7 @@ export function ProfileInfoCard({ user, tenant, onSaveProfile }: ProfileInfoCard
               readOnly
               value={phone}
               variant="pill"
-              className="cursor-not-allowed bg-muted/60 text-foreground-muted pr-4 pl-10 font-mono select-none"
+              className="bg-muted/60 text-foreground-muted cursor-not-allowed pr-4 pl-10 font-mono select-none"
             />
           </div>
         </div>
@@ -142,7 +142,7 @@ export function ProfileInfoCard({ user, tenant, onSaveProfile }: ProfileInfoCard
               readOnly
               value={tenantName}
               variant="pill"
-              className="cursor-not-allowed bg-muted/60 text-foreground-muted pr-4 pl-10 select-none"
+              className="bg-muted/60 text-foreground-muted cursor-not-allowed pr-4 pl-10 select-none"
             />
           </div>
         </div>

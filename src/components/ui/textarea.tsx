@@ -21,8 +21,7 @@ const textareaVariants = cva(
 );
 
 export interface TextareaProps
-  extends React.ComponentProps<"textarea">,
-    VariantProps<typeof textareaVariants> {
+  extends React.ComponentProps<"textarea">, VariantProps<typeof textareaVariants> {
   isError?: boolean;
 }
 

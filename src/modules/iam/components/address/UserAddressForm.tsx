@@ -146,7 +146,7 @@ export function UserAddressForm() {
                 disabled
                 readOnly
                 variant="rounded"
-                className="h-11 cursor-not-allowed bg-muted/50 pr-4 pl-10 sm:text-sm"
+                className="bg-muted/50 h-11 cursor-not-allowed pr-4 pl-10 sm:text-sm"
               />
             </div>
           </div>
