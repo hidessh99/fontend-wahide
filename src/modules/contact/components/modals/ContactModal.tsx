@@ -64,18 +64,18 @@ function ContactForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
-      setError("Nama kontak wajib diisi.");
+      setError(t("contact.errNameRequired"));
       return;
     }
 
     const cleanPhone = phone.replace(/[^0-9]/g, "");
     if (!cleanPhone.startsWith("62")) {
-      setError("Nomor WhatsApp wajib diawali 62 (contoh: 6281234567890).");
+      setError(t("contact.errPhonePrefix"));
       return;
     }
 
     if (cleanPhone.length < 10) {
-      setError("Nomor WhatsApp terlalu pendek.");
+      setError(t("contact.errPhoneTooShort"));
       return;
     }
 
@@ -91,7 +91,7 @@ function ContactForm({
       });
       onClose();
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal menyimpan kontak";
+      const msg = err instanceof Error ? err.message : t("contact.errSaveFailed");
       setError(msg);
     } finally {
       setIsLoading(false);
@@ -142,9 +142,9 @@ function ContactForm({
           <div className="flex items-center justify-between">
             <label className="text-foreground-secondary flex items-center gap-1.5 text-xs font-semibold tracking-wider uppercase">
               <TagIcon className="dark:text-wise-green size-3 text-emerald-600" />
-              <span>Tag / Segmentasi Kontak</span>
+              <span>{t("contact.tagSegmentationLabel")}</span>
             </label>
-            <span className="text-foreground-muted text-[11px]">Opsional</span>
+            <span className="text-foreground-muted text-[11px]">{t("contact.optional")}</span>
           </div>
 
           {/* Tag Badges List */}
@@ -176,7 +176,7 @@ function ContactForm({
               })
             ) : (
               <p className="text-foreground-muted py-0.5 text-xs italic">
-                Belum ada tag kontak yang tersedia.
+                {t("contact.noTagsAvailable")}
               </p>
             )}
           </div>
@@ -194,7 +194,7 @@ function ContactForm({
                     handleCreateNewTag();
                   }
                 }}
-                placeholder="+ Buat tag baru (misal: VIP)..."
+                placeholder={t("contact.newTagPlaceholder")}
                 disabled={isAddingTag || isLoading}
                 variant="pill"
                 className="h-9.5 flex-1"
@@ -212,7 +212,7 @@ function ContactForm({
                 ) : (
                   <>
                     <Plus className="mr-1 size-3.5" />
-                    <span>Tambah</span>
+                    <span>{t("contact.addTagBtn")}</span>
                   </>
                 )}
               </Button>

@@ -97,10 +97,10 @@ export function LiveQRModal({ device, isOpen, onClose, onSuccess }: LiveQRModalP
               <span>Multi-Device End-to-End Encrypted</span>
             </div>
             <DialogTitle className="text-foreground text-xl font-black tracking-tight sm:text-2xl">
-              Tautkan Perangkat WhatsApp
+              {t("whatsapp.qrModalTitle")}
             </DialogTitle>
             <DialogDescription className="text-foreground-secondary text-xs font-semibold">
-              Slot:{" "}
+              {t("whatsapp.slotLabel")}{" "}
               <span className="text-foreground font-bold">
                 {device.push_name || device.pushName || device.name || "WhatsApp Device"}
               </span>
@@ -122,7 +122,7 @@ export function LiveQRModal({ device, isOpen, onClose, onSuccess }: LiveQRModalP
                 }`}
               >
                 <QrCode className="size-3.5" />
-                <span>Pindai QR Code</span>
+                <span>{t("whatsapp.scanQRTab")}</span>
               </button>
               <button
                 type="button"
@@ -134,7 +134,7 @@ export function LiveQRModal({ device, isOpen, onClose, onSuccess }: LiveQRModalP
                 }`}
               >
                 <Smartphone className="size-3.5" />
-                <span>Kode Nomor Telepon</span>
+                <span>{t("whatsapp.phoneCodeTab")}</span>
               </button>
             </div>
           </div>
@@ -161,9 +161,9 @@ export function LiveQRModal({ device, isOpen, onClose, onSuccess }: LiveQRModalP
                 <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-rose-500/10 text-rose-500">
                   <AlertCircle className="size-7" />
                 </div>
-                <h3 className="text-foreground text-base font-bold">Gagal Memulai Pairing</h3>
+                <h3 className="text-foreground text-base font-bold">{t("whatsapp.qrError")}</h3>
                 <p className="text-foreground-secondary max-w-xs text-xs font-semibold">
-                  {errorMessage || "Terjadi kesalahan saat menghubungkan ke WhatsApp"}
+                  {errorMessage || t("whatsapp.qrErrorDesc")}
                 </p>
                 <Button
                   variant="primaryPill"
@@ -172,7 +172,7 @@ export function LiveQRModal({ device, isOpen, onClose, onSuccess }: LiveQRModalP
                   className="cursor-pointer gap-2 rounded-full px-5 text-xs font-bold"
                 >
                   <RefreshCw className="size-3.5" />
-                  <span>Coba Hubungkan Ulang</span>
+                  <span>{t("whatsapp.qrRetry")}</span>
                 </Button>
               </div>
             ) : pairMode === "QR" ? (
@@ -204,7 +204,7 @@ export function LiveQRModal({ device, isOpen, onClose, onSuccess }: LiveQRModalP
                       className="border-border hover:border-foreground-muted cursor-pointer gap-1.5 rounded-full text-xs font-bold"
                     >
                       <RefreshCw className="dark:text-wise-green size-3.5 text-emerald-700" />
-                      <span>QR Kedaluwarsa - Muat Ulang</span>
+                      <span>{t("whatsapp.qrExpiredReload")}</span>
                     </Button>
                   )}
                 </div>
@@ -222,7 +222,7 @@ export function LiveQRModal({ device, isOpen, onClose, onSuccess }: LiveQRModalP
                 {pairingCode ? (
                   <div className="animate-in zoom-in-95 w-full space-y-3 text-center">
                     <p className="text-foreground-secondary text-xs font-semibold">
-                      Masukkan 8 karakter kode berikut di aplikasi WhatsApp ponsel Anda:
+                      {t("whatsapp.enterPairingCodeInstruction")}
                     </p>
 
                     {/* Big Monospace OTP Boxes */}
@@ -252,13 +252,13 @@ export function LiveQRModal({ device, isOpen, onClose, onSuccess }: LiveQRModalP
                           <>
                             <Check className="text-dark-green dark:text-wise-green size-3.5" />
                             <span className="text-dark-green dark:text-wise-green font-bold">
-                              Kode Tersalin!
+                              {t("whatsapp.codeCopied")}
                             </span>
                           </>
                         ) : (
                           <>
                             <Copy className="size-3.5" />
-                            <span>Salin Kode</span>
+                            <span>{t("whatsapp.copyCode")}</span>
                           </>
                         )}
                       </Button>
@@ -268,7 +268,7 @@ export function LiveQRModal({ device, isOpen, onClose, onSuccess }: LiveQRModalP
                   <form onSubmit={handleRequestCode} className="w-full space-y-3">
                     <div className="space-y-1 text-left">
                       <label className="text-foreground text-xs font-bold">
-                        Nomor WhatsApp Ponsel
+                        {t("whatsapp.phoneLabel")}
                       </label>
                       <div className="border-border bg-surface focus-within:ring-wise-green/40 flex overflow-hidden rounded-md border focus-within:ring-2">
                         <span className="bg-muted text-foreground-secondary border-border flex items-center border-r px-3 py-2 text-xs font-bold">
@@ -296,12 +296,12 @@ export function LiveQRModal({ device, isOpen, onClose, onSuccess }: LiveQRModalP
                       {isLoadingCode ? (
                         <>
                           <Loader2 className="size-3.5 animate-spin" />
-                          <span>Menghubungkan ke WhatsApp...</span>
+                          <span>{t("whatsapp.connecting")}</span>
                         </>
                       ) : (
                         <>
                           <KeyRound className="size-3.5" />
-                          <span>Dapatkan Kode Pairing</span>
+                          <span>{t("whatsapp.getPairingCode")}</span>
                         </>
                       )}
                     </Button>
@@ -317,8 +317,8 @@ export function LiveQRModal({ device, isOpen, onClose, onSuccess }: LiveQRModalP
               <Smartphone className="dark:text-wise-green size-4 text-emerald-700" />
               <span>
                 {pairMode === "QR"
-                  ? "Petunjuk Pemindaian QR di Ponsel:"
-                  : "Petunjuk Memasukkan Kode di Ponsel:"}
+                  ? t("whatsapp.qrInstructionsTitle")
+                  : t("whatsapp.phoneCodeInstructionsTitle")}
               </span>
             </div>
             {pairMode === "QR" ? (
@@ -329,17 +329,10 @@ export function LiveQRModal({ device, isOpen, onClose, onSuccess }: LiveQRModalP
               </ol>
             ) : (
               <ol className="text-foreground-secondary list-inside list-decimal space-y-1.5 pl-1 leading-relaxed">
-                <li>
-                  Buka WhatsApp di ponsel $\rightarrow$ Ketuk <b>Menu</b> (titik tiga) atau{" "}
-                  <b>Pengaturan</b>.
-                </li>
-                <li>
-                  Pilih <b>Perangkat Tertaut</b> $\rightarrow$ <b>Tautkan Perangkat</b>.
-                </li>
-                <li>
-                  Pilih <b>Tautkan dengan nomor telepon saja</b> di bagian bawah layar.
-                </li>
-                <li>Masukkan 8 karakter kode pairing yang tertera di atas.</li>
+                <li>{t("whatsapp.phoneStep1")}</li>
+                <li>{t("whatsapp.phoneStep2")}</li>
+                <li>{t("whatsapp.phoneStep3")}</li>
+                <li>{t("whatsapp.phoneStep4")}</li>
               </ol>
             )}
           </div>

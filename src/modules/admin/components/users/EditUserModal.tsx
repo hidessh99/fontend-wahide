@@ -44,7 +44,7 @@ interface EditUserModalContentProps {
 }
 
 function EditUserModalContent({ user, onClose, onSubmit }: EditUserModalContentProps) {
-  const { t, locale } = useI18n();
+  const { t } = useI18n();
   const [name, setName] = useState(user.name || "");
   const [email, setEmail] = useState(user.email || "");
   const [phoneNumber, setPhoneNumber] = useState(user.phoneNumber || user.phone || "");
