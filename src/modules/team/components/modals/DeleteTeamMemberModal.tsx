@@ -41,9 +41,9 @@ export function DeleteTeamMemberModal({
 
   return (
     <AlertDialog open={isOpen} onOpenChange={handleOpenChange}>
-      <AlertDialogContent className="bg-surface border-border max-w-md gap-0 overflow-hidden p-0 dark:bg-[#161715]">
+      <AlertDialogContent className="border-border bg-surface flex max-h-[92dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-md dark:bg-[#161715]">
         {/* Header with Warning Accent */}
-        <AlertDialogHeader className="border-border/80 flex flex-row items-center gap-3 border-b bg-rose-500/5 p-5 text-left">
+        <AlertDialogHeader className="border-border/80 flex shrink-0 flex-row items-center gap-3 border-b bg-rose-500/5 p-5 text-left">
           <div className="flex size-10 shrink-0 items-center justify-center rounded-full border border-rose-500/20 bg-rose-500/10 text-rose-600 dark:text-rose-400">
             <AlertTriangle className="size-5" />
           </div>
@@ -58,7 +58,7 @@ export function DeleteTeamMemberModal({
         </AlertDialogHeader>
 
         {/* Modal Body with Member Context */}
-        <div className="text-foreground-secondary space-y-4 p-5 text-xs font-semibold">
+        <div className="text-foreground-secondary min-h-0 flex-1 space-y-4 overflow-y-auto p-5 text-xs font-semibold">
           <p className="leading-relaxed">
             Apakah Anda yakin ingin menghapus akses anggota tim ini secara permanen dari akun Anda?
           </p>
@@ -78,7 +78,7 @@ export function DeleteTeamMemberModal({
         </div>
 
         {/* Footer Actions */}
-        <AlertDialogFooter className="border-border bg-muted/30 m-0 flex flex-row items-center justify-end gap-2.5 rounded-none border-t px-5 py-4">
+        <AlertDialogFooter className="border-border bg-muted/20 m-0 flex shrink-0 flex-row items-center justify-end gap-2.5 rounded-none border-t p-4 sm:p-5">
           <AlertDialogCancel
             disabled={isDeleting}
             className="border-border hover:border-foreground-muted h-9 cursor-pointer rounded-full px-4 text-xs font-bold"

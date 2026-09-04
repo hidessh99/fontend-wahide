@@ -44,9 +44,9 @@ export function DeleteQueueModal({ queue, isOpen, onClose, onConfirm }: DeleteQu
 
   return (
     <AlertDialog open={isOpen} onOpenChange={handleOpenChange}>
-      <AlertDialogContent className="border-border bg-surface max-w-md gap-0 overflow-hidden p-0 dark:bg-[#161715]">
+      <AlertDialogContent className="border-border bg-surface flex max-h-[92dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-md dark:bg-[#161715]">
         {/* Header */}
-        <AlertDialogHeader className="border-border flex flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
+        <AlertDialogHeader className="border-border flex shrink-0 flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
           <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400">
             <Trash2 className="size-5" />
           </div>
@@ -61,7 +61,7 @@ export function DeleteQueueModal({ queue, isOpen, onClose, onConfirm }: DeleteQu
         </AlertDialogHeader>
 
         {/* Content Body */}
-        <div className="space-y-4 p-5 text-xs sm:p-6">
+        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-5 text-xs sm:p-6">
           <div className="flex items-start gap-2.5 rounded-lg border border-rose-500/20 bg-rose-500/10 p-3.5 text-rose-700 dark:text-rose-400">
             <AlertTriangle className="mt-0.5 size-4 shrink-0" />
             <div className="space-y-1">

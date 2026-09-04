@@ -50,8 +50,8 @@ export function ConfirmUpgradeModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && !isUpgrading && onClose()}>
-      <DialogContent className="bg-surface border-border text-foreground sm:max-w-md dark:bg-[#161715]">
-        <DialogHeader className="space-y-2">
+      <DialogContent className="border-border bg-surface flex max-h-[90dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-md dark:bg-[#161715]">
+        <DialogHeader className="border-border flex shrink-0 flex-col gap-2 border-b p-5 text-left sm:p-6">
           <div className="flex items-center gap-2 text-rose-600 dark:text-rose-400">
             <div className="flex size-8 items-center justify-center rounded-full bg-rose-500/10">
               <CreditCard className="size-4" />
@@ -66,7 +66,7 @@ export function ConfirmUpgradeModal({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 py-2 text-xs">
+        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-5 text-xs sm:p-6">
           {/* Plan Summary Card */}
           <div className="border-border bg-muted/20 space-y-2 rounded-lg border p-3.5">
             <div className="flex items-center justify-between font-bold">
@@ -136,7 +136,7 @@ export function ConfirmUpgradeModal({
           </div>
         </div>
 
-        <DialogFooter className="gap-2 sm:gap-0">
+        <DialogFooter className="border-border bg-muted/20 m-0 flex shrink-0 flex-row items-center justify-end gap-2.5 rounded-none border-t p-4 sm:p-5">
           <Button
             type="button"
             variant="outline"

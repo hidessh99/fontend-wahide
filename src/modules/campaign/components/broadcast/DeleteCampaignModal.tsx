@@ -53,24 +53,29 @@ export function DeleteCampaignModal({
 
   return (
     <AlertDialog open={isOpen} onOpenChange={handleOpenChange}>
-      <AlertDialogContent className="border-border bg-surface max-w-md rounded-2xl border p-6 shadow-2xl dark:bg-[#161715]">
-        <AlertDialogHeader className="space-y-3">
-          <div className="flex size-12 items-center justify-center rounded-full bg-rose-500/10 text-rose-500">
-            <AlertTriangle className="size-6" />
+      <AlertDialogContent className="border-border bg-surface flex max-h-[92dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl border p-0 shadow-2xl sm:max-w-md dark:bg-[#161715]">
+        <AlertDialogHeader className="border-border/60 flex shrink-0 flex-row items-center gap-3.5 border-b p-6 pb-4 text-left">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-rose-500/10 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400">
+            <AlertTriangle className="size-5" />
           </div>
-          <AlertDialogTitle className="text-foreground text-lg font-bold">
-            {t("campaign.deleteModalTitle")}
-          </AlertDialogTitle>
+          <div>
+            <AlertDialogTitle className="text-foreground text-base font-bold tracking-tight sm:text-lg">
+              {t("campaign.deleteModalTitle")}
+            </AlertDialogTitle>
+          </div>
+        </AlertDialogHeader>
+
+        <div className="text-foreground-secondary min-h-0 flex-1 space-y-4 overflow-y-auto p-6 text-sm">
           <AlertDialogDescription className="text-foreground-secondary text-sm leading-relaxed">
             {t("campaign.deleteModalDesc", { name: campaign.name || "Kampanye" })}
           </AlertDialogDescription>
-        </AlertDialogHeader>
+        </div>
 
-        <AlertDialogFooter className="mt-6 flex items-center justify-end gap-3">
+        <AlertDialogFooter className="border-border/60 bg-muted/20 m-0 flex shrink-0 flex-row items-center justify-end gap-2.5 rounded-none border-t p-6 pt-4">
           <AlertDialogCancel
             disabled={isDeleting}
             onClick={onClose}
-            className="border-border text-foreground hover:bg-muted rounded-full px-4 text-xs font-semibold"
+            className="border-border text-foreground hover:bg-muted cursor-pointer rounded-full px-4 text-xs font-semibold"
           >
             {t("campaign.deleteCancelBtn")}
           </AlertDialogCancel>
@@ -79,7 +84,7 @@ export function DeleteCampaignModal({
             variant="destructive"
             onClick={handleConfirm}
             disabled={isDeleting}
-            className="gap-2 rounded-full px-4 text-xs font-bold"
+            className="cursor-pointer gap-2 rounded-full px-4 text-xs font-bold shadow-sm disabled:opacity-50"
           >
             {isDeleting ? (
               <>

@@ -94,9 +94,9 @@ export function MessageDetailModal({ isOpen, log, onClose }: MessageDetailModalP
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="border-border bg-surface max-w-lg rounded-2xl border p-6 shadow-2xl dark:bg-[#161715]">
-        <DialogHeader className="space-y-1">
-          <div className="flex items-center justify-between gap-3">
+      <DialogContent className="border-border bg-surface flex max-h-[90dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl border p-0 shadow-2xl sm:max-w-lg dark:bg-[#161715]">
+        <DialogHeader className="border-border shrink-0 border-b p-5 pb-4 sm:p-6">
+          <div className="flex items-center justify-between gap-3 pr-6">
             <DialogTitle className="text-foreground text-lg font-bold">
               {t("campaign.detailModalTitle")}
             </DialogTitle>
@@ -104,7 +104,7 @@ export function MessageDetailModal({ isOpen, log, onClose }: MessageDetailModalP
           </div>
         </DialogHeader>
 
-        <div className="mt-4 space-y-4 text-xs">
+        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-5 text-xs sm:p-6">
           {/* Metadata Grid */}
           <div className="border-border bg-muted/30 grid grid-cols-2 gap-3 rounded-lg border p-3.5 sm:p-4">
             <div className="space-y-1">
@@ -178,7 +178,7 @@ export function MessageDetailModal({ isOpen, log, onClose }: MessageDetailModalP
           )}
         </div>
 
-        <DialogFooter className="mt-6">
+        <DialogFooter className="border-border bg-muted/20 m-0 flex shrink-0 flex-row items-center justify-end gap-2.5 rounded-none border-t p-4 sm:p-5">
           <Button
             variant="outline"
             onClick={onClose}

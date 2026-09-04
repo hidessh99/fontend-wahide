@@ -111,9 +111,9 @@ export function UpdateTicketStatusModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && !isSubmitting && onClose()}>
-      <DialogContent className="border-border bg-surface max-h-[92vh] max-w-lg gap-0 overflow-hidden p-0 dark:bg-[#161715]">
+      <DialogContent className="border-border bg-surface flex max-h-[92dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-lg dark:bg-[#161715]">
         {/* Header */}
-        <DialogHeader className="border-border flex flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
+        <DialogHeader className="border-border flex shrink-0 flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
           <div className="dark:text-wise-green flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600">
             <SlidersHorizontal className="size-5" />
           </div>
@@ -128,8 +128,8 @@ export function UpdateTicketStatusModal({
         </DialogHeader>
 
         {/* Scrollable Form Body */}
-        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col overflow-y-auto">
-          <div className="flex-1 space-y-4.5 p-5 text-xs sm:p-6">
+        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          <div className="flex-1 space-y-4.5 overflow-y-auto p-5 text-xs sm:p-6">
             {/* Target Ticket Identity Snippet */}
             <div className="border-border bg-muted/20 space-y-2 rounded-lg border p-3.5">
               <div className="flex items-center justify-between">

@@ -200,8 +200,8 @@ export function WebhookConfigCard({
 
       {/* Confirmation Dialog for Secret Rotation */}
       <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
-        <AlertDialogContent className="border-border bg-surface max-w-md gap-0 space-y-6 overflow-hidden p-6 sm:p-8 dark:bg-[#161715]">
-          <AlertDialogHeader className="flex flex-row items-center gap-3.5 text-left">
+        <AlertDialogContent className="border-border bg-surface flex max-h-[92dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-md dark:bg-[#161715]">
+          <AlertDialogHeader className="border-border flex shrink-0 flex-row items-center gap-3.5 border-b p-5 text-left sm:p-6">
             <div className="flex size-11 shrink-0 items-center justify-center rounded-full border border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-400">
               <AlertTriangle className="size-5.5" />
             </div>
@@ -215,12 +215,14 @@ export function WebhookConfigCard({
             </div>
           </AlertDialogHeader>
 
-          <p className="text-foreground-secondary text-xs leading-relaxed">
-            Kunci Signing Secret lama akan segera tidak berlaku. Semua server endpoint yang
-            memverifikasi header signature webhook harus diperbarui dengan kunci baru ini.
-          </p>
+          <div className="text-foreground-secondary min-h-0 flex-1 space-y-4 overflow-y-auto p-5 text-xs leading-relaxed sm:p-6">
+            <p>
+              Kunci Signing Secret lama akan segera tidak berlaku. Semua server endpoint yang
+              memverifikasi header signature webhook harus diperbarui dengan kunci baru ini.
+            </p>
+          </div>
 
-          <AlertDialogFooter className="border-border/60 -mx-6 -mb-6 flex flex-row items-center justify-end gap-2 border-t p-4 pt-3 sm:-mx-8 sm:-mb-8 sm:p-6 sm:pt-4">
+          <AlertDialogFooter className="border-border bg-muted/20 m-0 flex shrink-0 flex-row items-center justify-end gap-2.5 rounded-none border-t p-4 sm:p-5">
             <AlertDialogCancel
               disabled={isRegenerating}
               className="border-border hover:border-foreground-muted rounded-full text-xs font-bold"

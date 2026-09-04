@@ -49,9 +49,9 @@ export function MessageDetailModal({ message, isOpen, onClose }: MessageDetailMo
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="border-border bg-surface max-h-[90vh] max-w-lg gap-0 space-y-4 overflow-hidden p-5 sm:p-6 dark:bg-[#161715]">
+      <DialogContent className="border-border bg-surface flex max-h-[90dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-lg dark:bg-[#161715]">
         {/* Header */}
-        <DialogHeader className="border-border flex flex-row items-center gap-2.5 border-b pb-3.5 text-left">
+        <DialogHeader className="border-border flex shrink-0 flex-row items-center gap-2.5 border-b p-5 pb-3.5 text-left sm:p-6">
           <div className="dark:text-wise-green flex size-9 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600">
             <MessageSquare className="size-4.5" />
           </div>
@@ -66,7 +66,7 @@ export function MessageDetailModal({ message, isOpen, onClose }: MessageDetailMo
         </DialogHeader>
 
         {/* Scrollable Content */}
-        <div className="flex-1 space-y-4 overflow-y-auto pr-1 text-xs">
+        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-5 text-xs sm:p-6">
           {/* Status & Direction Bar */}
           <div className="grid grid-cols-2 gap-2">
             <div className="border-border bg-muted/20 rounded-lg border p-2.5">
@@ -210,7 +210,7 @@ export function MessageDetailModal({ message, isOpen, onClose }: MessageDetailMo
         </div>
 
         {/* Footer */}
-        <DialogFooter className="border-border m-0 flex shrink-0 flex-row justify-end rounded-none border-t p-0 pt-2">
+        <DialogFooter className="border-border bg-muted/20 m-0 flex shrink-0 flex-row justify-end rounded-none border-t p-4 sm:p-5">
           <Button
             type="button"
             variant="outline"

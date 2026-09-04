@@ -44,9 +44,9 @@ export function UpdateBillingStatusModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && !isLoading && onClose()}>
-      <DialogContent className="border-border bg-surface max-h-[92vh] max-w-md gap-0 overflow-y-auto rounded-xl p-0 shadow-2xl dark:bg-[#161715]">
+      <DialogContent className="border-border bg-surface flex max-h-[92dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-md dark:bg-[#161715]">
         {/* Header */}
-        <DialogHeader className="border-border flex flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
+        <DialogHeader className="border-border flex shrink-0 flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
           <div className="flex size-10 shrink-0 items-center justify-center rounded-full border border-amber-500/20 bg-amber-500/15 text-amber-600 dark:text-amber-400">
             <Receipt className="size-5" />
           </div>
@@ -61,8 +61,8 @@ export function UpdateBillingStatusModal({
         </DialogHeader>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col overflow-y-auto">
-          <div className="flex-1 space-y-4 p-5 text-xs sm:p-6">
+        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          <div className="flex-1 space-y-4 overflow-y-auto p-5 text-xs sm:p-6">
             {/* Transaction Detail Card */}
             <div className="border-border bg-muted/20 space-y-2 rounded-lg border p-3.5">
               <div className="flex items-center justify-between text-xs">

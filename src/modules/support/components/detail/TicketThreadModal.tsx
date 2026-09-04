@@ -209,9 +209,9 @@ export function TicketThreadModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && !isLoading && onClose()}>
-      <DialogContent className="border-border bg-surface max-h-[90vh] max-w-2xl gap-0 overflow-hidden p-0 dark:bg-[#161715]">
+      <DialogContent className="border-border bg-surface flex max-h-[90dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-2xl dark:bg-[#161715]">
         {/* Sticky Header */}
-        <DialogHeader className="border-border flex flex-row items-start justify-between border-b p-5 pb-4 text-left sm:p-6">
+        <DialogHeader className="border-border flex shrink-0 flex-row items-start justify-between border-b p-5 pb-4 text-left sm:p-6">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <span className="text-dark-green dark:text-wise-green bg-light-mint dark:bg-wise-green/15 border-wise-green/30 rounded-full border px-2.5 py-0.5 font-mono text-xs font-bold">
@@ -354,7 +354,7 @@ export function TicketThreadModal({
         {/* Reply Input Form with Attachment capability */}
         <form
           onSubmit={handleReplySubmit}
-          className="border-border bg-surface/50 border-t p-4 sm:p-5"
+          className="border-border bg-surface/50 shrink-0 border-t p-4 sm:p-5"
         >
           {/* File Picker Hidden */}
           <input

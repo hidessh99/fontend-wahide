@@ -72,8 +72,8 @@ export function AddTeamMemberModal({ isOpen, onClose, onSubmit }: AddTeamMemberM
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="border-border bg-surface max-h-[90vh] max-w-md gap-0 overflow-y-auto rounded-xl p-0 shadow-2xl dark:bg-[#161715]">
-        <DialogHeader className="border-border flex flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
+      <DialogContent className="border-border bg-surface flex max-h-[90dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-md dark:bg-[#161715]">
+        <DialogHeader className="border-border flex shrink-0 flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
           <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
             <Users className="size-5" />
           </div>
@@ -87,83 +87,85 @@ export function AddTeamMemberModal({ isOpen, onClose, onSubmit }: AddTeamMemberM
           </div>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4 p-5 sm:p-6">
-          <div>
-            <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
-              {t("team.nameLabel")}
-            </label>
-            <Input
-              type="text"
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder={t("team.namePlaceholder")}
-              variant="pill"
-            />
-          </div>
+        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          <div className="flex-1 space-y-4 overflow-y-auto p-5 sm:p-6">
+            <div>
+              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
+                {t("team.nameLabel")}
+              </label>
+              <Input
+                type="text"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder={t("team.namePlaceholder")}
+                variant="pill"
+              />
+            </div>
 
-          <div>
-            <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
-              {t("team.emailLabel")}
-            </label>
-            <Input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder={t("team.emailPlaceholder")}
-              variant="pill"
-            />
-          </div>
+            <div>
+              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
+                {t("team.emailLabel")}
+              </label>
+              <Input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder={t("team.emailPlaceholder")}
+                variant="pill"
+              />
+            </div>
 
-          <div>
-            <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
-              {t("team.phoneLabel")}
-            </label>
-            <Input
-              type="text"
-              required
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder={t("team.phonePlaceholder")}
-              variant="pill"
-              className="font-mono"
-            />
-          </div>
+            <div>
+              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
+                {t("team.phoneLabel")}
+              </label>
+              <Input
+                type="text"
+                required
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder={t("team.phonePlaceholder")}
+                variant="pill"
+                className="font-mono"
+              />
+            </div>
 
-          <div>
-            <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
-              {t("team.roleLabel")}
-            </label>
-            <div className="bg-muted/60 text-foreground border-border flex h-10 w-full items-center gap-2 rounded-full border px-4 text-xs font-bold select-none">
-              <ShieldCheck className="text-wise-green size-4" />
-              <span>{t("team.roleAgent")}</span>
+            <div>
+              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
+                {t("team.roleLabel")}
+              </label>
+              <div className="bg-muted/60 text-foreground border-border flex h-10 w-full items-center gap-2 rounded-full border px-4 text-xs font-bold select-none">
+                <ShieldCheck className="text-wise-green size-4" />
+                <span>{t("team.roleAgent")}</span>
+              </div>
+            </div>
+
+            <div>
+              <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
+                {t("team.passwordLabel")} <span className="text-red-500">*</span>
+              </label>
+              <Input
+                type="password"
+                required
+                minLength={6}
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (passwordError) setPasswordError(null);
+                }}
+                placeholder={t("team.passwordPlaceholder")}
+                variant="pill"
+                isError={!!passwordError}
+              />
+              {passwordError && (
+                <p className="mt-1.5 pl-3 text-xs font-semibold text-rose-500">{passwordError}</p>
+              )}
             </div>
           </div>
 
-          <div>
-            <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
-              {t("team.passwordLabel")} <span className="text-red-500">*</span>
-            </label>
-            <Input
-              type="password"
-              required
-              minLength={6}
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                if (passwordError) setPasswordError(null);
-              }}
-              placeholder={t("team.passwordPlaceholder")}
-              variant="pill"
-              isError={!!passwordError}
-            />
-            {passwordError && (
-              <p className="mt-1.5 pl-3 text-xs font-semibold text-rose-500">{passwordError}</p>
-            )}
-          </div>
-
-          <DialogFooter className="border-border/80 flex items-center justify-end gap-2.5 border-t pt-3">
+          <DialogFooter className="border-border bg-muted/20 m-0 flex shrink-0 flex-row items-center justify-end gap-2.5 rounded-none border-t p-4 sm:p-5">
             <Button
               type="button"
               variant="outline"

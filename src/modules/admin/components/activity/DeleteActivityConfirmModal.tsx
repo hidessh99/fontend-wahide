@@ -58,9 +58,9 @@ export function DeleteActivityConfirmModal({
 
   return (
     <AlertDialog open={isOpen} onOpenChange={handleOpenChange}>
-      <AlertDialogContent className="border-border bg-surface max-w-lg gap-0 overflow-hidden p-0 dark:bg-[#161715]">
+      <AlertDialogContent className="border-border bg-surface flex max-h-[92dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-lg dark:bg-[#161715]">
         {/* Header Section */}
-        <AlertDialogHeader className="border-border flex flex-row items-center gap-3 border-b bg-rose-500/5 p-5 text-left">
+        <AlertDialogHeader className="border-border flex shrink-0 flex-row items-center gap-3 border-b bg-rose-500/5 p-5 text-left">
           <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400">
             <AlertTriangle className="size-4.5" />
           </div>
@@ -75,67 +75,69 @@ export function DeleteActivityConfirmModal({
         </AlertDialogHeader>
 
         {/* Form Body */}
-        <form onSubmit={handleDelete} className="space-y-4 p-5 text-xs font-semibold">
-          {/* Target Activity Summary Card */}
-          <div className="border-border bg-muted/40 space-y-2 rounded-lg border p-3.5">
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex min-w-0 items-center gap-2">
-                <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-rose-500/15 text-xs font-bold text-rose-600">
-                  {activity.user?.name ? (
-                    activity.user.name.charAt(0).toUpperCase()
-                  ) : (
-                    <User className="size-3" />
-                  )}
-                </div>
-                <div className="min-w-0">
-                  <div className="text-foreground truncate text-xs font-bold">
-                    {activity.user?.name || "Pengguna Tanpa Nama"}
+        <form onSubmit={handleDelete} className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          <div className="flex-1 space-y-4 overflow-y-auto p-5 text-xs font-semibold">
+            {/* Target Activity Summary Card */}
+            <div className="border-border bg-muted/40 space-y-2 rounded-lg border p-3.5">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex min-w-0 items-center gap-2">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-rose-500/15 text-xs font-bold text-rose-600">
+                    {activity.user?.name ? (
+                      activity.user.name.charAt(0).toUpperCase()
+                    ) : (
+                      <User className="size-3" />
+                    )}
                   </div>
-                  <div className="text-foreground-muted flex items-center gap-1 truncate font-mono text-[10px]">
-                    <Mail className="size-2.5" />
-                    <span>{activity.user?.email || activity.userId}</span>
+                  <div className="min-w-0">
+                    <div className="text-foreground truncate text-xs font-bold">
+                      {activity.user?.name || "Pengguna Tanpa Nama"}
+                    </div>
+                    <div className="text-foreground-muted flex items-center gap-1 truncate font-mono text-[10px]">
+                      <Mail className="size-2.5" />
+                      <span>{activity.user?.email || activity.userId}</span>
+                    </div>
                   </div>
                 </div>
+
+                <span className="bg-surface border-border text-foreground rounded-full border px-2 py-0.5 font-mono text-[10px] font-bold dark:bg-[#10110e]">
+                  {activity.activityType || activity.type}
+                </span>
               </div>
 
-              <span className="bg-surface border-border text-foreground rounded-full border px-2 py-0.5 font-mono text-[10px] font-bold dark:bg-[#10110e]">
-                {activity.activityType || activity.type}
-              </span>
-            </div>
-
-            {/* Description Box */}
-            <div className="bg-surface border-border/60 text-foreground-secondary rounded-md border p-2.5 text-xs leading-relaxed dark:bg-[#121310]">
-              {activity.description || "Tidak ada deskripsi detail kejadian."}
-            </div>
-
-            {/* Timestamp & ID */}
-            <div className="text-foreground-muted border-border/40 flex items-center justify-between border-t pt-1 text-[11px]">
-              <div className="text-foreground-secondary flex items-center gap-1.5 font-medium">
-                <Clock className="text-foreground-muted size-3" />
-                <span>{formatHumanActivityDate(activity.createdAt).fullHuman}</span>
+              {/* Description Box */}
+              <div className="bg-surface border-border/60 text-foreground-secondary rounded-md border p-2.5 text-xs leading-relaxed dark:bg-[#121310]">
+                {activity.description || "Tidak ada deskripsi detail kejadian."}
               </div>
-              <span className="font-mono text-[9px]">ID: {activity.id}</span>
-            </div>
-          </div>
 
-          {/* Security Confirmation Checkbox */}
-          <div className="border-border border-t pt-2">
-            <label className="group flex cursor-pointer items-start gap-2.5 select-none">
-              <input
-                type="checkbox"
-                checked={isConfirmed}
-                onChange={(e) => setIsConfirmed(e.target.checked)}
-                className="border-border mt-0.5 size-4 cursor-pointer rounded text-rose-600 focus:ring-rose-500"
-              />
-              <span className="text-foreground-secondary group-hover:text-foreground text-xs leading-tight font-bold transition">
-                Saya mengonfirmasi bahwa rekaman log audit ini akan dihapus secara permanen dan
-                tidak dapat dipulihkan.
-              </span>
-            </label>
+              {/* Timestamp & ID */}
+              <div className="text-foreground-muted border-border/40 flex items-center justify-between border-t pt-1 text-[11px]">
+                <div className="text-foreground-secondary flex items-center gap-1.5 font-medium">
+                  <Clock className="text-foreground-muted size-3" />
+                  <span>{formatHumanActivityDate(activity.createdAt).fullHuman}</span>
+                </div>
+                <span className="font-mono text-[9px]">ID: {activity.id}</span>
+              </div>
+            </div>
+
+            {/* Security Confirmation Checkbox */}
+            <div className="border-border border-t pt-2">
+              <label className="group flex cursor-pointer items-start gap-2.5 select-none">
+                <input
+                  type="checkbox"
+                  checked={isConfirmed}
+                  onChange={(e) => setIsConfirmed(e.target.checked)}
+                  className="border-border mt-0.5 size-4 cursor-pointer rounded text-rose-600 focus:ring-rose-500"
+                />
+                <span className="text-foreground-secondary group-hover:text-foreground text-xs leading-tight font-bold transition">
+                  Saya mengonfirmasi bahwa rekaman log audit ini akan dihapus secara permanen dan
+                  tidak dapat dipulihkan.
+                </span>
+              </label>
+            </div>
           </div>
 
           {/* Footer Action Buttons */}
-          <AlertDialogFooter className="border-border m-0 flex flex-row items-center justify-end gap-2.5 rounded-none border-t bg-transparent p-0 pt-3">
+          <AlertDialogFooter className="border-border bg-muted/20 m-0 flex shrink-0 flex-row items-center justify-end gap-2.5 rounded-none border-t p-4 sm:p-5">
             <AlertDialogCancel
               disabled={isDeleting}
               className="border-border hover:border-foreground-muted cursor-pointer rounded-full px-4 text-xs font-bold"

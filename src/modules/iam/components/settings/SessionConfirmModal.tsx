@@ -43,9 +43,9 @@ export function SessionConfirmModal({
 
   return (
     <AlertDialog open={isOpen} onOpenChange={handleOpenChange}>
-      <AlertDialogContent className="border-border bg-surface max-w-lg gap-0 space-y-6 overflow-hidden p-6 sm:p-8 dark:bg-[#161715]">
+      <AlertDialogContent className="border-border bg-surface flex max-h-[92dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-lg dark:bg-[#161715]">
         {/* Header Icon & Title */}
-        <AlertDialogHeader className="flex flex-row items-center gap-3.5 text-left">
+        <AlertDialogHeader className="border-border flex shrink-0 flex-row items-center gap-3.5 border-b p-5 text-left sm:p-6">
           <div
             className={`flex size-11 shrink-0 items-center justify-center rounded-full border ${
               isLogoutAll
@@ -71,67 +71,70 @@ export function SessionConfirmModal({
           </div>
         </AlertDialogHeader>
 
-        {/* Warning Callout Box */}
-        <div
-          className={`space-y-2.5 rounded-lg border p-4 ${
-            isLogoutAll
-              ? "border-rose-500/20 bg-rose-500/5 dark:bg-rose-500/10"
-              : "border-amber-500/20 bg-amber-500/5 dark:bg-amber-500/10"
-          }`}
-        >
-          <div className="flex items-center gap-2 text-xs font-extrabold">
-            <span
-              className={
-                isLogoutAll
-                  ? "text-rose-700 dark:text-rose-400"
-                  : "text-amber-700 dark:text-amber-400"
-              }
-            >
-              ⚠️ Perhatian Keamanan Sesi:
-            </span>
+        {/* Scrollable Body Content */}
+        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-5 text-xs sm:p-6">
+          {/* Warning Callout Box */}
+          <div
+            className={`space-y-2.5 rounded-lg border p-4 ${
+              isLogoutAll
+                ? "border-rose-500/20 bg-rose-500/5 dark:bg-rose-500/10"
+                : "border-amber-500/20 bg-amber-500/5 dark:bg-amber-500/10"
+            }`}
+          >
+            <div className="flex items-center gap-2 text-xs font-extrabold">
+              <span
+                className={
+                  isLogoutAll
+                    ? "text-rose-700 dark:text-rose-400"
+                    : "text-amber-700 dark:text-amber-400"
+                }
+              >
+                ⚠️ Perhatian Keamanan Sesi:
+              </span>
+            </div>
+
+            <p className="text-foreground-secondary text-xs leading-relaxed font-medium">
+              {isLogoutAll ? (
+                <>
+                  Seluruh sesi login yang sedang aktif di browser atau perangkat lain akan{" "}
+                  <strong className="text-foreground font-bold">
+                    dikeluarkan seketika secara permanen
+                  </strong>
+                  . Sesi pada perangkat ini akan tetap aktif.
+                </>
+              ) : (
+                <>
+                  Sesi perangkat{" "}
+                  <strong className="text-foreground font-bold">
+                    {targetSession?.device || "terpilih"}
+                  </strong>{" "}
+                  ({targetSession?.ip || "IP Unknown"}) akan langsung dicabut dan pengguna pada
+                  perangkat tersebut wajib login ulang.
+                </>
+              )}
+            </p>
           </div>
 
-          <p className="text-foreground-secondary text-xs leading-relaxed font-medium">
-            {isLogoutAll ? (
-              <>
-                Seluruh sesi login yang sedang aktif di browser atau perangkat lain akan{" "}
-                <strong className="text-foreground font-bold">
-                  dikeluarkan seketika secara permanen
-                </strong>
-                . Sesi pada perangkat ini akan tetap aktif.
-              </>
-            ) : (
-              <>
-                Sesi perangkat{" "}
-                <strong className="text-foreground font-bold">
-                  {targetSession?.device || "terpilih"}
-                </strong>{" "}
-                ({targetSession?.ip || "IP Unknown"}) akan langsung dicabut dan pengguna pada
-                perangkat tersebut wajib login ulang.
-              </>
-            )}
-          </p>
+          {/* Target Details preview */}
+          {!isLogoutAll && targetSession && (
+            <div className="border-border bg-muted/30 flex items-center gap-3 rounded-lg border p-3">
+              <div className="bg-muted text-foreground-secondary flex size-8 items-center justify-center rounded-full">
+                <Smartphone className="size-4" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-foreground truncate text-xs font-bold">
+                  {targetSession.device}
+                </div>
+                <div className="text-foreground-muted truncate font-mono text-[11px]">
+                  IP: {targetSession.ip}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Target Details preview */}
-        {!isLogoutAll && targetSession && (
-          <div className="border-border bg-muted/30 flex items-center gap-3 rounded-lg border p-3">
-            <div className="bg-muted text-foreground-secondary flex size-8 items-center justify-center rounded-full">
-              <Smartphone className="size-4" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="text-foreground truncate text-xs font-bold">
-                {targetSession.device}
-              </div>
-              <div className="text-foreground-muted truncate font-mono text-[11px]">
-                IP: {targetSession.ip}
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Actions Button */}
-        <AlertDialogFooter className="border-border m-0 flex flex-col-reverse gap-3 rounded-none border-t bg-transparent p-0 pt-2 sm:flex-row sm:items-center sm:justify-end">
+        <AlertDialogFooter className="border-border bg-muted/20 m-0 flex shrink-0 flex-col-reverse gap-3 rounded-none border-t p-4 sm:flex-row sm:items-center sm:justify-end sm:p-5">
           <AlertDialogCancel
             disabled={isLoading}
             className="text-foreground border-border hover:bg-muted rounded-full text-xs font-bold"

@@ -88,9 +88,9 @@ export function LiveQRModal({ device, isOpen, onClose, onSuccess }: LiveQRModalP
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="border-border bg-surface max-h-[92vh] max-w-md gap-0 overflow-hidden p-0 dark:bg-[#161715]">
+      <DialogContent className="border-border bg-surface flex max-h-[92dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-md dark:bg-[#161715]">
         {/* Sticky Header */}
-        <DialogHeader className="border-border flex flex-row items-start justify-between border-b p-5 pb-4 text-left sm:p-6">
+        <DialogHeader className="border-border flex shrink-0 flex-row items-start justify-between border-b p-5 pb-4 text-left sm:p-6">
           <div className="space-y-1">
             <div className="bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green border-wise-green/30 mb-1 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-bold">
               <ShieldCheck className="size-3.5" />
@@ -110,7 +110,7 @@ export function LiveQRModal({ device, isOpen, onClose, onSuccess }: LiveQRModalP
 
         {/* Tab Switcher: QR Code vs Phone Pairing Code */}
         {status !== "AUTHENTICATED" && (
-          <div className="px-5 pt-4 pb-0 sm:px-6">
+          <div className="shrink-0 px-5 pt-4 pb-0 sm:px-6">
             <div className="bg-muted/60 border-border grid grid-cols-2 rounded-md border p-1 text-xs font-bold">
               <button
                 type="button"
@@ -141,7 +141,7 @@ export function LiveQRModal({ device, isOpen, onClose, onSuccess }: LiveQRModalP
         )}
 
         {/* Scrollable Body Content */}
-        <div className="flex-1 space-y-5 overflow-y-auto p-5 sm:p-6">
+        <div className="min-h-0 flex-1 space-y-5 overflow-y-auto p-5 sm:p-6">
           {/* Main Presentation Box */}
           <div className="border-border/80 flex min-h-60 flex-col items-center justify-center rounded-md border bg-zinc-100 p-5 dark:bg-[#10110e]">
             {status === "AUTHENTICATED" ? (
