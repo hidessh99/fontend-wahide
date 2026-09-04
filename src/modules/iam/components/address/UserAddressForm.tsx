@@ -72,7 +72,7 @@ export function UserAddressForm() {
 
   if (isLoadingInitial) {
     return (
-      <div className="border-border bg-surface space-y-4 rounded-xl border p-10 text-center shadow-xs dark:bg-[#161715]">
+      <div className="border-border bg-surface space-y-4 rounded-xl border p-10 text-center shadow-xs">
         <div className="dark:bg-wise-green/15 dark:text-wise-green mx-auto flex size-10 animate-spin items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
           <Loader2 className="size-5" />
         </div>
@@ -109,7 +109,7 @@ export function UserAddressForm() {
       )}
 
       {/* Header Info Status Card */}
-      <div className="border-border bg-surface rounded-xl border p-5 shadow-xs sm:p-6 dark:bg-[#161715]">
+      <div className="border-border bg-surface rounded-xl border p-5 shadow-xs sm:p-6">
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div className="flex items-start gap-3.5">
             <div className="dark:bg-wise-green/15 dark:text-wise-green mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
@@ -143,7 +143,7 @@ export function UserAddressForm() {
       {/* Main Address Form Container */}
       <form
         onSubmit={onFormSubmit}
-        className="border-border bg-surface space-y-6 rounded-xl border p-5 shadow-xs sm:p-8 dark:bg-[#161715]"
+        className="border-border bg-surface space-y-6 rounded-xl border p-5 shadow-xs sm:p-8"
       >
         <div className="grid grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2">
           {/* 1. Country / Negara */}

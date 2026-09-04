@@ -22,7 +22,7 @@ export default function GlobalAppError({
 
   return (
     <div className="bg-background text-foreground flex min-h-[80vh] items-center justify-center p-6">
-      <div className="border-border bg-surface animate-in fade-in zoom-in-95 w-full max-w-xl space-y-8 rounded-lg border p-8 text-center shadow-lg duration-200 sm:p-12 dark:bg-[#161715]">
+      <div className="border-border bg-surface animate-in fade-in zoom-in-95 w-full max-w-xl space-y-8 rounded-lg border p-8 text-center shadow-lg duration-200 sm:p-12">
         {/* Warning Icon & Badge */}
         <div className="space-y-3">
           <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400">

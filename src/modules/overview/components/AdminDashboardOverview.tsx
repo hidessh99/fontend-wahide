@@ -7,6 +7,7 @@ import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty";
+import { MetricCard } from "@/components/shared/MetricCard";
 import { useI18n } from "@/lib/i18n/context";
 import {
   Smartphone,
@@ -73,92 +74,72 @@ export function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
       {/* 4 Stat Overview Cards */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
         {/* Total Users & Tenants */}
-        <div className="border-border bg-surface space-y-2 rounded-xl border p-4 shadow-xs sm:p-5 dark:bg-[#161715]">
-          <div className="flex items-center justify-between">
-            <span className="text-foreground-muted text-xs font-bold tracking-wider uppercase">
-              {t("overview.adminPlatformUsers")}
+        <MetricCard
+          title={t("overview.adminPlatformUsers")}
+          icon={<Users className="size-4" />}
+          iconClassName="bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green"
+          value={t("overview.adminUserUnit", {
+            count: stats.total_users.toLocaleString(locale === "en" ? "en-US" : "id-ID"),
+          })}
+          subtitle={
+            <span className="text-foreground-muted block text-[11px] font-semibold">
+              {t("overview.adminTenantUnit", {
+                count: stats.total_tenants.toLocaleString(locale === "en" ? "en-US" : "id-ID"),
+              })}
             </span>
-            <div className="bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex size-8 items-center justify-center rounded-full">
-              <Users className="size-4" />
-            </div>
-          </div>
-          <div className="text-foreground text-2xl font-black tracking-tight">
-            {t("overview.adminUserUnit", {
-              count: stats.total_users.toLocaleString(locale === "en" ? "en-US" : "id-ID"),
-            })}
-          </div>
-          <span className="text-foreground-muted block text-[11px] font-semibold">
-            {t("overview.adminTenantUnit", {
-              count: stats.total_tenants.toLocaleString(locale === "en" ? "en-US" : "id-ID"),
-            })}
-          </span>
-        </div>
+          }
+        />
 
         {/* WhatsApp Nodes Platform-wide */}
-        <div className="border-border bg-surface space-y-2 rounded-xl border p-4 shadow-xs sm:p-5 dark:bg-[#161715]">
-          <div className="flex items-center justify-between">
-            <span className="text-foreground-muted text-xs font-bold tracking-wider uppercase">
-              {t("overview.adminGlobalNodes")}
+        <MetricCard
+          title={t("overview.adminGlobalNodes")}
+          icon={<Smartphone className="size-4" />}
+          iconClassName="bg-emerald-500/15 text-emerald-500"
+          value={t("overview.sessionUnit", {
+            connected: stats.connected_devices,
+            total: stats.total_devices,
+          })}
+          subtitle={
+            <span className="block text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+              {t("overview.adminMultiDeviceActive")}
             </span>
-            <div className="flex size-8 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-500">
-              <Smartphone className="size-4" />
-            </div>
-          </div>
-          <div className="text-foreground text-2xl font-black tracking-tight">
-            {t("overview.sessionUnit", {
-              connected: stats.connected_devices,
-              total: stats.total_devices,
-            })}
-          </div>
-          <span className="block text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
-            {t("overview.adminMultiDeviceActive")}
-          </span>
-        </div>
+          }
+        />
 
         {/* Messages Platform-wide */}
-        <div className="border-border bg-surface space-y-2 rounded-xl border p-4 shadow-xs sm:p-5 dark:bg-[#161715]">
-          <div className="flex items-center justify-between">
-            <span className="text-foreground-muted text-xs font-bold tracking-wider uppercase">
-              {t("overview.adminGatewayVolume")}
+        <MetricCard
+          title={t("overview.adminGatewayVolume")}
+          icon={<Send className="size-4" />}
+          iconClassName="bg-sky-500/15 text-sky-500"
+          value={stats.total_messages_sent.toLocaleString(locale === "en" ? "en-US" : "id-ID")}
+          subtitle={
+            <span className="text-foreground-muted block text-[11px] font-semibold">
+              {t("overview.adminCampaignCount", {
+                count: stats.total_campaigns.toLocaleString(locale === "en" ? "en-US" : "id-ID"),
+              })}
             </span>
-            <div className="flex size-8 items-center justify-center rounded-full bg-sky-500/15 text-sky-500">
-              <Send className="size-4" />
-            </div>
-          </div>
-          <div className="text-foreground text-2xl font-black tracking-tight">
-            {stats.total_messages_sent.toLocaleString(locale === "en" ? "en-US" : "id-ID")}
-          </div>
-          <span className="text-foreground-muted block text-[11px] font-semibold">
-            {t("overview.adminCampaignCount", {
-              count: stats.total_campaigns.toLocaleString(locale === "en" ? "en-US" : "id-ID"),
-            })}
-          </span>
-        </div>
+          }
+        />
 
         {/* Total Omset & Tickets */}
-        <div className="border-border bg-surface space-y-2 rounded-xl border p-4 shadow-xs sm:p-5 dark:bg-[#161715]">
-          <div className="flex items-center justify-between">
-            <span className="text-foreground-muted text-xs font-bold tracking-wider uppercase">
-              {t("overview.adminRevenueAndTickets")}
+        <MetricCard
+          title={t("overview.adminRevenueAndTickets")}
+          icon={<Wallet className="size-4" />}
+          iconClassName="bg-amber-500/15 text-amber-500"
+          value={`Rp ${stats.total_transactions.toLocaleString(locale === "en" ? "en-US" : "id-ID")}`}
+          subtitle={
+            <span className="block text-[11px] font-semibold text-amber-600 dark:text-amber-400">
+              {t("overview.adminActiveTickets", { count: stats.active_tickets })}
             </span>
-            <div className="flex size-8 items-center justify-center rounded-full bg-amber-500/15 text-amber-500">
-              <Wallet className="size-4" />
-            </div>
-          </div>
-          <div className="text-foreground text-2xl font-black tracking-tight">
-            Rp {stats.total_transactions.toLocaleString(locale === "en" ? "en-US" : "id-ID")}
-          </div>
-          <span className="block text-[11px] font-semibold text-amber-600 dark:text-amber-400">
-            {t("overview.adminActiveTickets", { count: stats.active_tickets })}
-          </span>
-        </div>
+          }
+        />
       </div>
 
       {/* Main 2-Column Split for Admin */}
       <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2">
         {/* Recent Registered Users */}
         <ErrorBoundary fallbackTitle="Gagal Memuat Pengguna Terbaru">
-          <div className="border-border bg-surface space-y-4 rounded-xl border p-4 shadow-xs sm:p-6 dark:bg-[#161715]">
+          <div className="border-border bg-surface space-y-4 rounded-xl border p-4 shadow-xs sm:p-6">
             <div className="border-border flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
                 <Users className="text-dark-green dark:text-wise-green size-4" />
@@ -208,7 +189,7 @@ export function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
 
         {/* Recent Transactions & Financial Overview */}
         <ErrorBoundary fallbackTitle="Gagal Memuat Transaksi Terbaru">
-          <div className="border-border bg-surface space-y-4 rounded-xl border p-4 shadow-xs sm:p-6 dark:bg-[#161715]">
+          <div className="border-border bg-surface space-y-4 rounded-xl border p-4 shadow-xs sm:p-6">
             <div className="border-border flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
                 <CreditCard className="text-dark-green dark:text-wise-green size-4" />

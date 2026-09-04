@@ -71,7 +71,7 @@ export function WebhookConfigCard({
   };
 
   return (
-    <div className="border-border bg-surface space-y-6 rounded-xl border p-6 shadow-sm sm:p-8 dark:bg-[#161715]">
+    <div className="border-border bg-surface space-y-6 rounded-xl border p-6 shadow-sm sm:p-8">
       {/* Header */}
       <div className="border-border flex flex-col justify-between gap-3 border-b pb-4 sm:flex-row sm:items-center">
         <div className="flex items-center gap-3">
@@ -200,7 +200,7 @@ export function WebhookConfigCard({
 
       {/* Confirmation Dialog for Secret Rotation */}
       <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
-        <AlertDialogContent className="border-border bg-surface flex max-h-[92dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-md dark:bg-[#161715]">
+        <AlertDialogContent className="border-border bg-surface flex max-h-[92dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-md">
           <AlertDialogHeader className="border-border flex shrink-0 flex-row items-center gap-3.5 border-b p-5 text-left sm:p-6">
             <div className="flex size-11 shrink-0 items-center justify-center rounded-full border border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-400">
               <AlertTriangle className="size-5.5" />

@@ -51,7 +51,7 @@ export function InvoiceReceiptModal({ isOpen, onClose, invoice }: InvoiceReceipt
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="border-border bg-surface flex max-h-[90dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-xl dark:bg-[#161715] print:max-h-full print:border-none print:shadow-none">
+      <DialogContent className="border-border bg-surface flex max-h-[90dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-xl print:max-h-full print:border-none print:shadow-none">
         {/* Sticky Modal Header (Hidden on Print) */}
         <DialogHeader className="border-border flex shrink-0 flex-row items-center gap-2.5 border-b p-4 text-left sm:p-5 print:hidden">
           <div className="bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex size-8 items-center justify-center rounded-full">

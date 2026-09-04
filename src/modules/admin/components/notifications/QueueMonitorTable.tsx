@@ -163,7 +163,7 @@ export function QueueMonitorTable({
   return (
     <div className="space-y-4">
       {/* Search & Filter Toolbar */}
-      <div className="border-border bg-surface rounded-xl border p-3.5 shadow-xs sm:p-4 dark:bg-[#161715]">
+      <div className="border-border bg-surface rounded-xl border p-3.5 shadow-xs sm:p-4">
         <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
           {/* Search Form */}
           <SearchInput
@@ -205,7 +205,7 @@ export function QueueMonitorTable({
       </div>
 
       {/* Queue Data Table & Mobile View */}
-      <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs dark:bg-[#161715]">
+      <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs">
         {isLoading ? (
           <div className="text-foreground-muted flex flex-col items-center justify-center space-y-3 py-16">
             <Loader2 className="dark:text-wise-green size-7 animate-spin text-emerald-600" />
@@ -226,7 +226,7 @@ export function QueueMonitorTable({
             {/* Mobile View: Cards (< 1024px) */}
             <div className="divide-border/60 divide-y lg:hidden">
               {sortedQueues.map((q) => (
-                <div key={q.id} className="bg-surface space-y-3 p-4 dark:bg-[#161715]">
+                <div key={q.id} className="bg-surface space-y-3 p-4">
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <span className="dark:text-wise-green mb-1 block w-fit rounded border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 font-mono text-[10px] font-black tracking-wider text-emerald-700 uppercase">

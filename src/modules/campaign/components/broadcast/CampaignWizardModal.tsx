@@ -194,7 +194,7 @@ export function CampaignWizardModal({ isOpen, onClose, onSubmit }: CampaignWizar
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && !isLoading && onClose()}>
-      <DialogContent className="border-border bg-surface flex max-h-[90dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden p-0 sm:max-w-2xl dark:bg-[#161715]">
+      <DialogContent className="border-border bg-surface flex max-h-[90dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden p-0 sm:max-w-2xl">
         {/* Sticky Header with Step Tracker */}
         <DialogHeader className="border-border/80 shrink-0 space-y-3 border-b p-4 pb-3 text-left sm:p-6">
           <div>
@@ -578,7 +578,7 @@ export function CampaignWizardModal({ isOpen, onClose, onSubmit }: CampaignWizar
         </div>
 
         {/* Sticky Footer Navigation */}
-        <DialogFooter className="border-border/80 bg-surface/90 m-0 flex shrink-0 flex-row items-center justify-between gap-2.5 rounded-none border-t p-3.5 backdrop-blur-sm sm:p-5 dark:bg-[#161715]/90">
+        <DialogFooter className="border-border/80 bg-surface/90 m-0 flex shrink-0 flex-row items-center justify-between gap-2.5 rounded-none border-t p-3.5 backdrop-blur-sm sm:p-5/90">
           {step > 1 ? (
             <Button
               type="button"

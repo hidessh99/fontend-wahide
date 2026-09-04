@@ -136,7 +136,7 @@ export function BillingView() {
       </div>
 
       {/* Filter Toolbar (Search Submit & Horizontal Scrollable Status Filters) */}
-      <div className="border-border bg-surface space-y-3 rounded-xl border p-3.5 shadow-xs sm:space-y-4 sm:p-4 dark:bg-[#161715]">
+      <div className="border-border bg-surface space-y-3 rounded-xl border p-3.5 shadow-xs sm:space-y-4 sm:p-4">
         {/* Top Row: Search Form + Refresh Button */}
         <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
           <div className="w-full flex-1 sm:max-w-lg">

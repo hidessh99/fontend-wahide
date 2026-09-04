@@ -390,7 +390,7 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
         {/* Left Column: Thread Timeline & Composer (Col-Span 8) */}
         <div className="space-y-6 lg:col-span-8">
           {/* Initial Message Card */}
-          <div className="border-border bg-surface overflow-hidden rounded-md border shadow-xs dark:bg-[#161715]">
+          <div className="border-border bg-surface overflow-hidden rounded-md border shadow-xs">
             <div className="border-border/60 bg-muted/30 flex items-center justify-between gap-3 border-b p-4 text-xs sm:p-5">
               <div className="flex items-center gap-2">
                 <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-7 items-center justify-center rounded-full bg-emerald-500/10 font-bold text-emerald-700">
@@ -454,7 +454,7 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
               className={`overflow-hidden rounded-md border shadow-xs ${
                 reply.isStaff
                   ? "border-wise-green/30 bg-wise-green/5 dark:bg-wise-green/5"
-                  : "border-border bg-surface dark:bg-[#161715]"
+                  : "border-border bg-surface"
               }`}
             >
               <div
@@ -529,7 +529,7 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
 
           {/* Reply Composer Section */}
           {ticket.status !== "CLOSED" ? (
-            <div className="border-border bg-surface space-y-4 rounded-xl border p-5 shadow-xs sm:p-6 dark:bg-[#161715]">
+            <div className="border-border bg-surface space-y-4 rounded-xl border p-5 shadow-xs sm:p-6">
               <div className="border-border flex items-center justify-between border-b pb-3">
                 <h3 className="text-foreground text-sm font-bold">{t("support.replyToTicket")}</h3>
               </div>
@@ -660,7 +660,7 @@ export function TicketDetailView({ ticketId }: TicketDetailViewProps) {
 
         {/* Right Column: Sticky Ticket Details Sidebar (Col-Span 4) */}
         <div className="lg:col-span-4">
-          <div className="border-border bg-surface sticky top-6 space-y-5 rounded-md border p-5 shadow-xs dark:bg-[#161715]">
+          <div className="border-border bg-surface sticky top-6 space-y-5 rounded-md border p-5 shadow-xs">
             <h3 className="text-foreground border-border border-b pb-3 text-sm font-bold">
               {t("support.ticketDetailsTitle")}
             </h3>

@@ -202,7 +202,7 @@ export function UserActivityForm({
   return (
     <div className="space-y-4">
       {/* Toolbar Section: Search Bar & Filter Chips */}
-      <div className="border-border bg-surface space-y-3 rounded-xl border p-4 shadow-xs dark:bg-[#161715]">
+      <div className="border-border bg-surface space-y-3 rounded-xl border p-4 shadow-xs">
         <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
           {/* Search Form */}
           <div className="w-full flex-1 sm:max-w-lg">
@@ -261,7 +261,7 @@ export function UserActivityForm({
       </div>
 
       {/* Activities Table Container */}
-      <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs dark:bg-[#161715]">
+      <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs">
         {isLoading ? (
           <div className="space-y-3 p-12 text-center">
             <div className="dark:bg-wise-green/15 dark:text-wise-green mx-auto flex size-9 animate-spin items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
@@ -299,7 +299,7 @@ export function UserActivityForm({
               {activities.map((act) => {
                 const { fullHuman } = formatHumanActivityDate(act.createdAt, locale);
                 return (
-                  <div key={act.id} className="bg-surface space-y-2.5 p-4 dark:bg-[#161715]">
+                  <div key={act.id} className="bg-surface space-y-2.5 p-4">
                     <div className="flex items-center justify-between gap-2">
                       {renderTypeBadge(act.activityType || act.type)}
                       <span className="bg-muted text-foreground-muted rounded px-1.5 py-0.5 font-mono text-[9px]">

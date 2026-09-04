@@ -27,7 +27,7 @@ export function TermsView() {
       </div>
 
       {/* Official Identity Card */}
-      <div className="p-6 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-4 shadow-sm">
+      <div className="p-6 rounded-md border border-border bg-surface space-y-4 shadow-sm">
         <h2 className="text-sm font-bold uppercase tracking-wider text-foreground-muted">
           {t("legal.companyInfoTitle")}
         </h2>
@@ -65,7 +65,7 @@ export function TermsView() {
       {/* Terms Articles */}
       <div className="space-y-8 text-xs sm:text-sm font-semibold text-foreground-secondary leading-relaxed">
         {/* Pasal 1 */}
-        <section className="space-y-3 p-6 rounded-md border border-border bg-surface dark:bg-[#161715]">
+        <section className="space-y-3 p-6 rounded-md border border-border bg-surface">
           <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
             <span className="size-6 rounded-full bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center text-xs font-mono font-bold">1</span>
             <span>Ketentuan Umum &amp; Penerimaan Perjanjian</span>
@@ -76,7 +76,7 @@ export function TermsView() {
         </section>
 
         {/* Pasal 2 */}
-        <section className="space-y-3 p-6 rounded-md border border-border bg-surface dark:bg-[#161715]">
+        <section className="space-y-3 p-6 rounded-md border border-border bg-surface">
           <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
             <span className="size-6 rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xs font-mono font-bold">2</span>
             <span>Kebijakan Penggunaan Wajar (AUP) &amp; Larangan Keras</span>
@@ -102,7 +102,7 @@ export function TermsView() {
         </section>
 
         {/* Pasal 3 */}
-        <section className="space-y-3 p-6 rounded-md border border-border bg-surface dark:bg-[#161715]">
+        <section className="space-y-3 p-6 rounded-md border border-border bg-surface">
           <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
             <span className="size-6 rounded-full bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center text-xs font-mono font-bold">3</span>
             <span>Kepatuhan terhadap Kebijakan WhatsApp / Meta</span>
@@ -113,7 +113,7 @@ export function TermsView() {
         </section>
 
         {/* Pasal 4 */}
-        <section className="space-y-3 p-6 rounded-md border border-border bg-surface dark:bg-[#161715]">
+        <section className="space-y-3 p-6 rounded-md border border-border bg-surface">
           <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
             <span className="size-6 rounded-full bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center text-xs font-mono font-bold">4</span>
             <span>Komitmen SLA Ketersediaan Sistem (99.9% Uptime)</span>
@@ -124,7 +124,7 @@ export function TermsView() {
         </section>
 
         {/* Pasal 5 */}
-        <section className="space-y-3 p-6 rounded-md border border-border bg-surface dark:bg-[#161715]">
+        <section className="space-y-3 p-6 rounded-md border border-border bg-surface">
           <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
             <span className="size-6 rounded-full bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center text-xs font-mono font-bold">5</span>
             <span>Paket Langganan, Deposit Saldo, &amp; Kebijakan Kuota</span>
@@ -135,7 +135,7 @@ export function TermsView() {
         </section>
 
         {/* Pasal 6 */}
-        <section className="space-y-3 p-6 rounded-md border border-border bg-surface dark:bg-[#161715]">
+        <section className="space-y-3 p-6 rounded-md border border-border bg-surface">
           <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
             <span className="size-6 rounded-full bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center text-xs font-mono font-bold">6</span>
             <span>Batasan Tanggung Jawab (*Limitation of Liability*)</span>
@@ -146,7 +146,7 @@ export function TermsView() {
         </section>
 
         {/* Pasal 7 */}
-        <section className="space-y-3 p-6 rounded-md border border-border bg-surface dark:bg-[#161715]">
+        <section className="space-y-3 p-6 rounded-md border border-border bg-surface">
           <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
             <span className="size-6 rounded-full bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center text-xs font-mono font-bold">7</span>
             <span>Hukum yang Berlaku &amp; Penyelesaian Sengketa</span>

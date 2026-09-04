@@ -124,7 +124,7 @@ export function TeamView() {
       </div>
 
       {/* Filter & Search Toolbar */}
-      <div className="border-border bg-surface flex flex-col justify-between gap-3 rounded-xl border p-3.5 shadow-xs sm:flex-row sm:items-center sm:p-4 dark:bg-[#161715]">
+      <div className="border-border bg-surface flex flex-col justify-between gap-3 rounded-xl border p-3.5 shadow-xs sm:flex-row sm:items-center sm:p-4">
         <div className="w-full flex-1 sm:max-w-lg">
           <SearchInput
             value={searchInput}
@@ -158,7 +158,7 @@ export function TeamView() {
 
       {/* Agents Table with Error Boundary */}
       <ErrorBoundary fallbackTitle="Gagal Memuat Daftar Tim Staf Agen">
-        <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs dark:bg-[#161715]">
+        <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs">
           {paginatedAgents.length === 0 ? (
             <EmptyState
               icon={<Users className="size-8" />}
@@ -176,7 +176,7 @@ export function TeamView() {
                 {paginatedAgents.map((agt) => (
                   <div
                     key={agt.id}
-                    className="bg-surface space-y-2.5 p-3.5 sm:p-4 dark:bg-[#161715]"
+                    className="bg-surface space-y-2.5 p-3.5 sm:p-4"
                   >
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex min-w-0 items-center gap-2">

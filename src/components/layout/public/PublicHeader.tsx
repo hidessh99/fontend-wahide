@@ -107,7 +107,7 @@ export function PublicHeader() {
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-b border-border bg-surface dark:bg-[#161715] px-6 py-6 space-y-4 animate-in slide-in-from-top-2 duration-200 shadow-xl">
+        <div className="lg:hidden border-b border-border bg-surface px-6 py-6 space-y-4 animate-in slide-in-from-top-2 duration-200 shadow-xl">
           <nav className="flex flex-col gap-1 text-sm font-bold text-foreground">
             <Link
               href="/#features"

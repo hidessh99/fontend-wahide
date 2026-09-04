@@ -49,7 +49,7 @@ export function AboutView() {
           return (
             <div
               key={idx}
-              className="p-5 sm:p-6 rounded-md border border-border bg-surface dark:bg-[#161715] text-center space-y-2 shadow-sm"
+              className="p-5 sm:p-6 rounded-md border border-border bg-surface text-center space-y-2 shadow-sm"
             >
               <Icon className="size-5 text-dark-green dark:text-wise-green mx-auto" />
               <div className="text-2xl sm:text-3xl font-black text-foreground font-mono">
@@ -65,7 +65,7 @@ export function AboutView() {
 
       {/* Vision & Mission */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="p-6 sm:p-8 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-4 shadow-sm">
+        <div className="p-6 sm:p-8 rounded-md border border-border bg-surface space-y-4 shadow-sm">
           <div className="inline-flex items-center gap-2 text-dark-green dark:text-wise-green font-bold text-xs uppercase tracking-wider">
             <Sparkles className="size-4" />
             <span>{t("about.visionTitle")}</span>
@@ -78,7 +78,7 @@ export function AboutView() {
           </p>
         </div>
 
-        <div className="p-6 sm:p-8 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-4 shadow-sm">
+        <div className="p-6 sm:p-8 rounded-md border border-border bg-surface space-y-4 shadow-sm">
           <div className="inline-flex items-center gap-2 text-dark-green dark:text-wise-green font-bold text-xs uppercase tracking-wider">
             <CheckCircle2 className="size-4" />
             <span>{t("about.missionTitle")}</span>
@@ -112,7 +112,7 @@ export function AboutView() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-6 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-3">
+          <div className="p-6 rounded-md border border-border bg-surface space-y-3">
             <div className="size-10 rounded-full bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center">
               <Cpu className="size-5" />
             </div>
@@ -124,7 +124,7 @@ export function AboutView() {
             </p>
           </div>
 
-          <div className="p-6 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-3">
+          <div className="p-6 rounded-md border border-border bg-surface space-y-3">
             <div className="size-10 rounded-full bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center">
               <Zap className="size-5" />
             </div>
@@ -136,7 +136,7 @@ export function AboutView() {
             </p>
           </div>
 
-          <div className="p-6 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-3">
+          <div className="p-6 rounded-md border border-border bg-surface space-y-3">
             <div className="size-10 rounded-full bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center">
               <ShieldCheck className="size-5" />
             </div>
@@ -151,7 +151,7 @@ export function AboutView() {
       </div>
 
       {/* Office & Headquarters Card */}
-      <div className="p-6 sm:p-8 rounded-md border border-border bg-surface dark:bg-[#161715] shadow-sm space-y-6">
+      <div className="p-6 sm:p-8 rounded-md border border-border bg-surface shadow-sm space-y-6">
         <div className="space-y-1">
           <h2 className="text-xl sm:text-2xl font-black text-foreground">
             {t("about.officeTitle")}

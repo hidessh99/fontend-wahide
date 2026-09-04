@@ -86,7 +86,7 @@ export function DeviceList() {
     <div className="space-y-6">
       {/* Top Action Bar & Stat Cards */}
       <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-4">
-        <div className="border-border bg-surface flex items-center gap-2.5 rounded-xl border p-3 shadow-xs sm:gap-3 sm:p-4 dark:bg-[#161715]">
+        <div className="border-border bg-surface flex items-center gap-2.5 rounded-xl border p-3 shadow-xs sm:gap-3 sm:p-4">
           <div className="bg-muted text-foreground-secondary flex size-8.5 shrink-0 items-center justify-center rounded-full sm:size-10">
             <Server className="size-4 sm:size-5" />
           </div>
@@ -98,7 +98,7 @@ export function DeviceList() {
           </div>
         </div>
 
-        <div className="border-border bg-surface flex items-center gap-2.5 rounded-xl border p-3 shadow-xs sm:gap-3 sm:p-4 dark:bg-[#161715]">
+        <div className="border-border bg-surface flex items-center gap-2.5 rounded-xl border p-3 shadow-xs sm:gap-3 sm:p-4">
           <div className="flex size-8.5 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500 sm:size-10">
             <CheckCircle2 className="size-4 sm:size-5" />
           </div>
@@ -112,7 +112,7 @@ export function DeviceList() {
           </div>
         </div>
 
-        <div className="border-border bg-surface flex items-center gap-2.5 rounded-xl border p-3 shadow-xs sm:gap-3 sm:p-4 dark:bg-[#161715]">
+        <div className="border-border bg-surface flex items-center gap-2.5 rounded-xl border p-3 shadow-xs sm:gap-3 sm:p-4">
           <div className="flex size-8.5 shrink-0 items-center justify-center rounded-full bg-rose-500/10 text-rose-500 sm:size-10">
             <XCircle className="size-4 sm:size-5" />
           </div>
@@ -126,7 +126,7 @@ export function DeviceList() {
           </div>
         </div>
 
-        <div className="border-border bg-surface flex items-center gap-2.5 rounded-xl border p-3 shadow-xs sm:gap-3 sm:p-4 dark:bg-[#161715]">
+        <div className="border-border bg-surface flex items-center gap-2.5 rounded-xl border p-3 shadow-xs sm:gap-3 sm:p-4">
           <div className="flex size-8.5 shrink-0 items-center justify-center rounded-full bg-sky-500/10 text-sky-500 sm:size-10">
             <Moon className="size-4 sm:size-5" />
           </div>
@@ -142,7 +142,7 @@ export function DeviceList() {
       </div>
 
       {/* Filter Toolbar & Actions */}
-      <div className="border-border bg-surface space-y-3 rounded-xl border p-3.5 shadow-xs sm:space-y-4 sm:p-4 dark:bg-[#161715]">
+      <div className="border-border bg-surface space-y-3 rounded-xl border p-3.5 shadow-xs sm:space-y-4 sm:p-4">
         {/* Top Row: Search Bar & Action Buttons */}
         <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
           {/* Search Input */}
@@ -237,7 +237,7 @@ export function DeviceList() {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="border-border bg-surface h-56 space-y-4 rounded-xl border p-5 sm:p-6 dark:bg-[#161715]"
+              className="border-border bg-surface h-56 space-y-4 rounded-xl border p-5 sm:p-6"
             >
               <div className="flex items-center justify-between">
                 <Skeleton className="size-10 rounded-full" />

@@ -46,7 +46,7 @@ export function BlogListView() {
           {posts.map((post) => (
             <article
               key={post.id}
-              className="p-6 rounded-md border border-border bg-surface dark:bg-[#161715] flex flex-col justify-between space-y-4 hover:border-foreground-muted transition shadow-sm"
+              className="p-6 rounded-md border border-border bg-surface flex flex-col justify-between space-y-4 hover:border-foreground-muted transition shadow-sm"
             >
               <div className="space-y-3">
                 {/* Tags */}

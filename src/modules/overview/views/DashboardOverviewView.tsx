@@ -68,7 +68,7 @@ function DashboardSkeleton() {
         {[1, 2, 3, 4].map((i) => (
           <div
             key={i}
-            className="border-border bg-surface space-y-3 rounded-xl border p-4 sm:p-5 dark:bg-[#161715]"
+            className="border-border bg-surface space-y-3 rounded-xl border p-4 sm:p-5"
           >
             <div className="flex items-center justify-between">
               <Skeleton className="h-3 w-24 rounded" />
@@ -85,7 +85,7 @@ function DashboardSkeleton() {
         {[1, 2].map((i) => (
           <div
             key={i}
-            className="border-border bg-surface space-y-4 rounded-xl border p-4 sm:p-6 dark:bg-[#161715]"
+            className="border-border bg-surface space-y-4 rounded-xl border p-4 sm:p-6"
           >
             <Skeleton className="h-5 w-40 rounded" />
             <div className="space-y-2.5">

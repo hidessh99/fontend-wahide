@@ -56,7 +56,7 @@ export function HomeView() {
       {/* 1. Hero Section */}
       <section className="mx-auto max-w-5xl px-4 sm:px-6">
         <div className="space-y-6 sm:space-y-8">
-          <div className="bg-surface border-border inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-bold shadow-xs dark:bg-[#161715]">
+          <div className="bg-surface border-border inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-bold shadow-xs">
             <span className="bg-wise-green h-2 w-2 animate-pulse rounded-full" />
             <span>{t("common.hero.badge")}</span>
           </div>
@@ -99,7 +99,7 @@ export function HomeView() {
 
         {/* Key Metrics Bento Grid */}
         <div className="border-border/80 mt-12 grid grid-cols-2 gap-3.5 border-t pt-8 sm:gap-4 lg:grid-cols-4">
-          <div className="bg-surface border-border space-y-1 rounded-lg border p-4 shadow-xs sm:p-5 dark:bg-[#161715]">
+          <div className="bg-surface border-border space-y-1 rounded-lg border p-4 shadow-xs sm:p-5">
             <p className="text-foreground-muted text-[11px] font-bold tracking-wider uppercase">
               {t("common.metrics.deviceScale")}
             </p>
@@ -109,7 +109,7 @@ export function HomeView() {
             </p>
           </div>
 
-          <div className="bg-surface border-border space-y-1 rounded-lg border p-4 shadow-xs sm:p-5 dark:bg-[#161715]">
+          <div className="bg-surface border-border space-y-1 rounded-lg border p-4 shadow-xs sm:p-5">
             <p className="text-foreground-muted text-[11px] font-bold tracking-wider uppercase">
               {t("common.metrics.ramSavings")}
             </p>
@@ -121,7 +121,7 @@ export function HomeView() {
             </p>
           </div>
 
-          <div className="bg-surface border-border space-y-1 rounded-lg border p-4 shadow-xs sm:p-5 dark:bg-[#161715]">
+          <div className="bg-surface border-border space-y-1 rounded-lg border p-4 shadow-xs sm:p-5">
             <p className="text-foreground-muted text-[11px] font-bold tracking-wider uppercase">
               {t("common.metrics.wakeupLatency")}
             </p>
@@ -131,7 +131,7 @@ export function HomeView() {
             </p>
           </div>
 
-          <div className="bg-surface border-border space-y-1 rounded-lg border p-4 shadow-xs sm:p-5 dark:bg-[#161715]">
+          <div className="bg-surface border-border space-y-1 rounded-lg border p-4 shadow-xs sm:p-5">
             <p className="text-foreground-muted text-[11px] font-bold tracking-wider uppercase">
               {t("common.metrics.antiBan")}
             </p>
@@ -225,7 +225,7 @@ export function HomeView() {
           ].map((feat, i) => (
             <div
               key={i}
-              className="border-border bg-surface hover:border-wise-green/50 space-y-2.5 rounded-lg border p-5 shadow-xs transition duration-150 sm:p-6 dark:bg-[#161715]"
+              className="border-border bg-surface hover:border-wise-green/50 space-y-2.5 rounded-lg border p-5 shadow-xs transition duration-150 sm:p-6"
             >
               <div className="bg-wise-green/15 text-dark-green dark:text-wise-green flex size-9 items-center justify-center rounded-full">
                 <feat.icon className="size-4.5" />
@@ -256,7 +256,7 @@ export function HomeView() {
 
         <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-3">
           {/* Plan 1: Starter Free Trial */}
-          <div className="border-border bg-surface flex flex-col justify-between space-y-6 rounded-lg border p-6 shadow-xs sm:p-7 dark:bg-[#161715]">
+          <div className="border-border bg-surface flex flex-col justify-between space-y-6 rounded-lg border p-6 shadow-xs sm:p-7">
             <div className="space-y-4">
               <div>
                 <h3 className="text-foreground text-base font-black sm:text-lg">
@@ -361,7 +361,7 @@ export function HomeView() {
           </div>
 
           {/* Plan 3: Enterprise Gateway */}
-          <div className="border-border bg-surface flex flex-col justify-between space-y-6 rounded-lg border p-6 shadow-xs sm:p-7 dark:bg-[#161715]">
+          <div className="border-border bg-surface flex flex-col justify-between space-y-6 rounded-lg border p-6 shadow-xs sm:p-7">
             <div className="space-y-4">
               <div>
                 <h3 className="text-foreground text-base font-black sm:text-lg">

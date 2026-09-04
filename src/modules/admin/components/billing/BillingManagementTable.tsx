@@ -154,7 +154,7 @@ export function BillingManagementTable() {
     <div className="space-y-6">
       {/* Summary Metrics Strip */}
       <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-        <div className="border-border bg-surface rounded-xl border p-4 shadow-xs dark:bg-[#161715]">
+        <div className="border-border bg-surface rounded-xl border p-4 shadow-xs">
           <div className="text-foreground-muted mb-1 flex items-center justify-between">
             <span className="text-[11px] font-bold tracking-wider uppercase">
               {t("admin.billing.metricPaidTotal")}
@@ -169,7 +169,7 @@ export function BillingManagementTable() {
           </span>
         </div>
 
-        <div className="border-border bg-surface rounded-xl border p-4 shadow-xs dark:bg-[#161715]">
+        <div className="border-border bg-surface rounded-xl border p-4 shadow-xs">
           <div className="text-foreground-muted mb-1 flex items-center justify-between">
             <span className="text-[11px] font-bold tracking-wider uppercase">
               {t("admin.billing.metricPendingTotal")}
@@ -184,7 +184,7 @@ export function BillingManagementTable() {
           </span>
         </div>
 
-        <div className="border-border bg-surface rounded-xl border p-4 shadow-xs dark:bg-[#161715]">
+        <div className="border-border bg-surface rounded-xl border p-4 shadow-xs">
           <div className="text-foreground-muted mb-1 flex items-center justify-between">
             <span className="text-[11px] font-bold tracking-wider uppercase">
               {t("admin.billing.metricClosedTotal")}
@@ -199,7 +199,7 @@ export function BillingManagementTable() {
           </span>
         </div>
 
-        <div className="border-border bg-surface rounded-xl border p-4 shadow-xs dark:bg-[#161715]">
+        <div className="border-border bg-surface rounded-xl border p-4 shadow-xs">
           <div className="text-foreground-muted mb-1 flex items-center justify-between">
             <span className="text-[11px] font-bold tracking-wider uppercase">
               {t("admin.billing.metricTotalTransactions")}
@@ -216,7 +216,7 @@ export function BillingManagementTable() {
       </div>
 
       {/* Search & Status Filter Toolbar */}
-      <div className="border-border bg-surface space-y-3 rounded-xl border p-3.5 shadow-xs sm:p-4 dark:bg-[#161715]">
+      <div className="border-border bg-surface space-y-3 rounded-xl border p-3.5 shadow-xs sm:p-4">
         <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
           {/* Search Form */}
           <SearchInput
@@ -261,7 +261,7 @@ export function BillingManagementTable() {
       </div>
 
       {/* Billings Data Table & Mobile View */}
-      <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs dark:bg-[#161715]">
+      <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs">
         {isLoading ? (
           <div className="text-foreground-muted flex flex-col items-center justify-center space-y-3 py-16">
             <Loader2 className="dark:text-wise-green size-7 animate-spin text-emerald-600" />
@@ -287,7 +287,7 @@ export function BillingManagementTable() {
                 const canChangeStatus = b.status === "PENDING" || b.status === "PROCESSING";
 
                 return (
-                  <div key={b.id} className="bg-surface space-y-3 p-4 dark:bg-[#161715]">
+                  <div key={b.id} className="bg-surface space-y-3 p-4">
                     {/* Header: User & Status */}
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex min-w-0 items-center gap-2.5">

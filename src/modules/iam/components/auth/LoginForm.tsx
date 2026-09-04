@@ -1,10 +1,12 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { TurnstileWidget } from "@/components/ui/TurnstileWidget";
+import { Alert } from "@/components/ui/alert";
+import { Spinner } from "@/components/ui/spinner";
+import { TurnstileWidget } from "@/components/shared/TurnstileWidget";
 import { TurnstileInstance } from "@marsidev/react-turnstile";
 import { loginSchema, LoginInput } from "@/modules/iam/schemas/auth.schema";
 import { useAuth } from "@/modules/iam/hooks/useAuth";
@@ -18,7 +20,6 @@ import {
   ArrowRight,
   AlertCircle,
   CheckCircle2,
-  Loader2,
 } from "lucide-react";
 
 export function LoginForm() {
@@ -102,24 +103,24 @@ export function LoginForm() {
 
       <form onSubmit={handleSubmit} className="space-y-5">
         {isRegistered && !error && (
-          <div className="flex items-center gap-3 rounded-md border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-300">
-            <CheckCircle2 className="size-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+          <Alert variant="success">
+            <CheckCircle2 className="size-5 shrink-0" />
             <span>{t("auth.login.registrationSuccess")}</span>
-          </div>
+          </Alert>
         )}
 
         {isSessionExpired && !error && !isRegistered && (
-          <div className="flex items-center gap-3 rounded-md border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-800 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-300">
-            <AlertCircle className="size-5 shrink-0 text-amber-600 dark:text-amber-400" />
+          <Alert variant="warning">
+            <AlertCircle className="size-5 shrink-0" />
             <span>{t("auth.login.sessionExpiredNotice")}</span>
-          </div>
+          </Alert>
         )}
 
         {error && (
-          <div className="flex items-center gap-3 rounded-md border border-rose-200 bg-rose-50 p-4 text-sm font-semibold text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-300">
+          <Alert variant="destructive">
             <AlertCircle className="size-5 shrink-0" />
             <span>{error}</span>
-          </div>
+          </Alert>
         )}
 
         <div className="space-y-4">
@@ -136,7 +137,7 @@ export function LoginForm() {
                 onChange={handleChange}
                 placeholder={t("auth.login.emailPlaceholder")}
                 disabled={isLoading}
-                className={`bg-surface text-foreground h-13 w-full rounded-full border pr-4 pl-12 font-semibold dark:bg-[#161715] ${
+                className={`bg-surface text-foreground h-13 w-full rounded-full border pr-4 pl-12 font-semibold ${
                   fieldErrors.email
                     ? "border-rose-500 ring-1 ring-rose-500"
                     : "border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green focus:ring-2"
@@ -171,7 +172,7 @@ export function LoginForm() {
                 onChange={handleChange}
                 placeholder={t("auth.login.passwordPlaceholder")}
                 disabled={isLoading}
-                className={`bg-surface text-foreground h-13 w-full rounded-full border pr-12 pl-12 font-semibold dark:bg-[#161715] ${
+                className={`bg-surface text-foreground h-13 w-full rounded-full border pr-12 pl-12 font-semibold ${
                   fieldErrors.password
                     ? "border-rose-500 ring-1 ring-rose-500"
                     : "border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green focus:ring-2"
@@ -180,8 +181,9 @@ export function LoginForm() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="text-foreground-muted hover:text-foreground hover:bg-muted absolute top-1/2 right-2 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full transition"
-                aria-label={showPassword ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}
+                tabIndex={-1}
+                className="text-foreground-muted hover:text-foreground absolute top-1/2 right-4 -translate-y-1/2 cursor-pointer p-1"
+                aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
               >
                 {showPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
               </button>
@@ -209,7 +211,7 @@ export function LoginForm() {
           </label>
         </div>
 
-        {/* Cloudflare Turnstile CAPTCHA Protection */}
+        {/* Turnstile Protection */}
         <TurnstileWidget
           ref={turnstileRef}
           onVerify={(token) => setFormData((prev) => ({ ...prev, turnstileToken: token }))}
@@ -226,7 +228,7 @@ export function LoginForm() {
         >
           {isLoading ? (
             <>
-              <Loader2 className="size-5 animate-spin" />
+              <Spinner className="size-5" />
               <span>{t("auth.login.loadingButton")}</span>
             </>
           ) : (

@@ -236,7 +236,7 @@ export function UserActivitiesTable({
   return (
     <div className="w-full min-w-0 space-y-4">
       {/* Toolbar Section: Search Bar & Filter Chips */}
-      <div className="border-border bg-surface w-full min-w-0 space-y-3 overflow-hidden rounded-xl border p-3.5 shadow-xs sm:p-4 dark:bg-[#161715]">
+      <div className="border-border bg-surface w-full min-w-0 space-y-3 overflow-hidden rounded-xl border p-3.5 shadow-xs sm:p-4">
         <div className="flex w-full min-w-0 flex-col justify-between gap-3 sm:flex-row sm:items-center">
           {/* Search Form */}
           <div className="w-full flex-1 sm:max-w-lg">
@@ -300,7 +300,7 @@ export function UserActivitiesTable({
       </div>
 
       {/* Activities Table Container */}
-      <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs dark:bg-[#161715]">
+      <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs">
         {isLoading ? (
           <div className="space-y-3 p-12 text-center">
             <div className="mx-auto flex size-9 animate-spin items-center justify-center rounded-full bg-rose-500/15 text-rose-600">
@@ -340,7 +340,7 @@ export function UserActivitiesTable({
                 return (
                   <div
                     key={act.id}
-                    className="bg-surface w-full min-w-0 space-y-2.5 p-4 dark:bg-[#161715]"
+                    className="bg-surface w-full min-w-0 space-y-2.5 p-4"
                   >
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex min-w-0 items-center gap-2">

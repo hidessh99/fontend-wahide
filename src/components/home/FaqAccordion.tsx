@@ -1,12 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { useI18n } from "@/lib/i18n/context";
-import { HelpCircle, ChevronDown } from "lucide-react";
+import { HelpCircle } from "lucide-react";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
 
 export function FaqAccordion() {
   const { t } = useI18n();
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   const faqs = [
     {
@@ -31,10 +36,6 @@ export function FaqAccordion() {
     },
   ];
 
-  const toggleFaq = (idx: number) => {
-    setOpenIndex(openIndex === idx ? null : idx);
-  };
-
   return (
     <div className="mx-auto max-w-4xl space-y-8">
       {/* Section Header */}
@@ -52,35 +53,23 @@ export function FaqAccordion() {
       </div>
 
       {/* Accordion List */}
-      <div className="space-y-3">
-        {faqs.map((item, idx) => {
-          const isOpen = openIndex === idx;
-          return (
-            <div
-              key={idx}
-              className="border-border bg-surface overflow-hidden rounded-md border shadow-xs transition dark:bg-[#161715]"
-            >
-              <button
-                onClick={() => toggleFaq(idx)}
-                className="text-foreground hover:text-dark-green dark:hover:text-wise-green flex w-full items-center justify-between gap-4 p-5 text-left text-sm font-bold transition sm:p-6 sm:text-base"
-              >
-                <span>{item.q}</span>
-                <ChevronDown
-                  className={`text-foreground-muted size-4 shrink-0 transition-transform duration-200 ${
-                    isOpen ? "text-dark-green dark:text-wise-green rotate-180" : ""
-                  }`}
-                />
-              </button>
+      <Accordion defaultValue={["faq-0"]} className="space-y-3">
+        {faqs.map((item, idx) => (
+          <AccordionItem
+            key={idx}
+            value={`faq-${idx}`}
+            className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs transition not-last:border-b"
+          >
+            <AccordionTrigger className="text-foreground hover:text-dark-green dark:hover:text-wise-green flex w-full items-center justify-between gap-4 p-5 text-left text-sm font-bold transition sm:p-6 sm:text-base hover:no-underline">
+              <span>{item.q}</span>
+            </AccordionTrigger>
 
-              {isOpen && (
-                <div className="text-foreground-secondary border-border/60 animate-in fade-in border-t px-5 pt-4 pb-6 text-xs leading-relaxed font-semibold duration-200 sm:px-6 sm:text-sm">
-                  <p>{item.a}</p>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
+            <AccordionContent className="text-foreground-secondary border-border/60 border-t px-5 pt-4 pb-6 text-xs leading-relaxed font-semibold sm:px-6 sm:text-sm">
+              <p>{item.a}</p>
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
     </div>
   );
 }

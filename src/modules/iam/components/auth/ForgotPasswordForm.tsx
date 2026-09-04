@@ -4,12 +4,14 @@ import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { TurnstileWidget } from "@/components/ui/TurnstileWidget";
+import { Alert } from "@/components/ui/alert";
+import { Spinner } from "@/components/ui/spinner";
+import { TurnstileWidget } from "@/components/shared/TurnstileWidget";
 import { TurnstileInstance } from "@marsidev/react-turnstile";
 import { forgotPasswordSchema, ForgotPasswordInput } from "@/modules/iam/schemas/auth.schema";
 import { authApi } from "@/modules/iam/api/auth.api";
 import { useI18n } from "@/lib/i18n/context";
-import { Mail, ArrowLeft, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { Mail, ArrowLeft, CheckCircle2, AlertCircle } from "lucide-react";
 
 export function ForgotPasswordForm() {
   const { t } = useI18n();
@@ -82,9 +84,9 @@ export function ForgotPasswordForm() {
 
       <form onSubmit={handleSubmit} className="space-y-5">
         {successMessage && (
-          <div className="space-y-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-300">
+          <Alert variant="success" className="flex flex-col gap-3">
             <div className="flex items-center gap-3">
-              <CheckCircle2 className="size-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+              <CheckCircle2 className="size-5 shrink-0" />
               <span>{successMessage}</span>
             </div>
             <Button
@@ -98,14 +100,14 @@ export function ForgotPasswordForm() {
             >
               {t("auth.forgotPassword.proceedToTokenButton")} →
             </Button>
-          </div>
+          </Alert>
         )}
 
         {error && (
-          <div className="flex items-center gap-3 rounded-md border border-rose-200 bg-rose-50 p-4 text-sm font-semibold text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-300">
+          <Alert variant="destructive">
             <AlertCircle className="size-5 shrink-0" />
             <span>{error}</span>
-          </div>
+          </Alert>
         )}
 
         <div>
@@ -123,12 +125,12 @@ export function ForgotPasswordForm() {
               }}
               placeholder={t("auth.forgotPassword.emailPlaceholder")}
               disabled={isLoading}
-              className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-13 w-full rounded-full border pr-4 pl-12 text-sm font-semibold transition outline-none focus:ring-2 dark:bg-[#161715]"
+              className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-13 w-full rounded-full border pr-4 pl-12 text-sm font-semibold transition outline-none focus:ring-2"
             />
           </div>
         </div>
 
-        {/* Cloudflare Turnstile CAPTCHA Protection */}
+        {/* Turnstile Protection */}
         <TurnstileWidget
           ref={turnstileRef}
           onVerify={(token) => setFormData((prev) => ({ ...prev, turnstileToken: token }))}
@@ -145,7 +147,7 @@ export function ForgotPasswordForm() {
         >
           {isLoading ? (
             <>
-              <Loader2 className="size-5 animate-spin" />
+              <Spinner className="size-5" />
               <span>{t("auth.forgotPassword.loadingButton")}</span>
             </>
           ) : (

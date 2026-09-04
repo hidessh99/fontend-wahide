@@ -78,7 +78,7 @@ export function InvoiceTable({
   };
 
   return (
-    <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs dark:bg-[#161715]">
+    <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs">
       {/* Invoices List */}
       {sortedInvoices.length === 0 ? (
         <EmptyState
@@ -101,7 +101,7 @@ export function InvoiceTable({
                 : "-";
 
               return (
-                <div key={inv.id} className="bg-surface space-y-3 p-3.5 sm:p-4 dark:bg-[#161715]">
+                <div key={inv.id} className="bg-surface space-y-3 p-3.5 sm:p-4">
                   {/* Top: Invoice Number & Status Badge */}
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-foreground bg-muted border-border rounded-full border px-2.5 py-0.5 font-mono text-xs font-bold">

@@ -303,7 +303,7 @@ export function AdminSidebar({ onItemClick, className }: AdminSidebarProps) {
       <div className="border-border bg-muted/20 space-y-2.5 border-t p-3.5">
         {/* User Identity Chip */}
         {user && (
-          <div className="border-border bg-surface flex items-center gap-2.5 rounded-lg border p-2.5 dark:bg-[#161715]">
+          <div className="border-border bg-surface flex items-center gap-2.5 rounded-lg border p-2.5">
             <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-rose-600 text-xs font-bold text-white">
               {user.name ? user.name.charAt(0).toUpperCase() : "A"}
             </div>

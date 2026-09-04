@@ -127,8 +127,8 @@ export function PlanCardGrid({
               key={plan.id}
               className={`relative flex flex-col justify-between space-y-6 rounded-md border p-6 transition-all sm:p-7 ${
                 isPopular
-                  ? "border-wise-green bg-surface ring-wise-green/30 shadow-xl ring-2 dark:bg-[#161715]"
-                  : "border-border bg-surface hover:border-foreground-muted/50 dark:bg-[#161715]"
+                  ? "border-wise-green bg-surface ring-wise-green/30 shadow-xl ring-2"
+                  : "border-border bg-surface hover:border-foreground-muted/50"
               }`}
             >
               {isPopular && (

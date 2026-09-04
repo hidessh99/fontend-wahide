@@ -44,7 +44,7 @@ export function DashboardPageSkeleton({
           {Array.from({ length: metricCount }).map((_, i) => (
             <div
               key={i}
-              className="border-border bg-surface space-y-3 rounded-md border p-4 shadow-xs sm:p-5 dark:bg-[#161715]"
+              className="border-border bg-surface space-y-3 rounded-md border p-4 shadow-xs sm:p-5"
             >
               <div className="flex items-center justify-between">
                 <Skeleton className="h-4 w-24 rounded-md" />
@@ -58,7 +58,7 @@ export function DashboardPageSkeleton({
       )}
 
       {/* 3. Filter / Search Toolbar Skeleton */}
-      <div className="border-border bg-surface flex flex-col justify-between gap-3 rounded-md border p-3 sm:flex-row sm:items-center sm:p-4 dark:bg-[#161715]">
+      <div className="border-border bg-surface flex flex-col justify-between gap-3 rounded-md border p-3 sm:flex-row sm:items-center sm:p-4">
         <div className="flex flex-1 items-center gap-2">
           <Skeleton className="h-9 max-w-md flex-1 rounded-md" />
           <Skeleton className="h-9 w-20 rounded-md" />
@@ -70,7 +70,7 @@ export function DashboardPageSkeleton({
       </div>
 
       {/* 4. Table / Content List Skeleton */}
-      <div className="border-border bg-surface divide-border/40 divide-y overflow-hidden rounded-md border shadow-xs dark:bg-[#161715]">
+      <div className="border-border bg-surface divide-border/40 divide-y overflow-hidden rounded-md border shadow-xs">
         {/* Table Header Bar */}
         <div className="bg-muted/20 flex items-center justify-between gap-4 p-3 sm:p-4">
           <div className="flex items-center gap-3">

@@ -161,7 +161,7 @@ export function SubscriptionsTable({
   return (
     <div className="space-y-4">
       {/* Search & Filter Toolbar */}
-      <div className="border-border bg-surface rounded-xl border p-3.5 shadow-xs sm:p-4 dark:bg-[#161715]">
+      <div className="border-border bg-surface rounded-xl border p-3.5 shadow-xs sm:p-4">
         <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
           {/* Search Form */}
           <SearchInput
@@ -202,7 +202,7 @@ export function SubscriptionsTable({
       </div>
 
       {/* Subscriptions Table & Mobile View */}
-      <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs dark:bg-[#161715]">
+      <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs">
         {isLoading ? (
           <div className="text-foreground-muted flex flex-col items-center justify-center space-y-3 py-16">
             <Loader2 className="dark:text-wise-green size-7 animate-spin text-emerald-600" />
@@ -233,7 +233,7 @@ export function SubscriptionsTable({
                 const isExpired = s.status === "EXPIRED";
 
                 return (
-                  <div key={s.id} className="bg-surface space-y-3 p-4 dark:bg-[#161715]">
+                  <div key={s.id} className="bg-surface space-y-3 p-4">
                     <div className="flex items-start justify-between gap-2">
                       <div className="space-y-0.5">
                         <span className="text-foreground text-sm font-bold">{tenantName}</span>

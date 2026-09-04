@@ -2,6 +2,10 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { NativeSelect } from "@/components/ui/native-select";
+import { Spinner } from "@/components/ui/spinner";
 import { useI18n } from "@/lib/i18n/context";
 import { toast } from "sonner";
 import {
@@ -12,7 +16,6 @@ import {
   MessageSquare,
   Clock,
   Building2,
-  Loader2,
   CheckCircle2,
 } from "lucide-react";
 
@@ -112,7 +115,7 @@ export function ContactUsView() {
         </div>
 
         {/* Email */}
-        <div className="p-6 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-4 shadow-sm flex flex-col justify-between">
+        <div className="p-6 rounded-md border border-border bg-surface space-y-4 shadow-sm flex flex-col justify-between">
           <div className="space-y-2">
             <div className="size-10 rounded-full bg-muted flex items-center justify-center text-foreground-secondary">
               <Mail className="size-5" />
@@ -136,7 +139,7 @@ export function ContactUsView() {
         </div>
 
         {/* Office Address */}
-        <div className="p-6 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-4 shadow-sm flex flex-col justify-between">
+        <div className="p-6 rounded-md border border-border bg-surface space-y-4 shadow-sm flex flex-col justify-between">
           <div className="space-y-2">
             <div className="size-10 rounded-full bg-muted flex items-center justify-center text-foreground-secondary">
               <Building2 className="size-5" />
@@ -159,7 +162,7 @@ export function ContactUsView() {
       {/* Contact Form & Map Container */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Form Container */}
-        <div className="lg:col-span-7 p-6 sm:p-8 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-6 shadow-sm">
+        <div className="lg:col-span-7 p-6 sm:p-8 rounded-xl border border-border bg-surface space-y-6 shadow-sm">
           <div className="space-y-1">
             <h2 className="text-xl font-black text-foreground">
               {t("contactUs.formTitle")}
@@ -175,13 +178,14 @@ export function ContactUsView() {
                 <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
                   {t("contactUs.nameLabel")}
                 </label>
-                <input
+                <Input
                   type="text"
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder={t("contactUs.namePlaceholder")}
-                  className="w-full h-10 px-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs"
+                  variant="pill"
+                  className="h-10 text-xs"
                 />
               </div>
 
@@ -189,13 +193,14 @@ export function ContactUsView() {
                 <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
                   {t("contactUs.emailLabel")}
                 </label>
-                <input
+                <Input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={t("contactUs.emailPlaceholder")}
-                  className="w-full h-10 px-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs"
+                  variant="pill"
+                  className="h-10 text-xs"
                 />
               </div>
             </div>
@@ -205,12 +210,13 @@ export function ContactUsView() {
                 <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
                   {t("contactUs.phoneLabel")}
                 </label>
-                <input
+                <Input
                   type="text"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder={t("contactUs.phonePlaceholder")}
-                  className="w-full h-10 px-4 rounded-full bg-surface dark:bg-[#10110e] text-foreground font-semibold border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition text-xs font-mono"
+                  variant="pill"
+                  className="h-10 text-xs font-mono"
                 />
               </div>
 
@@ -218,16 +224,17 @@ export function ContactUsView() {
                 <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
                   {t("contactUs.subjectLabel")}
                 </label>
-                <select
+                <NativeSelect
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
-                  className="w-full h-10 px-3 rounded-md bg-surface dark:bg-[#10110e] text-foreground text-xs font-semibold border border-border outline-none focus:border-wise-green"
+                  variant="rounded"
+                  className="h-10 text-xs"
                 >
                   <option value="TECH">{t("contactUs.subjectTech")}</option>
                   <option value="SALES">{t("contactUs.subjectSales")}</option>
                   <option value="BILLING">{t("contactUs.subjectBilling")}</option>
                   <option value="OTHER">{t("contactUs.subjectOther")}</option>
-                </select>
+                </NativeSelect>
               </div>
             </div>
 
@@ -235,13 +242,13 @@ export function ContactUsView() {
               <label className="block text-xs font-semibold uppercase tracking-wider text-foreground-secondary mb-1.5">
                 {t("contactUs.messageLabel")}
               </label>
-              <textarea
+              <Textarea
                 rows={5}
                 required
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder={t("contactUs.messagePlaceholder")}
-                className="w-full p-3 rounded-md bg-surface dark:bg-[#10110e] text-foreground font-semibold text-xs border border-border hover:border-foreground-muted focus:border-wise-green focus:ring-2 focus:ring-wise-green outline-none transition leading-relaxed"
+                className="text-xs leading-relaxed"
               />
             </div>
 
@@ -254,7 +261,7 @@ export function ContactUsView() {
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="size-3.5 animate-spin" />
+                  <Spinner className="size-3.5 mr-1" />
                   <span>{t("contactUs.submittingBtn")}</span>
                 </>
               ) : (
@@ -268,7 +275,7 @@ export function ContactUsView() {
         </div>
 
         {/* Map & Office Detail */}
-        <div className="lg:col-span-5 p-6 sm:p-8 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-6 shadow-sm flex flex-col justify-between">
+        <div className="lg:col-span-5 p-6 sm:p-8 rounded-xl border border-border bg-surface space-y-6 shadow-sm flex flex-col justify-between">
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <MapPin className="size-5 text-emerald-700 dark:text-wise-green" />

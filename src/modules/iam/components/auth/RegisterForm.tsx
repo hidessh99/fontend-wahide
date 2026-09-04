@@ -1,10 +1,12 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { TurnstileWidget } from "@/components/ui/TurnstileWidget";
+import { Alert } from "@/components/ui/alert";
+import { Spinner } from "@/components/ui/spinner";
+import { TurnstileWidget } from "@/components/shared/TurnstileWidget";
 import { TurnstileInstance } from "@marsidev/react-turnstile";
 import { registerSchema, RegisterInput } from "@/modules/iam/schemas/auth.schema";
 import { useAuth } from "@/modules/iam/hooks/useAuth";
@@ -18,7 +20,6 @@ import {
   User,
   ArrowRight,
   AlertCircle,
-  Loader2,
 } from "lucide-react";
 
 export function RegisterForm() {
@@ -42,7 +43,6 @@ export function RegisterForm() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
-    clearError();
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
@@ -50,18 +50,27 @@ export function RegisterForm() {
     if (fieldErrors[name]) {
       setFieldErrors((prev) => ({ ...prev, [name]: "" }));
     }
+    if (error) clearError();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFieldErrors({});
 
+    if (!formData.turnstileToken) {
+      setFieldErrors((prev) => ({
+        ...prev,
+        turnstile: "Silakan selesaikan verifikasi Cloudflare Turnstile.",
+      }));
+      return;
+    }
+
     const result = registerSchema.safeParse(formData);
     if (!result.success) {
       const errors: Record<string, string> = {};
       result.error.issues.forEach((issue) => {
         if (issue.path[0]) {
-          errors[issue.path[0].toString()] = issue.message;
+          errors[issue.path[0] as string] = issue.message;
         }
       });
       setFieldErrors(errors);
@@ -90,10 +99,10 @@ export function RegisterForm() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
-          <div className="flex items-center gap-3 rounded-md border border-rose-200 bg-rose-50 p-4 text-sm font-semibold text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-300">
+          <Alert variant="destructive">
             <AlertCircle className="size-5 shrink-0" />
             <span>{error}</span>
-          </div>
+          </Alert>
         )}
 
         <div className="space-y-3.5">
@@ -110,7 +119,7 @@ export function RegisterForm() {
                 onChange={handleChange}
                 placeholder={t("auth.register.namePlaceholder")}
                 disabled={isLoading}
-                className={`bg-surface text-foreground h-12 w-full rounded-full border pr-4 pl-12 font-semibold dark:bg-[#161715] ${
+                className={`bg-surface text-foreground h-12 w-full rounded-full border pr-4 pl-12 font-semibold ${
                   fieldErrors.name
                     ? "border-rose-500 ring-1 ring-rose-500"
                     : "border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green focus:ring-2"
@@ -137,7 +146,7 @@ export function RegisterForm() {
                 onChange={handleChange}
                 placeholder={t("auth.register.emailPlaceholder")}
                 disabled={isLoading}
-                className={`bg-surface text-foreground h-12 w-full rounded-full border pr-4 pl-12 font-semibold dark:bg-[#161715] ${
+                className={`bg-surface text-foreground h-12 w-full rounded-full border pr-4 pl-12 font-semibold ${
                   fieldErrors.email
                     ? "border-rose-500 ring-1 ring-rose-500"
                     : "border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green focus:ring-2"
@@ -164,7 +173,7 @@ export function RegisterForm() {
                 onChange={handleChange}
                 placeholder={t("auth.register.phonePlaceholder")}
                 disabled={isLoading}
-                className={`bg-surface text-foreground h-12 w-full rounded-full border pr-4 pl-12 font-semibold dark:bg-[#161715] ${
+                className={`bg-surface text-foreground h-12 w-full rounded-full border pr-4 pl-12 font-semibold ${
                   fieldErrors.phone
                     ? "border-rose-500 ring-1 ring-rose-500"
                     : "border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green focus:ring-2"
@@ -191,7 +200,7 @@ export function RegisterForm() {
                 onChange={handleChange}
                 placeholder={t("auth.register.passwordPlaceholder")}
                 disabled={isLoading}
-                className={`bg-surface text-foreground h-12 w-full rounded-full border pr-12 pl-12 font-semibold dark:bg-[#161715] ${
+                className={`bg-surface text-foreground h-12 w-full rounded-full border pr-12 pl-12 font-semibold ${
                   fieldErrors.password
                     ? "border-rose-500 ring-1 ring-rose-500"
                     : "border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green focus:ring-2"
@@ -226,7 +235,7 @@ export function RegisterForm() {
                 onChange={handleChange}
                 placeholder={t("auth.register.confirmPasswordPlaceholder")}
                 disabled={isLoading}
-                className={`bg-surface text-foreground h-12 w-full rounded-full border pr-12 pl-12 font-semibold dark:bg-[#161715] ${
+                className={`bg-surface text-foreground h-12 w-full rounded-full border pr-12 pl-12 font-semibold ${
                   fieldErrors.confirmPassword
                     ? "border-rose-500 ring-1 ring-rose-500"
                     : "border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green focus:ring-2"
@@ -273,7 +282,7 @@ export function RegisterForm() {
           )}
         </div>
 
-        {/* Cloudflare Turnstile CAPTCHA Protection */}
+        {/* Turnstile Protection */}
         <TurnstileWidget
           ref={turnstileRef}
           onVerify={(token) => setFormData((prev) => ({ ...prev, turnstileToken: token }))}
@@ -290,7 +299,7 @@ export function RegisterForm() {
         >
           {isLoading ? (
             <>
-              <Loader2 className="size-5 animate-spin" />
+              <Spinner className="size-5" />
               <span>{t("auth.register.loadingButton")}</span>
             </>
           ) : (

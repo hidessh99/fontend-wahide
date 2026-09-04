@@ -27,7 +27,7 @@ export function PrivacyView() {
       </div>
 
       {/* Official Identity Card */}
-      <div className="p-6 rounded-md border border-border bg-surface dark:bg-[#161715] space-y-4 shadow-sm">
+      <div className="p-6 rounded-md border border-border bg-surface space-y-4 shadow-sm">
         <h2 className="text-sm font-bold uppercase tracking-wider text-foreground-muted">
           {t("legal.companyInfoTitle")}
         </h2>
@@ -65,7 +65,7 @@ export function PrivacyView() {
       {/* Privacy Articles */}
       <div className="space-y-8 text-xs sm:text-sm font-semibold text-foreground-secondary leading-relaxed">
         {/* Section 1 */}
-        <section className="space-y-3 p-6 rounded-md border border-border bg-surface dark:bg-[#161715]">
+        <section className="space-y-3 p-6 rounded-md border border-border bg-surface">
           <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
             <span className="size-6 rounded-full bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center text-xs font-mono font-bold">1</span>
             <span>Landasan Hukum &amp; Kepatuhan Regulasi</span>
@@ -76,7 +76,7 @@ export function PrivacyView() {
         </section>
 
         {/* Section 2 */}
-        <section className="space-y-3 p-6 rounded-md border border-border bg-surface dark:bg-[#161715]">
+        <section className="space-y-3 p-6 rounded-md border border-border bg-surface">
           <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
             <span className="size-6 rounded-full bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center text-xs font-mono font-bold">2</span>
             <span>Data yang Kami Kumpulkan</span>
@@ -91,7 +91,7 @@ export function PrivacyView() {
         </section>
 
         {/* Section 3 */}
-        <section className="space-y-3 p-6 rounded-md border border-border bg-surface dark:bg-[#161715]">
+        <section className="space-y-3 p-6 rounded-md border border-border bg-surface">
           <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
             <span className="size-6 rounded-full bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center text-xs font-mono font-bold">3</span>
             <span>Kerahasiaan Pesan &amp; Enkripsi End-to-End</span>
@@ -111,7 +111,7 @@ export function PrivacyView() {
         </section>
 
         {/* Section 4 */}
-        <section className="space-y-3 p-6 rounded-md border border-border bg-surface dark:bg-[#161715]">
+        <section className="space-y-3 p-6 rounded-md border border-border bg-surface">
           <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
             <span className="size-6 rounded-full bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center text-xs font-mono font-bold">4</span>
             <span>Keamanan Data &amp; Isolasi Multi-Tenant</span>
@@ -122,7 +122,7 @@ export function PrivacyView() {
         </section>
 
         {/* Section 5 */}
-        <section className="space-y-3 p-6 rounded-md border border-border bg-surface dark:bg-[#161715]">
+        <section className="space-y-3 p-6 rounded-md border border-border bg-surface">
           <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
             <span className="size-6 rounded-full bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center text-xs font-mono font-bold">5</span>
             <span>Hak Subjek Data (*Data Subject Rights*)</span>
@@ -136,7 +136,7 @@ export function PrivacyView() {
         </section>
 
         {/* Section 6 */}
-        <section className="space-y-3 p-6 rounded-md border border-border bg-surface dark:bg-[#161715]">
+        <section className="space-y-3 p-6 rounded-md border border-border bg-surface">
           <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
             <span className="size-6 rounded-full bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center text-xs font-mono font-bold">6</span>
             <span>Kebijakan Cookie &amp; Layanan Pihak Ketiga</span>
@@ -147,7 +147,7 @@ export function PrivacyView() {
         </section>
 
         {/* Section 7 */}
-        <section className="space-y-4 p-6 rounded-md border border-border bg-surface dark:bg-[#161715]">
+        <section className="space-y-4 p-6 rounded-md border border-border bg-surface">
           <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
             <span className="size-6 rounded-full bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex items-center justify-center text-xs font-mono font-bold">7</span>
             <span>{t("legal.contactDpoTitle")}</span>

@@ -168,7 +168,7 @@ export function DevicesManagementTable({
   return (
     <div className="space-y-4">
       {/* Search & Filter Toolbar */}
-      <div className="border-border bg-surface rounded-xl border p-3.5 shadow-xs sm:p-4 dark:bg-[#161715]">
+      <div className="border-border bg-surface rounded-xl border p-3.5 shadow-xs sm:p-4">
         <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
           {/* Search Form */}
           <SearchInput
@@ -210,7 +210,7 @@ export function DevicesManagementTable({
       </div>
 
       {/* Devices Table & Mobile View */}
-      <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs dark:bg-[#161715]">
+      <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs">
         {isLoading ? (
           <div className="text-foreground-muted flex flex-col items-center justify-center space-y-3 py-16">
             <Loader2 className="dark:text-wise-green size-7 animate-spin text-emerald-600" />
@@ -231,7 +231,7 @@ export function DevicesManagementTable({
             {/* Mobile View: Cards (< 1024px) */}
             <div className="divide-border/60 divide-y lg:hidden">
               {sortedDevices.map((d) => (
-                <div key={d.id} className="bg-surface space-y-3 p-4 dark:bg-[#161715]">
+                <div key={d.id} className="bg-surface space-y-3 p-4">
                   <div className="flex items-start justify-between gap-2">
                     <div className="space-y-0.5">
                       <div className="flex items-center gap-2">

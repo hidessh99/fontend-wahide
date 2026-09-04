@@ -47,7 +47,7 @@ export function MessageSimulator() {
   };
 
   return (
-    <div className="border-border bg-surface space-y-8 rounded-lg border p-6 shadow-sm sm:p-10 dark:bg-[#161715]">
+    <div className="border-border bg-surface space-y-8 rounded-lg border p-6 shadow-sm sm:p-10">
       {/* Header */}
       <div className="border-border flex flex-col justify-between gap-4 border-b pb-6 md:flex-row md:items-end">
         <div className="max-w-2xl space-y-2">

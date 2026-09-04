@@ -93,7 +93,7 @@ export function MessageDetailModal({ isOpen, log, onClose }: MessageDetailModalP
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="border-border bg-surface flex max-h-[90dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl border p-0 shadow-2xl sm:max-w-lg dark:bg-[#161715]">
+      <DialogContent className="border-border bg-surface flex max-h-[90dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl border p-0 shadow-2xl sm:max-w-lg">
         <DialogHeader className="border-border shrink-0 border-b p-5 pb-4 sm:p-6">
           <div className="flex items-center justify-between gap-3 pr-6">
             <DialogTitle className="text-foreground text-lg font-bold">

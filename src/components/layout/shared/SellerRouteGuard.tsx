@@ -26,7 +26,7 @@ export function SellerRouteGuard({
   if (!hasAccess) {
     return (
       <div className="flex min-h-[70vh] items-center justify-center p-4 sm:p-6 lg:p-8">
-        <div className="bg-surface border-border w-full max-w-md space-y-5 rounded-3xl border p-6 text-center shadow-lg sm:p-8 dark:bg-[#161715]">
+        <div className="bg-surface border-border w-full max-w-md space-y-5 rounded-3xl border p-6 text-center shadow-lg sm:p-8">
           <div className="mx-auto flex size-14 items-center justify-center rounded-2xl border border-amber-500/20 bg-amber-500/10 text-amber-600 dark:text-amber-400">
             <ShieldAlert className="size-7" />
           </div>

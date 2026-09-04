@@ -53,7 +53,7 @@ export function ConfirmUpgradeModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && !isUpgrading && onClose()}>
-      <DialogContent className="border-border bg-surface flex max-h-[90dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-md dark:bg-[#161715]">
+      <DialogContent className="border-border bg-surface flex max-h-[90dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-md">
         <DialogHeader className="border-border flex shrink-0 flex-col gap-2 border-b p-5 text-left sm:p-6">
           <div className="flex items-center gap-2 text-rose-600 dark:text-rose-400">
             <div className="flex size-8 items-center justify-center rounded-full bg-rose-500/10">

@@ -288,7 +288,7 @@ export function EditUserModal({ user, isOpen, onClose, onSubmit }: EditUserModal
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="border-border bg-surface flex max-h-[92dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-lg dark:bg-[#161715]">
+      <DialogContent className="border-border bg-surface flex max-h-[92dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-lg">
         <EditUserModalContent key={user.id} user={user} onClose={onClose} onSubmit={onSubmit} />
       </DialogContent>
     </Dialog>

@@ -20,7 +20,7 @@ export function SpintaxSandbox() {
   };
 
   return (
-    <div className="border-border bg-surface space-y-6 rounded-lg border p-6 shadow-sm sm:p-8 dark:bg-[#161715]">
+    <div className="border-border bg-surface space-y-6 rounded-lg border p-6 shadow-sm sm:p-8">
       <div className="max-w-xl space-y-2">
         <div className="bg-wise-green/20 dark:bg-wise-green/15 text-dark-green dark:text-wise-green inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold">
           <Sparkles className="size-3.5" />

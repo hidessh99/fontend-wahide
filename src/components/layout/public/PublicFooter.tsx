@@ -9,7 +9,7 @@ export function PublicFooter() {
   const { t } = useI18n();
 
   return (
-    <footer className="border-t border-border bg-surface dark:bg-[#161715] py-12 px-4 sm:px-6 lg:px-8 transition-colors">
+    <footer className="border-t border-border bg-surface py-12 px-4 sm:px-6 lg:px-8 transition-colors">
       <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 mb-12">
         {/* Brand & Operating Hours Information */}
         <div className="space-y-3.5 sm:col-span-2 lg:col-span-1">

@@ -127,7 +127,7 @@ print(response.json())`,
   };
 
   return (
-    <div className="border-border bg-surface space-y-6 rounded-lg border p-6 shadow-sm sm:p-8 dark:bg-[#161715]">
+    <div className="border-border bg-surface space-y-6 rounded-lg border p-6 shadow-sm sm:p-8">
       {/* Header */}
       <div className="border-border flex flex-col justify-between gap-4 border-b pb-6 md:flex-row md:items-end">
         <div className="max-w-xl space-y-2">

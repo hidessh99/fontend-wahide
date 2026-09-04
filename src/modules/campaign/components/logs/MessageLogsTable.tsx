@@ -147,7 +147,7 @@ export function MessageLogsTable() {
   return (
     <div className="space-y-4">
       {/* Search Form with Submit Button & Status Filter */}
-      <div className="border-border bg-surface flex flex-col justify-between gap-3 rounded-xl border p-3.5 shadow-xs sm:flex-row sm:items-center sm:p-4 dark:bg-[#161715]">
+      <div className="border-border bg-surface flex flex-col justify-between gap-3 rounded-xl border p-3.5 shadow-xs sm:flex-row sm:items-center sm:p-4">
         <SearchInput
           value={searchInput}
           onChange={setSearchInput}
@@ -188,7 +188,7 @@ export function MessageLogsTable() {
       </div>
 
       {/* Logs Table */}
-      <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs dark:bg-[#161715]">
+      <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs">
         {isLoading ? (
           <div className="space-y-3 p-8 text-center sm:p-12">
             <Loader2 className="text-wise-green mx-auto size-8 animate-spin" />
@@ -214,7 +214,7 @@ export function MessageLogsTable() {
                 <div
                   key={log.id}
                   onClick={() => setSelectedLogForDetail(log)}
-                  className="bg-surface hover:bg-muted/30 cursor-pointer space-y-2.5 p-3.5 transition-colors sm:p-4 dark:bg-[#161715]"
+                  className="bg-surface hover:bg-muted/30 cursor-pointer space-y-2.5 p-3.5 transition-colors sm:p-4"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex min-w-0 items-center gap-2">

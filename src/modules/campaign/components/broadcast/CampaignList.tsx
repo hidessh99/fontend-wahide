@@ -169,7 +169,7 @@ export function CampaignList() {
   return (
     <div className="space-y-6">
       {/* Top Action Bar */}
-      <div className="border-border bg-surface flex flex-col justify-between gap-3 rounded-xl border p-3.5 shadow-xs sm:flex-row sm:items-center sm:p-4 dark:bg-[#161715]">
+      <div className="border-border bg-surface flex flex-col justify-between gap-3 rounded-xl border p-3.5 shadow-xs sm:flex-row sm:items-center sm:p-4">
         <div className="flex items-center gap-3">
           <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-8 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700 sm:size-10">
             <Zap className="size-4 sm:size-5" />
@@ -258,7 +258,7 @@ export function CampaignList() {
               <div
                 key={campaign.id}
                 onClick={() => setSelectedCampaignForDetail(campaign)}
-                className="border-border bg-surface hover:border-wise-green/60 group flex cursor-pointer flex-col justify-between space-y-4 rounded-md border p-5 transition hover:shadow-md sm:p-6 dark:bg-[#161715]"
+                className="border-border bg-surface hover:border-wise-green/60 group flex cursor-pointer flex-col justify-between space-y-4 rounded-md border p-5 transition hover:shadow-md sm:p-6"
                 title={t("campaign.cardClickHint")}
               >
                 {/* Header */}

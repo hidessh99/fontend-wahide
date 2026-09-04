@@ -144,7 +144,7 @@ export function TicketList() {
       )}
 
       {/* Action Toolbar (Search Form, Create Ticket CTA & Scrollable Filter Chips) */}
-      <div className="border-border bg-surface space-y-3 rounded-xl border p-3.5 shadow-xs sm:space-y-4 sm:p-4 dark:bg-[#161715]">
+      <div className="border-border bg-surface space-y-3 rounded-xl border p-3.5 shadow-xs sm:space-y-4 sm:p-4">
         {/* Top Row: Search Form + Primary CTA */}
         <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
           {/* Search Form */}
@@ -242,11 +242,11 @@ export function TicketList() {
           }
         />
       ) : (
-        <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs dark:bg-[#161715]">
+        <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs">
           {/* Mobile View: Card-based Ticket List (Visible on < 1024px) */}
           <div className="divide-border/50 divide-y lg:hidden">
             {sortedTickets.map((tkt) => (
-              <div key={tkt.id} className="bg-surface space-y-2.5 p-3.5 sm:p-4 dark:bg-[#161715]">
+              <div key={tkt.id} className="bg-surface space-y-2.5 p-3.5 sm:p-4">
                 {/* Header: Ticket Number & Status Badge */}
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-dark-green dark:text-wise-green bg-light-mint dark:bg-wise-green/15 border-wise-green/30 rounded-full border px-2.5 py-0.5 font-mono text-xs font-bold">

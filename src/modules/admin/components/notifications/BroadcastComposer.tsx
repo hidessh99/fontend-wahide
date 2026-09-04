@@ -211,7 +211,7 @@ export function BroadcastComposer({
   };
 
   return (
-    <div className="border-border bg-surface space-y-4 rounded-xl border p-5 shadow-xs sm:p-6 dark:bg-[#161715]">
+    <div className="border-border bg-surface space-y-4 rounded-xl border p-5 shadow-xs sm:p-6">
       {/* Header */}
       <div className="border-border flex items-center justify-between border-b pb-3.5">
         <div className="flex items-center gap-2.5">
@@ -322,7 +322,7 @@ export function BroadcastComposer({
 
                   {/* Dropdown Menu */}
                   {isDropdownOpen && (
-                    <div className="border-border bg-surface animate-in fade-in zoom-in-95 absolute top-full right-0 left-0 z-30 mt-1 max-h-56 space-y-1 overflow-y-auto rounded-xl border p-1.5 shadow-xl dark:bg-[#161715]">
+                    <div className="border-border bg-surface animate-in fade-in zoom-in-95 absolute top-full right-0 left-0 z-30 mt-1 max-h-56 space-y-1 overflow-y-auto rounded-xl border p-1.5 shadow-xl">
                       {isLoadingUsers ? (
                         <div className="text-foreground-muted flex items-center justify-center gap-2 p-4 text-center text-xs">
                           <Loader2 className="size-3.5 animate-spin text-emerald-600" />

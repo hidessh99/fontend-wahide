@@ -23,7 +23,7 @@ export function MessageMetricsCards({ metrics }: MessageMetricsCardsProps) {
 
   return (
     <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-      <div className="border-border bg-surface rounded-xl border p-4 shadow-xs dark:bg-[#161715]">
+      <div className="border-border bg-surface rounded-xl border p-4 shadow-xs">
         <div className="text-foreground-muted mb-1 flex items-center justify-between">
           <span className="text-[11px] font-bold tracking-wider uppercase">
             {t("admin.messages.totalMessages")}
@@ -42,7 +42,7 @@ export function MessageMetricsCards({ metrics }: MessageMetricsCardsProps) {
         </span>
       </div>
 
-      <div className="border-border bg-surface rounded-xl border p-4 shadow-xs dark:bg-[#161715]">
+      <div className="border-border bg-surface rounded-xl border p-4 shadow-xs">
         <div className="text-foreground-muted mb-1 flex items-center justify-between">
           <span className="text-[11px] font-bold tracking-wider uppercase">
             {t("admin.messages.delivered")}
@@ -60,7 +60,7 @@ export function MessageMetricsCards({ metrics }: MessageMetricsCardsProps) {
         </span>
       </div>
 
-      <div className="border-border bg-surface rounded-xl border p-4 shadow-xs dark:bg-[#161715]">
+      <div className="border-border bg-surface rounded-xl border p-4 shadow-xs">
         <div className="text-foreground-muted mb-1 flex items-center justify-between">
           <span className="text-[11px] font-bold tracking-wider uppercase">
             {t("admin.messages.readCount")}
@@ -76,7 +76,7 @@ export function MessageMetricsCards({ metrics }: MessageMetricsCardsProps) {
         </span>
       </div>
 
-      <div className="border-border bg-surface rounded-xl border p-4 shadow-xs dark:bg-[#161715]">
+      <div className="border-border bg-surface rounded-xl border p-4 shadow-xs">
         <div className="text-foreground-muted mb-1 flex items-center justify-between">
           <span className="text-[11px] font-bold tracking-wider uppercase">
             {t("admin.messages.failedCount")}

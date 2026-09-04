@@ -58,7 +58,7 @@ export function ContactTable({
   const isAllSelected = sortedContacts.length > 0 && selectedIds.size === sortedContacts.length;
 
   return (
-    <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs dark:bg-[#161715]">
+    <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs">
       {/* Mobile View: Card-based Contact List (Visible on < 1024px) */}
       <div className="divide-border/40 divide-y lg:hidden">
         {/* Select All Bar on Mobile */}
@@ -87,7 +87,7 @@ export function ContactTable({
               className={`space-y-2 p-3.5 transition-colors ${
                 isSelected
                   ? "bg-wise-green/10 dark:bg-wise-green/5"
-                  : "bg-surface dark:bg-[#161715]"
+                  : "bg-surface"
               }`}
             >
               <div className="flex items-center justify-between gap-2">

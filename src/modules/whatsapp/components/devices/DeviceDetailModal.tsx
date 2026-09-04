@@ -134,7 +134,7 @@ export function DeviceDetailModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="border-border bg-surface flex max-h-[90dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-2xl dark:bg-[#161715]">
+      <DialogContent className="border-border bg-surface flex max-h-[90dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-2xl">
         {/* Sticky Header */}
         <DialogHeader className="border-border/80 shrink-0 space-y-2 border-b p-5 pr-12 text-left sm:p-6">
           <div className="flex items-start gap-3.5">
@@ -176,7 +176,7 @@ export function DeviceDetailModal({
 
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {/* Device ID */}
-              <div className="border-border/60 bg-surface rounded-lg border p-3 dark:bg-[#161715]">
+              <div className="border-border/60 bg-surface rounded-lg border p-3">
                 <span className="text-foreground-muted block text-[11px]">
                   {t("whatsapp.deviceId") || "Device ID"}
                 </span>
@@ -199,7 +199,7 @@ export function DeviceDetailModal({
               </div>
 
               {/* JID */}
-              <div className="border-border/60 bg-surface rounded-lg border p-3 dark:bg-[#161715]">
+              <div className="border-border/60 bg-surface rounded-lg border p-3">
                 <span className="text-foreground-muted block text-[11px]">
                   {t("whatsapp.jidLabel") || "WhatsApp JID"}
                 </span>
@@ -234,7 +234,7 @@ export function DeviceDetailModal({
 
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               {/* Trust Score */}
-              <div className="border-border/60 bg-surface rounded-lg border p-3 dark:bg-[#161715]">
+              <div className="border-border/60 bg-surface rounded-lg border p-3">
                 <span className="text-foreground-muted block text-[11px]">
                   {t("whatsapp.trustScoreLabel") || "Skor Reputasi"}
                 </span>
@@ -253,7 +253,7 @@ export function DeviceDetailModal({
               </div>
 
               {/* Warmup Day */}
-              <div className="border-border/60 bg-surface rounded-lg border p-3 dark:bg-[#161715]">
+              <div className="border-border/60 bg-surface rounded-lg border p-3">
                 <span className="text-foreground-muted block text-[11px]">
                   {t("whatsapp.warmupDayLabel") || "Fase Pemanasan"}
                 </span>
@@ -266,7 +266,7 @@ export function DeviceDetailModal({
               </div>
 
               {/* Messages Sent Today */}
-              <div className="border-border/60 bg-surface rounded-lg border p-3 dark:bg-[#161715]">
+              <div className="border-border/60 bg-surface rounded-lg border p-3">
                 <span className="text-foreground-muted block text-[11px]">
                   {t("whatsapp.dailySentCountLabel") || "Pesan Hari Ini"}
                 </span>
