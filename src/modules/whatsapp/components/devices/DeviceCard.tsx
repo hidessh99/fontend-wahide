@@ -227,7 +227,7 @@ export function DeviceCard({
             {t("whatsapp.deviceId") || "Device ID"}
           </span>
           <div className="text-foreground flex items-center gap-1.5 font-mono text-xs font-bold">
-            <span className="max-w-[120px] truncate select-all" title={device.id}>
+            <span className="max-w-30 truncate select-all" title={device.id}>
               {device.id}
             </span>
             <button

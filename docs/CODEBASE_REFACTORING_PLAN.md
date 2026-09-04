@@ -109,33 +109,30 @@ Setelah standarisasi komponen yang dapat dimanfaatkan, 42 file komponen mati tan
 
 ---
 
-## Fase 3: Screaming Architecture & Penataan Direktori (P1 - Tinggi)
+## Fase 3: Konsolidasi Rute Publik & Pembersihan Redundansi [SELESAI / DONE 100%]
 
-### 3.1 Konsolidasi Halaman Publik / Marketing
-- **Kondisi Sekarang:** 
-  - File tampilan publik tersebar di `src/components/public/` (`AboutView`, `BlogListView`, `BlogPostView`, `ContactUsView`, `PrivacyView`, `TermsView`) dan `src/components/home/` (`HomeView`).
-  - Sementara modul `src/modules/content/` hanya memiliki `api` dan `types`.
-- **Target Restrukturisasi:**
-  - Satukan views publik ke dalam `src/modules/marketing/views/` atau `src/modules/content/views/`.
-  - Folder `src/components/` murni dikhususkan untuk:
-    - `src/components/ui/`: UI primitives atomik.
-    - `src/components/layout/`: Header, Sidebar, Footer, Navigation, Breadcrumbs.
-    - `src/components/shared/`: Cross-cutting concerns (e.g., `RBACGuard`, `TurnstileWidget`).
+> **Status Eksekusi**: Selesai 100%. Sesuai keputusan arsitektur, halaman publik (`home` & `public`) **dipertahankan pada posisinya saat ini** dan tidak dimasukkan ke dalam `modules/` karena landing page bersifat presentation surface statis/SEO-driven, bukan business domain module SaaS. Rute duplikat `/tos` telah dihapus dan dialihkan permanen ke `/terms`.
 
-### 3.2 Pembersihan Rute Redundan `/tos`
-- **Kondisi Sekarang:** `src/app/(public)/tos/page.tsx` menduplikasi `src/app/(public)/terms/page.tsx`.
-- **Target:** Hapus folder `app/(public)/tos` dan tambahkan redirect permanen di `next.config.ts`:
-  ```ts
-  async redirects() {
-    return [
-      {
-        source: "/tos",
-        destination: "/terms",
-        permanent: true,
-      },
-    ];
-  }
-  ```
+### 3.1 Keputusan Struktur Folder Publik
+- **Keputusan**: Folder `src/components/home/` dan `src/components/public/` tetap dipertahankan pada tempatnya.
+- `src/modules/` tetap murni dikhususkan untuk Core Business Engine & Transactional Gateway (`whatsapp`, `campaign`, `contact`, `finance`, `iam`, `subscription`, `support`, `team`).
+
+### 3.2 Pembersihan Rute Redundan `/tos` $\rightarrow$ `/terms`
+- **Tindakan**:
+  - Folder `src/app/(public)/tos/` telah dihapus secara fisik.
+  - Ditambahkan permanent redirect (HTTP 301) di `next.config.ts`:
+    ```ts
+    async redirects() {
+      return [
+        {
+          source: "/tos",
+          destination: "/terms",
+          permanent: true,
+        },
+      ];
+    }
+    ```
+  - Dependensi usang (`recharts`, `date-fns`, `cmdk`) dibersihkan dari `optimizePackageImports` di `next.config.ts`.
 
 ---
 
@@ -221,7 +218,7 @@ Silakan tandai fase-fase berikut untuk disetujui atau disesuaikan sebelum diekse
 
 - [x] **Fase 1: SELESAI** — Zero-Leak Hook `useClipboard`, timer ref cleanups, dan `AbortController` Signal pada seluruh domain API & 21 hooks data-fetching.
 - [x] **Fase 2: SELESAI** — Purge 42 dead-code UI components & 7 heavy npm packages, relokasi `TurnstileWidget.tsx` ke shared, ekstraksi `<MetricCard>`, standarisasi accordion/alert/native-select/spinner, dan normalisasi 190 token `dark:bg-[#161715]`.
-- [ ] **Setujui Fase 3**: Restrukturisasi direktori rute publik (`components/public` & `components/home` $\rightarrow$ `modules/marketing` atau `modules/content`).
+- [x] **Fase 3: SELESAI** — Struktur landing page dipertahankan (bukan modul SaaS), eliminasi rute duplikat `/tos` $\rightarrow$ `/terms` via 301 redirect di `next.config.ts`.
 - [ ] **Setujui Fase 4**: Implementasi `@tanstack/react-virtual` pada tabel dataset besar.
 - [ ] **Setujui Fase 5**: Standarisasi skema runtime Zod pada seluruh modul backend service.
 
