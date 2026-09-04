@@ -79,3 +79,6 @@ desktop.ini
 tmp/
 *.tmp
 .cache/
+
+.prettierrc
+..prettierignore
