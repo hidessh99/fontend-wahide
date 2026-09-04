@@ -162,7 +162,7 @@ export function InvoiceTable({
 
           {/* Desktop View: shadcn/ui Table (Visible on >= 1024px) */}
           <div className="hidden lg:block">
-            <Table className="min-w-[800px]">
+            <Table className="min-w-200">
               <TableHeader>
                 <TableRow className="bg-muted/50 border-border hover:bg-muted/50">
                   <TableHead className="w-[30%] px-5 py-3.5">

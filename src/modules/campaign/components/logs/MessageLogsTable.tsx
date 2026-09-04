@@ -267,7 +267,7 @@ export function MessageLogsTable() {
 
             {/* Desktop View: Unified Responsive Table using shadcn/ui (Visible on >= 1024px) */}
             <div className="hidden lg:block">
-              <Table className="min-w-[860px]">
+              <Table className="min-w-215">
                 <TableHeader>
                   <TableRow className="bg-muted/50 border-border hover:bg-muted/50">
                     <TableHead className="w-[22%] px-5 py-3.5">

@@ -149,10 +149,10 @@ export function ContactTable({
 
       {/* Desktop View: Unified Table using shadcn/ui (Visible on >= 1024px) */}
       <div className="hidden lg:block">
-        <Table className="min-w-[750px]">
+        <Table className="min-w-187.5">
           <TableHeader>
             <TableRow className="bg-muted/50 border-border hover:bg-muted/50">
-              <TableHead className="w-[50px] text-center">
+              <TableHead className="w-12.5 text-center">
                 <div className="flex items-center justify-center">
                   <Checkbox
                     checked={isAllSelected}
@@ -203,7 +203,7 @@ export function ContactTable({
                   }`}
                 >
                   {/* Select Checkbox */}
-                  <TableCell className="w-[50px] text-center align-middle">
+                  <TableCell className="w-12.5 text-center align-middle">
                     <div className="flex items-center justify-center">
                       <Checkbox
                         checked={isSelected}
