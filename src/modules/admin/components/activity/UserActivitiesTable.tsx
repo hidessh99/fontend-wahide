@@ -240,9 +240,6 @@ export function UserActivitiesTable({
     );
   };
 
-  const startItem = total > 0 ? (page - 1) * pageSize + 1 : 0;
-  const endItem = total > 0 ? Math.min(page * pageSize, total) : 0;
-
   return (
     <div className="w-full min-w-0 space-y-4">
       {/* Toolbar Section: Search Bar & Filter Chips */}
@@ -531,21 +528,15 @@ export function UserActivitiesTable({
 
         {/* Pagination Footer */}
         {!isLoading && total > 0 && (
-          <div className="border-border bg-muted/20 text-foreground-secondary flex flex-col justify-between gap-3 border-t px-5 py-3.5 text-xs font-semibold select-none sm:flex-row sm:items-center">
-            <div>
-              Menampilkan <span className="text-foreground font-bold">{startItem}</span> -{" "}
-              <span className="text-foreground font-bold">{endItem}</span> dari{" "}
-              <span className="text-foreground font-bold">{total}</span> rekaman aktivitas
-            </div>
-
-            <DataTablePagination
-              page={page}
-              totalPages={totalPages}
-              onPrevPage={onPrevPage}
-              onNextPage={onNextPage}
-              className="mx-0 w-auto"
-            />
-          </div>
+          <DataTablePagination
+            page={page}
+            totalPages={totalPages}
+            total={total}
+            pageSize={pageSize}
+            onPrevPage={onPrevPage}
+            onNextPage={onNextPage}
+            entityName="rekaman aktivitas"
+          />
         )}
       </div>
 

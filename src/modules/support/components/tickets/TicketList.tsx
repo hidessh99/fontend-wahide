@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty";
 import { SearchInput } from "@/components/ui/search-input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { DataTablePagination } from "@/components/ui/pagination";
 import { useI18n } from "@/lib/i18n/context";
 import { UpdateTicketStatusModal } from "./UpdateTicketStatusModal";
 
@@ -38,7 +39,6 @@ import {
   CheckCircle2,
   AlertCircle,
   ShieldAlert,
-  ChevronLeft,
   ChevronRight,
   Lock,
   User as UserIcon,
@@ -82,9 +82,6 @@ export function TicketList() {
     setSearchInput("");
     clearSearch();
   };
-
-  const startItem = total > 0 ? (page - 1) * pageSize + 1 : 0;
-  const endItem = total > 0 ? Math.min(page * pageSize, total) : 0;
 
   const renderStatusBadge = (status: TicketStatus) => {
     switch (status) {
@@ -244,14 +241,11 @@ export function TicketList() {
           }
         />
       ) : (
-        <div className="space-y-3">
-          {/* Mobile View: Card-based Ticket List (Visible on < 768px) */}
-          <div className="space-y-3 md:hidden">
+        <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs dark:bg-[#161715]">
+          {/* Mobile View: Card-based Ticket List (Visible on < 1024px) */}
+          <div className="divide-border/50 divide-y lg:hidden">
             {sortedTickets.map((tkt) => (
-              <div
-                key={tkt.id}
-                className="border-border bg-surface space-y-2.5 rounded-md border p-3.5 shadow-xs sm:p-4 dark:bg-[#161715]"
-              >
+              <div key={tkt.id} className="bg-surface space-y-2.5 p-3.5 sm:p-4 dark:bg-[#161715]">
                 {/* Header: Ticket Number & Status Badge */}
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-dark-green dark:text-wise-green bg-light-mint dark:bg-wise-green/15 border-wise-green/30 rounded-full border px-2.5 py-0.5 font-mono text-xs font-bold">
@@ -330,9 +324,9 @@ export function TicketList() {
             ))}
           </div>
 
-          {/* Desktop View: shadcn/ui Table (Visible on >= 768px) */}
-          <div className="border-border bg-surface hidden overflow-hidden rounded-md border shadow-xs md:block dark:bg-[#161715]">
-            <Table>
+          {/* Desktop View: shadcn/ui Table (Visible on >= 1024px) */}
+          <div className="hidden overflow-x-auto lg:block">
+            <Table className="min-w-[850px]">
               <TableHeader>
                 <TableRow className="bg-muted/50 border-border hover:bg-muted/50">
                   {isSuperAdmin ? (
@@ -562,48 +556,16 @@ export function TicketList() {
 
           {/* Pagination Footer */}
           {total > 0 && (
-            <div className="border-border bg-surface flex flex-col items-center justify-between gap-3 rounded-md border p-3 shadow-xs sm:flex-row sm:px-5 sm:py-3.5 dark:bg-[#161715]">
-              {/* Item count summary */}
-              <div className="text-foreground-secondary text-xs font-semibold">
-                {t("support.paginationShowing")
-                  .replace("{start}", String(startItem))
-                  .replace("{end}", String(endItem))
-                  .replace("{total}", String(total))}
-              </div>
-
-              {/* Page navigation: Previous, Page Indicator, Next */}
-              {totalPages > 1 && (
-                <div className="flex items-center gap-2">
-                  <span className="text-foreground-muted px-1.5 text-xs font-bold select-none">
-                    {t("support.paginationPage")
-                      .replace("{page}", String(page))
-                      .replace("{total}", String(totalPages))}
-                  </span>
-
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={prevPage}
-                    disabled={page <= 1}
-                    className="border-border hover:border-foreground-muted h-8.5 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold disabled:opacity-40"
-                  >
-                    <ChevronLeft className="size-3.5" />
-                    <span>{t("support.paginationPrev")}</span>
-                  </Button>
-
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={nextPage}
-                    disabled={page >= totalPages}
-                    className="border-border hover:border-foreground-muted h-8.5 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold disabled:opacity-40"
-                  >
-                    <span>{t("support.paginationNext")}</span>
-                    <ChevronRight className="size-3.5" />
-                  </Button>
-                </div>
-              )}
-            </div>
+            <DataTablePagination
+              page={page}
+              totalPages={totalPages}
+              total={total}
+              pageSize={pageSize}
+              onPageChange={(p) => fetchTickets(undefined, undefined, p)}
+              onPrevPage={prevPage}
+              onNextPage={nextPage}
+              entityName="tiket bantuan"
+            />
           )}
         </div>
       )}

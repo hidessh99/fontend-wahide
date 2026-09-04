@@ -3,7 +3,7 @@
 import React from "react";
 import { Contact } from "@/modules/contact/types/contact.types";
 import { useI18n } from "@/lib/i18n/context";
-import { Edit2, Trash2 } from "lucide-react";
+import { Edit2, Trash2, User } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DataTablePagination } from "@/components/ui/pagination";
 import {
@@ -57,11 +57,8 @@ export function ContactTable({
 
   const isAllSelected = sortedContacts.length > 0 && selectedIds.size === sortedContacts.length;
 
-  const startItem = total > 0 ? (page - 1) * pageSize + 1 : 0;
-  const endItem = total > 0 ? Math.min(page * pageSize, total) : 0;
-
   return (
-    <div className="border-border bg-surface overflow-hidden rounded-md border shadow-xs dark:bg-[#161715]">
+    <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs dark:bg-[#161715]">
       {/* Mobile View: Card-based Contact List (Visible on < 1024px) */}
       <div className="divide-border/40 divide-y lg:hidden">
         {/* Select All Bar on Mobile */}
@@ -218,9 +215,18 @@ export function ContactTable({
 
                   {/* Name Column */}
                   <TableCell className="px-4 py-3.5 align-middle">
-                    <span className="text-foreground block truncate text-sm font-bold tracking-tight">
-                      {contact.name}
-                    </span>
+                    <div className="flex min-w-0 items-center gap-2.5">
+                      <div className="flex size-7.5 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                        {contact.name ? (
+                          contact.name.charAt(0).toUpperCase()
+                        ) : (
+                          <User className="size-3.5" />
+                        )}
+                      </div>
+                      <span className="text-foreground block truncate text-xs font-bold sm:text-sm">
+                        {contact.name}
+                      </span>
+                    </div>
                   </TableCell>
 
                   {/* Phone Column */}
@@ -277,31 +283,19 @@ export function ContactTable({
         </Table>
       </div>
 
-      {/* Pagination Footer */}
+      {/* Standardized Shadcn UI Data Table Pagination Footer */}
       {total > 0 && (
-        <div className="border-border bg-muted/30 flex flex-col items-center justify-between gap-3 border-t p-3 sm:flex-row sm:px-5 sm:py-3.5">
-          {/* Item count summary */}
-          <div className="text-foreground-secondary text-xs font-semibold sm:text-sm">
-            {t("contact.showingPagination", {
-              start: String(startItem),
-              end: String(endItem),
-              total: String(total),
-            })}
-          </div>
-
-          {/* Shadcn UI Pagination */}
-          {totalPages > 1 && (
-            <DataTablePagination
-              page={page}
-              totalPages={totalPages}
-              onPrevPage={onPrevPage}
-              onNextPage={onNextPage}
-              prevText={t("contact.prevPage")}
-              nextText={t("contact.nextPage")}
-              className="mx-0 w-auto"
-            />
-          )}
-        </div>
+        <DataTablePagination
+          page={page}
+          totalPages={totalPages}
+          total={total}
+          pageSize={pageSize}
+          onPrevPage={onPrevPage}
+          onNextPage={onNextPage}
+          entityName="kontak"
+          prevText={t("contact.prevPage") || "Sebelumnya"}
+          nextText={t("contact.nextPage") || "Berikutnya"}
+        />
       )}
     </div>
   );

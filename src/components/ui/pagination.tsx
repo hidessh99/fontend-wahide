@@ -160,9 +160,14 @@ function PaginationEllipsis({ className, ...props }: React.ComponentProps<"span"
 export interface DataTablePaginationProps {
   page: number;
   totalPages: number;
+  total?: number;
+  pageSize?: number;
   onPageChange?: (page: number) => void;
   onPrevPage?: () => void;
   onNextPage?: () => void;
+  onPageSizeChange?: (pageSize: number) => void;
+  pageSizeOptions?: number[];
+  entityName?: string;
   prevText?: string;
   nextText?: string;
   showPageNumbers?: boolean;
@@ -170,55 +175,117 @@ export interface DataTablePaginationProps {
 }
 
 /**
- * Reusable Minimal Table Pagination Component: [ < Sebelumnya ] [ Berikutnya > ]
+ * Standard Full-Featured Table Pagination Footer matching /campaigns reference:
+ * - Left: "Menampilkan X - Y dari Z {entityName}" & "Baris per halaman: [ 10 / 20 / 50 / 100 ]"
+ * - Right: Always-visible pill controls: [ < Sebelumnya ] [ Halaman X dari Y ] [ Berikutnya > ]
  */
 export function DataTablePagination({
   page,
   totalPages,
+  total,
+  pageSize = 10,
   onPageChange,
   onPrevPage,
   onNextPage,
+  onPageSizeChange,
+  pageSizeOptions = [10, 20, 50, 100],
+  entityName = "data",
   prevText = "Sebelumnya",
   nextText = "Berikutnya",
   className,
 }: DataTablePaginationProps) {
-  if (totalPages <= 1) return null;
+  const safeTotalPages = Math.max(1, totalPages);
+  const handlePrev = () => {
+    if (page > 1) {
+      if (onPrevPage) onPrevPage();
+      else if (onPageChange) onPageChange(page - 1);
+    }
+  };
 
-  return (
-    <div className={cn("flex items-center gap-2", className)}>
+  const handleNext = () => {
+    if (page < safeTotalPages) {
+      if (onNextPage) onNextPage();
+      else if (onPageChange) onPageChange(page + 1);
+    }
+  };
+
+  const startItem = total && total > 0 ? (page - 1) * pageSize + 1 : 0;
+  const endItem = total && total > 0 ? Math.min(page * pageSize, total) : 0;
+  const isFullFooter = typeof total === "number";
+
+  const rightControls = (
+    <div className="flex items-center gap-2">
       <Button
         type="button"
         variant="outline"
         size="sm"
         disabled={page <= 1}
-        onClick={() => {
-          if (page > 1) {
-            if (onPrevPage) onPrevPage();
-            else if (onPageChange) onPageChange(page - 1);
-          }
-        }}
-        className="border-border hover:border-foreground-muted h-8.5 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold transition disabled:pointer-events-none disabled:opacity-40"
+        onClick={handlePrev}
+        className="border-border hover:border-foreground-muted h-8.5 cursor-pointer gap-1 rounded-full px-3.5 text-xs font-bold transition disabled:pointer-events-none disabled:opacity-40"
       >
         <ChevronLeftIcon className="size-3.5" />
-        <span>{prevText}</span>
+        <span className="hidden sm:inline">{prevText}</span>
       </Button>
+
+      <div className="bg-surface border-border text-foreground flex h-8.5 items-center rounded-full border px-3.5 text-xs font-bold select-none">
+        <span>
+          Halaman {page} dari {safeTotalPages}
+        </span>
+      </div>
 
       <Button
         type="button"
         variant="outline"
         size="sm"
-        disabled={page >= totalPages}
-        onClick={() => {
-          if (page < totalPages) {
-            if (onNextPage) onNextPage();
-            else if (onPageChange) onPageChange(page + 1);
-          }
-        }}
-        className="border-border hover:border-foreground-muted h-8.5 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold transition disabled:pointer-events-none disabled:opacity-40"
+        disabled={page >= safeTotalPages}
+        onClick={handleNext}
+        className="border-border hover:border-foreground-muted h-8.5 cursor-pointer gap-1 rounded-full px-3.5 text-xs font-bold transition disabled:pointer-events-none disabled:opacity-40"
       >
-        <span>{nextText}</span>
+        <span className="hidden sm:inline">{nextText}</span>
         <ChevronRightIcon className="size-3.5" />
       </Button>
+    </div>
+  );
+
+  if (!isFullFooter) {
+    return <div className={cn("flex items-center gap-2", className)}>{rightControls}</div>;
+  }
+
+  return (
+    <div
+      className={cn(
+        "border-border bg-muted/30 flex flex-col items-center justify-between gap-3 border-t p-3 sm:flex-row sm:px-5 sm:py-3.5",
+        className
+      )}
+    >
+      {/* Left: Summary and Page Size Selector */}
+      <div className="text-foreground-secondary flex flex-wrap items-center gap-3 text-xs font-semibold">
+        <span>
+          {total > 0
+            ? `Menampilkan ${startItem} - ${endItem} dari ${total} ${entityName}`
+            : `0 ${entityName}`}
+        </span>
+
+        {onPageSizeChange && (
+          <div className="border-border flex items-center gap-1.5 border-l pl-3">
+            <span className="text-foreground-muted text-[11px]">Baris per halaman:</span>
+            <select
+              value={pageSize}
+              onChange={(e) => onPageSizeChange(Number(e.target.value))}
+              className="bg-surface text-foreground border-border focus:border-wise-green h-7 cursor-pointer rounded-md border px-2 text-xs font-semibold outline-none dark:bg-[#10110e]"
+            >
+              {pageSizeOptions.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+      </div>
+
+      {/* Right: Always-Visible Interactive Pagination Controls */}
+      {rightControls}
     </div>
   );
 }

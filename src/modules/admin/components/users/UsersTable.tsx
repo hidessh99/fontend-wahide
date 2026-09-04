@@ -118,9 +118,6 @@ export function UsersTable({
     onClearSearch();
   };
 
-  const startItem = total > 0 ? (page - 1) * pageSize + 1 : 0;
-  const endItem = total > 0 ? Math.min(page * pageSize, total) : 0;
-
   return (
     <div className="space-y-5">
       {/* Search & Filter Toolbar */}
@@ -446,42 +443,18 @@ export function UsersTable({
 
         {/* Responsive Pagination Footer */}
         {total > 0 && (
-          <div className="border-border bg-muted/20 flex flex-col items-center justify-between gap-3 border-t p-3.5 sm:flex-row sm:px-5 sm:py-3.5">
-            {/* Item count summary & Page size selector */}
-            <div className="text-foreground-secondary flex items-center gap-3 text-xs font-semibold">
-              <span>
-                Menampilkan{" "}
-                <strong className="text-foreground">
-                  {startItem} - {endItem}
-                </strong>{" "}
-                dari <strong className="text-foreground">{total}</strong> pengguna
-              </span>
-
-              {onPageSizeChange && (
-                <div className="text-foreground-muted flex items-center gap-1.5 text-xs">
-                  <span>| Baris:</span>
-                  <select
-                    value={pageSize}
-                    onChange={(e) => onPageSizeChange(Number(e.target.value))}
-                    className="bg-surface border-border text-foreground h-7 cursor-pointer rounded-md border px-2 text-xs font-bold outline-none dark:bg-[#10110e]"
-                  >
-                    <option value={10}>10</option>
-                    <option value={25}>25</option>
-                    <option value={50}>50</option>
-                  </select>
-                </div>
-              )}
-            </div>
-
-            <DataTablePagination
-              page={page}
-              totalPages={totalPages}
-              onPageChange={onPageChange}
-              onPrevPage={onPrevPage}
-              onNextPage={onNextPage}
-              className="mx-0 w-auto"
-            />
-          </div>
+          <DataTablePagination
+            page={page}
+            totalPages={totalPages}
+            total={total}
+            pageSize={pageSize}
+            onPageChange={onPageChange}
+            onPrevPage={onPrevPage}
+            onNextPage={onNextPage}
+            onPageSizeChange={onPageSizeChange}
+            pageSizeOptions={[10, 25, 50]}
+            entityName="pengguna"
+          />
         )}
       </div>
 

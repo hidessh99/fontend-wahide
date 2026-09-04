@@ -50,9 +50,6 @@ export function InvoiceTable({
 
   const sortedInvoices = sortData(invoices);
 
-  const startItem = total > 0 ? (page - 1) * pageSize + 1 : 0;
-  const endItem = total > 0 ? Math.min(page * pageSize, total) : 0;
-
   const renderStatusBadge = (status: InvoiceStatus) => {
     switch (status) {
       case "PAID":
@@ -81,7 +78,7 @@ export function InvoiceTable({
   };
 
   return (
-    <div className="border-border bg-surface overflow-hidden rounded-md border shadow-xs dark:bg-[#161715]">
+    <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs dark:bg-[#161715]">
       {/* Invoices List */}
       {sortedInvoices.length === 0 ? (
         <EmptyState
@@ -91,8 +88,8 @@ export function InvoiceTable({
         />
       ) : (
         <div>
-          {/* Mobile View: Card-based Invoice List (Visible on < 768px) */}
-          <div className="divide-border/50 divide-y md:hidden">
+          {/* Mobile View: Card-based Invoice List (Visible on < 1024px) */}
+          <div className="divide-border/50 divide-y lg:hidden">
             {sortedInvoices.map((inv) => {
               const safeAmount = Number(inv.amount ?? 0);
               const dateStr = inv.createdAt
@@ -163,9 +160,9 @@ export function InvoiceTable({
             })}
           </div>
 
-          {/* Desktop View: shadcn/ui Table (Visible on >= 768px) */}
-          <div className="hidden md:block">
-            <Table>
+          {/* Desktop View: shadcn/ui Table (Visible on >= 1024px) */}
+          <div className="hidden lg:block">
+            <Table className="min-w-[800px]">
               <TableHeader>
                 <TableRow className="bg-muted/50 border-border hover:bg-muted/50">
                   <TableHead className="w-[30%] px-5 py-3.5">
@@ -300,27 +297,19 @@ export function InvoiceTable({
         </div>
       )}
 
-      {/* Pagination Footer */}
+      {/* Standardized Shadcn UI Data Table Pagination Footer */}
       {total > 0 && (
-        <div className="border-border bg-muted/30 flex flex-col items-center justify-between gap-3 border-t p-3 sm:flex-row sm:px-5 sm:py-3.5">
-          {/* Item count summary */}
-          <div className="text-foreground-secondary text-xs font-semibold">
-            Menampilkan {startItem} - {endItem} dari {total} faktur
-          </div>
-
-          {/* Shadcn UI Pagination */}
-          {totalPages > 1 && (
-            <DataTablePagination
-              page={page}
-              totalPages={totalPages}
-              onPrevPage={onPrevPage}
-              onNextPage={onNextPage}
-              prevText={t("billing.prevPage") || "Sebelumnya"}
-              nextText={t("billing.nextPage") || "Berikutnya"}
-              className="mx-0 w-auto"
-            />
-          )}
-        </div>
+        <DataTablePagination
+          page={page}
+          totalPages={totalPages}
+          total={total}
+          pageSize={pageSize}
+          onPrevPage={onPrevPage}
+          onNextPage={onNextPage}
+          entityName="faktur"
+          prevText={t("billing.prevPage") || "Sebelumnya"}
+          nextText={t("billing.nextPage") || "Berikutnya"}
+        />
       )}
     </div>
   );

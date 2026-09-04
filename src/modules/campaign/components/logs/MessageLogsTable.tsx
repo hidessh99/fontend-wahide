@@ -1,20 +1,12 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import {
-  CheckCheck,
-  Check,
-  AlertCircle,
-  RefreshCw,
-  Loader2,
-  Phone,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { CheckCheck, Check, AlertCircle, RefreshCw, Loader2, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty";
 import { SearchInput } from "@/components/ui/search-input";
+import { DataTablePagination } from "@/components/ui/pagination";
 import { useI18n } from "@/lib/i18n/context";
 import { useMessageLogs } from "../../hooks/useMessageLogs";
 import { MessageDetailModal } from "./MessageDetailModal";
@@ -112,9 +104,6 @@ export function MessageLogsTable() {
     setPage(1);
   };
 
-  const startItem = total > 0 ? (page - 1) * pageSize + 1 : 0;
-  const endItem = total > 0 ? Math.min(page * pageSize, total) : 0;
-
   const renderStatusBadge = (status: MessageLogItem["status"]) => {
     switch (status) {
       case "READ":
@@ -192,7 +181,7 @@ export function MessageLogsTable() {
       </div>
 
       {/* Logs Table */}
-      <div className="border-border bg-surface overflow-hidden rounded-md border shadow-xs dark:bg-[#161715]">
+      <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs dark:bg-[#161715]">
         {isLoading ? (
           <div className="space-y-3 p-8 text-center sm:p-12">
             <Loader2 className="text-wise-green mx-auto size-8 animate-spin" />
@@ -417,75 +406,22 @@ export function MessageLogsTable() {
           </div>
         )}
 
-        {/* Pagination Footer */}
+        {/* Standardized Shadcn UI Data Table Pagination Footer */}
         {total > 0 && (
-          <div className="border-border bg-muted/30 flex flex-col items-center justify-between gap-3 border-t p-3 sm:flex-row sm:px-5 sm:py-3.5">
-            {/* Left: Summary and Page Size Selector */}
-            <div className="text-foreground-secondary flex flex-wrap items-center gap-3 text-xs font-semibold">
-              <span>
-                {t("campaign.paginationShowing", {
-                  start: String(startItem),
-                  end: String(endItem),
-                  total: String(total),
-                }) || `Menampilkan ${startItem} - ${endItem} dari ${total} log pesan`}
-              </span>
-
-              <div className="border-border flex items-center gap-1.5 border-l pl-3">
-                <span className="text-foreground-muted text-[11px]">
-                  {t("campaign.rowsPerPage") || "Baris per halaman"}:
-                </span>
-                <select
-                  value={pageSize}
-                  onChange={(e) => {
-                    setPageSize(Number(e.target.value));
-                    setPage(1);
-                  }}
-                  className="bg-surface text-foreground border-border focus:border-wise-green h-7 cursor-pointer rounded-md border px-2 text-xs font-semibold outline-none dark:bg-[#10110e]"
-                >
-                  <option value={10}>10</option>
-                  <option value={20}>20</option>
-                  <option value={50}>50</option>
-                  <option value={100}>100</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Right: Always-Visible Interactive Pagination Controls */}
-            <div className="flex items-center gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                disabled={page <= 1}
-                onClick={() => setPage(Math.max(1, page - 1))}
-                className="border-border hover:border-foreground-muted h-8.5 cursor-pointer gap-1 rounded-full px-3.5 text-xs font-bold transition disabled:pointer-events-none disabled:opacity-40"
-              >
-                <ChevronLeft className="size-3.5" />
-                <span className="hidden sm:inline">{t("campaign.prevPage") || "Sebelumnya"}</span>
-              </Button>
-
-              <div className="bg-surface border-border text-foreground flex h-8.5 items-center rounded-full border px-3.5 text-xs font-bold select-none">
-                <span>
-                  {t("campaign.pageOf", {
-                    page: String(page),
-                    total: String(totalPages),
-                  }) || `Halaman ${page} dari ${totalPages}`}
-                </span>
-              </div>
-
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                disabled={page >= totalPages}
-                onClick={() => setPage(Math.min(totalPages, page + 1))}
-                className="border-border hover:border-foreground-muted h-8.5 cursor-pointer gap-1 rounded-full px-3.5 text-xs font-bold transition disabled:pointer-events-none disabled:opacity-40"
-              >
-                <span className="hidden sm:inline">{t("campaign.nextPage") || "Berikutnya"}</span>
-                <ChevronRight className="size-3.5" />
-              </Button>
-            </div>
-          </div>
+          <DataTablePagination
+            page={page}
+            totalPages={totalPages}
+            total={total}
+            pageSize={pageSize}
+            onPageChange={(p) => setPage(p)}
+            onPageSizeChange={(size) => {
+              setPageSize(size);
+              setPage(1);
+            }}
+            entityName="log pesan"
+            prevText={t("campaign.prevPage") || "Sebelumnya"}
+            nextText={t("campaign.nextPage") || "Berikutnya"}
+          />
         )}
       </div>
 

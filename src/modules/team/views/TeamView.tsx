@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty";
 import { SearchInput } from "@/components/ui/search-input";
+import { DataTablePagination } from "@/components/ui/pagination";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { useI18n } from "@/lib/i18n/context";
 import {
@@ -19,8 +20,6 @@ import {
   ShieldCheck,
   Smartphone,
   CheckCircle2,
-  ChevronLeft,
-  ChevronRight,
 } from "lucide-react";
 import {
   Table,
@@ -84,9 +83,6 @@ export function TeamView() {
     const start = (page - 1) * pageSize;
     return sortedFilteredAgents.slice(start, start + pageSize);
   }, [sortedFilteredAgents, page, pageSize]);
-
-  const startItem = total > 0 ? (page - 1) * pageSize + 1 : 0;
-  const endItem = total > 0 ? Math.min(page * pageSize, total) : 0;
 
   const handleClearSearch = () => {
     setSearchInput("");
@@ -180,7 +176,7 @@ export function TeamView() {
 
       {/* Agents Table with Error Boundary */}
       <ErrorBoundary fallbackTitle="Gagal Memuat Daftar Tim Staf Agen">
-        <div className="border-border bg-surface overflow-hidden rounded-md border shadow-xs dark:bg-[#161715]">
+        <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs dark:bg-[#161715]">
           {paginatedAgents.length === 0 ? (
             <EmptyState
               icon={<Users className="size-8" />}
@@ -193,8 +189,8 @@ export function TeamView() {
             />
           ) : (
             <div>
-              {/* Mobile View: Card-based Agent List (Visible on < 768px) */}
-              <div className="divide-border/50 divide-y md:hidden">
+              {/* Mobile View: Card-based Agent List (Visible on < 1024px) */}
+              <div className="divide-border/50 divide-y lg:hidden">
                 {paginatedAgents.map((agt) => (
                   <div
                     key={agt.id}
@@ -260,9 +256,9 @@ export function TeamView() {
                 ))}
               </div>
 
-              {/* Desktop View: shadcn/ui Table (Visible on >= 768px) */}
-              <div className="hidden md:block">
-                <Table>
+              {/* Desktop View: shadcn/ui Table (Visible on >= 1024px) */}
+              <div className="hidden overflow-x-auto lg:block">
+                <Table className="min-w-[750px]">
                   <TableHeader>
                     <TableRow className="bg-muted/50 border-border hover:bg-muted/50">
                       <TableHead className="w-[30%] px-5 py-3.5">
@@ -400,43 +396,14 @@ export function TeamView() {
 
           {/* Pagination Footer */}
           {total > 0 && (
-            <div className="border-border bg-muted/30 flex flex-col items-center justify-between gap-3 border-t p-3 sm:flex-row sm:px-5 sm:py-3.5">
-              {/* Item count summary */}
-              <div className="text-foreground-secondary text-xs font-semibold">
-                Menampilkan {startItem} - {endItem} dari {total} anggota tim
-              </div>
-
-              {/* Page navigation: Previous, Page Indicator, Next */}
-              {totalPages > 1 && (
-                <div className="flex items-center gap-2">
-                  <span className="text-foreground-muted px-1.5 text-xs font-bold select-none">
-                    Halaman {page} dari {totalPages}
-                  </span>
-
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setPage((prev) => Math.max(1, prev - 1))}
-                    disabled={page <= 1}
-                    className="border-border hover:border-foreground-muted h-8.5 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold disabled:opacity-40"
-                  >
-                    <ChevronLeft className="size-3.5" />
-                    <span>Sebelumnya</span>
-                  </Button>
-
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
-                    disabled={page >= totalPages}
-                    className="border-border hover:border-foreground-muted h-8.5 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold disabled:opacity-40"
-                  >
-                    <span>Berikutnya</span>
-                    <ChevronRight className="size-3.5" />
-                  </Button>
-                </div>
-              )}
-            </div>
+            <DataTablePagination
+              page={page}
+              totalPages={totalPages}
+              total={total}
+              pageSize={pageSize}
+              onPageChange={(p) => setPage(p)}
+              entityName="anggota tim"
+            />
           )}
         </div>
       </ErrorBoundary>
