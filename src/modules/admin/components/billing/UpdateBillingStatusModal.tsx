@@ -3,8 +3,15 @@
 import React, { useState } from "react";
 import { AdminBillingItem } from "@/modules/admin/types/admin.types";
 import { Button } from "@/components/ui/button";
-import { useEscapeKey } from "@/hooks/useEscapeKey";
-import { X, AlertTriangle, Loader2, Save, Clock, Ban, Receipt, User } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { AlertTriangle, Loader2, Save, Clock, Ban, Receipt, User } from "lucide-react";
 
 interface UpdateBillingStatusModalProps {
   billing: AdminBillingItem | null;
@@ -22,10 +29,7 @@ export function UpdateBillingStatusModal({
   const [selectedStatus, setSelectedStatus] = useState<"EXPIRED" | "CANCELLED">("CANCELLED");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Universal Escape key dismissal with zero listener churn
-  useEscapeKey(isOpen && !isLoading, onClose);
-
-  if (!isOpen || !billing) return null;
+  if (!billing) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,41 +43,22 @@ export function UpdateBillingStatusModal({
   };
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      onClick={(e) => {
-        if (e.target === e.currentTarget && !isLoading) onClose();
-      }}
-      className="animate-in fade-in fixed inset-0 z-50 flex min-h-full items-center justify-center overflow-y-auto bg-black/75 p-3 backdrop-blur-sm sm:p-6"
-    >
-      <div className="border-border bg-surface animate-in zoom-in-95 relative flex max-h-[92vh] w-full max-w-md flex-col overflow-hidden rounded-xl border shadow-2xl dark:bg-[#161715]">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && !isLoading && onClose()}>
+      <DialogContent className="border-border bg-surface max-h-[92vh] max-w-md gap-0 overflow-y-auto rounded-xl p-0 shadow-2xl dark:bg-[#161715]">
         {/* Header */}
-        <div className="border-border flex shrink-0 items-start justify-between border-b p-5 pb-4 sm:p-6">
-          <div className="flex items-center gap-3">
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-full border border-amber-500/20 bg-amber-500/15 text-amber-600 dark:text-amber-400">
-              <Receipt className="size-5" />
-            </div>
-            <div>
-              <h2 className="text-foreground text-lg font-black tracking-tight">
-                Ubah Status Transaksi
-              </h2>
-              <p className="text-foreground-secondary text-xs font-semibold">
-                Tandai transaksi kadaluarsa atau batalkan tagihan.
-              </p>
-            </div>
+        <DialogHeader className="border-border flex flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-full border border-amber-500/20 bg-amber-500/15 text-amber-600 dark:text-amber-400">
+            <Receipt className="size-5" />
           </div>
-
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={isLoading}
-            className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full transition disabled:opacity-50"
-            aria-label="Tutup"
-          >
-            <X className="size-4" />
-          </button>
-        </div>
+          <div>
+            <DialogTitle className="text-foreground text-lg font-black tracking-tight">
+              Ubah Status Transaksi
+            </DialogTitle>
+            <DialogDescription className="text-foreground-secondary text-xs font-semibold">
+              Tandai transaksi kadaluarsa atau batalkan tagihan.
+            </DialogDescription>
+          </div>
+        </DialogHeader>
 
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col overflow-y-auto">
@@ -177,7 +162,7 @@ export function UpdateBillingStatusModal({
           </div>
 
           {/* Footer Actions */}
-          <div className="border-border bg-muted/20 flex shrink-0 items-center justify-end gap-3 border-t p-4 sm:p-5">
+          <DialogFooter className="border-border bg-muted/20 flex shrink-0 items-center justify-end gap-3 border-t p-4 sm:p-5">
             <Button
               type="button"
               variant="outline"
@@ -208,9 +193,9 @@ export function UpdateBillingStatusModal({
                 </>
               )}
             </Button>
-          </div>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

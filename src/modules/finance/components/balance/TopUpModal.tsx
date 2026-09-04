@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { PaymentMethod } from "@/modules/finance/types/finance.types";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -122,10 +123,10 @@ export function TopUpModal({ isOpen, onClose, onSubmit }: TopUpModalProps) {
                 {t("billing.customAmountLabel")}
               </label>
               <div className="relative">
-                <span className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 font-mono text-xs font-bold">
+                <span className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 z-10 -translate-y-1/2 font-mono text-xs font-bold">
                   Rp
                 </span>
-                <input
+                <Input
                   id="custom-nominal-input"
                   type="text"
                   placeholder="Contoh: 150.000"
@@ -135,7 +136,8 @@ export function TopUpModal({ isOpen, onClose, onSubmit }: TopUpModalProps) {
                     setCustomAmount(raw ? Number(raw).toLocaleString("id-ID") : "");
                     setError(null);
                   }}
-                  className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full rounded-md border pr-4 pl-10 font-mono text-xs font-semibold outline-none focus:ring-1 dark:bg-[#10110e]"
+                  variant="rounded"
+                  className="pr-4 pl-10 font-mono"
                 />
               </div>
               <span className="text-foreground-muted mt-1 block text-[11px]">

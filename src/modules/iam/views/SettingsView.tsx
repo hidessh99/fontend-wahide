@@ -153,7 +153,7 @@ export function SettingsView() {
       </div>
 
       {/* API Key Fast-Path Card */}
-      <div className="border-border bg-surface space-y-6 rounded-md border p-6 shadow-sm sm:p-8 dark:bg-[#161715]">
+      <div className="border-border bg-surface space-y-6 rounded-xl border p-6 shadow-sm sm:p-8 dark:bg-[#161715]">
         <div className="border-border flex flex-col justify-between gap-3 border-b pb-4 sm:flex-row sm:items-center">
           <div className="flex items-center gap-3">
             <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-10 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
@@ -268,7 +268,7 @@ export function SettingsView() {
         />
 
         {/* Security & Password Form */}
-        <div className="border-border bg-surface space-y-5 rounded-md border p-6 shadow-sm sm:p-8 dark:bg-[#161715]">
+        <div className="border-border bg-surface space-y-5 rounded-xl border p-6 shadow-sm sm:p-8 dark:bg-[#161715]">
           <div className="border-border flex items-center gap-3 border-b pb-4">
             <div className="bg-muted text-foreground-secondary flex size-9 items-center justify-center rounded-full">
               <Lock className="size-4" />

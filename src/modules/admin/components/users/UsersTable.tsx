@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty";
 import { SearchInput } from "@/components/ui/search-input";
 import { DataTablePagination } from "@/components/ui/pagination";
+import { NativeSelect } from "@/components/ui/native-select";
 import {
   RefreshCw,
   Sliders,
@@ -135,28 +136,30 @@ export function UsersTable({
           {/* Filters & Refresh */}
           <div className="flex shrink-0 flex-wrap items-center gap-2 sm:flex-nowrap">
             {/* Role Filter */}
-            <select
+            <NativeSelect
               value={roleFilter}
               onChange={(e) => onRoleFilterChange(e.target.value)}
-              className="bg-surface text-foreground border-border dark:focus:border-wise-green h-10 flex-1 cursor-pointer rounded-full border px-3.5 text-xs font-semibold outline-none focus:border-emerald-600 sm:flex-initial dark:bg-[#10110e]"
+              variant="pill"
+              wrapperClassName="flex-1 sm:flex-initial"
             >
               <option value="ALL">Semua Peran</option>
               <option value="SELLER">Seller</option>
               <option value="SUPER_ADMIN">Super Admin</option>
               <option value="AGENT">CS Agent</option>
               <option value="USER">User</option>
-            </select>
+            </NativeSelect>
 
             {/* Status Filter */}
-            <select
+            <NativeSelect
               value={statusFilter}
               onChange={(e) => onStatusFilterChange(e.target.value)}
-              className="bg-surface text-foreground border-border dark:focus:border-wise-green h-10 flex-1 cursor-pointer rounded-full border px-3.5 text-xs font-semibold outline-none focus:border-emerald-600 sm:flex-initial dark:bg-[#10110e]"
+              variant="pill"
+              wrapperClassName="flex-1 sm:flex-initial"
             >
               <option value="ALL">Semua Status</option>
               <option value="ACTIVE">🟢 Aktif</option>
               <option value="SUSPENDED">🔴 Ditangguhkan</option>
-            </select>
+            </NativeSelect>
 
             {/* Refresh Button */}
             <Button

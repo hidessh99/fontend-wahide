@@ -8,6 +8,8 @@ import { useCampaigns } from "@/modules/campaign/hooks/useCampaigns";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty";
 import {
   Smartphone,
   Send,
@@ -205,7 +207,7 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
       {/* 4 Stat Overview Cards */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
         {/* Device Status */}
-        <div className="border-border bg-surface space-y-2 rounded-md border p-4 sm:p-5 dark:bg-[#161715]">
+        <div className="border-border bg-surface space-y-2 rounded-xl border p-4 shadow-xs sm:p-5 dark:bg-[#161715]">
           <div className="flex items-center justify-between">
             <span className="text-foreground-muted text-xs font-bold tracking-wider uppercase">
               WhatsApp Terhubung
@@ -223,7 +225,7 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
         </div>
 
         {/* Quota Remaining */}
-        <div className="border-border bg-surface space-y-2 rounded-md border p-5 dark:bg-[#161715]">
+        <div className="border-border bg-surface space-y-2 rounded-xl border p-5 shadow-xs dark:bg-[#161715]">
           <div className="flex items-center justify-between">
             <span className="text-foreground-muted text-xs font-bold tracking-wider uppercase">
               Sisa Kuota Pesan
@@ -241,7 +243,7 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
         </div>
 
         {/* Contacts Count & Balance */}
-        <div className="border-border bg-surface space-y-2 rounded-md border p-5 dark:bg-[#161715]">
+        <div className="border-border bg-surface space-y-2 rounded-xl border p-5 shadow-xs dark:bg-[#161715]">
           <div className="flex items-center justify-between">
             <span className="text-foreground-muted text-xs font-bold tracking-wider uppercase">
               Buku Kontak &amp; Saldo
@@ -271,7 +273,7 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
         </div>
 
         {/* Campaigns Count */}
-        <div className="border-border bg-surface space-y-2 rounded-md border p-5 dark:bg-[#161715]">
+        <div className="border-border bg-surface space-y-2 rounded-xl border p-5 shadow-xs dark:bg-[#161715]">
           <div className="flex items-center justify-between">
             <span className="text-foreground-muted text-xs font-bold tracking-wider uppercase">
               Kampanye Aktif
@@ -292,7 +294,7 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
       <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2">
         {/* Active WhatsApp Devices */}
         <ErrorBoundary fallbackTitle="Gagal Memuat Ringkasan Sesi WhatsApp">
-          <div className="border-border bg-surface space-y-4 rounded-md border p-4 sm:p-6 dark:bg-[#161715]">
+          <div className="border-border bg-surface space-y-4 rounded-xl border p-4 shadow-xs sm:p-6 dark:bg-[#161715]">
             <div className="border-border flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
                 <Radio className="text-dark-green dark:text-wise-green size-4" />
@@ -310,15 +312,18 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
             </div>
 
             {devices.length === 0 ? (
-              <div className="text-foreground-secondary p-6 text-center text-xs sm:p-8">
-                Belum ada perangkat yang terhubung.
-              </div>
+              <EmptyState
+                icon={<Smartphone className="size-6" />}
+                title="Belum ada perangkat terhubung"
+                description="Hubungkan perangkat WhatsApp untuk mulai mengirim pesan dan kampanye."
+                className="p-6 sm:p-8"
+              />
             ) : (
               <div className="space-y-2.5">
                 {devices.slice(0, 3).map((d) => (
                   <div
                     key={d.id}
-                    className="border-border bg-surface flex items-center justify-between rounded-md border p-3 dark:bg-[#10110e]"
+                    className="border-border bg-surface flex items-center justify-between rounded-xl border p-3 dark:bg-[#10110e]"
                   >
                     <div className="flex items-center gap-3">
                       <div className="bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex size-8 items-center justify-center rounded-full">
@@ -334,16 +339,13 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
                       </div>
                     </div>
 
-                    <span
-                      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                        d.status === "CONNECTED"
-                          ? "border border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                          : "border border-amber-500/20 bg-amber-500/10 text-amber-600 dark:text-amber-400"
-                      }`}
+                    <Badge
+                      variant={d.status === "CONNECTED" ? "success" : "warning"}
+                      className="text-[10px]"
                     >
                       <CheckCircle2 className="size-2.5" />
                       <span>{d.status}</span>
-                    </span>
+                    </Badge>
                   </div>
                 ))}
               </div>
@@ -353,7 +355,7 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
 
         {/* Broadcast Campaigns & Invoices Activity */}
         <ErrorBoundary fallbackTitle="Gagal Memuat Ringkasan Kampanye">
-          <div className="border-border bg-surface space-y-4 rounded-md border p-4 sm:p-6 dark:bg-[#161715]">
+          <div className="border-border bg-surface space-y-4 rounded-xl border p-4 shadow-xs sm:p-6 dark:bg-[#161715]">
             <div className="border-border flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
                 <Layers className="text-dark-green dark:text-wise-green size-4" />
@@ -372,15 +374,18 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
 
             {campaigns.length === 0 &&
             (!stats.recent_invoices || stats.recent_invoices.length === 0) ? (
-              <div className="text-foreground-secondary p-8 text-center text-xs">
-                Belum ada kampanye siaran yang dibuat.
-              </div>
+              <EmptyState
+                icon={<Layers className="size-6" />}
+                title="Belum ada kampanye siaran"
+                description="Buat kampanye broadcast baru untuk menjangkau kontak pelanggan Anda."
+                className="p-6 sm:p-8"
+              />
             ) : (
               <div className="space-y-2.5">
                 {campaigns.slice(0, 3).map((c) => (
                   <div
                     key={c.id}
-                    className="border-border bg-surface flex items-center justify-between rounded-md border p-3 dark:bg-[#10110e]"
+                    className="border-border bg-surface flex items-center justify-between rounded-xl border p-3 dark:bg-[#10110e]"
                   >
                     <div className="space-y-0.5">
                       <span className="text-foreground block text-xs font-bold">{c.name}</span>
@@ -389,10 +394,10 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
                       </span>
                     </div>
 
-                    <span className="bg-light-mint dark:bg-wise-green/10 text-dark-green dark:text-wise-green border-wise-green/30 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold">
+                    <Badge variant="success" className="text-[10px]">
                       <ShieldCheck className="size-2.5" />
                       <span>{c.status}</span>
-                    </span>
+                    </Badge>
                   </div>
                 ))}
               </div>
@@ -461,7 +466,7 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
       {/* 4 Stat Overview Cards */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
         {/* Total Users & Tenants */}
-        <div className="border-border bg-surface space-y-2 rounded-md border p-4 sm:p-5 dark:bg-[#161715]">
+        <div className="border-border bg-surface space-y-2 rounded-xl border p-4 shadow-xs sm:p-5 dark:bg-[#161715]">
           <div className="flex items-center justify-between">
             <span className="text-foreground-muted text-xs font-bold tracking-wider uppercase">
               Pengguna Platform
@@ -479,7 +484,7 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
         </div>
 
         {/* WhatsApp Nodes Platform-wide */}
-        <div className="border-border bg-surface space-y-2 rounded-md border p-4 sm:p-5 dark:bg-[#161715]">
+        <div className="border-border bg-surface space-y-2 rounded-xl border p-4 shadow-xs sm:p-5 dark:bg-[#161715]">
           <div className="flex items-center justify-between">
             <span className="text-foreground-muted text-xs font-bold tracking-wider uppercase">
               Node WhatsApp Global
@@ -497,7 +502,7 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
         </div>
 
         {/* Messages Platform-wide */}
-        <div className="border-border bg-surface space-y-2 rounded-md border p-4 sm:p-5 dark:bg-[#161715]">
+        <div className="border-border bg-surface space-y-2 rounded-xl border p-4 shadow-xs sm:p-5 dark:bg-[#161715]">
           <div className="flex items-center justify-between">
             <span className="text-foreground-muted text-xs font-bold tracking-wider uppercase">
               Volume Pesan Gateway
@@ -515,7 +520,7 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
         </div>
 
         {/* Total Omset & Tickets */}
-        <div className="border-border bg-surface space-y-2 rounded-md border p-4 sm:p-5 dark:bg-[#161715]">
+        <div className="border-border bg-surface space-y-2 rounded-xl border p-4 shadow-xs sm:p-5 dark:bg-[#161715]">
           <div className="flex items-center justify-between">
             <span className="text-foreground-muted text-xs font-bold tracking-wider uppercase">
               Omset &amp; Tiket Bantuan
@@ -537,7 +542,7 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
       <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2">
         {/* Recent Registered Users */}
         <ErrorBoundary fallbackTitle="Gagal Memuat Pengguna Terbaru">
-          <div className="border-border bg-surface space-y-4 rounded-md border p-4 sm:p-6 dark:bg-[#161715]">
+          <div className="border-border bg-surface space-y-4 rounded-xl border p-4 shadow-xs sm:p-6 dark:bg-[#161715]">
             <div className="border-border flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
                 <Users className="text-dark-green dark:text-wise-green size-4" />
@@ -555,15 +560,18 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
             </div>
 
             {stats.recent_users.length === 0 ? (
-              <div className="text-foreground-secondary p-6 text-center text-xs sm:p-8">
-                Belum ada pendaftaran pengguna baru.
-              </div>
+              <EmptyState
+                icon={<Users className="size-6" />}
+                title="Belum ada pengguna baru"
+                description="Belum ada pendaftaran akun pengguna baru pada sistem."
+                className="p-6 sm:p-8"
+              />
             ) : (
               <div className="space-y-2.5">
                 {stats.recent_users.slice(0, 5).map((u) => (
                   <div
                     key={u.id}
-                    className="border-border bg-surface flex items-center justify-between rounded-md border p-3 dark:bg-[#10110e]"
+                    className="border-border bg-surface flex items-center justify-between rounded-xl border p-3 dark:bg-[#10110e]"
                   >
                     <div className="space-y-0.5">
                       <span className="text-foreground block text-xs font-bold">{u.name}</span>
@@ -572,9 +580,9 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
                       </span>
                     </div>
 
-                    <span className="bg-foreground/5 text-foreground-secondary border-border inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase">
+                    <Badge variant="neutral" className="text-[10px] uppercase">
                       {u.role_name || "seller"}
-                    </span>
+                    </Badge>
                   </div>
                 ))}
               </div>
@@ -584,7 +592,7 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
 
         {/* Recent Transactions & Financial Overview */}
         <ErrorBoundary fallbackTitle="Gagal Memuat Transaksi Terbaru">
-          <div className="border-border bg-surface space-y-4 rounded-md border p-4 sm:p-6 dark:bg-[#161715]">
+          <div className="border-border bg-surface space-y-4 rounded-xl border p-4 shadow-xs sm:p-6 dark:bg-[#161715]">
             <div className="border-border flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
                 <CreditCard className="text-dark-green dark:text-wise-green size-4" />
@@ -602,15 +610,18 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
             </div>
 
             {stats.recent_transactions.length === 0 ? (
-              <div className="text-foreground-secondary p-6 text-center text-xs sm:p-8">
-                Belum ada riwayat transaksi keuangan.
-              </div>
+              <EmptyState
+                icon={<CreditCard className="size-6" />}
+                title="Belum ada transaksi"
+                description="Belum ada riwayat transaksi pembayaran tercatat pada platform."
+                className="p-6 sm:p-8"
+              />
             ) : (
               <div className="space-y-2.5">
                 {stats.recent_transactions.slice(0, 5).map((tx) => (
                   <div
                     key={tx.id}
-                    className="border-border bg-surface flex items-center justify-between rounded-md border p-3 dark:bg-[#10110e]"
+                    className="border-border bg-surface flex items-center justify-between rounded-xl border p-3 dark:bg-[#10110e]"
                   >
                     <div className="space-y-0.5">
                       <span className="text-foreground block text-xs font-bold">{tx.title}</span>
@@ -623,9 +634,9 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
                       <span className="text-foreground block text-xs font-bold">
                         Rp {tx.total_price.toLocaleString("id-ID")}
                       </span>
-                      <span className="py-0.2 inline-flex items-center rounded bg-emerald-500/10 px-1.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                      <Badge variant="success" className="text-[10px]">
                         {tx.status}
-                      </span>
+                      </Badge>
                     </div>
                   </div>
                 ))}
@@ -663,7 +674,7 @@ function DashboardSkeleton() {
         {[1, 2, 3, 4].map((i) => (
           <div
             key={i}
-            className="border-border bg-surface space-y-3 rounded-md border p-4 sm:p-5 dark:bg-[#161715]"
+            className="border-border bg-surface space-y-3 rounded-xl border p-4 sm:p-5 dark:bg-[#161715]"
           >
             <div className="flex items-center justify-between">
               <Skeleton className="h-3 w-24 rounded" />
@@ -680,7 +691,7 @@ function DashboardSkeleton() {
         {[1, 2].map((i) => (
           <div
             key={i}
-            className="border-border bg-surface space-y-4 rounded-md border p-4 sm:p-6 dark:bg-[#161715]"
+            className="border-border bg-surface space-y-4 rounded-xl border p-4 sm:p-6 dark:bg-[#161715]"
           >
             <Skeleton className="h-5 w-40 rounded" />
             <div className="space-y-2.5">

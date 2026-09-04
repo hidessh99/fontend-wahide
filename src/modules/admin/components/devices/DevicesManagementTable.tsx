@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty";
 import { SearchInput } from "@/components/ui/search-input";
 import { DataTablePagination } from "@/components/ui/pagination";
+import { NativeSelect } from "@/components/ui/native-select";
 import { formatDateTime } from "@/lib/utils";
 import {
   RefreshCw,
@@ -167,10 +168,10 @@ export function DevicesManagementTable({
 
           {/* Filter Status & Refresh */}
           <div className="flex shrink-0 items-center gap-2">
-            <select
+            <NativeSelect
               value={statusFilter}
               onChange={(e) => onStatusFilterChange(e.target.value)}
-              className="bg-surface text-foreground border-border dark:focus:border-wise-green h-10 cursor-pointer rounded-full border px-3.5 text-xs font-semibold outline-none focus:border-emerald-600 dark:bg-[#10110e]"
+              variant="pill"
             >
               <option value="ALL">Semua Status</option>
               <option value="ONLINE">🟢 Online (Tersambung)</option>
@@ -178,7 +179,7 @@ export function DevicesManagementTable({
               <option value="QR_PENDING">🟡 Scan QR Pending</option>
               <option value="HIBERNATED">🔵 Hibernated</option>
               <option value="BANNED">🔴 Banned</option>
-            </select>
+            </NativeSelect>
 
             <Button
               variant="outline"

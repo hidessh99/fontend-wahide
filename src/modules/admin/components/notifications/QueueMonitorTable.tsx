@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty";
 import { SearchInput } from "@/components/ui/search-input";
 import { DataTablePagination } from "@/components/ui/pagination";
+import { NativeSelect } from "@/components/ui/native-select";
 import { formatDateTime } from "@/lib/utils";
 import {
   RefreshCw,
@@ -156,17 +157,18 @@ export function QueueMonitorTable({
 
           {/* Filters & Refresh */}
           <div className="flex shrink-0 items-center gap-2">
-            <select
+            <NativeSelect
               value={statusFilter}
               onChange={(e) => onStatusFilterChange(e.target.value)}
-              className="bg-surface text-foreground border-border dark:focus:border-wise-green h-10 flex-1 cursor-pointer rounded-full border px-3.5 text-xs font-semibold outline-none focus:border-emerald-600 sm:flex-initial dark:bg-[#10110e]"
+              variant="pill"
+              wrapperClassName="flex-1 sm:flex-initial"
             >
               <option value="ALL">Semua Status</option>
               <option value="COMPLETED">🟢 Selesai (COMPLETED)</option>
               <option value="PENDING">🟡 Menunggu (PENDING)</option>
               <option value="PROCESSING">🔵 Diproses (PROCESSING)</option>
               <option value="FAILED">🔴 Gagal (FAILED)</option>
-            </select>
+            </NativeSelect>
 
             <Button
               variant="outline"

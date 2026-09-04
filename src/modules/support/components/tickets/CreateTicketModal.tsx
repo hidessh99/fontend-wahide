@@ -8,6 +8,7 @@ import {
 } from "@/modules/support/types/support.types";
 import { supportApi } from "@/modules/support/api/support.api";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -173,13 +174,13 @@ export function CreateTicketModal({ isOpen, onClose, onSubmit }: CreateTicketMod
               <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                 {t("support.subjectLabel")}
               </label>
-              <input
+              <Input
                 type="text"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
                 placeholder={t("support.subjectPlaceholder")}
                 disabled={isLoading}
-                className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full rounded-md border px-3 text-xs font-semibold transition outline-none focus:ring-1 dark:bg-[#10110e]"
+                variant="rounded"
                 autoFocus
               />
             </div>

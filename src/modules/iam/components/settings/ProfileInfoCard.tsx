@@ -44,7 +44,7 @@ export function ProfileInfoCard({ user, tenant, onSaveProfile }: ProfileInfoCard
   };
 
   return (
-    <div className="border-border bg-surface space-y-5 rounded-md border p-6 shadow-sm sm:p-8 dark:bg-[#161715]">
+    <div className="border-border bg-surface space-y-5 rounded-xl border p-6 shadow-sm sm:p-8 dark:bg-[#161715]">
       <div className="border-border flex items-center gap-3 border-b pb-4">
         <div className="bg-muted text-foreground-secondary flex size-9 items-center justify-center rounded-full">
           <UserIcon className="size-4" />

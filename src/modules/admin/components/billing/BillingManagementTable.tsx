@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty";
 import { SearchInput } from "@/components/ui/search-input";
 import { DataTablePagination } from "@/components/ui/pagination";
+import { NativeSelect } from "@/components/ui/native-select";
 import { formatDateTime } from "@/lib/utils";
 import {
   RefreshCw,
@@ -202,10 +203,11 @@ export function BillingManagementTable() {
           {/* Filters & Refresh */}
           <div className="flex shrink-0 items-center gap-2">
             {/* Status Filter */}
-            <select
+            <NativeSelect
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="bg-surface text-foreground border-border dark:focus:border-wise-green h-10 flex-1 cursor-pointer rounded-full border px-3.5 text-xs font-semibold outline-none focus:border-emerald-600 sm:flex-initial dark:bg-[#10110e]"
+              variant="pill"
+              wrapperClassName="flex-1 sm:flex-initial"
             >
               <option value="ALL">Semua Status</option>
               <option value="PAID">🟢 PAID (Lunas)</option>
@@ -213,7 +215,7 @@ export function BillingManagementTable() {
               <option value="PROCESSING">🔵 PROCESSING (Diproses)</option>
               <option value="EXPIRED">⚪ EXPIRED (Kadaluarsa)</option>
               <option value="CANCELLED">🔴 CANCELLED (Dibatalkan)</option>
-            </select>
+            </NativeSelect>
 
             {/* Refresh Button */}
             <Button

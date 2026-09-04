@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Contact, CreateContactInput, Tag } from "@/modules/contact/types/contact.types";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -110,13 +111,13 @@ function ContactForm({
           <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
             {t("contact.nameLabel")}
           </label>
-          <input
+          <Input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder={t("contact.namePlaceholder")}
             disabled={isLoading}
-            className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-11 w-full rounded-full border px-4 text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
+            variant="pill"
             autoFocus
           />
         </div>
@@ -125,13 +126,14 @@ function ContactForm({
           <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
             {t("contact.phoneLabel")}
           </label>
-          <input
+          <Input
             type="text"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             placeholder={t("contact.phonePlaceholder")}
             disabled={isLoading}
-            className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-11 w-full rounded-full border px-4 font-mono text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
+            variant="pill"
+            className="font-mono"
           />
         </div>
 
@@ -182,7 +184,7 @@ function ContactForm({
           {/* Quick Create Tag Input */}
           {onCreateTag && (
             <div className="flex items-center gap-2 pt-1">
-              <input
+              <Input
                 type="text"
                 value={newTagName}
                 onChange={(e) => setNewTagName(e.target.value)}
@@ -194,7 +196,8 @@ function ContactForm({
                 }}
                 placeholder="+ Buat tag baru (misal: VIP)..."
                 disabled={isAddingTag || isLoading}
-                className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-9.5 flex-1 rounded-full border px-3.5 text-xs font-medium transition outline-none focus:ring-2 dark:bg-[#10110e]"
+                variant="pill"
+                className="h-9.5 flex-1"
               />
               <Button
                 type="button"

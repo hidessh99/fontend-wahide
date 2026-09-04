@@ -118,7 +118,7 @@ export function DeviceCard({
   return (
     <div
       onClick={() => onViewDetail?.(device)}
-      className="border-border bg-surface hover:border-wise-green/60 group relative flex cursor-pointer flex-col justify-between space-y-5 rounded-md border p-5 transition-all hover:shadow-lg sm:p-6 dark:bg-[#161715]"
+      className="border-border bg-surface hover:border-wise-green/60 group relative flex cursor-pointer flex-col justify-between space-y-5 rounded-xl border p-5 transition-all hover:shadow-lg sm:p-6 dark:bg-[#161715]"
       title={t("whatsapp.viewDetail") || "Klik untuk melihat detail perangkat"}
     >
       {/* Card Header */}

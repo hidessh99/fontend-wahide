@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty";
 import { SearchInput } from "@/components/ui/search-input";
 import { DataTablePagination } from "@/components/ui/pagination";
+import { NativeSelect } from "@/components/ui/native-select";
 import { useI18n } from "@/lib/i18n/context";
 import { useMessageLogs } from "../../hooks/useMessageLogs";
 import { MessageDetailModal } from "./MessageDetailModal";
@@ -167,16 +168,17 @@ export function MessageLogsTable() {
             <span className="hidden sm:inline">Refresh</span>
           </Button>
 
-          <select
+          <NativeSelect
             value={statusFilter}
             onChange={(e) => handleStatusChange(e.target.value)}
-            className="bg-surface text-foreground border-border focus:border-wise-green h-10 w-full cursor-pointer rounded-full border px-3.5 text-xs font-semibold outline-none sm:w-auto dark:bg-[#10110e]"
+            variant="pill"
+            wrapperClassName="w-full sm:w-auto"
           >
             <option value="ALL">{t("campaign.filterAllStatus")}</option>
             <option value="READ">{t("campaign.statusRead")}</option>
             <option value="DELIVERED">{t("campaign.statusDelivered")}</option>
             <option value="FAILED">{t("campaign.statusFailed")}</option>
-          </select>
+          </NativeSelect>
         </div>
       </div>
 

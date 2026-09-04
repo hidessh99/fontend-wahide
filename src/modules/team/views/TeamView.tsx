@@ -4,6 +4,7 @@ import React, { useState, useMemo } from "react";
 import { useTeam } from "@/modules/team/hooks/useTeam";
 import { Agent } from "@/modules/team/types/team.types";
 import { DeleteTeamMemberModal } from "@/modules/team/components/modals/DeleteTeamMemberModal";
+import { AddTeamMemberModal } from "@/modules/team/components/modals/AddTeamMemberModal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty";
@@ -15,12 +16,10 @@ import {
   Users,
   Plus,
   Trash2,
-  X,
-  Loader2,
-  ShieldCheck,
   Smartphone,
   CheckCircle2,
   RefreshCw,
+  ShieldCheck,
 } from "lucide-react";
 import {
   Table,
@@ -45,12 +44,6 @@ export function TeamView() {
 
   // Add Member Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordError, setPasswordError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Delete Member Modal State
   const [deletingMember, setDeletingMember] = useState<Agent | null>(null);
@@ -89,35 +82,6 @@ export function TeamView() {
     setSearchInput("");
     setActiveSearch("");
     setPage(1);
-  };
-
-  const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name.trim() || !email.trim() || !phone.trim()) return;
-
-    if (!password.trim() || password.trim().length < 6) {
-      setPasswordError("Password akun agen wajib diisi minimal 6 karakter");
-      return;
-    }
-
-    setPasswordError(null);
-    setIsSubmitting(true);
-    try {
-      await createAgent({
-        name: name.trim(),
-        email: email.trim(),
-        phone: phone.trim(),
-        role: "AGENT",
-        password: password.trim(),
-      });
-      setName("");
-      setEmail("");
-      setPhone("");
-      setPassword("");
-      setIsModalOpen(false);
-    } finally {
-      setIsSubmitting(false);
-    }
   };
 
   const handleConfirmDelete = async () => {
@@ -427,139 +391,11 @@ export function TeamView() {
       </ErrorBoundary>
 
       {/* Modal Add Agent */}
-      {isModalOpen && (
-        <div className="animate-in fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm sm:p-6">
-          <div className="border-border bg-surface relative w-full max-w-md space-y-5 overflow-hidden rounded-md border p-6 shadow-2xl sm:p-8 dark:bg-[#161715]">
-            <div className="flex items-start justify-between">
-              <div className="flex items-center gap-3">
-                <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-10 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
-                  <Users className="size-5" />
-                </div>
-                <div>
-                  <h2 className="text-foreground text-lg font-black">{t("team.modalTitle")}</h2>
-                  <p className="text-foreground-secondary text-xs font-semibold">
-                    {t("team.modalSubtitle")}
-                  </p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(false)}
-                className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-8 cursor-pointer items-center justify-center rounded-full transition"
-                aria-label="Tutup"
-              >
-                <X className="size-4" />
-              </button>
-            </div>
-
-            <form onSubmit={handleCreate} className="space-y-4 pt-1">
-              <div>
-                <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
-                  {t("team.nameLabel")}
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder={t("team.namePlaceholder")}
-                  className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full rounded-full border px-4 text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
-                />
-              </div>
-
-              <div>
-                <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
-                  {t("team.emailLabel")}
-                </label>
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder={t("team.emailPlaceholder")}
-                  className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full rounded-full border px-4 text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
-                />
-              </div>
-
-              <div>
-                <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
-                  {t("team.phoneLabel")}
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder={t("team.phonePlaceholder")}
-                  className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full rounded-full border px-4 font-mono text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
-                />
-              </div>
-
-              <div>
-                <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
-                  {t("team.roleLabel")}
-                </label>
-                <div className="bg-muted/60 text-foreground border-border flex h-10 w-full items-center gap-2 rounded-full border px-4 text-xs font-bold select-none">
-                  <ShieldCheck className="text-wise-green size-4" />
-                  <span>{t("team.roleAgent")}</span>
-                </div>
-              </div>
-
-              <div>
-                <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
-                  {t("team.passwordLabel")} <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="password"
-                  required
-                  minLength={6}
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                    if (passwordError) setPasswordError(null);
-                  }}
-                  placeholder={t("team.passwordPlaceholder")}
-                  className={`bg-surface text-foreground hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full rounded-full border px-4 text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e] ${
-                    passwordError ? "border-rose-500" : "border-border"
-                  }`}
-                />
-                {passwordError && (
-                  <p className="mt-1.5 pl-3 text-xs font-semibold text-rose-500">{passwordError}</p>
-                )}
-              </div>
-
-              <div className="border-border/80 flex items-center justify-end gap-2.5 border-t pt-3">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setIsModalOpen(false)}
-                  disabled={isSubmitting}
-                  className="border-border hover:border-foreground-muted rounded-full px-4 text-xs font-bold"
-                >
-                  {t("team.cancel")}
-                </Button>
-                <Button
-                  type="submit"
-                  variant="primaryPill"
-                  size="sm"
-                  disabled={isSubmitting}
-                  className="gap-1.5 px-6 text-xs font-bold shadow-sm"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="size-3.5 animate-spin" />
-                      <span>{t("team.submitting")}</span>
-                    </>
-                  ) : (
-                    <span>{t("team.submitCreate")}</span>
-                  )}
-                </Button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <AddTeamMemberModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={createAgent}
+      />
 
       {/* Modal Dialog Delete Confirmation */}
       <DeleteTeamMemberModal

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -77,7 +78,7 @@ export function AddDeviceModal({ isOpen, onClose, onSubmit }: AddDeviceModalProp
               <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                 {t("whatsapp.deviceNameLabel")}
               </label>
-              <input
+              <Input
                 type="text"
                 value={name}
                 onChange={(e) => {
@@ -86,7 +87,7 @@ export function AddDeviceModal({ isOpen, onClose, onSubmit }: AddDeviceModalProp
                 }}
                 placeholder={t("whatsapp.deviceNamePlaceholder")}
                 disabled={isLoading}
-                className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-12 w-full rounded-full border px-4 text-sm font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
+                variant="pill"
                 autoFocus
               />
             </div>
