@@ -8,6 +8,8 @@
   "searchBtn": "Search",
   "totalContacts": "Total Contacts",
   "selectedCount": "{count} contacts selected",
+  "selectAll": "Select All",
+  "selectAllWithCount": "Select All ({count})",
   "bulkDelete": "Delete Selected",
   "tableHeaderName": "Contact Name",
   "tableHeaderPhone": "WhatsApp Number",

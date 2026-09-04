@@ -8,6 +8,8 @@
   "searchBtn": "Cari",
   "totalContacts": "Total Kontak",
   "selectedCount": "{count} kontak terpilih",
+  "selectAll": "Pilih Semua",
+  "selectAllWithCount": "Pilih Semua ({count})",
   "bulkDelete": "Hapus Terpilih",
   "tableHeaderName": "Nama Kontak",
   "tableHeaderPhone": "Nomor WhatsApp",

@@ -1,9 +1,17 @@
 "use client";
 
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import { UserItem, AdjustBalanceInput, UpdateUserInput } from "@/modules/admin/types/admin.types";
-import { AdjustBalanceModal } from "./AdjustBalanceModal";
-import { EditUserModal } from "./EditUserModal";
+
+const AdjustBalanceModal = dynamic(
+  () => import("./AdjustBalanceModal").then((m) => m.AdjustBalanceModal),
+  { ssr: false }
+);
+const EditUserModal = dynamic(
+  () => import("./EditUserModal").then((m) => m.EditUserModal),
+  { ssr: false }
+);
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty";

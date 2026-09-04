@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
+import dynamic from "next/dynamic";
 import { CheckCheck, Check, AlertCircle, RefreshCw, Loader2, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,7 +11,11 @@ import { DataTablePagination } from "@/components/ui/pagination";
 import { NativeSelect } from "@/components/ui/native-select";
 import { useI18n } from "@/lib/i18n/context";
 import { useMessageLogs } from "../../hooks/useMessageLogs";
-import { MessageDetailModal } from "./MessageDetailModal";
+
+const MessageDetailModal = dynamic(
+  () => import("./MessageDetailModal").then((m) => m.MessageDetailModal),
+  { ssr: false }
+);
 import {
   Table,
   TableHeader,

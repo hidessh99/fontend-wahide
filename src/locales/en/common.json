@@ -14,7 +14,8 @@
     "login": "Sign In",
     "register": "Start Free Trial",
     "dashboard": "Dashboard",
-    "logout": "Sign Out"
+    "logout": "Sign Out",
+    "openMenu": "Open Menu"
   },
   "hero": {
     "badge": "WhatsApp Multi-Device Gateway & REST API",

@@ -14,7 +14,8 @@
     "login": "Masuk",
     "register": "Daftar Gratis",
     "dashboard": "Dashboard",
-    "logout": "Keluar"
+    "logout": "Keluar",
+    "openMenu": "Buka Menu"
   },
   "hero": {
     "badge": "WhatsApp Multi-Device Gateway & REST API",

@@ -67,13 +67,13 @@ export function ContactTable({
             <Checkbox
               checked={isAllSelected}
               onCheckedChange={() => onToggleSelectAll(sortedContacts.map((c) => c.id))}
-              aria-label="Pilih Semua Kontak"
+              aria-label={t("contact.selectAll")}
             />
-            <span>Pilih Semua ({sortedContacts.length})</span>
+            <span>{t("contact.selectAllWithCount", { count: sortedContacts.length })}</span>
           </div>
           {selectedIds.size > 0 && (
             <span className="dark:text-wise-green font-bold text-emerald-700">
-              {selectedIds.size} terpilih
+              {t("contact.selectedCount", { count: selectedIds.size })}
             </span>
           )}
         </div>
@@ -157,7 +157,7 @@ export function ContactTable({
                   <Checkbox
                     checked={isAllSelected}
                     onCheckedChange={() => onToggleSelectAll(sortedContacts.map((c) => c.id))}
-                    aria-label="Pilih Semua Kontak"
+                    aria-label={t("contact.selectAll")}
                   />
                 </div>
               </TableHead>

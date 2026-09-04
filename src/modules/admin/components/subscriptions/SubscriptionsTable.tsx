@@ -1,9 +1,17 @@
 "use client";
 
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import { AdminSubscriptionItem } from "@/modules/admin/types/admin.types";
-import { ExpireSubscriptionModal } from "./ExpireSubscriptionModal";
-import { SubscriptionDetailModal } from "./SubscriptionDetailModal";
+
+const ExpireSubscriptionModal = dynamic(
+  () => import("./ExpireSubscriptionModal").then((m) => m.ExpireSubscriptionModal),
+  { ssr: false }
+);
+const SubscriptionDetailModal = dynamic(
+  () => import("./SubscriptionDetailModal").then((m) => m.SubscriptionDetailModal),
+  { ssr: false }
+);
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty";

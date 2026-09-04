@@ -51,22 +51,65 @@ export function useCampaigns() {
     };
   }, []);
 
-  // Auto-polling: automatically refresh campaigns while any campaign is RUNNING
+  // Auto-polling: automatically refresh campaigns with Tab Visibility awareness while any campaign is RUNNING
+  const hasRunning = campaigns.some((c) => c.status === "RUNNING");
+
   useEffect(() => {
-    const hasRunning = campaigns.some((c) => c.status === "RUNNING");
     if (!hasRunning) return;
 
-    const interval = setInterval(async () => {
-      try {
-        const data = await campaignApi.getCampaigns();
-        setCampaigns(data);
-      } catch {
-        // silent polling error
-      }
-    }, 3000);
+    let timeoutId: NodeJS.Timeout | null = null;
+    let isCancelled = false;
+    let inFlight = false;
 
-    return () => clearInterval(interval);
-  }, [campaigns]);
+    const poll = async () => {
+      if (isCancelled) return;
+
+      // Tab visibility check: pause network calls when browser tab is inactive
+      if (typeof document !== "undefined" && document.visibilityState !== "visible") {
+        timeoutId = setTimeout(poll, 4000);
+        return;
+      }
+
+      if (!inFlight) {
+        inFlight = true;
+        try {
+          const data = await campaignApi.getCampaigns();
+          if (!isCancelled) {
+            setCampaigns(data);
+          }
+        } catch {
+          // silent polling error
+        } finally {
+          inFlight = false;
+        }
+      }
+
+      if (!isCancelled) {
+        timeoutId = setTimeout(poll, 3000);
+      }
+    };
+
+    timeoutId = setTimeout(poll, 3000);
+
+    const handleVisibilityChange = () => {
+      if (typeof document !== "undefined" && document.visibilityState === "visible" && !inFlight) {
+        if (timeoutId) clearTimeout(timeoutId);
+        poll();
+      }
+    };
+
+    if (typeof document !== "undefined") {
+      document.addEventListener("visibilitychange", handleVisibilityChange);
+    }
+
+    return () => {
+      isCancelled = true;
+      if (timeoutId) clearTimeout(timeoutId);
+      if (typeof document !== "undefined") {
+        document.removeEventListener("visibilitychange", handleVisibilityChange);
+      }
+    };
+  }, [hasRunning]);
 
   const startCampaign = async (id: string): Promise<void> => {
     try {

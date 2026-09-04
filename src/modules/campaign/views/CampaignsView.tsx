@@ -1,12 +1,20 @@
 "use client";
 
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import { CampaignList } from "@/modules/campaign/components/broadcast/CampaignList";
-import { MessageLogsTable } from "@/modules/campaign/components/logs/MessageLogsTable";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useI18n } from "@/lib/i18n/context";
 import { Send, Layers, ListChecks } from "lucide-react";
+
+const MessageLogsTable = dynamic(
+  () =>
+    import("@/modules/campaign/components/logs/MessageLogsTable").then(
+      (m) => m.MessageLogsTable
+    ),
+  { ssr: false }
+);
 
 export function CampaignsView() {
   const { t } = useI18n();
@@ -58,7 +66,7 @@ export function CampaignsView() {
         </TabsContent>
         <TabsContent value="logs">
           <ErrorBoundary fallbackTitle="Gagal Memuat Log Audit Pesan">
-            <MessageLogsTable />
+            {activeTab === "logs" && <MessageLogsTable />}
           </ErrorBoundary>
         </TabsContent>
       </Tabs>
