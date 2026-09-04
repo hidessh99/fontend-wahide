@@ -3,8 +3,10 @@
 import React, { useState } from "react";
 import { User, Tenant } from "@/modules/iam/types/auth.types";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { User as UserIcon, Mail, Smartphone, Building, Lock, Save, Loader2 } from "lucide-react";
+import { useI18n } from "@/lib/i18n/context";
 
 interface ProfileInfoCardProps {
   user: User | null;
@@ -13,6 +15,7 @@ interface ProfileInfoCardProps {
 }
 
 export function ProfileInfoCard({ user, tenant, onSaveProfile }: ProfileInfoCardProps) {
+  const { t } = useI18n();
   const [name, setName] = useState(user?.name || "");
   const [isSaving, setIsSaving] = useState(false);
   const [nameError, setNameError] = useState<string | null>(null);
@@ -26,7 +29,7 @@ export function ProfileInfoCard({ user, tenant, onSaveProfile }: ProfileInfoCard
     e.preventDefault();
     const trimmedName = name.trim();
     if (!trimmedName) {
-      setNameError("Nama lengkap tidak boleh kosong.");
+      setNameError(t("settings.profileNameRequired"));
       return;
     }
 
@@ -34,9 +37,9 @@ export function ProfileInfoCard({ user, tenant, onSaveProfile }: ProfileInfoCard
     setIsSaving(true);
     try {
       await onSaveProfile(trimmedName);
-      toast.success("Nama profil berhasil diperbarui.", { id: "profile-save" });
+      toast.success(t("settings.profileSaved"), { id: "profile-save" });
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal memperbarui nama profil.";
+      const msg = err instanceof Error ? err.message : t("settings.profileSaveError");
       toast.error(msg, { id: "profile-save" });
     } finally {
       setIsSaving(false);
@@ -44,15 +47,15 @@ export function ProfileInfoCard({ user, tenant, onSaveProfile }: ProfileInfoCard
   };
 
   return (
-    <div className="border-border bg-surface space-y-5 rounded-md border p-6 shadow-sm sm:p-8 dark:bg-[#161715]">
+    <div className="border-border bg-surface space-y-5 rounded-xl border p-6 shadow-sm sm:p-8 dark:bg-[#161715]">
       <div className="border-border flex items-center gap-3 border-b pb-4">
         <div className="bg-muted text-foreground-secondary flex size-9 items-center justify-center rounded-full">
           <UserIcon className="size-4" />
         </div>
         <div>
-          <h2 className="text-foreground text-lg font-black">Informasi Profil</h2>
+          <h2 className="text-foreground text-lg font-black">{t("settings.profileInfoTitle")}</h2>
           <p className="text-foreground-secondary text-xs font-semibold">
-            Nama bisnis dan kontak akun admin utama.
+            {t("settings.profileInfoSubtitle")}
           </p>
         </div>
       </div>
@@ -60,22 +63,22 @@ export function ProfileInfoCard({ user, tenant, onSaveProfile }: ProfileInfoCard
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
-            Nama Lengkap
+            {t("settings.profileName")}
           </label>
           <div className="relative">
             <UserIcon className="text-foreground-muted absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
-            <input
+            <Input
               type="text"
               value={name}
               onChange={(e) => {
                 setName(e.target.value);
                 if (nameError) setNameError(null);
               }}
-              placeholder="Nama Lengkap Anda"
+              placeholder={t("settings.profileNamePlaceholder")}
               required
-              className={`bg-surface text-foreground hover:border-foreground-muted dark:focus:border-wise-green dark:focus:ring-wise-green/20 h-10 w-full rounded-full border pr-4 pl-10 text-xs font-semibold transition outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 dark:bg-[#10110e] ${
-                nameError ? "border-rose-500" : "border-border"
-              }`}
+              variant="pill"
+              isError={!!nameError}
+              className="pr-4 pl-10"
             />
           </div>
           {nameError && (
@@ -86,21 +89,22 @@ export function ProfileInfoCard({ user, tenant, onSaveProfile }: ProfileInfoCard
         <div>
           <div className="mb-1.5 flex items-center justify-between">
             <label className="text-foreground-secondary block text-xs font-semibold tracking-wider uppercase">
-              Alamat Email
+              {t("settings.profileEmail")}
             </label>
             <span className="text-foreground-muted inline-flex items-center gap-1 text-[10px] font-semibold">
               <Lock className="size-2.5" />
-              Terkunci
+              {t("settings.locked")}
             </span>
           </div>
           <div className="relative">
             <Mail className="text-foreground-muted absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
-            <input
+            <Input
               type="email"
               disabled
               readOnly
               value={email}
-              className="bg-muted/60 text-foreground-muted border-border h-10 w-full cursor-not-allowed rounded-full border pr-4 pl-10 text-xs font-semibold select-none"
+              variant="pill"
+              className="bg-muted/60 text-foreground-muted cursor-not-allowed pr-4 pl-10 select-none"
             />
           </div>
         </div>
@@ -108,37 +112,39 @@ export function ProfileInfoCard({ user, tenant, onSaveProfile }: ProfileInfoCard
         <div>
           <div className="mb-1.5 flex items-center justify-between">
             <label className="text-foreground-secondary block text-xs font-semibold tracking-wider uppercase">
-              Nomor WhatsApp Admin
+              {t("settings.profilePhone")}
             </label>
             <span className="text-foreground-muted inline-flex items-center gap-1 text-[10px] font-semibold">
               <Lock className="size-2.5" />
-              Terkunci
+              {t("settings.locked")}
             </span>
           </div>
           <div className="relative">
             <Smartphone className="text-foreground-muted absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
-            <input
+            <Input
               type="text"
               disabled
               readOnly
               value={phone}
-              className="bg-muted/60 text-foreground-muted border-border h-10 w-full cursor-not-allowed rounded-full border pr-4 pl-10 font-mono text-xs font-semibold select-none"
+              variant="pill"
+              className="bg-muted/60 text-foreground-muted cursor-not-allowed pr-4 pl-10 font-mono select-none"
             />
           </div>
         </div>
 
         <div>
           <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
-            Nama Perusahaan / Tenant
+            {t("settings.profileTenantLabel")}
           </label>
           <div className="relative">
             <Building className="text-foreground-muted absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
-            <input
+            <Input
               type="text"
               disabled
               readOnly
               value={tenantName}
-              className="bg-muted/60 text-foreground-muted border-border h-10 w-full cursor-not-allowed rounded-full border pr-4 pl-10 text-xs font-semibold select-none"
+              variant="pill"
+              className="bg-muted/60 text-foreground-muted cursor-not-allowed pr-4 pl-10 select-none"
             />
           </div>
         </div>
@@ -154,12 +160,12 @@ export function ProfileInfoCard({ user, tenant, onSaveProfile }: ProfileInfoCard
             {isSaving ? (
               <>
                 <Loader2 className="size-3.5 animate-spin" />
-                <span>Menyimpan...</span>
+                <span>{t("settings.profileSaving")}</span>
               </>
             ) : (
               <>
                 <Save className="size-3.5" />
-                <span>Simpan Profil</span>
+                <span>{t("settings.profileSaveBtn")}</span>
               </>
             )}
           </Button>

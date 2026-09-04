@@ -12,32 +12,60 @@ const WHATSAPP_BASE = env.NEXT_PUBLIC_WHATSAPP_API_URL;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mapBackendDevice = (d: any): Device => {
   let mappedStatus = d.status?.toUpperCase?.() || d.status;
+  const rawJid = d.jid || d.j_id || "";
+
   if (mappedStatus === "ONLINE" || mappedStatus === "CONNECTED") {
     mappedStatus = "CONNECTED";
   } else if (mappedStatus === "HIBERNATED") {
     mappedStatus = "HIBERNATED";
   } else if (mappedStatus === "PAIRING" || mappedStatus === "QR_PENDING") {
-    mappedStatus = d.jid ? "HIBERNATED" : "PAIRING";
+    mappedStatus = rawJid ? "HIBERNATED" : "PAIRING";
+  } else if (mappedStatus === "OFFLINE" || mappedStatus === "DISCONNECTED") {
+    mappedStatus = rawJid ? "HIBERNATED" : "DISCONNECTED";
   } else {
-    mappedStatus = "DISCONNECTED";
+    mappedStatus = rawJid ? "HIBERNATED" : "DISCONNECTED";
   }
 
   // Extract clean phone number from JID (e.g., "6282151743688:80@s.whatsapp.net" -> "6282151743688")
-  let phone = d.phone || null;
-  const rawJid = d.jid || d.j_id || "";
+  let phone = d.phone || d.phone_number || d.phoneNumber || null;
   if (!phone && rawJid) {
-    phone = rawJid.split(":")[0].split("@")[0] || null;
+    const userPart = rawJid.split("@")[0].split(":")[0];
+    phone = userPart.split(".")[0] || null;
   }
 
   const pushName = d.push_name || d.pushName || d.name || "WhatsApp Device";
 
   return {
     ...d,
+    id: String(d.id || ""),
+    tenantId: d.tenant_id || d.tenantId,
+    jid: rawJid || null,
     push_name: pushName,
     pushName: pushName,
     name: pushName,
     phone: phone,
     status: mappedStatus,
+    trustScore:
+      typeof d.trust_score === "number"
+        ? d.trust_score
+        : typeof d.trustScore === "number"
+          ? d.trustScore
+          : 10,
+    warmupDay:
+      typeof d.warmup_day === "number"
+        ? d.warmup_day
+        : typeof d.warmupDay === "number"
+          ? d.warmupDay
+          : 1,
+    dailySentCount:
+      typeof d.daily_sent_count === "number"
+        ? d.daily_sent_count
+        : typeof d.dailySentCount === "number"
+          ? d.dailySentCount
+          : 0,
+    lastSeenAt: d.last_seen_at || d.lastSeenAt || null,
+    createdAt: d.created_at || d.createdAt || new Date().toISOString(),
+    updatedAt: d.updated_at || d.updatedAt || undefined,
   };
 };
 
@@ -53,6 +81,13 @@ export const whatsappApi = {
       // Fallback empty array on initial connection failure
       return [];
     }
+  },
+
+  getDevice: async (id: string): Promise<Device> => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const res = await httpClient.get<any>(`${WHATSAPP_BASE}/whatsapp/devices/${id}`);
+    const data = res.payload || res;
+    return mapBackendDevice(data);
   },
 
   createDevice: async (payload: CreateDeviceInput): Promise<Device> => {

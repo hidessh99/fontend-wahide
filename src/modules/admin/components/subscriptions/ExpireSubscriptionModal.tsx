@@ -12,8 +12,9 @@ import {
   AlertDialogFooter,
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
-import { formatCurrency, formatDateTime } from "@/lib/utils";
+import { formatDateTime } from "@/lib/utils";
 import { AlertTriangle, Clock, Loader2, Building2, CreditCard, ShieldAlert } from "lucide-react";
+import { useI18n } from "@/lib/i18n/context";
 
 interface ExpireSubscriptionModalProps {
   subscription: AdminSubscriptionItem | null;
@@ -28,6 +29,7 @@ export function ExpireSubscriptionModal({
   onClose,
   onConfirm,
 }: ExpireSubscriptionModalProps) {
+  const { t, locale } = useI18n();
   const [isUpdating, setIsUpdating] = useState(false);
 
   const handleOpenChange = (open: boolean) => {
@@ -53,30 +55,30 @@ export function ExpireSubscriptionModal({
 
   return (
     <AlertDialog open={isOpen} onOpenChange={handleOpenChange}>
-      <AlertDialogContent className="border-border bg-surface max-w-md gap-0 overflow-hidden p-0 dark:bg-[#161715]">
+      <AlertDialogContent className="border-border bg-surface flex max-h-[92dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-md dark:bg-[#161715]">
         {/* Header */}
-        <AlertDialogHeader className="border-border flex flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
+        <AlertDialogHeader className="border-border flex shrink-0 flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
           <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400">
             <ShieldAlert className="size-5" />
           </div>
           <div>
             <AlertDialogTitle className="text-foreground text-base font-black tracking-tight">
-              Tandai Langganan Kedaluwarsa
+              {t("admin.subscriptions.expireModalTitle")}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-foreground-secondary text-xs font-semibold">
-              Ubah status langganan pengguna menjadi EXPIRED.
+              {t("admin.subscriptions.expireModalSubtitle")}
             </AlertDialogDescription>
           </div>
         </AlertDialogHeader>
 
         {/* Content Body */}
-        <div className="space-y-4 p-5 text-xs sm:p-6">
+        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-5 text-xs sm:p-6">
           {/* Subscription Summary Box */}
           <div className="border-border bg-muted/20 space-y-2 rounded-xl border p-3.5 text-xs">
             <div className="flex items-center justify-between">
               <span className="text-foreground-secondary flex items-center gap-1 font-semibold">
                 <Building2 className="text-foreground-muted size-3" />
-                <span>Tenant:</span>
+                <span>{t("admin.subscriptions.tenantLabel")}</span>
               </span>
               <span className="text-foreground font-bold">{tenantName}</span>
             </div>
@@ -84,17 +86,17 @@ export function ExpireSubscriptionModal({
             <div className="flex items-center justify-between">
               <span className="text-foreground-secondary flex items-center gap-1 font-semibold">
                 <CreditCard className="text-foreground-muted size-3" />
-                <span>Paket Saat Ini:</span>
+                <span>{t("admin.subscriptions.currentPlanLabel")}</span>
               </span>
               <span className="text-foreground font-bold">
-                {planName} ({formatCurrency(subscription.plan?.price ?? 0)})
+                {planName} (Rp {(subscription.plan?.price ?? 0).toLocaleString(locale === "en" ? "en-US" : "id-ID")})
               </span>
             </div>
 
             <div className="flex items-center justify-between">
               <span className="text-foreground-secondary flex items-center gap-1 font-semibold">
                 <Clock className="text-foreground-muted size-3" />
-                <span>Batas Waktu Saat Ini:</span>
+                <span>{t("admin.subscriptions.currentExpiryLabel")}</span>
               </span>
               <span className="text-foreground font-mono font-bold">
                 {formatDateTime(subscription.expiredAt)}
@@ -102,7 +104,9 @@ export function ExpireSubscriptionModal({
             </div>
 
             <div className="border-border/50 flex items-center justify-between border-t pt-1">
-              <span className="text-foreground-secondary font-semibold">Status Awal:</span>
+              <span className="text-foreground-secondary font-semibold">
+                {t("admin.subscriptions.initialStatusLabel")}
+              </span>
               <span className="text-foreground font-mono font-bold uppercase">
                 {subscription.status}
               </span>
@@ -113,8 +117,7 @@ export function ExpireSubscriptionModal({
           <div className="flex items-start gap-2.5 rounded-xl border border-amber-500/20 bg-amber-500/10 p-3 text-xs text-amber-700 dark:text-amber-400">
             <AlertTriangle className="mt-0.5 size-4 shrink-0" />
             <span className="leading-relaxed font-semibold">
-              Status langganan ini akan segera diset ke <strong>EXPIRED</strong> dan masa aktif
-              dihentikan per detik ini. Cache izin tenant akan otomatis direset.
+              {t("admin.subscriptions.expireWarning")}
             </span>
           </div>
         </div>
@@ -125,7 +128,7 @@ export function ExpireSubscriptionModal({
             disabled={isUpdating}
             className="border-border hover:bg-muted h-9 cursor-pointer rounded-full px-4 text-xs font-bold"
           >
-            Batal
+            {t("cancel")}
           </AlertDialogCancel>
 
           <Button
@@ -139,12 +142,12 @@ export function ExpireSubscriptionModal({
             {isUpdating ? (
               <>
                 <Loader2 className="size-3.5 animate-spin" />
-                <span>Memperbarui...</span>
+                <span>{t("admin.subscriptions.updatingBtn")}</span>
               </>
             ) : (
               <>
                 <Clock className="size-3.5" />
-                <span>Ubah Status ke EXPIRED</span>
+                <span>{t("admin.subscriptions.expireConfirmBtn")}</span>
               </>
             )}
           </Button>

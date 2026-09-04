@@ -38,5 +38,12 @@
   "payNow": "Pay",
   "viewInvoice": "Invoice",
   "officialInvoiceTitle": "Official Payment Invoice",
-  "printReceipt": "Print / Save as PDF"
+  "printReceipt": "Print / Save as PDF",
+  "selectAmountPreset": "Select Top-Up Amount",
+  "minimumTopUpNotice": "Minimum deposit top-up amount is IDR 10,000.",
+  "paymentMethod": "Payment Method",
+  "prevPage": "Previous",
+  "nextPage": "Next",
+  "toastTopUpError": "Failed to process deposit top-up transaction.",
+  "addressRequiredForTopUp": "Please complete your business address details before making a top-up deposit."
 }

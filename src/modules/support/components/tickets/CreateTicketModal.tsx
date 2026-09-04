@@ -8,6 +8,9 @@ import {
 } from "@/modules/support/types/support.types";
 import { supportApi } from "@/modules/support/api/support.api";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -143,9 +146,9 @@ export function CreateTicketModal({ isOpen, onClose, onSubmit }: CreateTicketMod
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && !isLoading && onClose()}>
-      <DialogContent className="border-border bg-surface max-h-[90vh] max-w-lg gap-0 overflow-hidden p-0 dark:bg-[#161715]">
+      <DialogContent className="border-border bg-surface flex max-h-[90dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-lg dark:bg-[#161715]">
         {/* Sticky Modal Header */}
-        <DialogHeader className="border-border/80 flex flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
+        <DialogHeader className="border-border/80 flex shrink-0 flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
           <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
             <LifeBuoy className="size-5" />
           </div>
@@ -160,8 +163,8 @@ export function CreateTicketModal({ isOpen, onClose, onSubmit }: CreateTicketMod
         </DialogHeader>
 
         {/* Scrollable Form Body */}
-        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col overflow-y-auto">
-          <div className="flex-1 space-y-4 p-5 sm:p-6">
+        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          <div className="flex-1 space-y-4 overflow-y-auto p-5 sm:p-6">
             {error && (
               <div className="rounded-md border border-rose-500/20 bg-rose-500/10 p-3 text-xs font-semibold text-rose-600 dark:text-rose-400">
                 {error}
@@ -173,13 +176,13 @@ export function CreateTicketModal({ isOpen, onClose, onSubmit }: CreateTicketMod
               <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                 {t("support.subjectLabel")}
               </label>
-              <input
+              <Input
                 type="text"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
                 placeholder={t("support.subjectPlaceholder")}
                 disabled={isLoading}
-                className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full rounded-md border px-3 text-xs font-semibold transition outline-none focus:ring-1 dark:bg-[#10110e]"
+                variant="rounded"
                 autoFocus
               />
             </div>
@@ -190,35 +193,35 @@ export function CreateTicketModal({ isOpen, onClose, onSubmit }: CreateTicketMod
                 <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                   {t("support.categoryLabel")}
                 </label>
-                <select
+                <NativeSelect
                   value={category}
                   onChange={(e) => setCategory(e.target.value as TicketCategory)}
                   disabled={isLoading}
-                  className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full cursor-pointer rounded-md border px-3 text-xs font-semibold outline-none focus:ring-1 dark:bg-[#10110e]"
+                  variant="rounded"
                 >
                   <option value="WHATSAPP">{t("support.catWhatsApp")}</option>
                   <option value="BILLING">{t("support.catBilling")}</option>
                   <option value="ACCOUNT">{t("support.catAccount")}</option>
                   <option value="FEATURE_REQUEST">{t("support.catFeature")}</option>
                   <option value="OTHER">{t("support.catOther")}</option>
-                </select>
+                </NativeSelect>
               </div>
 
               <div>
                 <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                   {t("support.priorityLabel")}
                 </label>
-                <select
+                <NativeSelect
                   value={priority}
                   onChange={(e) => setPriority(e.target.value as TicketPriority)}
                   disabled={isLoading}
-                  className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full cursor-pointer rounded-md border px-3 text-xs font-semibold outline-none focus:ring-1 dark:bg-[#10110e]"
+                  variant="rounded"
                 >
                   <option value="LOW">{t("support.priorityLow")}</option>
                   <option value="MEDIUM">{t("support.priorityMedium")}</option>
                   <option value="HIGH">{t("support.priorityHigh")}</option>
                   <option value="URGENT">{t("support.priorityUrgent")}</option>
-                </select>
+                </NativeSelect>
               </div>
             </div>
 
@@ -227,13 +230,14 @@ export function CreateTicketModal({ isOpen, onClose, onSubmit }: CreateTicketMod
               <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                 {t("support.messageLabel")}
               </label>
-              <textarea
+              <Textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder={t("support.messagePlaceholder")}
                 disabled={isLoading}
                 rows={4}
-                className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green w-full resize-none rounded-md border p-3 text-xs font-semibold transition outline-none focus:ring-1 dark:bg-[#10110e]"
+                variant="rounded"
+                className="resize-none"
               />
             </div>
 

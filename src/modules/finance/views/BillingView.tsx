@@ -9,10 +9,11 @@ import { BalanceCard } from "@/modules/finance/components/balance/BalanceCard";
 import { InvoiceTable } from "@/modules/finance/components/invoices/InvoiceTable";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { Button } from "@/components/ui/button";
+import { SearchInput } from "@/components/ui/search-input";
 import { useI18n } from "@/lib/i18n/context";
 import { toast } from "sonner";
 import { Invoice } from "@/modules/finance/types/finance.types";
-import { Receipt, Search, X } from "lucide-react";
+import { Receipt, RefreshCw } from "lucide-react";
 
 const TopUpModal = dynamic(
   () => import("@/modules/finance/components/balance/TopUpModal").then((m) => m.TopUpModal),
@@ -34,7 +35,6 @@ export function BillingView() {
   const {
     balance,
     filteredInvoices,
-    activeSearch,
     statusFilter,
     page,
     pageSize,
@@ -45,6 +45,8 @@ export function BillingView() {
     setStatusFilter,
     nextPage,
     prevPage,
+    isLoading,
+    fetchBillingData,
     createTopUp,
   } = useBilling();
 
@@ -134,52 +136,42 @@ export function BillingView() {
       </div>
 
       {/* Filter Toolbar (Search Submit & Horizontal Scrollable Status Filters) */}
-      <div className="border-border bg-surface space-y-3 rounded-md border p-3 sm:space-y-4 sm:p-4 dark:bg-[#161715]">
-        {/* Search Form with Submit Button */}
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            executeSearch(searchInput);
-          }}
-          className="flex items-center gap-2"
-        >
-          <div className="relative flex-1">
-            <Search className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
-            <input
-              type="text"
+      <div className="border-border bg-surface space-y-3 rounded-xl border p-3.5 shadow-xs sm:space-y-4 sm:p-4 dark:bg-[#161715]">
+        {/* Top Row: Search Form + Refresh Button */}
+        <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+          <div className="w-full flex-1 sm:max-w-lg">
+            <SearchInput
               value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
+              onChange={setSearchInput}
+              onSearch={(val) => executeSearch(val.trim())}
+              onClear={() => {
+                setSearchInput("");
+                clearSearch();
+              }}
               placeholder="Cari nomor faktur atau deskripsi..."
-              className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full rounded-full border pr-9 pl-10 text-xs font-semibold transition outline-none focus:ring-2 dark:bg-[#10110e]"
+              buttonText="Cari"
             />
-            {(searchInput || activeSearch) && (
-              <button
-                type="button"
-                onClick={() => {
-                  setSearchInput("");
-                  clearSearch();
-                }}
-                className="text-foreground-muted hover:text-foreground hover:bg-muted absolute top-1/2 right-3 flex size-5 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full transition"
-                title="Hapus Pencarian"
-                aria-label="Hapus Pencarian"
-              >
-                <X className="size-3.5" />
-              </button>
-            )}
           </div>
+
           <Button
-            type="submit"
-            variant="primaryPill"
+            type="button"
+            variant="outline"
             size="sm"
-            className="h-10 shrink-0 cursor-pointer px-4 text-xs font-bold shadow-xs"
+            onClick={fetchBillingData}
+            disabled={isLoading}
+            className="border-border hover:border-foreground-muted h-10 shrink-0 cursor-pointer gap-1.5 self-start rounded-full px-3.5 text-xs font-bold transition sm:self-auto"
+            aria-label="Refresh Riwayat Faktur"
+            title="Refresh Riwayat Faktur"
           >
-            <Search className="mr-1 size-3.5" />
-            <span>Cari</span>
+            <RefreshCw
+              className={`size-3.5 ${isLoading ? "dark:text-wise-green animate-spin text-emerald-700" : ""}`}
+            />
+            <span className="hidden sm:inline">Refresh</span>
           </Button>
-        </form>
+        </div>
 
         {/* Status Filter Chips (Horizontal Scrollable) */}
-        <div className="no-scrollbar flex items-center gap-1.5 overflow-x-auto scroll-smooth py-1">
+        <div className="no-scrollbar border-border/50 flex items-center gap-1.5 overflow-x-auto scroll-smooth border-t pt-2">
           {statusOptions.map((opt) => {
             const isActive = statusFilter === opt.value;
             return (

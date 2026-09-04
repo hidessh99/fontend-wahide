@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import { AdminPlanItem, CreatePlanInput } from "@/modules/admin/types/admin.types";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
@@ -28,6 +30,7 @@ import {
   PlusCircle,
   Edit3,
 } from "lucide-react";
+import { useI18n } from "@/lib/i18n/context";
 
 interface PlanFormModalProps {
   plan: AdminPlanItem | null;
@@ -43,6 +46,7 @@ interface PlanFormModalContentProps {
 }
 
 function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentProps) {
+  const { t } = useI18n();
   const isEdit = Boolean(plan);
 
   const [name, setName] = useState(plan?.name || "");
@@ -92,24 +96,26 @@ function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentP
   return (
     <>
       {/* Header */}
-      <DialogHeader className="border-border flex flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
+      <DialogHeader className="border-border flex shrink-0 flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
         <div className="dark:text-wise-green flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600">
           {isEdit ? <Edit3 className="size-5" /> : <PlusCircle className="size-5" />}
         </div>
         <div>
           <DialogTitle className="text-foreground text-lg font-black tracking-tight sm:text-xl">
-            {isEdit ? `Ubah Paket Langganan` : "Tambah Paket Langganan Baru"}
+            {isEdit
+              ? t("admin.plans.formModalTitleEdit")
+              : t("admin.plans.formModalTitleAdd")}
           </DialogTitle>
           <DialogDescription className="text-foreground-secondary text-xs font-semibold">
             {isEdit
-              ? `Konfigurasi harga, kuota pesan, dan fitur tier ${plan?.name}.`
-              : "Tentukan kuota pesan, batas slot WhatsApp, dan harga tier baru."}
+              ? t("admin.plans.formModalSubtitleEdit", { name: plan?.name ?? "" })
+              : t("admin.plans.formModalSubtitleAdd")}
           </DialogDescription>
         </div>
       </DialogHeader>
 
       {/* Scrollable Form Body */}
-      <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+      <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col overflow-hidden">
         <div className="flex-1 space-y-4.5 p-5 text-xs sm:p-6">
           {/* Nama Paket & Harga */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -119,16 +125,16 @@ function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentP
                 className="text-foreground-secondary mb-1 flex items-center gap-1.5 font-bold"
               >
                 <Tag className="size-3.5" />
-                <span>Nama Paket Langganan:</span>
+                <span>{t("admin.plans.planNameLabel")}</span>
               </label>
-              <input
+              <Input
                 id="plan-name-input"
                 type="text"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Contoh: Pro Enterprise"
-                className="bg-surface border-border text-foreground focus:border-foreground h-10 w-full rounded-lg border px-3 text-xs font-semibold outline-none dark:bg-[#10110e]"
+                placeholder={t("admin.plans.planNamePlaceholder")}
+                variant="rounded"
               />
             </div>
 
@@ -138,9 +144,9 @@ function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentP
                 className="text-foreground-secondary mb-1 flex items-center gap-1.5 font-bold"
               >
                 <CreditCard className="size-3.5" />
-                <span>Harga / Bulan (Rp):</span>
+                <span>{t("admin.plans.priceLabel")}</span>
               </label>
-              <input
+              <Input
                 id="plan-price-input"
                 type="number"
                 min={0}
@@ -148,8 +154,9 @@ function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentP
                 required
                 value={price}
                 onChange={(e) => setPrice(Number(e.target.value))}
-                placeholder="50000"
-                className="bg-surface border-border text-foreground focus:border-foreground h-10 w-full rounded-lg border px-3 font-mono text-xs font-black outline-none dark:bg-[#10110e]"
+                placeholder={t("admin.plans.pricePlaceholder")}
+                variant="rounded"
+                className="font-mono font-black"
               />
             </div>
           </div>
@@ -157,7 +164,7 @@ function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentP
           {/* Kuota Pesan & Batas Resource */}
           <div className="border-border bg-muted/20 space-y-3 rounded-xl border p-3.5">
             <span className="text-foreground-secondary block text-[11px] font-bold tracking-wider uppercase">
-              Batas Kuota Operasional:
+              {t("admin.plans.operationalQuotaTitle")}
             </span>
 
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -167,16 +174,17 @@ function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentP
                   className="text-foreground-secondary mb-1 flex items-center gap-1.5 font-semibold"
                 >
                   <MessageSquare className="size-3.5" />
-                  <span>Limit Pesan/Bulan:</span>
+                  <span>{t("admin.plans.msgLimitLabel")}</span>
                 </label>
-                <input
+                <Input
                   id="plan-message-limit-input"
                   type="number"
                   min={100}
                   required
                   value={monthlyMessageLimit}
                   onChange={(e) => setMonthlyMessageLimit(Number(e.target.value))}
-                  className="bg-surface border-border text-foreground focus:border-foreground h-9 w-full rounded-lg border px-3 font-mono text-xs font-bold outline-none dark:bg-[#10110e]"
+                  variant="rounded"
+                  className="h-9 font-mono font-bold"
                 />
               </div>
 
@@ -186,16 +194,17 @@ function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentP
                   className="text-foreground-secondary mb-1 flex items-center gap-1.5 font-semibold"
                 >
                   <Smartphone className="size-3.5" />
-                  <span>Slot Nomor WhatsApp:</span>
+                  <span>{t("admin.plans.slotsLabel")}</span>
                 </label>
-                <input
+                <Input
                   id="plan-max-devices-input"
                   type="number"
                   min={1}
                   required
                   value={maxDevices}
                   onChange={(e) => setMaxDevices(Number(e.target.value))}
-                  className="bg-surface border-border text-foreground focus:border-foreground h-9 w-full rounded-lg border px-3 font-mono text-xs font-bold outline-none dark:bg-[#10110e]"
+                  variant="rounded"
+                  className="h-9 font-mono font-bold"
                 />
               </div>
 
@@ -205,16 +214,17 @@ function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentP
                   className="text-foreground-secondary mb-1 flex items-center gap-1.5 font-semibold"
                 >
                   <Users className="size-3.5" />
-                  <span>Maks Anggota CS:</span>
+                  <span>{t("admin.plans.csAgentsLabel")}</span>
                 </label>
-                <input
+                <Input
                   id="plan-max-agents-input"
                   type="number"
                   min={0}
                   required
                   value={maxAgents}
                   onChange={(e) => setMaxAgents(Number(e.target.value))}
-                  className="bg-surface border-border text-foreground focus:border-foreground h-9 w-full rounded-lg border px-3 font-mono text-xs font-bold outline-none dark:bg-[#10110e]"
+                  variant="rounded"
+                  className="h-9 font-mono font-bold"
                 />
               </div>
             </div>
@@ -223,7 +233,7 @@ function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentP
           {/* Toggle Hak Akses Fitur */}
           <div className="space-y-2.5">
             <span className="text-foreground-secondary block text-[11px] font-bold tracking-wider uppercase">
-              Hak Akses Modul Fitur:
+              {t("admin.plans.featureAccessTitle")}
             </span>
 
             <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
@@ -231,9 +241,11 @@ function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentP
                 <div className="flex items-center gap-2">
                   <Paperclip className="text-foreground-muted size-4" />
                   <div>
-                    <span className="text-foreground block font-bold">Kirim Lampiran File</span>
+                    <span className="text-foreground block font-bold">
+                      {t("admin.plans.allowAttachmentTitle")}
+                    </span>
                     <span className="text-foreground-muted text-[10px]">
-                      Gambar, Dokumen PDF, &amp; Audio
+                      {t("admin.plans.allowAttachmentDesc")}
                     </span>
                   </div>
                 </div>
@@ -249,9 +261,11 @@ function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentP
                 <div className="flex items-center gap-2">
                   <Send className="text-foreground-muted size-4" />
                   <div>
-                    <span className="text-foreground block font-bold">Kampanye Broadcast</span>
+                    <span className="text-foreground block font-bold">
+                      {t("admin.plans.allowCampaignTitle")}
+                    </span>
                     <span className="text-foreground-muted text-[10px]">
-                      Kirim Pesan Massal Terjadwal
+                      {t("admin.plans.allowCampaignDesc")}
                     </span>
                   </div>
                 </div>
@@ -267,9 +281,11 @@ function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentP
                 <div className="flex items-center gap-2">
                   <Bot className="text-foreground-muted size-4" />
                   <div>
-                    <span className="text-foreground block font-bold">Auto-Reply &amp; Bot</span>
+                    <span className="text-foreground block font-bold">
+                      {t("admin.plans.allowAutoreplyTitle")}
+                    </span>
                     <span className="text-foreground-muted text-[10px]">
-                      Balas Cepat Berbasis Kata Kunci
+                      {t("admin.plans.allowAutoreplyDesc")}
                     </span>
                   </div>
                 </div>
@@ -285,9 +301,11 @@ function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentP
                 <div className="flex items-center gap-2">
                   <Clock className="text-foreground-muted size-4" />
                   <div>
-                    <span className="text-foreground block font-bold">Jadwal Pesan Kalender</span>
+                    <span className="text-foreground block font-bold">
+                      {t("admin.plans.allowScheduleTitle")}
+                    </span>
                     <span className="text-foreground-muted text-[10px]">
-                      Antrean Pengiriman Otomatis
+                      {t("admin.plans.allowScheduleDesc")}
                     </span>
                   </div>
                 </div>
@@ -307,16 +325,16 @@ function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentP
               <div>
                 <span className="text-foreground flex items-center gap-1.5 font-bold">
                   <Layers className="size-3.5" />
-                  <span>Sertakan Watermark Footer Pesan</span>
+                  <span>{t("admin.plans.watermarkTitle")}</span>
                 </span>
                 <span className="text-foreground-muted text-[11px]">
-                  Tambahkan teks promosi default di akhir setiap pesan keluar.
+                  {t("admin.plans.watermarkDesc")}
                 </span>
               </div>
               <Switch
                 checked={hasWatermark}
                 onCheckedChange={setHasWatermark}
-                aria-label="Sertakan Watermark Footer Pesan"
+                aria-label={t("admin.plans.watermarkTitle")}
               />
             </div>
 
@@ -326,15 +344,16 @@ function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentP
                   htmlFor="plan-watermark-text-input"
                   className="text-foreground-secondary mb-1 block text-[11px] font-semibold"
                 >
-                  Isi Teks Watermark:
+                  {t("admin.plans.watermarkTextLabel")}
                 </label>
-                <textarea
+                <Textarea
                   id="plan-watermark-text-input"
                   rows={2}
                   value={watermarkText}
                   onChange={(e) => setWatermarkText(e.target.value)}
-                  placeholder="_Sent via Wahide WhatsApp Gateway_"
-                  className="bg-surface border-border text-foreground focus:border-foreground w-full rounded-lg border p-2.5 font-mono text-[11px] outline-none dark:bg-[#10110e]"
+                  placeholder={t("admin.plans.watermarkPlaceholder")}
+                  variant="rounded"
+                  className="p-2.5 font-mono text-[11px]"
                 />
               </div>
             )}
@@ -351,7 +370,7 @@ function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentP
             disabled={isLoading}
             className="border-border hover:bg-muted rounded-full text-xs font-bold"
           >
-            Batalkan
+            {t("cancel")}
           </Button>
 
           <Button
@@ -364,12 +383,14 @@ function PlanFormModalContent({ plan, onClose, onSubmit }: PlanFormModalContentP
             {isLoading ? (
               <>
                 <Loader2 className="size-3.5 animate-spin" />
-                <span>Menyimpan...</span>
+                <span>{t("admin.plans.savingBtn")}</span>
               </>
             ) : (
               <>
                 <Save className="size-3.5" />
-                <span>{isEdit ? "Simpan Perubahan Paket" : "Tambahkan Paket Baru"}</span>
+                <span>
+                  {isEdit ? t("admin.plans.saveEditBtn") : t("admin.plans.saveAddBtn")}
+                </span>
               </>
             )}
           </Button>
@@ -384,7 +405,7 @@ export function PlanFormModal({ plan, isOpen, onClose, onSubmit }: PlanFormModal
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="border-border bg-surface max-h-[92vh] max-w-xl gap-0 overflow-hidden p-0 dark:bg-[#161715]">
+      <DialogContent className="border-border bg-surface flex max-h-[92dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-xl dark:bg-[#161715]">
         <PlanFormModalContent
           key={plan?.id || "new-plan"}
           plan={plan}

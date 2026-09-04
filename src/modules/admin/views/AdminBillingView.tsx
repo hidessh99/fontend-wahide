@@ -3,8 +3,11 @@
 import React from "react";
 import { BillingManagementTable } from "@/modules/admin/components/billing/BillingManagementTable";
 import { Receipt } from "lucide-react";
+import { useI18n } from "@/lib/i18n/context";
 
 export function AdminBillingView() {
+  const { t } = useI18n();
+
   return (
     <div className="mx-auto max-w-7xl space-y-6 p-3 sm:space-y-8 sm:p-6 lg:p-8">
       {/* Header Section */}
@@ -15,12 +18,11 @@ export function AdminBillingView() {
               <Receipt className="size-4 sm:size-5" />
             </div>
             <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl lg:text-3xl">
-              Manajemen Billing &amp; Topup
+              {t("admin.billing.title")}
             </h1>
           </div>
           <p className="text-foreground-secondary max-w-2xl text-xs font-semibold sm:text-sm">
-            Kelola transaksi deposit saldo, monitor invoice tagihan, dan rekonsiliasi status
-            pembayaran platform.
+            {t("admin.billing.subtitle")}
           </p>
         </div>
       </div>

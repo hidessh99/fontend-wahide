@@ -39,10 +39,19 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   output: process.env.VERCEL ? undefined : "standalone",
   poweredByHeader: false,
-  reactStrictMode: true,
+  reactStrictMode: false,
   compress: true,
   experimental: {
-    optimizePackageImports: ["lucide-react", "sonner", "date-fns", "zod", "recharts"],
+    optimizePackageImports: [
+      "lucide-react",
+      "sonner",
+      "date-fns",
+      "zod",
+      "recharts",
+      "@tanstack/react-virtual",
+      "@base-ui/react",
+      "cmdk",
+    ],
   },
   async headers() {
     return [

@@ -5,8 +5,10 @@ import { useAdminMessageLogs } from "@/modules/admin/hooks/useAdminMessageLogs";
 import { MessageLogsTable } from "@/modules/admin/components/messages/MessageLogsTable";
 import { MessageMetricsCards } from "@/modules/admin/components/messages/MessageMetricsCards";
 import { MessageSquare, Send } from "lucide-react";
+import { useI18n } from "@/lib/i18n/context";
 
 export function AdminMessagesView() {
+  const { t } = useI18n();
   const {
     logs,
     isLoading,
@@ -40,12 +42,11 @@ export function AdminMessagesView() {
               <MessageSquare className="size-4 sm:size-5" />
             </div>
             <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl lg:text-3xl">
-              Log Pesan WhatsApp Seluruh Pengguna
+              {t("admin.messages.title")}
             </h1>
           </div>
           <p className="text-foreground-secondary max-w-2xl text-xs font-semibold sm:text-sm">
-            Pantau dan audit seluruh riwayat pesan keluar (broadcast/direct) dan pesan masuk dari
-            seluruh akun member dan seller.
+            {t("admin.messages.subtitle")}
           </p>
         </div>
       </div>
@@ -58,7 +59,9 @@ export function AdminMessagesView() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Send className="dark:text-wise-green size-4 text-emerald-600" />
-            <h2 className="text-foreground text-base font-black">Daftar Riwayat Pesan WhatsApp</h2>
+            <h2 className="text-foreground text-base font-black">
+              {t("admin.messages.listTitle")}
+            </h2>
           </div>
         </div>
 

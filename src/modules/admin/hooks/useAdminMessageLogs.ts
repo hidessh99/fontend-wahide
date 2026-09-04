@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { useI18n } from "@/lib/i18n/context";
 import { AdminMessageLogItem } from "@/modules/admin/types/admin.types";
 import { adminApi } from "@/modules/admin/api/admin.api";
 import { toast } from "sonner";
 
 export function useAdminMessageLogs() {
+  const { t } = useI18n();
   const [logs, setLogs] = useState<AdminMessageLogItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -29,14 +31,14 @@ export function useAdminMessageLogs() {
       setLogs(res.logs);
       setTotal(res.total);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal memuat log pesan";
+      const msg = err instanceof Error ? err.message : t("admin.messages.toastFetchFailed");
       toast.error(msg);
       setLogs([]);
       setTotal(0);
     } finally {
       setIsLoading(false);
     }
-  }, [page, pageSize, searchQuery, statusFilter, directionFilter]);
+  }, [page, pageSize, searchQuery, statusFilter, directionFilter, t]);
 
   useEffect(() => {
     let isMounted = true;
@@ -74,9 +76,9 @@ export function useAdminMessageLogs() {
       await adminApi.deleteAdminMessageLog(id);
       setLogs((prev) => prev.filter((l) => l.id !== id));
       setTotal((prev) => Math.max(0, prev - 1));
-      toast.success("Log pesan WhatsApp berhasil dihapus.");
+      toast.success(t("admin.messages.toastDeleteSuccess"));
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal menghapus log pesan";
+      const msg = err instanceof Error ? err.message : t("admin.messages.toastDeleteFailed");
       toast.error(msg);
       throw err;
     }

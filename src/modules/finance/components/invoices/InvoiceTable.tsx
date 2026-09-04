@@ -6,6 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty";
 import { DataTablePagination } from "@/components/ui/pagination";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
+import { useTableSort } from "@/hooks/useTableSort";
 import { useI18n } from "@/lib/i18n/context";
 import { FileText, CheckCircle2, Clock, AlertCircle, CreditCard } from "lucide-react";
 
@@ -33,9 +43,12 @@ export function InvoiceTable({
   onPay,
 }: InvoiceTableProps) {
   const { t } = useI18n();
+  const { sortKey, sortOrder, handleSort, sortData } = useTableSort<Invoice>({
+    initialKey: "createdAt",
+    initialOrder: "desc",
+  });
 
-  const startItem = total > 0 ? (page - 1) * pageSize + 1 : 0;
-  const endItem = total > 0 ? Math.min(page * pageSize, total) : 0;
+  const sortedInvoices = sortData(invoices);
 
   const renderStatusBadge = (status: InvoiceStatus) => {
     switch (status) {
@@ -65,9 +78,9 @@ export function InvoiceTable({
   };
 
   return (
-    <div className="border-border bg-surface overflow-hidden rounded-md border shadow-xs dark:bg-[#161715]">
+    <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs dark:bg-[#161715]">
       {/* Invoices List */}
-      {invoices.length === 0 ? (
+      {sortedInvoices.length === 0 ? (
         <EmptyState
           icon={<FileText />}
           title={t("billing.noInvoices")}
@@ -75,9 +88,9 @@ export function InvoiceTable({
         />
       ) : (
         <div>
-          {/* Mobile View: Card-based Invoice List (Visible on < 768px) */}
-          <div className="divide-border/50 divide-y md:hidden">
-            {invoices.map((inv) => {
+          {/* Mobile View: Card-based Invoice List (Visible on < 1024px) */}
+          <div className="divide-border/50 divide-y lg:hidden">
+            {sortedInvoices.map((inv) => {
               const safeAmount = Number(inv.amount ?? 0);
               const dateStr = inv.createdAt
                 ? new Date(inv.createdAt).toLocaleDateString("id-ID", {
@@ -147,123 +160,156 @@ export function InvoiceTable({
             })}
           </div>
 
-          {/* Desktop View: Tabular Grid (Visible on >= 768px) */}
-          <div className="hidden md:block">
-            {/* Table Header */}
-            <div className="bg-muted/60 border-border text-foreground-muted grid grid-cols-12 gap-3 border-b px-5 py-4 text-xs font-extrabold tracking-wider uppercase select-none">
-              <div className="col-span-3">{t("billing.tableHeaderInvoice")}</div>
-              <div className="col-span-4">{t("billing.tableHeaderDesc")}</div>
-              <div className="col-span-2">{t("billing.tableHeaderAmount")}</div>
-              <div className="col-span-2 text-center">{t("billing.tableHeaderStatus")}</div>
-              <div className="col-span-1 text-right">{t("billing.tableHeaderAction")}</div>
-            </div>
-
-            {/* Table Body */}
-            <div className="divide-border/50 divide-y text-xs font-semibold">
-              {invoices.map((inv) => {
-                const safeAmount = Number(inv.amount ?? 0);
-                const dateStr = inv.createdAt
-                  ? new Date(inv.createdAt).toLocaleDateString("id-ID", {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                    })
-                  : "-";
-
-                return (
-                  <div
-                    key={inv.id}
-                    className="hover:bg-muted/40 grid min-h-14.5 grid-cols-12 items-center gap-3 px-5 py-3.5 transition-colors"
-                  >
-                    {/* Invoice Number & Date */}
-                    <div className="col-span-3 space-y-0.5">
-                      <span className="text-foreground block truncate font-mono text-sm font-bold tracking-tight">
-                        {inv.invoiceNumber || "INV-WAHIDE"}
-                      </span>
-                      <span className="text-foreground-muted block text-xs">{dateStr}</span>
+          {/* Desktop View: shadcn/ui Table (Visible on >= 1024px) */}
+          <div className="hidden lg:block">
+            <Table className="min-w-200">
+              <TableHeader>
+                <TableRow className="bg-muted/50 border-border hover:bg-muted/50">
+                  <TableHead className="w-[30%] px-5 py-3.5">
+                    <DataTableColumnHeader
+                      title={t("billing.tableHeaderInvoice")}
+                      columnKey="invoiceNumber"
+                      currentSortKey={sortKey as string}
+                      currentSortOrder={sortOrder}
+                      onSort={handleSort}
+                    />
+                  </TableHead>
+                  <TableHead className="w-[35%] px-4 py-3.5">
+                    <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
+                      {t("billing.tableHeaderDesc")}
                     </div>
-
-                    {/* Description */}
-                    <div className="text-foreground-secondary col-span-4 truncate text-sm font-semibold">
-                      {inv.description || "Layanan WhatsApp Gateway"}
+                  </TableHead>
+                  <TableHead className="w-[15%] px-4 py-3.5">
+                    <DataTableColumnHeader
+                      title={t("billing.tableHeaderAmount")}
+                      columnKey="amount"
+                      currentSortKey={sortKey as string}
+                      currentSortOrder={sortOrder}
+                      onSort={handleSort}
+                      align="right"
+                    />
+                  </TableHead>
+                  <TableHead className="w-[10%] px-3 py-3.5 text-center">
+                    <DataTableColumnHeader
+                      title={t("billing.tableHeaderStatus")}
+                      columnKey="status"
+                      currentSortKey={sortKey as string}
+                      currentSortOrder={sortOrder}
+                      onSort={handleSort}
+                      align="center"
+                    />
+                  </TableHead>
+                  <TableHead className="w-[10%] px-5 py-3.5 text-right">
+                    <div className="text-foreground-muted text-right text-[11px] font-extrabold tracking-wider uppercase select-none">
+                      {t("billing.tableHeaderAction")}
                     </div>
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
 
-                    {/* Amount */}
-                    <div className="text-foreground col-span-2 truncate font-mono text-sm font-bold">
-                      Rp {safeAmount.toLocaleString("id-ID")}
-                    </div>
+              <TableBody>
+                {sortedInvoices.map((inv) => {
+                  const safeAmount = Number(inv.amount ?? 0);
+                  const dateStr = inv.createdAt
+                    ? new Date(inv.createdAt).toLocaleDateString("id-ID", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })
+                    : "-";
 
-                    {/* Status Badge */}
-                    <div className="col-span-2 flex justify-center">
-                      {renderStatusBadge(inv.status)}
-                    </div>
+                  return (
+                    <TableRow key={inv.id} className="hover:bg-muted/30 transition-colors">
+                      {/* Invoice Number & Date */}
+                      <TableCell className="px-5 py-3.5 align-middle">
+                        <div className="space-y-0.5">
+                          <span className="text-foreground block truncate font-mono text-sm font-bold tracking-tight">
+                            {inv.invoiceNumber || "INV-WAHIDE"}
+                          </span>
+                          <span className="text-foreground-muted block text-xs">{dateStr}</span>
+                        </div>
+                      </TableCell>
 
-                    {/* Action Column */}
-                    <div className="col-span-1 flex items-center justify-end">
-                      {inv.status === "PENDING" ? (
-                        <Button
-                          variant="primaryPill"
-                          size="sm"
-                          onClick={() => {
-                            if (inv.paymentUrl || inv.invoiceUrl) {
-                              window.open(
-                                inv.paymentUrl || inv.invoiceUrl,
-                                "_blank",
-                                "noopener,noreferrer"
-                              );
-                            } else if (onPay) {
-                              onPay(inv);
-                            }
-                          }}
-                          className="h-8 cursor-pointer gap-1 rounded-full px-3.5 text-xs font-bold shadow-xs"
-                        >
-                          <CreditCard className="size-3.5" />
-                          <span>{t("billing.payNow")}</span>
-                        </Button>
-                      ) : inv.status === "PAID" ? (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => onViewReceipt(inv)}
-                          className="border-border hover:border-foreground-muted h-8 cursor-pointer gap-1.5 rounded-full px-3 text-xs font-bold"
-                          title={t("billing.viewInvoice")}
-                        >
-                          <FileText className="text-foreground-secondary size-3.5" />
-                          <span>{t("billing.viewInvoice")}</span>
-                        </Button>
-                      ) : (
-                        <span className="text-foreground-muted pr-2 font-mono text-xs">-</span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                      {/* Description */}
+                      <TableCell className="text-foreground-secondary px-4 py-3.5 align-middle text-sm font-semibold">
+                        <span className="line-clamp-1">
+                          {inv.description || "Layanan WhatsApp Gateway"}
+                        </span>
+                      </TableCell>
+
+                      {/* Amount */}
+                      <TableCell className="text-foreground px-4 py-3.5 text-right align-middle font-mono text-sm font-bold">
+                        Rp {safeAmount.toLocaleString("id-ID")}
+                      </TableCell>
+
+                      {/* Status Badge */}
+                      <TableCell className="px-3 py-3.5 text-center align-middle">
+                        <div className="inline-flex items-center justify-center">
+                          {renderStatusBadge(inv.status)}
+                        </div>
+                      </TableCell>
+
+                      {/* Action Column */}
+                      <TableCell className="px-5 py-3.5 text-right align-middle">
+                        <div className="flex items-center justify-end">
+                          {inv.status === "PENDING" ? (
+                            <Button
+                              variant="primaryPill"
+                              size="sm"
+                              onClick={() => {
+                                if (inv.paymentUrl || inv.invoiceUrl) {
+                                  window.open(
+                                    inv.paymentUrl || inv.invoiceUrl,
+                                    "_blank",
+                                    "noopener,noreferrer"
+                                  );
+                                } else if (onPay) {
+                                  onPay(inv);
+                                }
+                              }}
+                              className="h-8 cursor-pointer gap-1 rounded-full px-3.5 text-xs font-bold shadow-xs"
+                            >
+                              <CreditCard className="size-3.5" />
+                              <span>{t("billing.payNow")}</span>
+                            </Button>
+                          ) : inv.status === "PAID" ? (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => onViewReceipt(inv)}
+                              className="border-border hover:border-foreground-muted h-8 cursor-pointer gap-1.5 rounded-full px-3 text-xs font-bold"
+                              title={t("billing.viewInvoice")}
+                            >
+                              <FileText className="text-foreground-secondary size-3.5" />
+                              <span>{t("billing.viewInvoice")}</span>
+                            </Button>
+                          ) : (
+                            <span className="text-foreground-muted pr-2 font-mono text-xs">-</span>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
           </div>
         </div>
       )}
 
-      {/* Pagination Footer */}
+      {/* Standardized Shadcn UI Data Table Pagination Footer */}
       {total > 0 && (
-        <div className="border-border bg-muted/30 flex flex-col items-center justify-between gap-3 border-t p-3 sm:flex-row sm:px-5 sm:py-3.5">
-          {/* Item count summary */}
-          <div className="text-foreground-secondary text-xs font-semibold">
-            Menampilkan {startItem} - {endItem} dari {total} faktur
-          </div>
-
-          {/* Shadcn UI Pagination */}
-          {totalPages > 1 && (
-            <DataTablePagination
-              page={page}
-              totalPages={totalPages}
-              onPrevPage={onPrevPage}
-              onNextPage={onNextPage}
-              prevText={t("billing.prevPage") || "Sebelumnya"}
-              nextText={t("billing.nextPage") || "Berikutnya"}
-              className="mx-0 w-auto"
-            />
-          )}
-        </div>
+        <DataTablePagination
+          page={page}
+          totalPages={totalPages}
+          total={total}
+          pageSize={pageSize}
+          onPrevPage={onPrevPage}
+          onNextPage={onNextPage}
+          entityName="faktur"
+          prevText={t("billing.prevPage") || "Sebelumnya"}
+          nextText={t("billing.nextPage") || "Berikutnya"}
+        />
       )}
     </div>
   );

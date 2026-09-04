@@ -8,9 +8,12 @@
   "searchBtn": "Search",
   "totalContacts": "Total Contacts",
   "selectedCount": "{count} contacts selected",
+  "selectAll": "Select All",
+  "selectAllWithCount": "Select All ({count})",
   "bulkDelete": "Delete Selected",
   "tableHeaderName": "Contact Name",
   "tableHeaderPhone": "WhatsApp Number",
+  "tableHeaderTags": "Tags / Segments",
   "tableHeaderCreated": "Added On",
   "tableHeaderActions": "Actions",
   "showingPagination": "Showing {start} - {end} of {total} contacts",
@@ -50,5 +53,14 @@
   "toastUpdated": "Contact updated successfully.",
   "toastDeleted": "Contact deleted successfully.",
   "toastBulkDeleted": "{count} contacts deleted successfully.",
-  "toastImportSuccess": "Successfully imported {count} contacts from CSV."
+  "toastImportSuccess": "Successfully imported {count} contacts from CSV.",
+  "errNameRequired": "Contact name is required.",
+  "errPhonePrefix": "WhatsApp number must start with 62 (e.g. 6281234567890).",
+  "errPhoneTooShort": "WhatsApp number is too short.",
+  "errSaveFailed": "Failed to save contact",
+  "tagSegmentationLabel": "Contact Tags / Segmentation",
+  "optional": "Optional",
+  "noTagsAvailable": "No contact tags available yet.",
+  "newTagPlaceholder": "+ Create new tag (e.g. VIP)...",
+  "addTagBtn": "Add"
 }

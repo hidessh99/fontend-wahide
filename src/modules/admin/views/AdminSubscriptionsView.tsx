@@ -5,8 +5,10 @@ import { useAdminSubscriptions } from "@/modules/admin/hooks/useAdminSubscriptio
 import { SubscriptionsTable } from "@/modules/admin/components/subscriptions/SubscriptionsTable";
 import { SubscriptionMetricsCards } from "@/modules/admin/components/subscriptions/SubscriptionMetricsCards";
 import { CreditCard, Receipt } from "lucide-react";
+import { useI18n } from "@/lib/i18n/context";
 
 export function AdminSubscriptionsView() {
+  const { t } = useI18n();
   const {
     subscriptions,
     isLoading,
@@ -38,12 +40,11 @@ export function AdminSubscriptionsView() {
               <Receipt className="size-4 sm:size-5" />
             </div>
             <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl lg:text-3xl">
-              Manajemen Langganan Seluruh Pengguna
+              {t("admin.subscriptions.title")}
             </h1>
           </div>
           <p className="text-foreground-secondary max-w-2xl text-xs font-semibold sm:text-sm">
-            Pantau seluruh paket langganan aktif, alokasi kuota pesan bulanan, siklus masa berlaku,
-            dan kelola status kedaluwarsa pengguna secara langsung.
+            {t("admin.subscriptions.subtitle")}
           </p>
         </div>
       </div>
@@ -57,7 +58,7 @@ export function AdminSubscriptionsView() {
           <div className="flex items-center gap-2">
             <CreditCard className="dark:text-wise-green size-4 text-emerald-600" />
             <h2 className="text-foreground text-base font-black">
-              Daftar Paket Langganan Tenant &amp; User
+              {t("admin.subscriptions.listTitle")}
             </h2>
           </div>
         </div>

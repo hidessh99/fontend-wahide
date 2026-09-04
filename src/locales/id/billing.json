@@ -38,5 +38,12 @@
   "payNow": "Bayar",
   "viewInvoice": "Faktur",
   "officialInvoiceTitle": "Faktur Pembayaran Resmi",
-  "printReceipt": "Cetak / Simpan PDF"
+  "printReceipt": "Cetak / Simpan PDF",
+  "selectAmountPreset": "Pilih Nominal Top-Up",
+  "minimumTopUpNotice": "Minimal nominal top-up saldo deposit adalah Rp 10.000.",
+  "paymentMethod": "Metode Pembayaran",
+  "prevPage": "Sebelumnya",
+  "nextPage": "Selanjutnya",
+  "toastTopUpError": "Gagal memproses transaksi top-up saldo deposit.",
+  "addressRequiredForTopUp": "Lengkapi profil alamat bisnis Anda terlebih dahulu sebelum melakukan top-up deposit."
 }

@@ -10,7 +10,7 @@ export const DEFAULT_POSTS: BlogPost[] = [
     slug: "5-layer-anti-ban-protection-whatsapp-2026",
     title: "5 Lapisan Perlindungan Anti-Ban WhatsApp Gateway 2026",
     excerpt:
-      "Panduan lengkap bagaimana arsitektur multi-device whatsmeow dan Spintax Regex mencegah blokir nomor saat broadcast skala besar.",
+      "Panduan lengkap bagaimana arsitektur multi-device native dan Spintax Regex mencegah blokir nomor saat broadcast skala besar.",
     content: `Mengirim pesan broadcast dalam jumlah puluhan ribu nomor setiap harinya membutuhkan arsitektur pertahanan yang disiplin. Pada platform Wahide, kami menerapkan 5 Layer Anti-Ban:\n\n1. **Dynamic Spintax Syntax Engine**: Variasi sinonim kata otomatis.\n2. **Human Typing Simulation (ChatPresence)**: Simulasi mengetik 1.5 - 3 detik.\n3. **Jitter Delay & Random Backoff**: Jeda pengiriman acak 3 - 15 detik.\n4. **Session Hibernation Protocol**: Memutus TCP socket saat idle untuk menghemat memori.\n5. **Zero-Heap Event Filtering**: Mengabaikan status presence broadcast yang membebani heap.`,
     author: "Wahide Core Team",
     tags: ["WhatsApp", "Anti-Ban", "Spintax", "Architecture"],

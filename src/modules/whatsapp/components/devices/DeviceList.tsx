@@ -21,6 +21,10 @@ const SendMessageModal = dynamic(
   () => import("../messages/SendMessageModal").then((m) => m.SendMessageModal),
   { ssr: false }
 );
+const DeviceDetailModal = dynamic(
+  () => import("./DeviceDetailModal").then((m) => m.DeviceDetailModal),
+  { ssr: false }
+);
 import {
   Smartphone,
   Plus,
@@ -56,6 +60,7 @@ export function DeviceList() {
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isSendModalOpen, setIsSendModalOpen] = useState(false);
+  const [selectedDeviceForDetail, setSelectedDeviceForDetail] = useState<Device | null>(null);
 
   const handleOpenQR = (device: Device) => {
     setSelectedDeviceForQR(device);
@@ -67,19 +72,21 @@ export function DeviceList() {
     setSelectedDeviceForQR(null);
   };
 
-  const handlePairingSuccess = (device: Device) => {
+  const handlePairingSuccess = async (device: Device) => {
     updateDeviceStatus(device.id, "CONNECTED", {
       phone: device.phone,
       pushName: device.pushName,
       lastSeenAt: new Date().toISOString(),
     });
+    // Immediately synchronize fresh device state from backend to populate extracted phone
+    await fetchDevices();
   };
 
   return (
     <div className="space-y-6">
       {/* Top Action Bar & Stat Cards */}
       <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-4">
-        <div className="border-border bg-surface flex items-center gap-2.5 rounded-md border p-3 shadow-xs sm:gap-3 sm:p-4 dark:bg-[#161715]">
+        <div className="border-border bg-surface flex items-center gap-2.5 rounded-xl border p-3 shadow-xs sm:gap-3 sm:p-4 dark:bg-[#161715]">
           <div className="bg-muted text-foreground-secondary flex size-8.5 shrink-0 items-center justify-center rounded-full sm:size-10">
             <Server className="size-4 sm:size-5" />
           </div>
@@ -91,7 +98,7 @@ export function DeviceList() {
           </div>
         </div>
 
-        <div className="border-border bg-surface flex items-center gap-2.5 rounded-md border p-3 shadow-xs sm:gap-3 sm:p-4 dark:bg-[#161715]">
+        <div className="border-border bg-surface flex items-center gap-2.5 rounded-xl border p-3 shadow-xs sm:gap-3 sm:p-4 dark:bg-[#161715]">
           <div className="flex size-8.5 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500 sm:size-10">
             <CheckCircle2 className="size-4 sm:size-5" />
           </div>
@@ -105,7 +112,7 @@ export function DeviceList() {
           </div>
         </div>
 
-        <div className="border-border bg-surface flex items-center gap-2.5 rounded-md border p-3 shadow-xs sm:gap-3 sm:p-4 dark:bg-[#161715]">
+        <div className="border-border bg-surface flex items-center gap-2.5 rounded-xl border p-3 shadow-xs sm:gap-3 sm:p-4 dark:bg-[#161715]">
           <div className="flex size-8.5 shrink-0 items-center justify-center rounded-full bg-rose-500/10 text-rose-500 sm:size-10">
             <XCircle className="size-4 sm:size-5" />
           </div>
@@ -119,7 +126,7 @@ export function DeviceList() {
           </div>
         </div>
 
-        <div className="border-border bg-surface flex items-center gap-2.5 rounded-md border p-3 shadow-xs sm:gap-3 sm:p-4 dark:bg-[#161715]">
+        <div className="border-border bg-surface flex items-center gap-2.5 rounded-xl border p-3 shadow-xs sm:gap-3 sm:p-4 dark:bg-[#161715]">
           <div className="flex size-8.5 shrink-0 items-center justify-center rounded-full bg-sky-500/10 text-sky-500 sm:size-10">
             <Moon className="size-4 sm:size-5" />
           </div>
@@ -135,7 +142,7 @@ export function DeviceList() {
       </div>
 
       {/* Filter Toolbar & Actions */}
-      <div className="border-border bg-surface space-y-3 rounded-md border p-3 sm:space-y-4 sm:p-4 dark:bg-[#161715]">
+      <div className="border-border bg-surface space-y-3 rounded-xl border p-3.5 shadow-xs sm:space-y-4 sm:p-4 dark:bg-[#161715]">
         {/* Top Row: Search Bar & Action Buttons */}
         <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
           {/* Search Input */}
@@ -215,10 +222,11 @@ export function DeviceList() {
             size="sm"
             onClick={() => fetchDevices()}
             disabled={isLoading}
-            className="border-border hover:border-foreground-muted size-8.5 shrink-0 cursor-pointer rounded-full p-0"
+            className="border-border hover:border-foreground-muted h-10 shrink-0 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold transition"
             aria-label="Refresh Daftar"
           >
             <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin" : ""}`} />
+            <span className="hidden sm:inline">Refresh</span>
           </Button>
         </div>
       </div>
@@ -229,7 +237,7 @@ export function DeviceList() {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="border-border bg-surface h-56 space-y-4 rounded-md border p-5 sm:p-6 dark:bg-[#161715]"
+              className="border-border bg-surface h-56 space-y-4 rounded-xl border p-5 sm:p-6 dark:bg-[#161715]"
             >
               <div className="flex items-center justify-between">
                 <Skeleton className="size-10 rounded-full" />
@@ -279,10 +287,22 @@ export function DeviceList() {
               onHibernate={hibernateDevice}
               onWake={wakeDevice}
               onDelete={deleteDevice}
+              onViewDetail={setSelectedDeviceForDetail}
             />
           ))}
         </div>
       )}
+
+      {/* Device Detail Modal */}
+      <DeviceDetailModal
+        device={selectedDeviceForDetail}
+        isOpen={Boolean(selectedDeviceForDetail)}
+        onClose={() => setSelectedDeviceForDetail(null)}
+        onScanQR={handleOpenQR}
+        onDisconnect={disconnectDevice}
+        onHibernate={hibernateDevice}
+        onWake={wakeDevice}
+      />
 
       {/* Live QR Modal */}
       <LiveQRModal

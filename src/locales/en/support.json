@@ -112,5 +112,20 @@
   "replyLabel": "Reply Message",
   "toastCreated": "Support ticket created successfully.",
   "toastReplySent": "Reply sent successfully.",
-  "toastStatusUpdated": "Ticket status updated."
+  "toastStatusUpdated": "Ticket status updated.",
+  "createTicketTitle": "Create New Support Ticket",
+  "createTicketSubtitle": "Wahide technical support team will respond to your issue as quickly as possible.",
+  "catWhatsApp": "WhatsApp Gateway & QR",
+  "catBilling": "Billing & Invoices",
+  "catAccount": "Account & Membership",
+  "catFeature": "Feature Request",
+  "catOther": "Other",
+  "priorityUrgent": "Urgent",
+  "attachmentNotice": "PNG, JPG, JPEG format (Max 1 MB)",
+  "attachScreenshot": "Select Screenshot Image",
+  "loadingMessages": "Loading ticket messages...",
+  "statusUpdatedError": "Failed to update ticket status.",
+  "updateStatusTitle": "Update Ticket Status",
+  "updateStatusDesc": "Select a new handling status for this support ticket.",
+  "selectNewStatus": "Select New Status"
 }

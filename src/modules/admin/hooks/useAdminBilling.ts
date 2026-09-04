@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { useI18n } from "@/lib/i18n/context";
 import { AdminBillingItem, BillingStatus } from "../types/admin.types";
 import { adminApi } from "../api/admin.api";
 import { toast } from "sonner";
 
 export function useAdminBilling() {
+  const { t } = useI18n();
   const [billings, setBillings] = useState<AdminBillingItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -66,11 +68,11 @@ export function useAdminBilling() {
       );
       toast.success(
         status === "EXPIRED"
-          ? "Transaksi berhasil ditandai Kadaluarsa (EXPIRED)."
-          : "Transaksi berhasil dibatalkan (CANCELLED)."
+          ? t("admin.billing.toastExpiredSuccess")
+          : t("admin.billing.toastCancelledSuccess")
       );
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal memperbarui status transaksi";
+      const msg = err instanceof Error ? err.message : t("admin.billing.toastUpdateFailed");
       toast.error(msg);
       throw err;
     }
@@ -81,9 +83,9 @@ export function useAdminBilling() {
       await adminApi.deleteAdminBilling(id);
       setBillings((prev) => prev.filter((b) => b.id !== id));
       setTotal((prev) => Math.max(0, prev - 1));
-      toast.success("Catatan transaksi billing berhasil dihapus.");
+      toast.success(t("admin.billing.deleteBillingSuccessToast"));
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal menghapus transaksi";
+      const msg = err instanceof Error ? err.message : t("admin.billing.toastDeleteFailed");
       toast.error(msg);
       throw err;
     }

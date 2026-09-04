@@ -31,5 +31,22 @@
   "saving": "Menyimpan...",
   "toastWebhookSaved": "Pengaturan Webhook berhasil disimpan.",
   "toastSecretCopied": "Signing Secret disalin ke clipboard.",
-  "toastSecretRegenerated": "Signing Secret baru berhasil dibuat."
+  "toastSecretRegenerated": "Signing Secret baru berhasil dibuat.",
+  "confirmTitle": "Konfirmasi Pembayaran Paket",
+  "confirmSubtitle": "Aktifkan paket {planName} dengan pembayaran otomatis menggunakan Saldo Wallet Anda.",
+  "selectedPlan": "Paket Dipilih:",
+  "validityPeriod": "Masa Berlaku:",
+  "validityValue": "30 Hari (1 Bulan)",
+  "totalBill": "Total Tagihan:",
+  "walletBalance": "Saldo Wallet Anda:",
+  "remainingBalance": "Sisa Saldo Setelah Upgrade:",
+  "sufficientTitle": "Saldo Cukup.",
+  "sufficientDesc": "Saldo Anda akan otomatis dipotong sebesar {price} dan Invoice Lunas akan diterbitkan.",
+  "insufficientTitle": "Saldo Tidak Mencukupi.",
+  "insufficientDesc": "Anda membutuhkan tambahan saldo sebesar {deficit} untuk mengaktifkan paket ini.",
+  "invoiceAssurance": "Invoice resmi bertipe SUBSCRIPTION akan otomatis dicatat di menu Billing.",
+  "cancel": "Batal",
+  "processing": "Memproses Pembayaran...",
+  "payAndActivate": "Bayar & Aktifkan Paket",
+  "topUpAtBilling": "Top-Up Saldo di Billing"
 }

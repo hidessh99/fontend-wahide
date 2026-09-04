@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { PaymentMethod } from "@/modules/finance/types/finance.types";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -56,9 +57,9 @@ export function TopUpModal({ isOpen, onClose, onSubmit }: TopUpModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && !isLoading && onClose()}>
-      <DialogContent className="border-border bg-surface max-h-[90vh] max-w-lg gap-0 overflow-hidden p-0 dark:bg-[#161715]">
+      <DialogContent className="border-border bg-surface flex max-h-[90dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-lg dark:bg-[#161715]">
         {/* Sticky Header */}
-        <DialogHeader className="border-border flex flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
+        <DialogHeader className="border-border flex shrink-0 flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
           <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
             <Wallet className="size-5" />
           </div>
@@ -73,7 +74,7 @@ export function TopUpModal({ isOpen, onClose, onSubmit }: TopUpModalProps) {
         </DialogHeader>
 
         {/* Scrollable Form Body */}
-        <form onSubmit={handleSubmit} className="flex flex-1 flex-col overflow-hidden">
+        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col overflow-hidden">
           <div className="flex-1 space-y-4.5 overflow-y-auto p-5 sm:p-6">
             {error && (
               <div className="rounded-md border border-rose-500/20 bg-rose-500/10 p-3 text-xs font-semibold text-rose-600 dark:text-rose-400">
@@ -122,10 +123,10 @@ export function TopUpModal({ isOpen, onClose, onSubmit }: TopUpModalProps) {
                 {t("billing.customAmountLabel")}
               </label>
               <div className="relative">
-                <span className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 font-mono text-xs font-bold">
+                <span className="text-foreground-muted pointer-events-none absolute top-1/2 left-3.5 z-10 -translate-y-1/2 font-mono text-xs font-bold">
                   Rp
                 </span>
-                <input
+                <Input
                   id="custom-nominal-input"
                   type="text"
                   placeholder="Contoh: 150.000"
@@ -135,7 +136,8 @@ export function TopUpModal({ isOpen, onClose, onSubmit }: TopUpModalProps) {
                     setCustomAmount(raw ? Number(raw).toLocaleString("id-ID") : "");
                     setError(null);
                   }}
-                  className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-10 w-full rounded-md border pr-4 pl-10 font-mono text-xs font-semibold outline-none focus:ring-1 dark:bg-[#10110e]"
+                  variant="rounded"
+                  className="pr-4 pl-10 font-mono"
                 />
               </div>
               <span className="text-foreground-muted mt-1 block text-[11px]">

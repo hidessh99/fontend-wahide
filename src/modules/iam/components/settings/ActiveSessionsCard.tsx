@@ -8,9 +8,14 @@ import { Badge } from "@/components/ui/badge";
 import { SessionConfirmModal } from "./SessionConfirmModal";
 import { toast } from "sonner";
 import { ShieldCheck, Trash2, RefreshCw, Laptop, Smartphone, Globe, Loader2 } from "lucide-react";
+import { useI18n } from "@/lib/i18n/context";
 
-function formatDeviceLabel(ua?: string): { name: string; isMobile: boolean } {
-  if (!ua) return { name: "Web Browser (Perangkat Tidak Diketahui)", isMobile: false };
+function formatDeviceLabel(
+  ua?: string,
+  unknownLabel = "Web Browser (Unknown Device)",
+  desktopLabel = "Web Browser / Desktop"
+): { name: string; isMobile: boolean } {
+  if (!ua) return { name: unknownLabel, isMobile: false };
   const lower = ua.toLowerCase();
 
   if (lower.includes("iphone")) return { name: "Safari / iPhone (iOS)", isMobile: true };
@@ -21,28 +26,33 @@ function formatDeviceLabel(ua?: string): { name: string; isMobile: boolean } {
     return { name: "Safari / macOS", isMobile: false };
   if (lower.includes("linux")) return { name: "Browser / Linux Desktop", isMobile: false };
 
-  return { name: "Peramban Web / Desktop", isMobile: false };
+  return { name: desktopLabel, isMobile: false };
 }
 
-function formatRelativeTime(dateStr?: string, isCurrent?: boolean): string {
-  if (isCurrent) return "Sedang Aktif Saat Ini";
-  if (!dateStr) return "Baru saja";
+function formatRelativeTime(
+  dateStr: string | undefined,
+  isCurrent: boolean | undefined,
+  t: (key: string, params?: Record<string, string | number>) => string
+): string {
+  if (isCurrent) return t("settings.activeNow");
+  if (!dateStr) return t("settings.justNow");
 
   try {
     const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return "Baru saja";
+    if (isNaN(d.getTime())) return t("settings.justNow");
 
     const diffSec = Math.floor((Date.now() - d.getTime()) / 1000);
-    if (diffSec < 60) return "Baru saja";
-    if (diffSec < 3600) return `${Math.floor(diffSec / 60)} menit yang lalu`;
-    if (diffSec < 86400) return `${Math.floor(diffSec / 3600)} jam yang lalu`;
-    return `${Math.floor(diffSec / 86400)} hari yang lalu`;
+    if (diffSec < 60) return t("settings.justNow");
+    if (diffSec < 3600) return t("settings.minutesAgo", { count: Math.floor(diffSec / 60) });
+    if (diffSec < 86400) return t("settings.hoursAgo", { count: Math.floor(diffSec / 3600) });
+    return t("settings.daysAgo", { count: Math.floor(diffSec / 86400) });
   } catch {
-    return "Baru saja";
+    return t("settings.justNow");
   }
 }
 
 export function ActiveSessionsCard() {
+  const { t } = useI18n();
   const [sessions, setSessions] = useState<ActiveSession[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isActionLoading, setIsActionLoading] = useState(false);
@@ -100,7 +110,11 @@ export function ActiveSessionsCard() {
   };
 
   const handleOpenRevokeSingleModal = (session: ActiveSession) => {
-    const { name } = formatDeviceLabel(session.user_agent);
+    const { name } = formatDeviceLabel(
+      session.user_agent,
+      t("settings.unknownDevice"),
+      t("settings.desktopBrowser")
+    );
     setConfirmModal({
       isOpen: true,
       mode: "REVOKE_SINGLE",
@@ -117,17 +131,17 @@ export function ActiveSessionsCard() {
     try {
       if (confirmModal.mode === "LOGOUT_ALL") {
         await userApi.logoutAllSessions();
-        toast.success("Seluruh sesi login perangkat lain berhasil dicabut.", {
+        toast.success(t("settings.allSessionsRevoked"), {
           id: "session-revoke",
         });
       } else if (confirmModal.targetSession?.tokenId) {
         await userApi.revokeSession(confirmModal.targetSession.tokenId);
-        toast.success("Sesi perangkat terpilih berhasil dicabut.", { id: "session-revoke" });
+        toast.success(t("settings.singleSessionRevoked"), { id: "session-revoke" });
       }
       setConfirmModal((prev) => ({ ...prev, isOpen: false }));
       await loadSessions();
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal memproses pencabutan sesi.";
+      const msg = err instanceof Error ? err.message : t("settings.revokeSessionFailed");
       toast.error(msg, { id: "session-revoke" });
     } finally {
       setIsActionLoading(false);
@@ -137,16 +151,16 @@ export function ActiveSessionsCard() {
   const otherSessionsCount = sessions.filter((s) => !s.is_current).length;
 
   return (
-    <div className="border-border bg-surface space-y-5 rounded-md border p-6 shadow-sm sm:p-8 dark:bg-[#161715]">
+    <div className="border-border bg-surface space-y-5 rounded-xl border p-6 shadow-sm sm:p-8 dark:bg-[#161715]">
       <div className="border-border flex flex-col justify-between gap-3 border-b pb-4 sm:flex-row sm:items-center">
         <div className="flex items-center gap-3">
           <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-9 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
             <ShieldCheck className="size-4" />
           </div>
           <div>
-            <h2 className="text-foreground text-lg font-black">Sesi Login Aktif</h2>
+            <h2 className="text-foreground text-lg font-black">{t("settings.activeSessions")}</h2>
             <p className="text-foreground-secondary text-xs font-semibold">
-              Kelola perangkat dan browser yang sedang terautentikasi ke akun Anda.
+              {t("settings.activeSessionsDesc")}
             </p>
           </div>
         </div>
@@ -158,10 +172,11 @@ export function ActiveSessionsCard() {
             size="sm"
             onClick={loadSessions}
             disabled={isLoading}
-            className="border-border text-foreground-muted hover:text-foreground hover:bg-muted size-8 rounded-full p-0"
-            aria-label="Refresh Sesi"
+            className="border-border text-foreground-muted hover:text-foreground hover:bg-muted h-9 shrink-0 cursor-pointer gap-1.5 rounded-full px-3 text-xs font-bold transition"
+            aria-label={t("settings.refreshAria")}
           >
             <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin" : ""}`} />
+            <span className="hidden sm:inline">{t("settings.refreshBtn")}</span>
           </Button>
 
           {otherSessionsCount > 0 && (
@@ -173,7 +188,7 @@ export function ActiveSessionsCard() {
               className="rounded-full border-rose-500/20 text-xs font-bold text-rose-600 hover:bg-rose-500/10 dark:text-rose-400"
             >
               <Trash2 className="mr-1.5 size-3.5" />
-              <span>Keluar dari Semua Perangkat</span>
+              <span>{t("settings.terminateAll")}</span>
             </Button>
           )}
         </div>
@@ -182,20 +197,24 @@ export function ActiveSessionsCard() {
       {isLoading ? (
         <div className="text-foreground-muted flex flex-col items-center justify-center space-y-2 py-8">
           <Loader2 className="dark:text-wise-green size-6 animate-spin text-emerald-600" />
-          <span className="text-xs font-semibold">Memuat sesi login aktif...</span>
+          <span className="text-xs font-semibold">{t("settings.loadingSessions")}</span>
         </div>
       ) : sessions.length === 0 ? (
         <div className="border-border bg-muted/20 flex items-center gap-3 rounded-md border p-4">
           <Globe className="text-foreground-muted size-4 shrink-0" />
           <div className="text-foreground-secondary text-xs font-semibold">
-            Sesi saat ini aktif. Belum ada perangkat lain yang terhubung.
+            {t("settings.noOtherSessions")}
           </div>
         </div>
       ) : (
         <div className="space-y-3">
           {sessions.map((s, idx) => {
-            const { name, isMobile } = formatDeviceLabel(s.user_agent);
-            const timeLabel = formatRelativeTime(s.last_active || s.created_at, s.is_current);
+            const { name, isMobile } = formatDeviceLabel(
+              s.user_agent,
+              t("settings.unknownDevice"),
+              t("settings.desktopBrowser")
+            );
+            const timeLabel = formatRelativeTime(s.last_active || s.created_at, s.is_current, t);
 
             return (
               <div
@@ -210,9 +229,9 @@ export function ActiveSessionsCard() {
                   <div className="min-w-0 space-y-0.5">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="text-foreground truncate text-xs font-bold">
-                        {name} {s.is_current ? "(Perangkat Ini)" : ""}
+                        {name} {s.is_current ? t("settings.thisDevice") : ""}
                       </span>
-                      {s.is_current && <Badge variant="success">Sesi Saat Ini</Badge>}
+                      {s.is_current && <Badge variant="success">{t("settings.currentSessionBadge")}</Badge>}
                     </div>
                     <span className="text-foreground-muted block truncate font-mono text-[11px]">
                       {s.ip_address || "127.0.0.1"} • {timeLabel}
@@ -227,7 +246,7 @@ export function ActiveSessionsCard() {
                     size="sm"
                     onClick={() => handleOpenRevokeSingleModal(s)}
                     className="border-border text-foreground-muted size-7 shrink-0 rounded-full p-0 hover:border-rose-500/30 hover:bg-rose-500/10 hover:text-rose-500"
-                    aria-label="Cabut Sesi"
+                    aria-label={t("settings.revokeSessionAria")}
                   >
                     <Trash2 className="size-3" />
                   </Button>

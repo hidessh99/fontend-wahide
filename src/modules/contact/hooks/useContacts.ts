@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { Contact, CreateContactInput } from "../types/contact.types";
+import { Contact, CreateContactInput, Tag } from "../types/contact.types";
 import { contactApi } from "../api/contact.api";
 import { toast } from "sonner";
 import { useI18n } from "@/lib/i18n/context";
@@ -9,6 +9,7 @@ import { useI18n } from "@/lib/i18n/context";
 export function useContacts() {
   const { t } = useI18n();
   const [contacts, setContacts] = useState<Contact[]>([]);
+  const [tags, setTags] = useState<Tag[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeSearch, setActiveSearch] = useState("");
@@ -16,6 +17,15 @@ export function useContacts() {
   const [pageSize] = useState(10);
   const [total, setTotal] = useState(0);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
+  const fetchTags = useCallback(async () => {
+    try {
+      const data = await contactApi.getTags();
+      setTags(data);
+    } catch {
+      // benign
+    }
+  }, []);
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
@@ -73,16 +83,17 @@ export function useContacts() {
     let isMounted = true;
     const controller = new AbortController();
 
-    const loadInitialContacts = async () => {
+    const loadInitialData = async () => {
       try {
-        const res = await contactApi.getContacts(
-          { search: "", page: 1, pageSize: 10 },
-          controller.signal
-        );
+        const [contactsRes, tagsRes] = await Promise.all([
+          contactApi.getContacts({ search: "", page: 1, pageSize: 10 }, controller.signal),
+          contactApi.getTags(),
+        ]);
         if (isMounted) {
-          setContacts(res.contacts);
-          setTotal(res.total);
-          setPage(res.page);
+          setContacts(contactsRes.contacts);
+          setTotal(contactsRes.total);
+          setPage(contactsRes.page);
+          setTags(tagsRes);
         }
       } catch (err: unknown) {
         if (err instanceof Error && err.name === "AbortError") return;
@@ -96,7 +107,7 @@ export function useContacts() {
       }
     };
 
-    loadInitialContacts();
+    loadInitialData();
 
     return () => {
       isMounted = false;
@@ -104,10 +115,23 @@ export function useContacts() {
     };
   }, []);
 
+  const createTag = async (name: string): Promise<Tag> => {
+    try {
+      const newTag = await contactApi.createTag(name);
+      setTags((prev) => [...prev, newTag]);
+      return newTag;
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Gagal membuat tag";
+      toast.error(msg);
+      throw err;
+    }
+  };
+
   const createContact = async (data: CreateContactInput): Promise<Contact> => {
     try {
       const newContact = await contactApi.createContact(data);
       setContacts((prev) => [newContact, ...prev]);
+      await fetchTags();
       setTotal((prev) => prev + 1);
       toast.success(t("contact.toastCreated"));
       return newContact;
@@ -209,7 +233,10 @@ export function useContacts() {
   return {
     contacts,
     filteredContacts,
-    allTags: [] as string[],
+    tags,
+    allTags: tags.map((t) => t.name),
+    fetchTags,
+    createTag,
     isLoading,
     error,
     activeSearch,

@@ -3,7 +3,18 @@
 import React, { useState } from "react";
 import { WebhookConfig } from "@/modules/subscription/types/subscription.types";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 import { useI18n } from "@/lib/i18n/context";
 import {
   Webhook,
@@ -15,6 +26,7 @@ import {
   Save,
   Loader2,
   ShieldCheck,
+  AlertTriangle,
 } from "lucide-react";
 
 interface WebhookConfigCardProps {
@@ -36,6 +48,7 @@ export function WebhookConfigCard({
   const [showSecret, setShowSecret] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isRegenerating, setIsRegenerating] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,19 +60,18 @@ export function WebhookConfigCard({
     }
   };
 
-  const handleRegenerate = async () => {
-    if (confirm("Apakah Anda yakin ingin membuat ulang kunci Signing Secret?")) {
-      setIsRegenerating(true);
-      try {
-        await onRegenerateSecret();
-      } finally {
-        setIsRegenerating(false);
-      }
+  const handleConfirmRegenerate = async () => {
+    setIsRegenerating(true);
+    try {
+      await onRegenerateSecret();
+      setIsConfirmOpen(false);
+    } finally {
+      setIsRegenerating(false);
     }
   };
 
   return (
-    <div className="border-border bg-surface space-y-6 rounded-md border p-6 shadow-sm sm:p-8 dark:bg-[#161715]">
+    <div className="border-border bg-surface space-y-6 rounded-xl border p-6 shadow-sm sm:p-8 dark:bg-[#161715]">
       {/* Header */}
       <div className="border-border flex flex-col justify-between gap-3 border-b pb-4 sm:flex-row sm:items-center">
         <div className="flex items-center gap-3">
@@ -92,18 +104,19 @@ export function WebhookConfigCard({
           <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
             {t("subscription.webhookUrlLabel")}
           </label>
-          <input
+          <Input
             type="url"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             placeholder={t("subscription.webhookUrlPlaceholder")}
             disabled={!isEnabled || isSaving}
-            className="bg-surface text-foreground border-border hover:border-foreground-muted focus:border-wise-green focus:ring-wise-green h-11 w-full rounded-full border px-4 font-mono text-xs font-semibold transition outline-none focus:ring-2 disabled:opacity-50 dark:bg-[#10110e]"
+            variant="pill"
+            className="h-11 font-mono"
           />
         </div>
 
         {/* Signing Secret Box */}
-        <div className="border-border bg-muted/30 space-y-2 rounded-md border p-4">
+        <div className="border-border bg-muted/30 space-y-2 rounded-xl border p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Key className="dark:text-wise-green size-4 text-emerald-700" />
@@ -140,7 +153,7 @@ export function WebhookConfigCard({
                 variant="outline"
                 size="sm"
                 disabled={isRegenerating}
-                onClick={handleRegenerate}
+                onClick={() => setIsConfirmOpen(true)}
                 className="border-border size-7 rounded-full p-0"
                 aria-label="Regenerate Secret"
               >
@@ -184,6 +197,50 @@ export function WebhookConfigCard({
           </Button>
         </div>
       </form>
+
+      {/* Confirmation Dialog for Secret Rotation */}
+      <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
+        <AlertDialogContent className="border-border bg-surface flex max-h-[92dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-md dark:bg-[#161715]">
+          <AlertDialogHeader className="border-border flex shrink-0 flex-row items-center gap-3.5 border-b p-5 text-left sm:p-6">
+            <div className="flex size-11 shrink-0 items-center justify-center rounded-full border border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-400">
+              <AlertTriangle className="size-5.5" />
+            </div>
+            <div>
+              <AlertDialogTitle className="text-foreground text-lg font-black tracking-tight">
+                Buat Ulang Signing Secret?
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-foreground-secondary text-xs font-semibold">
+                Tindakan rotasi kunci secret webhook sistem.
+              </AlertDialogDescription>
+            </div>
+          </AlertDialogHeader>
+
+          <div className="text-foreground-secondary min-h-0 flex-1 space-y-4 overflow-y-auto p-5 text-xs leading-relaxed sm:p-6">
+            <p>
+              Kunci Signing Secret lama akan segera tidak berlaku. Semua server endpoint yang
+              memverifikasi header signature webhook harus diperbarui dengan kunci baru ini.
+            </p>
+          </div>
+
+          <AlertDialogFooter className="border-border bg-muted/20 m-0 flex shrink-0 flex-row items-center justify-end gap-2.5 rounded-none border-t p-4 sm:p-5">
+            <AlertDialogCancel
+              disabled={isRegenerating}
+              className="border-border hover:border-foreground-muted rounded-full text-xs font-bold"
+            >
+              Batal
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={isRegenerating}
+              onClick={handleConfirmRegenerate}
+              variant="primaryPill"
+              className="gap-1.5 rounded-full text-xs font-bold"
+            >
+              {isRegenerating && <Loader2 className="size-3.5 animate-spin" />}
+              <span>{isRegenerating ? "Memproses..." : "Ya, Buat Ulang"}</span>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

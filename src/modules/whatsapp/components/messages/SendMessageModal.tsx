@@ -2,8 +2,12 @@
 
 import React, { useState } from "react";
 import { Device } from "@/modules/whatsapp/types/whatsapp.types";
+import { formatPhoneNumber } from "@/modules/whatsapp/components/devices/DeviceCard";
 import { whatsappApi } from "@/modules/whatsapp/api/whatsapp.api";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -69,9 +73,9 @@ export function SendMessageModal({ devices, isOpen, onClose }: SendMessageModalP
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && !isSending && onClose()}>
-      <DialogContent className="border-border bg-surface max-h-[90vh] max-w-lg gap-0 overflow-hidden p-0 dark:bg-[#161715]">
+      <DialogContent className="border-border bg-surface flex max-h-[90dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-lg dark:bg-[#161715]">
         {/* Sticky Header */}
-        <DialogHeader className="border-border flex flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
+        <DialogHeader className="border-border flex shrink-0 flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
           <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700">
             <Send className="size-5" />
           </div>
@@ -86,28 +90,29 @@ export function SendMessageModal({ devices, isOpen, onClose }: SendMessageModalP
         </DialogHeader>
 
         {/* Scrollable Form Body */}
-        <form onSubmit={handleSend} className="flex min-h-0 flex-1 flex-col overflow-y-auto">
-          <div className="flex-1 space-y-4 p-5 sm:p-6">
+        <form onSubmit={handleSend} className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          <div className="flex-1 space-y-4 overflow-y-auto p-5 sm:p-6">
             {/* Select Device */}
             <div>
               <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                 {t("whatsapp.selectSenderDevice")}
               </label>
-              <select
+              <NativeSelect
                 value={activeDeviceId}
                 onChange={(e) => setUserSelectedDeviceId(e.target.value)}
-                className="bg-surface text-foreground border-border focus:border-wise-green h-10 w-full rounded-md border px-3 text-xs font-semibold outline-none dark:bg-[#10110e]"
+                variant="rounded"
               >
                 {connectedDevices.length === 0 ? (
                   <option value="">{t("whatsapp.noConnectedDevices")}</option>
                 ) : (
                   connectedDevices.map((d) => (
                     <option key={d.id} value={d.id}>
-                      {d.push_name || d.name} ({d.phone ? `+${d.phone}` : "Tanpa Nomor"})
+                      {d.push_name || d.name} (
+                      {d.phone ? formatPhoneNumber(d.phone) : "Nomor Belum Tertaut"})
                     </option>
                   ))
                 )}
-              </select>
+              </NativeSelect>
             </div>
 
             {/* Recipient Phone */}
@@ -115,12 +120,13 @@ export function SendMessageModal({ devices, isOpen, onClose }: SendMessageModalP
               <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                 {t("whatsapp.recipientPhoneLabel")}
               </label>
-              <input
+              <Input
                 type="tel"
                 value={recipient}
                 onChange={(e) => setRecipient(e.target.value)}
                 placeholder="6281234567890"
-                className="bg-surface text-foreground border-border focus:border-wise-green h-10 w-full rounded-md border px-3 font-mono text-xs font-semibold outline-none dark:bg-[#10110e]"
+                variant="rounded"
+                className="font-mono"
                 required
               />
               <span className="text-foreground-muted mt-1 block text-[11px]">
@@ -133,12 +139,13 @@ export function SendMessageModal({ devices, isOpen, onClose }: SendMessageModalP
               <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
                 {t("whatsapp.messageTextLabel")}
               </label>
-              <textarea
+              <Textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 rows={4}
                 placeholder={t("whatsapp.messageTextPlaceholder")}
-                className="bg-surface text-foreground border-border focus:border-wise-green w-full resize-none rounded-md border p-3 text-xs font-semibold outline-none dark:bg-[#10110e]"
+                variant="rounded"
+                className="resize-none"
                 required
               />
             </div>

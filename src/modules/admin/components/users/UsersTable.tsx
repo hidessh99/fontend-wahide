@@ -1,14 +1,23 @@
 "use client";
 
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import { UserItem, AdjustBalanceInput, UpdateUserInput } from "@/modules/admin/types/admin.types";
-import { AdjustBalanceModal } from "./AdjustBalanceModal";
-import { EditUserModal } from "./EditUserModal";
+
+const AdjustBalanceModal = dynamic(
+  () => import("./AdjustBalanceModal").then((m) => m.AdjustBalanceModal),
+  { ssr: false }
+);
+const EditUserModal = dynamic(
+  () => import("./EditUserModal").then((m) => m.EditUserModal),
+  { ssr: false }
+);
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty";
 import { SearchInput } from "@/components/ui/search-input";
 import { DataTablePagination } from "@/components/ui/pagination";
+import { NativeSelect } from "@/components/ui/native-select";
 import {
   RefreshCw,
   Sliders,
@@ -20,6 +29,17 @@ import {
   User,
   Loader2,
 } from "lucide-react";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
+import { useTableSort } from "@/hooks/useTableSort";
+import { useI18n } from "@/lib/i18n/context";
 
 interface UsersTableProps {
   users: UserItem[];
@@ -44,18 +64,21 @@ interface UsersTableProps {
   onUpdateUser: (userId: string, data: UpdateUserInput) => Promise<unknown>;
 }
 
-function getRoleBadge(role: string) {
+function getRoleBadge(
+  role: string,
+  t: (key: string, params?: Record<string, string | number>) => string
+) {
   const upper = (role || "").toUpperCase();
   if (upper === "SUPER_ADMIN" || upper === "ADMIN") {
-    return <Badge variant="danger">Super Admin</Badge>;
+    return <Badge variant="danger">{t("admin.users.badgeSuperAdmin")}</Badge>;
   }
   if (upper === "SELLER") {
-    return <Badge variant="success">Seller</Badge>;
+    return <Badge variant="success">{t("admin.users.badgeSeller")}</Badge>;
   }
   if (upper === "AGENT") {
-    return <Badge variant="info">CS Agent</Badge>;
+    return <Badge variant="info">{t("admin.users.badgeAgent")}</Badge>;
   }
-  return <Badge variant="neutral">{role || "User"}</Badge>;
+  return <Badge variant="neutral">{role || t("admin.users.filterUser")}</Badge>;
 }
 
 export function UsersTable({
@@ -80,11 +103,19 @@ export function UsersTable({
   onAdjustBalance,
   onUpdateUser,
 }: UsersTableProps) {
+  const { t, locale } = useI18n();
   const [searchInput, setSearchInput] = useState("");
   const [selectedUserForAdjust, setSelectedUserForAdjust] = useState<UserItem | null>(null);
   const [selectedUserForEdit, setSelectedUserForEdit] = useState<UserItem | null>(null);
   const [isAdjustModalOpen, setIsAdjustModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const { sortKey, sortOrder, handleSort, sortData } = useTableSort<UserItem>({
+    initialKey: "createdAt",
+    initialOrder: "desc",
+  });
+
+  const sortedUsers = sortData(users);
 
   const handleOpenAdjust = (user: UserItem) => {
     setSelectedUserForAdjust(user);
@@ -101,9 +132,6 @@ export function UsersTable({
     onClearSearch();
   };
 
-  const startItem = total > 0 ? (page - 1) * pageSize + 1 : 0;
-  const endItem = total > 0 ? Math.min(page * pageSize, total) : 0;
-
   return (
     <div className="space-y-5">
       {/* Search & Filter Toolbar */}
@@ -115,34 +143,36 @@ export function UsersTable({
             onChange={setSearchInput}
             onSearch={() => onSearch(searchInput.trim())}
             onClear={handleResetSearch}
-            placeholder="Cari berdasarkan nama, email, atau nomor WhatsApp..."
+            placeholder={t("admin.users.searchPlaceholder")}
           />
 
           {/* Filters & Refresh */}
           <div className="flex shrink-0 flex-wrap items-center gap-2 sm:flex-nowrap">
             {/* Role Filter */}
-            <select
+            <NativeSelect
               value={roleFilter}
               onChange={(e) => onRoleFilterChange(e.target.value)}
-              className="bg-surface text-foreground border-border dark:focus:border-wise-green h-10 flex-1 cursor-pointer rounded-full border px-3.5 text-xs font-semibold outline-none focus:border-emerald-600 sm:flex-initial dark:bg-[#10110e]"
+              variant="pill"
+              wrapperClassName="flex-1 sm:flex-initial"
             >
-              <option value="ALL">Semua Peran</option>
-              <option value="SELLER">Seller</option>
-              <option value="SUPER_ADMIN">Super Admin</option>
-              <option value="AGENT">CS Agent</option>
-              <option value="USER">User</option>
-            </select>
+              <option value="ALL">{t("admin.users.filterAllRoles")}</option>
+              <option value="SELLER">{t("admin.users.filterSeller")}</option>
+              <option value="SUPER_ADMIN">{t("admin.users.filterSuperAdmin")}</option>
+              <option value="AGENT">{t("admin.users.filterAgent")}</option>
+              <option value="USER">{t("admin.users.filterUser")}</option>
+            </NativeSelect>
 
             {/* Status Filter */}
-            <select
+            <NativeSelect
               value={statusFilter}
               onChange={(e) => onStatusFilterChange(e.target.value)}
-              className="bg-surface text-foreground border-border dark:focus:border-wise-green h-10 flex-1 cursor-pointer rounded-full border px-3.5 text-xs font-semibold outline-none focus:border-emerald-600 sm:flex-initial dark:bg-[#10110e]"
+              variant="pill"
+              wrapperClassName="flex-1 sm:flex-initial"
             >
-              <option value="ALL">Semua Status</option>
-              <option value="ACTIVE">🟢 Aktif</option>
-              <option value="SUSPENDED">🔴 Ditangguhkan</option>
-            </select>
+              <option value="ALL">{t("admin.users.filterAllStatus")}</option>
+              <option value="ACTIVE">{t("admin.users.filterActive")}</option>
+              <option value="SUSPENDED">{t("admin.users.filterSuspended")}</option>
+            </NativeSelect>
 
             {/* Refresh Button */}
             <Button
@@ -150,10 +180,11 @@ export function UsersTable({
               size="sm"
               onClick={onRefresh}
               disabled={isLoading}
-              className="border-border hover:border-foreground-muted size-10 shrink-0 cursor-pointer rounded-full p-0"
-              aria-label="Refresh Data Pengguna"
+              className="border-border hover:border-foreground-muted h-10 shrink-0 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold transition"
+              aria-label={t("admin.users.refreshAria")}
             >
-              <RefreshCw className={`size-4 ${isLoading ? "animate-spin" : ""}`} />
+              <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin" : ""}`} />
+              <span className="hidden sm:inline">{t("refresh")}</span>
             </Button>
           </div>
         </div>
@@ -164,23 +195,23 @@ export function UsersTable({
         {isLoading ? (
           <div className="text-foreground-muted flex flex-col items-center justify-center space-y-3 py-16">
             <Loader2 className="dark:text-wise-green size-7 animate-spin text-emerald-600" />
-            <span className="text-xs font-bold">Memuat daftar pengguna platform...</span>
+            <span className="text-xs font-bold">{t("admin.users.loadingText")}</span>
           </div>
         ) : users.length === 0 ? (
           <EmptyState
             icon={<User />}
-            title="Tidak Ada Pengguna Ditemukan"
+            title={t("admin.users.emptyTitle")}
             description={
               activeSearch
-                ? `Tidak ditemukan hasil yang cocok dengan kata kunci "${activeSearch}". Coba kata kunci lain.`
-                : "Belum ada data pengguna yang terdaftar pada sistem."
+                ? t("admin.users.emptySearchDesc", { query: activeSearch })
+                : t("admin.users.emptyDesc")
             }
           />
         ) : (
           <div>
             {/* Mobile View: Card-based list for screen < 1024px */}
             <div className="divide-border/60 divide-y lg:hidden">
-              {users.map((u) => {
+              {sortedUsers.map((u) => {
                 const balance = u.balance ?? u.depositBalance ?? 0;
                 const isActive = u.status === "ACTIVE" || u.isActive === true;
                 const phone = u.phoneNumber || u.phone || "-";
@@ -204,16 +235,16 @@ export function UsersTable({
                       </div>
 
                       <div className="flex shrink-0 flex-col items-end gap-1">
-                        {getRoleBadge(u.role || u.roleName || "USER")}
+                        {getRoleBadge(u.role || u.roleName || "USER", t)}
                         {isActive ? (
                           <span className="dark:text-wise-green inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600">
                             <CheckCircle2 className="size-3" />
-                            <span>Aktif</span>
+                            <span>{t("admin.users.badgeActive")}</span>
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1 text-[10px] font-bold text-rose-600 dark:text-rose-400">
                             <ShieldAlert className="size-3" />
-                            <span>Ditangguhkan</span>
+                            <span>{t("admin.users.badgeSuspended")}</span>
                           </span>
                         )}
                       </div>
@@ -223,7 +254,7 @@ export function UsersTable({
                     <div className="border-border/40 grid grid-cols-2 gap-2 border-t pt-2 text-xs">
                       <div>
                         <span className="text-foreground-muted block text-[10px] font-bold uppercase">
-                          No. Telepon / WA
+                          {t("admin.users.phoneColLabel")}
                         </span>
                         <span className="text-foreground block truncate font-mono text-[11px] font-semibold">
                           {phone}
@@ -231,10 +262,10 @@ export function UsersTable({
                       </div>
                       <div className="text-right">
                         <span className="text-foreground-muted block text-[10px] font-bold uppercase">
-                          Saldo Dompet
+                          {t("admin.users.walletBalanceLabel")}
                         </span>
                         <span className="dark:text-wise-green block truncate font-mono text-xs font-bold text-emerald-700">
-                          Rp {balance.toLocaleString("id-ID")}
+                          Rp {balance.toLocaleString(locale === "en" ? "en-US" : "id-ID")}
                         </span>
                       </div>
                     </div>
@@ -249,7 +280,7 @@ export function UsersTable({
                         className="border-border hover:bg-muted h-8.5 justify-center gap-1.5 rounded-full text-xs font-bold"
                       >
                         <Edit className="dark:text-wise-green size-3.5 text-emerald-600" />
-                        <span>Ubah</span>
+                        <span>{t("admin.users.editBtn")}</span>
                       </Button>
 
                       <Button
@@ -260,7 +291,7 @@ export function UsersTable({
                         className="border-border hover:bg-muted h-8.5 justify-center gap-1.5 rounded-full text-xs font-bold"
                       >
                         <Sliders className="size-3.5 text-rose-600 dark:text-rose-400" />
-                        <span>Saldo</span>
+                        <span>{t("admin.users.balanceBtn")}</span>
                       </Button>
                     </div>
                   </div>
@@ -268,30 +299,71 @@ export function UsersTable({
               })}
             </div>
 
-            {/* Desktop View: Tabular Grid for screen >= 1024px */}
-            <div className="hidden overflow-x-auto lg:block">
-              <table className="w-full border-collapse text-left">
-                <thead>
-                  <tr className="border-border bg-muted/50 text-foreground-muted border-b text-[11px] font-extrabold tracking-wider uppercase select-none">
-                    <th className="px-5 py-3.5 font-extrabold">Nama Lengkap</th>
-                    <th className="px-4 py-3.5 font-extrabold">Email</th>
-                    <th className="px-4 py-3.5 font-extrabold">Nomor Telepon / WhatsApp</th>
-                    <th className="px-3 py-3.5 text-center font-extrabold">Role / Peran</th>
-                    <th className="px-3 py-3.5 text-center font-extrabold">Status Akun</th>
-                    <th className="px-4 py-3.5 text-right font-extrabold">Saldo Dompet</th>
-                    <th className="px-5 py-3.5 text-right font-extrabold">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-border/50 divide-y text-xs font-semibold">
-                  {users.map((u) => {
+            {/* Desktop View: shadcn/ui Table for screen >= 1024px */}
+            <div className="hidden lg:block">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-border bg-muted/50 hover:bg-muted/50">
+                    <TableHead className="w-[25%] px-5 py-3.5">
+                      <DataTableColumnHeader
+                        title={t("admin.users.colName")}
+                        columnKey="name"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                      />
+                    </TableHead>
+                    <TableHead className="w-[20%] px-4 py-3.5">
+                      <DataTableColumnHeader
+                        title={t("admin.users.colEmail")}
+                        columnKey="email"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                      />
+                    </TableHead>
+                    <TableHead className="w-[18%] px-4 py-3.5">
+                      <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        {t("admin.users.colPhone")}
+                      </div>
+                    </TableHead>
+                    <TableHead className="w-[10%] px-3 py-3.5 text-center">
+                      <div className="text-foreground-muted text-center text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        {t("admin.users.colRole")}
+                      </div>
+                    </TableHead>
+                    <TableHead className="w-[10%] px-3 py-3.5 text-center">
+                      <div className="text-foreground-muted text-center text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        {t("admin.users.colStatus")}
+                      </div>
+                    </TableHead>
+                    <TableHead className="w-[12%] px-4 py-3.5 text-right">
+                      <DataTableColumnHeader
+                        title={t("admin.users.colBalance")}
+                        columnKey="depositBalance"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                        align="right"
+                      />
+                    </TableHead>
+                    <TableHead className="w-[10%] px-5 py-3.5 text-right">
+                      <div className="text-foreground-muted text-right text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        {t("admin.users.colActions")}
+                      </div>
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {sortedUsers.map((u) => {
                     const balance = u.balance ?? u.depositBalance ?? 0;
                     const isActive = u.status === "ACTIVE" || u.isActive === true;
                     const phone = u.phoneNumber || u.phone || "-";
 
                     return (
-                      <tr key={u.id} className="hover:bg-muted/30 group transition-colors">
+                      <TableRow key={u.id} className="hover:bg-muted/30 transition-colors">
                         {/* 1. Nama Lengkap with Avatar */}
-                        <td className="px-5 py-3.5">
+                        <TableCell className="px-5 py-3.5 align-middle">
                           <div className="flex items-center gap-2.5">
                             <div className="bg-muted text-foreground border-border flex size-8 shrink-0 items-center justify-center rounded-full border text-xs font-black uppercase">
                               {u.name ? u.name.charAt(0) : "U"}
@@ -300,53 +372,57 @@ export function UsersTable({
                               {u.name}
                             </span>
                           </div>
-                        </td>
+                        </TableCell>
 
                         {/* 2. Email */}
-                        <td className="px-4 py-3.5">
+                        <TableCell className="px-4 py-3.5 align-middle">
                           <div className="text-foreground-secondary flex max-w-50 items-center gap-1.5 truncate font-mono text-xs">
                             <Mail className="text-foreground-muted size-3 shrink-0" />
                             <span className="truncate">{u.email}</span>
                           </div>
-                        </td>
+                        </TableCell>
 
                         {/* 3. Nomor Telepon / WhatsApp */}
-                        <td className="px-4 py-3.5">
+                        <TableCell className="px-4 py-3.5 align-middle">
                           <div className="text-foreground flex max-w-40 items-center gap-1.5 truncate font-mono text-xs">
                             <Phone className="text-foreground-muted size-3 shrink-0" />
                             <span>{phone}</span>
                           </div>
-                        </td>
+                        </TableCell>
 
                         {/* 4. Role / Peran */}
-                        <td className="px-3 py-3.5 text-center">
-                          {getRoleBadge(u.role || u.roleName || "USER")}
-                        </td>
+                        <TableCell className="px-3 py-3.5 text-center align-middle">
+                          <div className="inline-flex items-center justify-center">
+                            {getRoleBadge(u.role || u.roleName || "USER", t)}
+                          </div>
+                        </TableCell>
 
                         {/* 5. Status Akun */}
-                        <td className="px-3 py-3.5 text-center">
-                          {isActive ? (
-                            <span className="dark:text-wise-green inline-flex items-center gap-1 text-xs font-bold text-emerald-600">
-                              <CheckCircle2 className="size-3.5" />
-                              <span>Aktif</span>
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1 text-xs font-bold text-rose-600 dark:text-rose-400">
-                              <ShieldAlert className="size-3.5" />
-                              <span>Ditangguhkan</span>
-                            </span>
-                          )}
-                        </td>
+                        <TableCell className="px-3 py-3.5 text-center align-middle">
+                          <div className="inline-flex items-center justify-center">
+                            {isActive ? (
+                              <span className="dark:text-wise-green inline-flex items-center gap-1 text-xs font-bold text-emerald-600">
+                                <CheckCircle2 className="size-3.5" />
+                                <span>{t("admin.users.badgeActive")}</span>
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 text-xs font-bold text-rose-600 dark:text-rose-400">
+                                <ShieldAlert className="size-3.5" />
+                                <span>{t("admin.users.badgeSuspended")}</span>
+                              </span>
+                            )}
+                          </div>
+                        </TableCell>
 
                         {/* 6. Saldo Dompet */}
-                        <td className="text-foreground px-4 py-3.5 text-right font-mono font-bold">
+                        <TableCell className="text-foreground px-4 py-3.5 text-right align-middle font-mono font-bold">
                           <span className="dark:text-wise-green text-emerald-700">
-                            Rp {balance.toLocaleString("id-ID")}
+                            Rp {balance.toLocaleString(locale === "en" ? "en-US" : "id-ID")}
                           </span>
-                        </td>
+                        </TableCell>
 
                         {/* 7. Aksi (Ubah & Sesuaikan Saldo) */}
-                        <td className="px-5 py-3.5 text-right">
+                        <TableCell className="px-5 py-3.5 text-right align-middle">
                           <div className="flex items-center justify-end gap-1.5">
                             <Button
                               type="button"
@@ -354,10 +430,10 @@ export function UsersTable({
                               size="sm"
                               onClick={() => handleOpenEdit(u)}
                               className="border-border hover:border-foreground-muted hover:bg-muted h-8 gap-1 rounded-full px-2.5 text-xs font-bold"
-                              title="Ubah Data & Password"
+                              title={t("admin.users.editTooltip")}
                             >
                               <Edit className="dark:text-wise-green size-3.5 text-emerald-600" />
-                              <span>Ubah</span>
+                              <span>{t("admin.users.editBtn")}</span>
                             </Button>
 
                             <Button
@@ -366,60 +442,36 @@ export function UsersTable({
                               size="sm"
                               onClick={() => handleOpenAdjust(u)}
                               className="border-border hover:border-foreground-muted hover:bg-muted h-8 gap-1 rounded-full px-2.5 text-xs font-bold"
-                              title="Sesuaikan Saldo Dompet"
+                              title={t("admin.users.adjustTooltip")}
                             >
                               <Sliders className="size-3.5 text-rose-600 dark:text-rose-400" />
-                              <span>Saldo</span>
+                              <span>{t("admin.users.balanceBtn")}</span>
                             </Button>
                           </div>
-                        </td>
-                      </tr>
+                        </TableCell>
+                      </TableRow>
                     );
                   })}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           </div>
         )}
 
         {/* Responsive Pagination Footer */}
         {total > 0 && (
-          <div className="border-border bg-muted/20 flex flex-col items-center justify-between gap-3 border-t p-3.5 sm:flex-row sm:px-5 sm:py-3.5">
-            {/* Item count summary & Page size selector */}
-            <div className="text-foreground-secondary flex items-center gap-3 text-xs font-semibold">
-              <span>
-                Menampilkan{" "}
-                <strong className="text-foreground">
-                  {startItem} - {endItem}
-                </strong>{" "}
-                dari <strong className="text-foreground">{total}</strong> pengguna
-              </span>
-
-              {onPageSizeChange && (
-                <div className="text-foreground-muted flex items-center gap-1.5 text-xs">
-                  <span>| Baris:</span>
-                  <select
-                    value={pageSize}
-                    onChange={(e) => onPageSizeChange(Number(e.target.value))}
-                    className="bg-surface border-border text-foreground h-7 cursor-pointer rounded-md border px-2 text-xs font-bold outline-none dark:bg-[#10110e]"
-                  >
-                    <option value={10}>10</option>
-                    <option value={25}>25</option>
-                    <option value={50}>50</option>
-                  </select>
-                </div>
-              )}
-            </div>
-
-            <DataTablePagination
-              page={page}
-              totalPages={totalPages}
-              onPageChange={onPageChange}
-              onPrevPage={onPrevPage}
-              onNextPage={onNextPage}
-              className="mx-0 w-auto"
-            />
-          </div>
+          <DataTablePagination
+            page={page}
+            totalPages={totalPages}
+            total={total}
+            pageSize={pageSize}
+            onPageChange={onPageChange}
+            onPrevPage={onPrevPage}
+            onNextPage={onNextPage}
+            onPageSizeChange={onPageSizeChange}
+            pageSizeOptions={[10, 25, 50]}
+            entityName={t("admin.users.entityName")}
+          />
         )}
       </div>
 

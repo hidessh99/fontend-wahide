@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { AdminQueueItem } from "@/modules/admin/types/admin.types";
+import { useI18n } from "@/lib/i18n/context";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -22,6 +23,7 @@ interface DeleteQueueModalProps {
 }
 
 export function DeleteQueueModal({ queue, isOpen, onClose, onConfirm }: DeleteQueueModalProps) {
+  const { t } = useI18n();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleOpenChange = (open: boolean) => {
@@ -44,52 +46,51 @@ export function DeleteQueueModal({ queue, isOpen, onClose, onConfirm }: DeleteQu
 
   return (
     <AlertDialog open={isOpen} onOpenChange={handleOpenChange}>
-      <AlertDialogContent className="border-border bg-surface max-w-md gap-0 overflow-hidden p-0 dark:bg-[#161715]">
+      <AlertDialogContent className="border-border bg-surface flex max-h-[92dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-md dark:bg-[#161715]">
         {/* Header */}
-        <AlertDialogHeader className="border-border flex flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
+        <AlertDialogHeader className="border-border flex shrink-0 flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
           <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400">
             <Trash2 className="size-5" />
           </div>
           <div>
             <AlertDialogTitle className="text-foreground text-lg font-black tracking-tight">
-              Hapus Tugas Antrean
+              {t("admin.notifications.deleteModalTitle")}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-foreground-secondary text-xs font-semibold">
-              Hapus tugas antrean email dari sistem background worker.
+              {t("admin.notifications.deleteModalSubtitle")}
             </AlertDialogDescription>
           </div>
         </AlertDialogHeader>
 
         {/* Content Body */}
-        <div className="space-y-4 p-5 text-xs sm:p-6">
+        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-5 text-xs sm:p-6">
           <div className="flex items-start gap-2.5 rounded-lg border border-rose-500/20 bg-rose-500/10 p-3.5 text-rose-700 dark:text-rose-400">
             <AlertTriangle className="mt-0.5 size-4 shrink-0" />
             <div className="space-y-1">
-              <span className="block font-bold">Tindakan ini tidak dapat dibatalkan!</span>
+              <span className="block font-bold">{t("admin.notifications.deleteWarningTitle")}</span>
               <p className="text-foreground-secondary text-[11px] leading-relaxed">
-                Tugas notifikasi ini akan dihapus permanen dari antrean dan tidak akan diproses oleh
-                worker.
+                {t("admin.notifications.deleteWarningDesc")}
               </p>
             </div>
           </div>
 
           <div className="border-border bg-muted/20 text-foreground-secondary space-y-1.5 rounded-lg border p-3 text-xs font-semibold">
             <div className="flex justify-between">
-              <span>ID Antrean:</span>
+              <span>{t("admin.notifications.queueIdLabel")}</span>
               <span className="text-foreground font-mono font-bold">{queue.id}</span>
             </div>
             <div className="flex justify-between">
-              <span>Tipe Tugas:</span>
+              <span>{t("admin.notifications.taskTypeLabel")}</span>
               <strong className="text-foreground">{queue.taskType}</strong>
             </div>
             <div className="flex justify-between">
-              <span>Target:</span>
+              <span>{t("admin.notifications.targetLabel")}</span>
               <span className="text-foreground font-mono font-bold">
                 {queue.targetEmail || "-"}
               </span>
             </div>
             <div className="flex justify-between">
-              <span>Status:</span>
+              <span>{t("admin.notifications.statusLabel")}</span>
               <span className="text-foreground font-bold">{queue.status}</span>
             </div>
           </div>
@@ -101,7 +102,7 @@ export function DeleteQueueModal({ queue, isOpen, onClose, onConfirm }: DeleteQu
             disabled={isLoading}
             className="border-border hover:bg-muted rounded-full text-xs font-bold"
           >
-            Batalkan
+            {t("common.cancel")}
           </AlertDialogCancel>
 
           <Button
@@ -115,12 +116,12 @@ export function DeleteQueueModal({ queue, isOpen, onClose, onConfirm }: DeleteQu
             {isLoading ? (
               <>
                 <Loader2 className="size-3.5 animate-spin" />
-                <span>Menghapus...</span>
+                <span>{t("admin.notifications.deletingBtn")}</span>
               </>
             ) : (
               <>
                 <Trash2 className="size-3.5" />
-                <span>Hapus Antrean</span>
+                <span>{t("admin.notifications.deleteConfirmBtn")}</span>
               </>
             )}
           </Button>

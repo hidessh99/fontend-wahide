@@ -1,8 +1,15 @@
+export interface Tag {
+  id: string;
+  name: string;
+  tenant_id?: string;
+  createdAt?: string;
+}
+
 export interface Contact {
   id: string;
   name: string;
   phone: string;
-  tags: string[];
+  tags?: (Tag | string)[];
   createdAt: string;
   updatedAt?: string;
 }
@@ -11,6 +18,7 @@ export interface CreateContactInput {
   name: string;
   phone: string;
   tags?: string[];
+  tag_ids?: string[];
 }
 
 export interface UpdateContactInput {
@@ -18,6 +26,7 @@ export interface UpdateContactInput {
   name?: string;
   phone?: string;
   tags?: string[];
+  tag_ids?: string[];
 }
 
 export interface ContactFilter {

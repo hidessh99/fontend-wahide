@@ -51,9 +51,9 @@ export function InvoiceReceiptModal({ isOpen, onClose, invoice }: InvoiceReceipt
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="border-border bg-surface max-h-[90vh] max-w-xl gap-0 overflow-hidden p-0 dark:bg-[#161715] print:max-h-full print:border-none print:shadow-none">
+      <DialogContent className="border-border bg-surface flex max-h-[90dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-xl dark:bg-[#161715] print:max-h-full print:border-none print:shadow-none">
         {/* Sticky Modal Header (Hidden on Print) */}
-        <DialogHeader className="border-border flex flex-row items-center gap-2.5 border-b p-4 text-left sm:p-5 print:hidden">
+        <DialogHeader className="border-border flex shrink-0 flex-row items-center gap-2.5 border-b p-4 text-left sm:p-5 print:hidden">
           <div className="bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex size-8 items-center justify-center rounded-full">
             <Receipt className="size-4" />
           </div>
@@ -68,7 +68,7 @@ export function InvoiceReceiptModal({ isOpen, onClose, invoice }: InvoiceReceipt
         </DialogHeader>
 
         {/* Scrollable Printable Receipt Content */}
-        <div className="flex-1 space-y-6 overflow-y-auto p-4 sm:p-6 print:overflow-visible print:p-0">
+        <div className="min-h-0 flex-1 space-y-6 overflow-y-auto p-4 sm:p-6 print:overflow-visible print:p-0">
           {/* Top Brand Banner */}
           <div className="border-border/60 flex items-start justify-between border-b pb-4">
             <div>

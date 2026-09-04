@@ -4,8 +4,10 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { AdminSubscriptionItem } from "@/modules/admin/types/admin.types";
 import { adminApi } from "@/modules/admin/api/admin.api";
 import { toast } from "sonner";
+import { useI18n } from "@/lib/i18n/context";
 
 export function useAdminSubscriptions() {
+  const { t } = useI18n();
   const [subscriptions, setSubscriptions] = useState<AdminSubscriptionItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -29,14 +31,14 @@ export function useAdminSubscriptions() {
       setSubscriptions(res.subscriptions);
       setTotal(res.total);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal memuat daftar langganan";
+      const msg = err instanceof Error ? err.message : t("admin.subscriptions.loadFailedToast");
       toast.error(msg);
       setSubscriptions([]);
       setTotal(0);
     } finally {
       setIsLoading(false);
     }
-  }, [page, pageSize, searchQuery, statusFilter, planFilter]);
+  }, [page, pageSize, searchQuery, statusFilter, planFilter, t]);
 
   useEffect(() => {
     let isMounted = true;
@@ -77,9 +79,9 @@ export function useAdminSubscriptions() {
           s.id === id ? { ...s, status: "EXPIRED", expiredAt: new Date().toISOString() } : s
         )
       );
-      toast.success("Status langganan berhasil diubah menjadi EXPIRED.");
+      toast.success(t("admin.subscriptions.expireSuccessToast"));
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal mengubah status langganan";
+      const msg = err instanceof Error ? err.message : t("admin.subscriptions.expireFailedToast");
       toast.error(msg);
       throw err;
     }

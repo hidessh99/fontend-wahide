@@ -5,6 +5,7 @@ import { DashboardBreadcrumb } from "./DashboardBreadcrumb";
 import { DashboardUserNav } from "./DashboardUserNav";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { LocaleSwitcher } from "@/components/layout/shared/LocaleSwitcher";
+import { useI18n } from "@/lib/i18n/context";
 import { Menu } from "lucide-react";
 
 interface DashboardHeaderProps {
@@ -12,6 +13,8 @@ interface DashboardHeaderProps {
 }
 
 export function DashboardHeader({ onOpenMobileNav }: DashboardHeaderProps) {
+  const { t } = useI18n();
+
   return (
     <header className="border-border bg-background/80 sticky top-0 z-40 flex h-18 items-center justify-between border-b px-4 backdrop-blur-md sm:px-8">
       {/* Kiri: Mobile Nav Button & Breadcrumb */}
@@ -20,7 +23,7 @@ export function DashboardHeader({ onOpenMobileNav }: DashboardHeaderProps) {
           <button
             onClick={onOpenMobileNav}
             className="hover:bg-muted text-foreground-secondary hover:text-foreground cursor-pointer rounded-full p-2 lg:hidden"
-            aria-label="Buka Menu"
+            aria-label={t("nav.openMenu")}
           >
             <Menu className="size-5" />
           </button>

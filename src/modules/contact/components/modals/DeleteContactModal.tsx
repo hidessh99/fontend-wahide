@@ -62,9 +62,9 @@ export function DeleteContactModal({
 
   return (
     <AlertDialog open={isOpen} onOpenChange={handleOpenChange}>
-      <AlertDialogContent className="bg-surface border-border max-w-md gap-0 overflow-hidden p-0 dark:bg-[#161715]">
+      <AlertDialogContent className="border-border bg-surface flex max-h-[92dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-md dark:bg-[#161715]">
         {/* Header */}
-        <AlertDialogHeader className="border-border/60 flex flex-row items-center gap-3.5 border-b p-6 pb-4 text-left">
+        <AlertDialogHeader className="border-border/60 flex shrink-0 flex-row items-center gap-3.5 border-b p-6 pb-4 text-left">
           <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-rose-500/10 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400">
             <AlertTriangle className="size-5" />
           </div>
@@ -76,7 +76,7 @@ export function DeleteContactModal({
         </AlertDialogHeader>
 
         {/* Body Content */}
-        <div className="text-foreground-secondary space-y-4 p-6 text-sm">
+        <div className="text-foreground-secondary min-h-0 flex-1 space-y-4 overflow-y-auto p-6 text-sm">
           {/* Target Identity Highlight */}
           {!isBulk && contact && (
             <div className="bg-muted/40 border-border/80 space-y-1 rounded-lg border p-3.5">

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import { TenantBalance } from "@/modules/finance/types/finance.types";
@@ -15,7 +15,7 @@ export function BalanceCard({ balance, onOpenTopUp }: BalanceCardProps) {
   const { t } = useI18n();
 
   return (
-    <div className="border-border bg-surface flex flex-col justify-between gap-6 rounded-md border p-6 shadow-sm sm:flex-row sm:items-center sm:p-8 dark:bg-[#161715]">
+    <div className="border-border bg-surface flex flex-col justify-between gap-6 rounded-xl border p-6 shadow-sm sm:flex-row sm:items-center sm:p-8 dark:bg-[#161715]">
       <div className="flex items-center gap-4">
         <div className="bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex size-14 shrink-0 items-center justify-center rounded-full">
           <Wallet className="size-7" />

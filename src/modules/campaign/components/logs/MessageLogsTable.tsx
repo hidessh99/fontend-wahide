@@ -1,15 +1,31 @@
 "use client";
 
-import React, { useState, useRef, useMemo } from "react";
-import { useVirtualizer } from "@tanstack/react-virtual";
-import { CheckCheck, Check, AlertCircle, RefreshCw, Loader2 } from "lucide-react";
+import React, { useState, useMemo } from "react";
+import dynamic from "next/dynamic";
+import { CheckCheck, Check, AlertCircle, RefreshCw, Loader2, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty";
 import { SearchInput } from "@/components/ui/search-input";
 import { DataTablePagination } from "@/components/ui/pagination";
+import { NativeSelect } from "@/components/ui/native-select";
 import { useI18n } from "@/lib/i18n/context";
 import { useMessageLogs } from "../../hooks/useMessageLogs";
+
+const MessageDetailModal = dynamic(
+  () => import("./MessageDetailModal").then((m) => m.MessageDetailModal),
+  { ssr: false }
+);
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
+import { useTableSort } from "@/hooks/useTableSort";
 
 export interface MessageLogItem {
   id: string;
@@ -30,13 +46,14 @@ export function MessageLogsTable() {
     page,
     setPage,
     pageSize,
+    setPageSize,
     isLoading,
     fetchLogs,
   } = useMessageLogs(1, 20);
   const [searchInput, setSearchInput] = useState("");
   const [activeSearch, setActiveSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
-  const parentRef = useRef<HTMLDivElement>(null);
+  const [selectedLogForDetail, setSelectedLogForDetail] = useState<MessageLogItem | null>(null);
 
   const mappedLogs = useMemo<MessageLogItem[]>(() => {
     return logs.map((m) => {
@@ -70,17 +87,17 @@ export function MessageLogsTable() {
     });
   }, [mappedLogs, activeSearch, statusFilter]);
 
-  const total = serverTotal || filteredLogs.length;
-  const totalPages = Math.max(1, Math.ceil(total / pageSize));
-
-  // High-Throughput DOM Virtualization
-  // eslint-disable-next-line react-hooks/incompatible-library
-  const rowVirtualizer = useVirtualizer({
-    count: filteredLogs.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 64,
-    overscan: 5,
+  const { sortKey, sortOrder, handleSort, sortData } = useTableSort<MessageLogItem>({
+    initialKey: "sentAt",
+    initialOrder: "desc",
   });
+
+  const sortedFilteredLogs = useMemo(() => {
+    return sortData(filteredLogs);
+  }, [filteredLogs, sortData]);
+
+  const total = serverTotal || sortedFilteredLogs.length;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   const handleClearSearch = () => {
     setSearchInput("");
@@ -92,9 +109,6 @@ export function MessageLogsTable() {
     setStatusFilter(status);
     setPage(1);
   };
-
-  const startItem = total > 0 ? (page - 1) * pageSize + 1 : 0;
-  const endItem = total > 0 ? Math.min(page * pageSize, total) : 0;
 
   const renderStatusBadge = (status: MessageLogItem["status"]) => {
     switch (status) {
@@ -133,7 +147,7 @@ export function MessageLogsTable() {
   return (
     <div className="space-y-4">
       {/* Search Form with Submit Button & Status Filter */}
-      <div className="border-border bg-surface flex flex-col justify-between gap-3 rounded-md border p-3 sm:flex-row sm:items-center sm:p-4 dark:bg-[#161715]">
+      <div className="border-border bg-surface flex flex-col justify-between gap-3 rounded-xl border p-3.5 shadow-xs sm:flex-row sm:items-center sm:p-4 dark:bg-[#161715]">
         <SearchInput
           value={searchInput}
           onChange={setSearchInput}
@@ -159,21 +173,22 @@ export function MessageLogsTable() {
             <span className="hidden sm:inline">Refresh</span>
           </Button>
 
-          <select
+          <NativeSelect
             value={statusFilter}
             onChange={(e) => handleStatusChange(e.target.value)}
-            className="bg-surface text-foreground border-border focus:border-wise-green h-10 w-full cursor-pointer rounded-full border px-3.5 text-xs font-semibold outline-none sm:w-auto dark:bg-[#10110e]"
+            variant="pill"
+            wrapperClassName="w-full sm:w-auto"
           >
             <option value="ALL">{t("campaign.filterAllStatus")}</option>
             <option value="READ">{t("campaign.statusRead")}</option>
             <option value="DELIVERED">{t("campaign.statusDelivered")}</option>
             <option value="FAILED">{t("campaign.statusFailed")}</option>
-          </select>
+          </NativeSelect>
         </div>
       </div>
 
       {/* Logs Table */}
-      <div className="border-border bg-surface overflow-hidden rounded-md border shadow-xs dark:bg-[#161715]">
+      <div className="border-border bg-surface overflow-hidden rounded-xl border shadow-xs dark:bg-[#161715]">
         {isLoading ? (
           <div className="space-y-3 p-8 text-center sm:p-12">
             <Loader2 className="text-wise-green mx-auto size-8 animate-spin" />
@@ -193,33 +208,44 @@ export function MessageLogsTable() {
           />
         ) : (
           <div>
-            {/* Mobile View: Card-based Message Logs (Visible on < 768px) */}
-            <div className="divide-border/50 divide-y md:hidden">
-              {filteredLogs.map((log) => (
-                <div key={log.id} className="bg-surface space-y-2 p-3.5 sm:p-4 dark:bg-[#161715]">
+            {/* Mobile View: Card-based Message Logs (Visible on < 1024px) */}
+            <div className="divide-border/50 divide-y lg:hidden">
+              {sortedFilteredLogs.map((log) => (
+                <div
+                  key={log.id}
+                  onClick={() => setSelectedLogForDetail(log)}
+                  className="bg-surface hover:bg-muted/30 cursor-pointer space-y-2.5 p-3.5 transition-colors sm:p-4 dark:bg-[#161715]"
+                >
                   <div className="flex items-center justify-between gap-2">
-                    <div className="min-w-0">
-                      <span className="text-foreground block truncate text-sm font-bold">
-                        {log.recipientName || t("campaign.unnamedRecipient")}
-                      </span>
-                      <span className="text-foreground-secondary block font-mono text-xs">
-                        +{log.recipientPhone}
-                      </span>
+                    <div className="flex min-w-0 items-center gap-2">
+                      <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                        <Phone className="size-3.5" />
+                      </div>
+                      <div className="min-w-0">
+                        {log.recipientName && log.recipientName !== log.recipientPhone ? (
+                          <>
+                            <span className="text-foreground block truncate text-xs font-bold">
+                              {log.recipientName}
+                            </span>
+                            <span className="text-foreground-secondary block font-mono text-[11px]">
+                              +{log.recipientPhone}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-foreground block truncate font-mono text-xs font-bold">
+                            +{log.recipientPhone}
+                          </span>
+                        )}
+                      </div>
                     </div>
 
-                    <div className="flex shrink-0 flex-col items-end">
+                    <div className="flex shrink-0 items-center">
                       {renderStatusBadge(log.status)}
-                      <span className="text-foreground-muted mt-0.5 font-mono text-[11px]">
-                        {new Date(log.sentAt).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </span>
                     </div>
                   </div>
 
                   <div className="bg-muted/40 text-foreground-secondary rounded p-2 text-xs">
-                    <p className="line-clamp-2">{log.messageSnippet}</p>
+                    <p className="line-clamp-2 leading-relaxed">{log.messageSnippet}</p>
                     {log.errorMessage && (
                       <span className="mt-1 block truncate font-mono text-xs text-rose-500">
                         {log.errorMessage}
@@ -228,120 +254,192 @@ export function MessageLogsTable() {
                   </div>
 
                   <div className="text-foreground-muted flex items-center justify-between text-[11px]">
-                    <span className="truncate">{log.campaignName}</span>
+                    <span className="truncate font-medium">{log.campaignName}</span>
                     <span className="font-mono">
-                      {new Date(log.sentAt).toLocaleDateString("id-ID")}
+                      {log.sentAt
+                        ? new Date(log.sentAt).toLocaleString("id-ID", {
+                            day: "numeric",
+                            month: "short",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : "-"}
                     </span>
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Desktop View: Tabular Virtualized Grid (Visible on >= 768px) */}
-            <div className="hidden md:block">
-              {/* Table Header */}
-              <div className="bg-muted/60 border-border text-foreground-muted grid grid-cols-12 gap-3 border-b px-5 py-4 text-xs font-extrabold tracking-wider uppercase select-none">
-                <div className="col-span-3">{t("campaign.tableHeaderRecipient")}</div>
-                <div className="col-span-3">{t("campaign.tableHeaderCampaign")}</div>
-                <div className="col-span-4">{t("campaign.tableHeaderMessage")}</div>
-                <div className="col-span-2 text-right">{t("campaign.tableHeaderStatusTime")}</div>
-              </div>
+            {/* Desktop View: Unified Responsive Table using shadcn/ui (Visible on >= 1024px) */}
+            <div className="hidden lg:block">
+              <Table className="min-w-215">
+                <TableHeader>
+                  <TableRow className="bg-muted/50 border-border hover:bg-muted/50">
+                    <TableHead className="w-[22%] px-5 py-3.5">
+                      <DataTableColumnHeader
+                        title={t("campaign.tableHeaderRecipient")}
+                        columnKey="recipientPhone"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                      />
+                    </TableHead>
+                    <TableHead className="w-[18%] px-4 py-3.5">
+                      <DataTableColumnHeader
+                        title={t("campaign.tableHeaderCampaign")}
+                        columnKey="campaignName"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                      />
+                    </TableHead>
+                    <TableHead className="w-[28%] px-4 py-3.5">
+                      <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        {t("campaign.tableHeaderMessage")}
+                      </div>
+                    </TableHead>
+                    <TableHead className="w-[14%] px-3 py-3.5 text-center">
+                      <DataTableColumnHeader
+                        title={t("campaign.tableHeaderStatus")}
+                        columnKey="status"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                        align="center"
+                      />
+                    </TableHead>
+                    <TableHead className="w-[18%] px-5 py-3.5 text-right">
+                      <DataTableColumnHeader
+                        title={t("campaign.tableHeaderSentAt")}
+                        columnKey="sentAt"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                        align="right"
+                      />
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {sortedFilteredLogs.map((log) => {
+                    const formattedDate = log.sentAt
+                      ? new Date(log.sentAt).toLocaleDateString("id-ID", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })
+                      : "-";
 
-              {/* Table Body */}
-              <div
-                ref={parentRef}
-                className="divide-border/50 max-h-135 divide-y overflow-auto text-xs font-semibold"
-              >
-                <div
-                  style={{
-                    height: `${rowVirtualizer.getTotalSize()}px`,
-                    width: "100%",
-                    position: "relative",
-                  }}
-                >
-                  {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-                    const log = filteredLogs[virtualRow.index];
-                    if (!log) return null;
+                    const formattedTime = log.sentAt
+                      ? new Date(log.sentAt).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                        })
+                      : "";
 
                     return (
-                      <div
+                      <TableRow
                         key={log.id}
-                        style={{
-                          position: "absolute",
-                          top: 0,
-                          left: 0,
-                          width: "100%",
-                          height: `${virtualRow.size}px`,
-                          transform: `translateY(${virtualRow.start}px)`,
-                        }}
-                        className="hover:bg-muted/40 grid min-h-14.5 grid-cols-12 items-center gap-3 px-5 py-3.5 transition-colors"
+                        onClick={() => setSelectedLogForDetail(log)}
+                        className="hover:bg-muted/40 border-border/40 cursor-pointer border-b transition-colors"
                       >
                         {/* Recipient */}
-                        <div className="col-span-3 space-y-0.5">
-                          <span className="text-foreground block truncate text-sm font-bold sm:text-base">
-                            {log.recipientName || t("campaign.unnamedRecipient")}
-                          </span>
-                          <span className="text-foreground-secondary block font-mono text-xs sm:text-sm">
-                            +{log.recipientPhone}
-                          </span>
-                        </div>
+                        <TableCell className="px-5 py-3.5 align-middle">
+                          <div className="flex min-w-0 items-center gap-2.5">
+                            <div className="flex size-7.5 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                              <Phone className="size-3.5" />
+                            </div>
+                            <div className="min-w-0">
+                              {log.recipientName && log.recipientName !== log.recipientPhone ? (
+                                <>
+                                  <span className="text-foreground block truncate text-xs font-bold sm:text-sm">
+                                    {log.recipientName}
+                                  </span>
+                                  <span className="text-foreground-secondary block font-mono text-xs">
+                                    +{log.recipientPhone}
+                                  </span>
+                                </>
+                              ) : (
+                                <span className="text-foreground block truncate font-mono text-xs font-bold sm:text-sm">
+                                  +{log.recipientPhone}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </TableCell>
 
                         {/* Campaign */}
-                        <div className="text-foreground-secondary col-span-3 truncate text-sm font-semibold">
-                          {log.campaignName}
-                        </div>
+                        <TableCell className="px-4 py-3.5 align-middle">
+                          <span className="bg-muted/60 text-foreground-secondary inline-block max-w-full truncate rounded px-2 py-0.5 text-[11px] font-medium">
+                            {log.campaignName}
+                          </span>
+                        </TableCell>
 
                         {/* Message Snippet */}
-                        <div className="text-foreground-secondary col-span-4 truncate text-xs sm:text-sm">
-                          <span className="block truncate">{log.messageSnippet}</span>
+                        <TableCell className="text-foreground-secondary px-4 py-3.5 align-middle text-xs leading-relaxed">
+                          <span className="block max-w-xs truncate">{log.messageSnippet}</span>
                           {log.errorMessage && (
-                            <span className="mt-0.5 block truncate font-mono text-xs text-rose-500">
+                            <span className="mt-0.5 block truncate font-mono text-[11px] font-medium text-rose-500">
                               {log.errorMessage}
                             </span>
                           )}
-                        </div>
+                        </TableCell>
 
-                        {/* Status & Time */}
-                        <div className="col-span-2 flex flex-col items-end justify-center space-y-0.5">
-                          {renderStatusBadge(log.status)}
-                          <span className="text-foreground-muted font-mono text-xs">
-                            {new Date(log.sentAt).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
-                          </span>
-                        </div>
-                      </div>
+                        {/* Status */}
+                        <TableCell className="px-3 py-3.5 text-center align-middle">
+                          <div className="inline-flex items-center justify-center">
+                            {renderStatusBadge(log.status)}
+                          </div>
+                        </TableCell>
+
+                        {/* Sent At */}
+                        <TableCell className="px-5 py-3.5 text-right align-middle font-mono text-xs">
+                          <div className="space-y-0.5">
+                            <span className="text-foreground block font-bold whitespace-nowrap">
+                              {formattedDate}
+                            </span>
+                            <span className="text-foreground-muted block text-[11px] whitespace-nowrap">
+                              {formattedTime}
+                            </span>
+                          </div>
+                        </TableCell>
+                      </TableRow>
                     );
                   })}
-                </div>
-              </div>
+                </TableBody>
+              </Table>
             </div>
           </div>
         )}
 
-        {/* Pagination Footer */}
+        {/* Standardized Shadcn UI Data Table Pagination Footer */}
         {total > 0 && (
-          <div className="border-border bg-muted/30 flex flex-col items-center justify-between gap-3 border-t p-3 sm:flex-row sm:px-5 sm:py-3.5">
-            {/* Item count summary */}
-            <div className="text-foreground-secondary text-xs font-semibold">
-              Menampilkan {startItem} - {endItem} dari {total} log pesan
-            </div>
-
-            {/* Shadcn UI Pagination */}
-            {totalPages > 1 && (
-              <DataTablePagination
-                page={page}
-                totalPages={totalPages}
-                onPageChange={(p) => setPage(p)}
-                onPrevPage={() => setPage((prev) => Math.max(1, prev - 1))}
-                onNextPage={() => setPage((prev) => Math.min(totalPages, prev + 1))}
-                className="mx-0 w-auto"
-              />
-            )}
-          </div>
+          <DataTablePagination
+            page={page}
+            totalPages={totalPages}
+            total={total}
+            pageSize={pageSize}
+            onPageChange={(p) => setPage(p)}
+            onPageSizeChange={(size) => {
+              setPageSize(size);
+              setPage(1);
+            }}
+            entityName="log pesan"
+            prevText={t("campaign.prevPage") || "Sebelumnya"}
+            nextText={t("campaign.nextPage") || "Berikutnya"}
+          />
         )}
       </div>
+
+      {/* Message Log Detail Modal */}
+      {selectedLogForDetail && (
+        <MessageDetailModal
+          isOpen={Boolean(selectedLogForDetail)}
+          log={selectedLogForDetail}
+          onClose={() => setSelectedLogForDetail(null)}
+        />
+      )}
     </div>
   );
 }

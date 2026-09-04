@@ -12,6 +12,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { CreditCard, PlusCircle, MinusCircle, Loader2, Save, AlertTriangle } from "lucide-react";
+import { useI18n } from "@/lib/i18n/context";
 
 interface AdjustBalanceModalProps {
   user: UserItem | null;
@@ -21,6 +22,7 @@ interface AdjustBalanceModalProps {
 }
 
 export function AdjustBalanceModal({ user, isOpen, onClose, onSubmit }: AdjustBalanceModalProps) {
+  const { t, locale } = useI18n();
   const [mode, setMode] = useState<"ADD" | "REDUCE">("ADD");
   const [amount, setAmount] = useState<number>(50000);
   const [isLoading, setIsLoading] = useState(false);
@@ -52,9 +54,9 @@ export function AdjustBalanceModal({ user, isOpen, onClose, onSubmit }: AdjustBa
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && !isLoading && onClose()}>
-      <DialogContent className="border-border bg-surface max-h-[92vh] max-w-md gap-0 overflow-hidden p-0 dark:bg-[#161715]">
+      <DialogContent className="border-border bg-surface flex max-h-[92dvh] w-full max-w-[calc(100%-1.5rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 shadow-2xl sm:max-w-md dark:bg-[#161715]">
         {/* Header */}
-        <DialogHeader className="border-border flex flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
+        <DialogHeader className="border-border flex shrink-0 flex-row items-center gap-3 border-b p-5 pb-4 text-left sm:p-6">
           <div
             className={`flex size-10 shrink-0 items-center justify-center rounded-full border ${
               mode === "ADD"
@@ -66,17 +68,17 @@ export function AdjustBalanceModal({ user, isOpen, onClose, onSubmit }: AdjustBa
           </div>
           <div>
             <DialogTitle className="text-foreground text-lg font-black tracking-tight sm:text-xl">
-              Penyesuaian Saldo Dompet
+              {t("admin.users.adjustBalanceModalTitle")}
             </DialogTitle>
             <DialogDescription className="text-foreground-secondary text-xs font-semibold">
-              Kelola saldo dompet untuk akun {user.name}.
+              {t("admin.users.adjustBalanceModalSubtitle", { name: user.name })}
             </DialogDescription>
           </div>
         </DialogHeader>
 
         {/* Scrollable Form Body */}
-        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col overflow-y-auto">
-          <div className="flex-1 space-y-4 p-5 text-xs sm:p-6">
+        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          <div className="flex-1 space-y-4 overflow-y-auto p-5 text-xs sm:p-6">
             {/* Mode Tabs: Tambah Saldo vs Kurang Saldo */}
             <div className="bg-muted/40 border-border grid grid-cols-2 gap-2 rounded-full border p-1">
               <button
@@ -89,7 +91,7 @@ export function AdjustBalanceModal({ user, isOpen, onClose, onSubmit }: AdjustBa
                 }`}
               >
                 <PlusCircle className="size-3.5" />
-                <span>Tambah Saldo (+)</span>
+                <span>{t("admin.users.modeAdd")}</span>
               </button>
 
               <button
@@ -102,21 +104,21 @@ export function AdjustBalanceModal({ user, isOpen, onClose, onSubmit }: AdjustBa
                 }`}
               >
                 <MinusCircle className="size-3.5" />
-                <span>Kurangi Saldo (-)</span>
+                <span>{t("admin.users.modeReduce")}</span>
               </button>
             </div>
 
             {/* Current Balance and Preview Box */}
             <div className="border-border bg-muted/20 space-y-2 rounded-lg border p-3.5">
               <div className="flex items-center justify-between">
-                <span className="text-foreground-secondary">Saldo Saat Ini:</span>
+                <span className="text-foreground-secondary">{t("admin.users.currentBalanceLabel")}</span>
                 <span className="text-foreground font-mono font-bold">
-                  Rp {currentBalance.toLocaleString("id-ID")}
+                  Rp {currentBalance.toLocaleString(locale === "en" ? "en-US" : "id-ID")}
                 </span>
               </div>
 
               <div className="border-border/50 flex items-center justify-between border-t pt-2">
-                <span className="text-foreground font-bold">Estimasi Saldo Baru:</span>
+                <span className="text-foreground font-bold">{t("admin.users.projectedBalanceLabel")}</span>
                 <span
                   className={`font-mono font-black ${
                     mode === "ADD"
@@ -124,7 +126,7 @@ export function AdjustBalanceModal({ user, isOpen, onClose, onSubmit }: AdjustBa
                       : "text-rose-600 dark:text-rose-400"
                   }`}
                 >
-                  Rp {projectedBalance.toLocaleString("id-ID")}
+                  Rp {projectedBalance.toLocaleString(locale === "en" ? "en-US" : "id-ID")}
                 </span>
               </div>
             </div>
@@ -132,7 +134,7 @@ export function AdjustBalanceModal({ user, isOpen, onClose, onSubmit }: AdjustBa
             {/* Quick Preset Buttons */}
             <div>
               <span className="text-foreground-secondary mb-1.5 block font-bold">
-                Pilih Nominal Cepat:
+                {t("admin.users.quickPresetLabel")}
               </span>
               <div className="grid grid-cols-3 gap-1.5">
                 {presetAmounts.map((preset) => (
@@ -146,7 +148,7 @@ export function AdjustBalanceModal({ user, isOpen, onClose, onSubmit }: AdjustBa
                         : "border-border bg-surface text-foreground-secondary hover:text-foreground hover:bg-muted dark:bg-[#10110e]"
                     }`}
                   >
-                    Rp {(preset / 1000).toLocaleString("id-ID")}k
+                    Rp {(preset / 1000).toLocaleString(locale === "en" ? "en-US" : "id-ID")}k
                   </button>
                 ))}
               </div>
@@ -158,7 +160,7 @@ export function AdjustBalanceModal({ user, isOpen, onClose, onSubmit }: AdjustBa
                 htmlFor="nominal-penyesuaian-input"
                 className="text-foreground-secondary mb-1 block font-bold"
               >
-                Nominal Penyesuaian (Rp):
+                {t("admin.users.manualAmountLabel")}
               </label>
               <div className="relative">
                 <span className="text-foreground-muted pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 font-mono font-bold">
@@ -183,8 +185,7 @@ export function AdjustBalanceModal({ user, isOpen, onClose, onSubmit }: AdjustBa
               <div className="flex items-start gap-2 rounded-lg border border-amber-500/20 bg-amber-500/10 p-3 text-amber-700 dark:text-amber-400">
                 <AlertTriangle className="mt-0.5 size-4 shrink-0" />
                 <span className="text-[11px] leading-relaxed">
-                  Pengurangan saldo akan langsung memengaruhi limit pesan broadcast dan pembaruan
-                  paket otomatis pengguna.
+                  {t("admin.users.reduceWarning")}
                 </span>
               </div>
             )}
@@ -200,7 +201,7 @@ export function AdjustBalanceModal({ user, isOpen, onClose, onSubmit }: AdjustBa
               disabled={isLoading}
               className="border-border hover:bg-muted rounded-full text-xs font-bold"
             >
-              Batalkan
+              {t("cancel")}
             </Button>
 
             <Button
@@ -216,12 +217,12 @@ export function AdjustBalanceModal({ user, isOpen, onClose, onSubmit }: AdjustBa
               {isLoading ? (
                 <>
                   <Loader2 className="size-3.5 animate-spin" />
-                  <span>Menyimpan...</span>
+                  <span>{t("admin.users.submitting")}</span>
                 </>
               ) : (
                 <>
                   <Save className="size-3.5" />
-                  <span>{mode === "ADD" ? "Tambah Saldo Sekarang" : "Kurangi Saldo Sekarang"}</span>
+                  <span>{mode === "ADD" ? t("admin.users.submitAdd") : t("admin.users.submitReduce")}</span>
                 </>
               )}
             </Button>

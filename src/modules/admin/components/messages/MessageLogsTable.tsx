@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { AdminMessageLogItem } from "@/modules/admin/types/admin.types";
+import { useI18n } from "@/lib/i18n/context";
 import { DeleteMessageModal } from "./DeleteMessageModal";
 import { MessageDetailModal } from "./MessageDetailModal";
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty";
 import { SearchInput } from "@/components/ui/search-input";
 import { DataTablePagination } from "@/components/ui/pagination";
-import { formatDateTime } from "@/lib/utils";
+import { NativeSelect } from "@/components/ui/native-select";
 import {
   RefreshCw,
   MessageSquare,
@@ -24,6 +25,16 @@ import {
   Smartphone,
   CheckCheck,
 } from "lucide-react";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
+import { useTableSort } from "@/hooks/useTableSort";
 
 interface MessageLogsTableProps {
   logs: AdminMessageLogItem[];
@@ -47,21 +58,24 @@ interface MessageLogsTableProps {
   onPrevPage: () => void;
 }
 
-function getMessageStatusBadge(status: string) {
+function getMessageStatusBadge(
+  status: string,
+  t: (key: string, params?: Record<string, string | number>) => string
+) {
   const upper = (status || "").toUpperCase();
   switch (upper) {
     case "READ":
       return (
         <Badge variant="info">
           <CheckCheck className="size-3" />
-          <span>Terbaca</span>
+          <span>{t("admin.messages.badgeRead")}</span>
         </Badge>
       );
     case "DELIVERED":
       return (
         <Badge variant="success">
           <CheckCircle2 className="size-3" />
-          <span>Tersampaikan</span>
+          <span>{t("admin.messages.badgeDelivered")}</span>
         </Badge>
       );
     case "SENT":
@@ -71,21 +85,21 @@ function getMessageStatusBadge(status: string) {
           className="border-teal-500/20 bg-teal-500/10 text-teal-600 dark:text-teal-400"
         >
           <Send className="size-3" />
-          <span>Terkirim</span>
+          <span>{t("admin.messages.badgeSent")}</span>
         </Badge>
       );
     case "PENDING":
       return (
         <Badge variant="warning">
           <Clock className="size-3" />
-          <span>Menunggu</span>
+          <span>{t("admin.messages.badgePending")}</span>
         </Badge>
       );
     case "FAILED":
       return (
         <Badge variant="danger">
           <AlertCircle className="size-3" />
-          <span>Gagal</span>
+          <span>{t("admin.messages.badgeFailed")}</span>
         </Badge>
       );
     default:
@@ -118,6 +132,7 @@ export function MessageLogsTable({
   onNextPage,
   onPrevPage,
 }: MessageLogsTableProps) {
+  const { t, locale } = useI18n();
   const [searchInput, setSearchInput] = useState("");
   const [selectedMessageForDelete, setSelectedMessageForDelete] =
     useState<AdminMessageLogItem | null>(null);
@@ -125,6 +140,28 @@ export function MessageLogsTable({
     useState<AdminMessageLogItem | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+
+  const formatDate = (dateStr: string) => {
+    if (!dateStr) return "-";
+    try {
+      return new Intl.DateTimeFormat(locale === "en" ? "en-US" : "id-ID", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }).format(new Date(dateStr));
+    } catch {
+      return dateStr;
+    }
+  };
+
+  const { sortKey, sortOrder, handleSort, sortData } = useTableSort<AdminMessageLogItem>({
+    initialKey: "createdAt",
+    initialOrder: "desc",
+  });
+
+  const sortedLogs = sortData(logs);
 
   const handleResetSearch = () => {
     setSearchInput("");
@@ -141,9 +178,6 @@ export function MessageLogsTable({
     setIsDetailModalOpen(true);
   };
 
-  const startItem = total > 0 ? (page - 1) * pageSize + 1 : 0;
-  const endItem = total > 0 ? Math.min(page * pageSize, total) : 0;
-
   return (
     <div className="space-y-4">
       {/* Search & Filter Toolbar */}
@@ -155,45 +189,46 @@ export function MessageLogsTable({
             onChange={setSearchInput}
             onSearch={() => onSearch(searchInput.trim())}
             onClear={handleResetSearch}
-            placeholder="Cari berdasarkan nomor WhatsApp, isi pesan, atau ID..."
+            placeholder={t("admin.messages.searchPlaceholder")}
           />
 
           {/* Filters & Refresh */}
           <div className="flex shrink-0 flex-wrap items-center gap-2">
             {/* Direction Filter */}
-            <select
+            <NativeSelect
               value={directionFilter}
               onChange={(e) => onDirectionFilterChange(e.target.value)}
-              className="bg-surface text-foreground border-border dark:focus:border-wise-green h-10 cursor-pointer rounded-full border px-3.5 text-xs font-semibold outline-none focus:border-emerald-600 dark:bg-[#10110e]"
+              variant="pill"
             >
-              <option value="ALL">Semua Arah</option>
-              <option value="OUTBOUND">↗️ Keluar (OUTBOUND)</option>
-              <option value="INBOUND">↙️ Masuk (INBOUND)</option>
-            </select>
+              <option value="ALL">{t("admin.messages.filterAllDirections")}</option>
+              <option value="OUTBOUND">{t("admin.messages.filterOutbound")}</option>
+              <option value="INBOUND">{t("admin.messages.filterInbound")}</option>
+            </NativeSelect>
 
             {/* Status Filter */}
-            <select
+            <NativeSelect
               value={statusFilter}
               onChange={(e) => onStatusFilterChange(e.target.value)}
-              className="bg-surface text-foreground border-border dark:focus:border-wise-green h-10 cursor-pointer rounded-full border px-3.5 text-xs font-semibold outline-none focus:border-emerald-600 dark:bg-[#10110e]"
+              variant="pill"
             >
-              <option value="ALL">Semua Status</option>
-              <option value="READ">🔵 Terbaca (READ)</option>
-              <option value="DELIVERED">🟢 Tersampaikan (DELIVERED)</option>
-              <option value="SENT">🟢 Terkirim (SENT)</option>
-              <option value="PENDING">🟡 Menunggu (PENDING)</option>
-              <option value="FAILED">🔴 Gagal (FAILED)</option>
-            </select>
+              <option value="ALL">{t("admin.messages.filterAllStatus")}</option>
+              <option value="READ">🔵 {t("admin.messages.statusRead")}</option>
+              <option value="DELIVERED">🟢 {t("admin.messages.statusDelivered")}</option>
+              <option value="SENT">🟢 {t("admin.messages.statusSent")}</option>
+              <option value="PENDING">🟡 {t("admin.messages.statusPending")}</option>
+              <option value="FAILED">🔴 {t("admin.messages.statusFailed")}</option>
+            </NativeSelect>
 
             <Button
               variant="outline"
               size="sm"
               onClick={onRefresh}
               disabled={isLoading}
-              className="border-border hover:border-foreground-muted size-10 shrink-0 cursor-pointer rounded-full p-0"
-              aria-label="Refresh Data Log Pesan"
+              className="border-border hover:border-foreground-muted h-10 shrink-0 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold transition"
+              aria-label={t("admin.messages.refreshAria")}
             >
-              <RefreshCw className={`size-4 ${isLoading ? "animate-spin" : ""}`} />
+              <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin" : ""}`} />
+              <span className="hidden sm:inline">{t("common.refresh")}</span>
             </Button>
           </div>
         </div>
@@ -204,23 +239,23 @@ export function MessageLogsTable({
         {isLoading ? (
           <div className="text-foreground-muted flex flex-col items-center justify-center space-y-3 py-16">
             <Loader2 className="dark:text-wise-green size-7 animate-spin text-emerald-600" />
-            <span className="text-xs font-bold">Memuat riwayat log pesan WhatsApp...</span>
+            <span className="text-xs font-bold">{t("admin.messages.loadingText")}</span>
           </div>
         ) : logs.length === 0 ? (
           <EmptyState
             icon={<MessageSquare />}
-            title="Tidak Ada Pesan Ditemukan"
+            title={t("admin.messages.emptyTitle")}
             description={
               searchQuery
-                ? `Tidak ditemukan pesan dengan kata kunci "${searchQuery}".`
-                : "Saat ini belum ada riwayat pesan WhatsApp yang tercatat di sistem."
+                ? t("admin.messages.emptySearchDesc", { query: searchQuery })
+                : t("admin.messages.emptyDesc")
             }
           />
         ) : (
           <div>
             {/* Mobile View: Cards (< 1024px) */}
             <div className="divide-border/60 divide-y lg:hidden">
-              {logs.map((m) => (
+              {sortedLogs.map((m) => (
                 <div key={m.id} className="bg-surface space-y-3 p-4 dark:bg-[#161715]">
                   <div className="flex items-start justify-between gap-2">
                     <div>
@@ -232,12 +267,12 @@ export function MessageLogsTable({
                               : "border-blue-500/20 bg-blue-500/10 text-blue-600 dark:text-blue-400"
                           }`}
                         >
-                          {m.direction === "OUTBOUND" ? "↗️ OUTBOUND" : "↙️ INBOUND"}
+                          {m.direction === "OUTBOUND" ? t("admin.messages.filterOutbound") : t("admin.messages.filterInbound")}
                         </span>
                         {m.mediaUrl && (
                           <span className="bg-muted text-foreground-muted border-border flex items-center gap-1 rounded border px-1.5 py-0.5 text-[9px] font-bold">
                             <Paperclip className="size-2.5" />
-                            <span>Media</span>
+                            <span>{t("admin.messages.mediaBadge")}</span>
                           </span>
                         )}
                       </div>
@@ -246,12 +281,12 @@ export function MessageLogsTable({
                       </span>
                     </div>
 
-                    <div className="shrink-0">{getMessageStatusBadge(m.status)}</div>
+                    <div className="shrink-0">{getMessageStatusBadge(m.status, t)}</div>
                   </div>
 
                   {/* Message body preview */}
                   <p className="text-foreground bg-muted/30 border-border/60 line-clamp-2 rounded-lg border p-2 text-xs font-medium italic">
-                    &quot;{m.messageBody}&quot;
+                    &quot;{m.messageBody || t("admin.messages.emptyMessage")}&quot;
                   </p>
 
                   {m.errorMessage && (
@@ -262,7 +297,7 @@ export function MessageLogsTable({
 
                   <div className="text-foreground-muted flex items-center justify-between pt-1 text-[11px]">
                     <span className="font-mono text-[10px]">Dev: {m.deviceId.slice(0, 10)}...</span>
-                    <span>{formatDateTime(m.createdAt)}</span>
+                    <span>{formatDate(m.createdAt)}</span>
                   </div>
 
                   {/* Actions */}
@@ -274,7 +309,7 @@ export function MessageLogsTable({
                       className="border-border hover:bg-muted h-8 cursor-pointer gap-1 rounded-full px-2.5 text-xs font-bold"
                     >
                       <Eye className="size-3.5" />
-                      <span>Detail</span>
+                      <span>{t("admin.messages.detailBtn")}</span>
                     </Button>
 
                     <Button
@@ -282,7 +317,7 @@ export function MessageLogsTable({
                       size="sm"
                       onClick={() => handleOpenDelete(m)}
                       className="border-border size-8 h-8 cursor-pointer rounded-full p-0 text-rose-600 hover:border-rose-500/50 hover:bg-rose-500/10"
-                      title="Hapus Log Pesan"
+                      title={t("admin.messages.deleteBtn")}
                     >
                       <Trash2 className="size-3.5" />
                     </Button>
@@ -292,44 +327,85 @@ export function MessageLogsTable({
             </div>
 
             {/* Desktop Table View (>= 1024px) */}
-            <div className="hidden overflow-x-auto lg:block">
-              <table className="w-full border-collapse text-left">
-                <thead>
-                  <tr className="border-border bg-muted/50 text-foreground-muted border-b text-[11px] font-extrabold tracking-wider uppercase select-none">
-                    <th className="px-5 py-3.5 font-extrabold">Waktu &amp; ID</th>
-                    <th className="px-4 py-3.5 font-extrabold">Penerima (Nomor/JID)</th>
-                    <th className="px-3 py-3.5 text-center font-extrabold">Arah</th>
-                    <th className="px-4 py-3.5 font-extrabold">Cuplikan Pesan</th>
-                    <th className="px-3 py-3.5 font-extrabold">Perangkat</th>
-                    <th className="px-3 py-3.5 text-center font-extrabold">Status</th>
-                    <th className="px-5 py-3.5 text-right font-extrabold">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-border/50 divide-y text-xs font-semibold">
-                  {logs.map((m) => (
-                    <tr key={m.id} className="hover:bg-muted/30 group transition-colors">
+            <div className="hidden lg:block">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-border bg-muted/50 hover:bg-muted/50">
+                    <TableHead className="w-[18%] px-5 py-3.5">
+                      <DataTableColumnHeader
+                        title={t("admin.messages.colTimeId")}
+                        columnKey="createdAt"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                      />
+                    </TableHead>
+                    <TableHead className="w-[18%] px-4 py-3.5">
+                      <DataTableColumnHeader
+                        title={t("admin.messages.colRecipient")}
+                        columnKey="recipientJid"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                      />
+                    </TableHead>
+                    <TableHead className="w-[10%] px-3 py-3.5 text-center">
+                      <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        {t("admin.messages.colDirection")}
+                      </div>
+                    </TableHead>
+                    <TableHead className="w-[26%] px-4 py-3.5">
+                      <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        {t("admin.messages.colSnippet")}
+                      </div>
+                    </TableHead>
+                    <TableHead className="w-[10%] px-3 py-3.5">
+                      <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        {t("admin.messages.colDevice")}
+                      </div>
+                    </TableHead>
+                    <TableHead className="w-[10%] px-3 py-3.5 text-center">
+                      <DataTableColumnHeader
+                        title={t("admin.messages.colStatus")}
+                        columnKey="status"
+                        currentSortKey={sortKey as string}
+                        currentSortOrder={sortOrder}
+                        onSort={handleSort}
+                        align="center"
+                      />
+                    </TableHead>
+                    <TableHead className="w-[8%] px-5 py-3.5 text-right">
+                      <div className="text-foreground-muted text-right text-[11px] font-extrabold tracking-wider uppercase select-none">
+                        {t("admin.messages.colActions")}
+                      </div>
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {sortedLogs.map((m) => (
+                    <TableRow key={m.id} className="hover:bg-muted/30 transition-colors">
                       {/* 1. Waktu & ID */}
-                      <td className="px-5 py-3.5">
+                      <TableCell className="px-5 py-3.5 align-middle">
                         <div className="space-y-0.5">
                           <span className="text-foreground block font-mono text-[11px] font-bold">
-                            {formatDateTime(m.createdAt)}
+                            {formatDate(m.createdAt)}
                           </span>
                           <span className="text-foreground-muted block font-mono text-[10px]">
                             {m.id.slice(0, 16)}...
                           </span>
                         </div>
-                      </td>
+                      </TableCell>
 
                       {/* 2. Target Nomor / JID */}
-                      <td className="px-4 py-3.5">
+                      <TableCell className="px-4 py-3.5 align-middle">
                         <div className="text-foreground flex items-center gap-1.5 font-mono text-xs font-bold">
                           <Smartphone className="text-foreground-muted size-3 shrink-0" />
                           <span className="max-w-45 truncate">{m.recipientJid}</span>
                         </div>
-                      </td>
+                      </TableCell>
 
                       {/* 3. Arah Pesan */}
-                      <td className="px-3 py-3.5 text-center">
+                      <TableCell className="px-3 py-3.5 text-center align-middle">
                         <span
                           className={`inline-flex items-center gap-1 rounded border px-2 py-0.5 text-[10px] font-black tracking-wider uppercase ${
                             m.direction === "OUTBOUND"
@@ -339,35 +415,39 @@ export function MessageLogsTable({
                         >
                           {m.direction === "OUTBOUND" ? "↗️ OUT" : "↙️ IN"}
                         </span>
-                      </td>
+                      </TableCell>
 
                       {/* 4. Cuplikan Pesan */}
-                      <td className="max-w-xs px-4 py-3.5">
+                      <TableCell className="max-w-xs px-4 py-3.5 align-middle">
                         <div className="space-y-1">
                           <p className="text-foreground max-w-65 truncate text-xs font-medium">
-                            {m.messageBody || "(Pesan kosong)"}
+                            {m.messageBody || t("admin.messages.emptyMessage")}
                           </p>
                           {m.mediaUrl && (
                             <span className="bg-muted text-foreground-muted border-border inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[9px] font-bold">
                               <Paperclip className="size-2.5" />
-                              <span>Lampiran Media</span>
+                              <span>{t("admin.messages.mediaAttachment")}</span>
                             </span>
                           )}
                         </div>
-                      </td>
+                      </TableCell>
 
                       {/* 5. Perangkat */}
-                      <td className="px-3 py-3.5">
+                      <TableCell className="px-3 py-3.5 align-middle">
                         <span className="text-foreground-secondary block max-w-24 truncate font-mono text-[11px]">
                           {m.deviceId || "-"}
                         </span>
-                      </td>
+                      </TableCell>
 
                       {/* 6. Status */}
-                      <td className="px-3 py-3.5 text-center">{getMessageStatusBadge(m.status)}</td>
+                      <TableCell className="px-3 py-3.5 text-center align-middle">
+                        <div className="inline-flex items-center justify-center">
+                          {getMessageStatusBadge(m.status, t)}
+                        </div>
+                      </TableCell>
 
                       {/* 7. Aksi */}
-                      <td className="px-5 py-3.5 text-right">
+                      <TableCell className="px-5 py-3.5 text-right align-middle">
                         <div className="flex items-center justify-end gap-1.5">
                           <Button
                             type="button"
@@ -375,10 +455,10 @@ export function MessageLogsTable({
                             size="sm"
                             onClick={() => handleOpenDetail(m)}
                             className="border-border hover:bg-muted h-8 cursor-pointer gap-1 rounded-full px-2.5 text-xs font-bold"
-                            title="Lihat Detail Pesan"
+                            title={t("admin.messages.detailBtn")}
                           >
                             <Eye className="text-foreground-secondary size-3.5" />
-                            <span>Detail</span>
+                            <span>{t("admin.messages.detailBtn")}</span>
                           </Button>
 
                           <Button
@@ -387,57 +467,34 @@ export function MessageLogsTable({
                             size="sm"
                             onClick={() => handleOpenDelete(m)}
                             className="border-border size-8 h-8 cursor-pointer rounded-full p-0 text-rose-600 hover:border-rose-500/50 hover:bg-rose-500/10"
-                            title="Hapus Log Pesan"
+                            title={t("admin.messages.deleteBtn")}
                           >
                             <Trash2 className="size-3.5" />
                           </Button>
                         </div>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           </div>
         )}
 
         {/* Responsive Pagination Footer */}
         {total > 0 && (
-          <div className="border-border bg-muted/20 flex flex-col items-center justify-between gap-3 border-t p-3.5 sm:flex-row sm:px-5 sm:py-3.5">
-            <div className="text-foreground-secondary flex items-center gap-3 text-xs font-semibold">
-              <span>
-                Menampilkan{" "}
-                <strong className="text-foreground">
-                  {startItem} - {endItem}
-                </strong>{" "}
-                dari <strong className="text-foreground">{total}</strong> pesan
-              </span>
-
-              <div className="text-foreground-muted flex items-center gap-1.5 text-xs">
-                <span>| Baris:</span>
-                <select
-                  value={pageSize}
-                  onChange={(e) => onPageSizeChange(Number(e.target.value))}
-                  className="bg-surface border-border text-foreground h-7 cursor-pointer rounded-md border px-2 text-xs font-bold outline-none dark:bg-[#10110e]"
-                >
-                  <option value={10}>10</option>
-                  <option value={15}>15</option>
-                  <option value={25}>25</option>
-                  <option value={50}>50</option>
-                  <option value={100}>100</option>
-                </select>
-              </div>
-            </div>
-
-            <DataTablePagination
-              page={page}
-              totalPages={totalPages}
-              onPageChange={onPageChange}
-              onPrevPage={onPrevPage}
-              onNextPage={onNextPage}
-              className="mx-0 w-auto"
-            />
-          </div>
+          <DataTablePagination
+            page={page}
+            totalPages={totalPages}
+            total={total}
+            pageSize={pageSize}
+            onPageChange={onPageChange}
+            onPrevPage={onPrevPage}
+            onNextPage={onNextPage}
+            onPageSizeChange={onPageSizeChange}
+            pageSizeOptions={[10, 15, 25, 50, 100]}
+            entityName={t("admin.messages.entityName")}
+          />
         )}
       </div>
 

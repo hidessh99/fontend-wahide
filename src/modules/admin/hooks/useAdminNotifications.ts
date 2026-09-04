@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { useI18n } from "@/lib/i18n/context";
 import { AdminQueueItem } from "../types/admin.types";
 import { adminApi } from "../api/admin.api";
 import { toast } from "sonner";
 
 export function useAdminNotifications() {
+  const { t } = useI18n();
   const [queues, setQueues] = useState<AdminQueueItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
@@ -64,9 +66,9 @@ export function useAdminNotifications() {
       await adminApi.deleteAdminQueue(id);
       setQueues((prev) => prev.filter((q) => q.id !== id));
       setTotal((prev) => Math.max(0, prev - 1));
-      toast.success("Tugas antrean berhasil dihapus.");
+      toast.success(t("admin.notifications.toastDeleteSuccess"));
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal menghapus antrean";
+      const msg = err instanceof Error ? err.message : t("admin.notifications.toastDeleteFailed");
       toast.error(msg);
       throw err;
     }
@@ -79,7 +81,7 @@ export function useAdminNotifications() {
       toast.success(res.message);
       await fetchQueues();
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal mengirim siaran massal";
+      const msg = err instanceof Error ? err.message : t("admin.notifications.toastBroadcastFailed");
       toast.error(msg);
       throw err;
     } finally {
@@ -94,7 +96,7 @@ export function useAdminNotifications() {
       toast.success(res.message);
       await fetchQueues();
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal mengirim siaran target";
+      const msg = err instanceof Error ? err.message : t("admin.notifications.toastTargetBroadcastFailed");
       toast.error(msg);
       throw err;
     } finally {
@@ -115,7 +117,7 @@ export function useAdminNotifications() {
       toast.success(res.message);
       await fetchQueues();
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal memasukkan email ke antrean";
+      const msg = err instanceof Error ? err.message : t("admin.notifications.toastEnqueueFailed");
       toast.error(msg);
       throw err;
     } finally {
@@ -142,10 +144,10 @@ export function useAdminNotifications() {
         });
         successCount++;
       }
-      toast.success(`Berhasil menjadwalkan ${successCount} email ke antrean worker.`);
+      toast.success(t("admin.notifications.toastBatchEnqueueSuccess", { count: successCount }));
       await fetchQueues();
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal memasukkan email ke antrean";
+      const msg = err instanceof Error ? err.message : t("admin.notifications.toastEnqueueFailed");
       toast.error(msg);
       throw err;
     } finally {

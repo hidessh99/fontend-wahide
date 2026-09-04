@@ -4,8 +4,10 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { AdminPlanItem, CreatePlanInput, UpdatePlanInput } from "../types/admin.types";
 import { adminApi } from "../api/admin.api";
 import { toast } from "sonner";
+import { useI18n } from "@/lib/i18n/context";
 
 export function useAdminPlans() {
+  const { t } = useI18n();
   const [plans, setPlans] = useState<AdminPlanItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -47,10 +49,10 @@ export function useAdminPlans() {
     try {
       const newPlan = await adminApi.createAdminPlan(input);
       setPlans((prev) => [newPlan, ...prev]);
-      toast.success(`Paket ${newPlan.name} berhasil ditambahkan.`);
+      toast.success(t("admin.plans.toastCreateSuccess", { name: newPlan.name }));
       return newPlan;
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal menambahkan paket baru";
+      const msg = err instanceof Error ? err.message : t("admin.plans.toastCreateFailed");
       toast.error(msg);
       throw err;
     }
@@ -60,10 +62,10 @@ export function useAdminPlans() {
     try {
       const updated = await adminApi.updateAdminPlan(id, input);
       setPlans((prev) => prev.map((p) => (p.id === id ? updated : p)));
-      toast.success(`Paket ${updated.name} berhasil diperbarui.`);
+      toast.success(t("admin.plans.toastUpdateSuccess", { name: updated.name }));
       return updated;
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal memperbarui paket";
+      const msg = err instanceof Error ? err.message : t("admin.plans.toastUpdateFailed");
       toast.error(msg);
       throw err;
     }
@@ -73,9 +75,9 @@ export function useAdminPlans() {
     try {
       await adminApi.deleteAdminPlan(id);
       setPlans((prev) => prev.filter((p) => p.id !== id));
-      toast.success(`Paket ${planName} berhasil dihapus.`);
+      toast.success(t("admin.plans.toastDeleteSuccess", { name: planName }));
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal menghapus paket";
+      const msg = err instanceof Error ? err.message : t("admin.plans.toastDeleteFailed");
       toast.error(msg);
       throw err;
     }
