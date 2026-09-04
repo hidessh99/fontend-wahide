@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { MessageLogItem } from "./MessageLogsTable";
 import { Button } from "@/components/ui/button";
+import { useClipboard } from "@/hooks/useClipboard";
 import {
   Dialog,
   DialogContent,
@@ -31,15 +32,13 @@ interface MessageDetailModalProps {
 
 export function MessageDetailModal({ isOpen, log, onClose }: MessageDetailModalProps) {
   const { t } = useI18n();
-  const [copied, setCopied] = useState(false);
+  const { isCopied: copied, copy } = useClipboard();
 
   if (!log) return null;
 
   const handleCopyMessage = async () => {
     if (!log.messageSnippet) return;
-    await navigator.clipboard.writeText(log.messageSnippet);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    await copy(log.messageSnippet);
   };
 
   const renderBadge = (status: MessageLogItem["status"]) => {

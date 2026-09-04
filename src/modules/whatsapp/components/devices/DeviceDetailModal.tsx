@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Device } from "@/modules/whatsapp/types/whatsapp.types";
+import { useClipboard } from "@/hooks/useClipboard";
 import {
   Dialog,
   DialogContent,
@@ -51,16 +52,16 @@ export function DeviceDetailModal({
   onWake,
 }: DeviceDetailModalProps) {
   const { t, locale } = useI18n();
-  const [copiedField, setCopiedField] = useState<string | null>(null);
+  const { copied: copiedField, copy } = useClipboard<string>();
   const [isActionLoading, setIsActionLoading] = useState(false);
 
   if (!device) return null;
 
-  const handleCopy = (text: string, fieldName: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedField(fieldName);
-    toast.success(`${fieldName} ${t("whatsapp.deviceIdCopied") || "berhasil disalin!"}`);
-    setTimeout(() => setCopiedField(null), 2000);
+  const handleCopy = async (text: string, fieldName: string) => {
+    const success = await copy(text, fieldName);
+    if (success) {
+      toast.success(`${fieldName} ${t("whatsapp.deviceIdCopied") || "berhasil disalin!"}`);
+    }
   };
 
   const handleAction = async (actionFn: (id: string) => Promise<void>) => {

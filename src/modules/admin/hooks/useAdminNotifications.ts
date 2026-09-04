@@ -36,28 +36,32 @@ export function useAdminNotifications() {
   }, [page, pageSize, searchQuery, statusFilter]);
 
   useEffect(() => {
-    let isMounted = true;
+    const controller = new AbortController();
     const load = async () => {
       setIsLoading(true);
       try {
-        const res = await adminApi.getAdminQueues({
-          page,
-          pageSize,
-          search: searchQuery,
-          status: statusFilter !== "ALL" ? statusFilter : undefined,
-        });
-        if (isMounted) {
+        const res = await adminApi.getAdminQueues(
+          {
+            page,
+            pageSize,
+            search: searchQuery,
+            status: statusFilter !== "ALL" ? statusFilter : undefined,
+          },
+          controller.signal
+        );
+        if (!controller.signal.aborted) {
           setQueues(res.queues);
           setTotal(res.total);
           setIsLoading(false);
         }
-      } catch {
-        if (isMounted) setIsLoading(false);
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name === "AbortError") return;
+        if (!controller.signal.aborted) setIsLoading(false);
       }
     };
     load();
     return () => {
-      isMounted = false;
+      controller.abort();
     };
   }, [page, pageSize, searchQuery, statusFilter]);
 

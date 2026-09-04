@@ -156,6 +156,7 @@ class HttpClient {
     const timeoutId = setTimeout(() => timeoutController.abort(), timeoutMs);
 
     let combinedSignal: AbortSignal = timeoutController.signal;
+    let cleanupSignalListeners: (() => void) | null = null;
     if (customConfig.signal) {
       if (typeof AbortSignal !== "undefined" && typeof AbortSignal.any === "function") {
         combinedSignal = AbortSignal.any([timeoutController.signal, customConfig.signal]);
@@ -165,6 +166,10 @@ class HttpClient {
         timeoutController.signal.addEventListener("abort", onAbort, { once: true });
         customConfig.signal.addEventListener("abort", onAbort, { once: true });
         combinedSignal = compositeController.signal;
+        cleanupSignalListeners = () => {
+          timeoutController.signal.removeEventListener("abort", onAbort);
+          customConfig.signal?.removeEventListener("abort", onAbort);
+        };
       }
     }
 
@@ -227,8 +232,6 @@ class HttpClient {
 
       return data as ApiResponse<T>;
     } catch (err: unknown) {
-      clearTimeout(timeoutId);
-
       if (err instanceof ApiError) {
         throw err;
       }
@@ -250,6 +253,9 @@ class HttpClient {
         throw new ApiError(err.message, 500);
       }
       throw new ApiError("Gagal menghubungi server. Periksa koneksi internet.", 500);
+    } finally {
+      clearTimeout(timeoutId);
+      cleanupSignalListeners?.();
     }
   }
 

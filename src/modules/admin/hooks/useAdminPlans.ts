@@ -27,21 +27,22 @@ export function useAdminPlans() {
   }, []);
 
   useEffect(() => {
-    let isMounted = true;
+    const controller = new AbortController();
     const init = async () => {
       try {
-        const data = await adminApi.getAdminPlans();
-        if (isMounted) {
+        const data = await adminApi.getAdminPlans(controller.signal);
+        if (!controller.signal.aborted) {
           setPlans(data);
           setIsLoading(false);
         }
-      } catch {
-        if (isMounted) setIsLoading(false);
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name === "AbortError") return;
+        if (!controller.signal.aborted) setIsLoading(false);
       }
     };
     init();
     return () => {
-      isMounted = false;
+      controller.abort();
     };
   }, []);
 

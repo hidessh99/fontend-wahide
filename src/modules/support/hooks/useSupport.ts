@@ -78,22 +78,26 @@ export function useSupport() {
 
   useEffect(() => {
     let isMounted = true;
+    const controller = new AbortController();
+
     const init = async () => {
       try {
-        const res = await supportApi.getTickets({ page: 1, pageSize: 10 });
+        const res = await supportApi.getTickets({ page: 1, pageSize: 10 }, controller.signal);
         if (isMounted) {
           setTickets(res.tickets);
           setTotal(res.total);
           setPage(res.page);
           setIsLoading(false);
         }
-      } catch {
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name === "AbortError") return;
         if (isMounted) setIsLoading(false);
       }
     };
     init();
     return () => {
       isMounted = false;
+      controller.abort();
     };
   }, []);
 

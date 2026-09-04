@@ -47,11 +47,24 @@ export function UserAddressForm() {
     handleSubmit,
   } = useUserAddress();
 
+  const redirectTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  React.useEffect(() => {
+    return () => {
+      if (redirectTimerRef.current !== null) {
+        clearTimeout(redirectTimerRef.current);
+      }
+    };
+  }, []);
+
   const onFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const success = await handleSubmit(e);
     if (success && from === "billing") {
-      setTimeout(() => {
+      if (redirectTimerRef.current !== null) {
+        clearTimeout(redirectTimerRef.current);
+      }
+      redirectTimerRef.current = setTimeout(() => {
         router.push(`/billing${action ? `?action=${action}` : ""}`);
       }, 400);
     }

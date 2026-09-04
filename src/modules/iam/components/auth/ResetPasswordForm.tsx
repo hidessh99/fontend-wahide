@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -27,6 +27,15 @@ export function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const turnstileRef = useRef<TurnstileInstance>(null);
+  const redirectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (redirectTimerRef.current !== null) {
+        clearTimeout(redirectTimerRef.current);
+      }
+    };
+  }, []);
 
   const emailParam = searchParams.get("email") || "";
   const tokenParam = searchParams.get("token") || "";
@@ -60,8 +69,11 @@ export function ResetPasswordForm() {
       const res = await authApi.resetPassword(result.data);
       setSuccessMessage(res.message || t("auth.resetPassword.successNotice"));
 
-      // Auto redirect to /login after 2 seconds
-      setTimeout(() => {
+      // Auto redirect to /login after 2 seconds with safe cleanup
+      if (redirectTimerRef.current !== null) {
+        clearTimeout(redirectTimerRef.current);
+      }
+      redirectTimerRef.current = setTimeout(() => {
         router.push("/login");
       }, 2000);
     } catch (err: unknown) {

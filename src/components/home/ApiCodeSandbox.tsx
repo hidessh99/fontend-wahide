@@ -7,6 +7,7 @@ import { env } from "@/lib/config/env";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { Code2, Copy, Check, ExternalLink, Workflow } from "lucide-react";
+import { useClipboard } from "@/hooks/useClipboard";
 
 type LangType = "curl" | "nodejs" | "go" | "php" | "python";
 
@@ -15,7 +16,7 @@ const POSTMAN_DOCS_URL = "https://documenter.getpostman.com/view/26294023/2sBYAu
 export function ApiCodeSandbox() {
   const { t } = useI18n();
   const [activeLang, setActiveLang] = useState<LangType>("curl");
-  const [isCopied, setIsCopied] = useState(false);
+  const { isCopied, copy } = useClipboard();
 
   // Dynamic API endpoint from environment configuration
   const apiEndpoint = env.NEXT_PUBLIC_WHATSAPP_API_URL
@@ -118,11 +119,11 @@ print(response.json())`,
     },
   };
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(codeSnippets[activeLang].code);
-    setIsCopied(true);
-    toast.success(t("common.landing.apiSandbox.copied"));
-    setTimeout(() => setIsCopied(false), 2000);
+  const handleCopy = async () => {
+    const success = await copy(codeSnippets[activeLang].code);
+    if (success) {
+      toast.success(t("common.landing.apiSandbox.copied"));
+    }
   };
 
   return (

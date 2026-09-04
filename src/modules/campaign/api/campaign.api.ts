@@ -72,16 +72,18 @@ const mapBackendCampaign = (c: any): Campaign => {
 };
 
 export const campaignApi = {
-  getCampaigns: async (page = 1, pageSize = 50): Promise<Campaign[]> => {
+  getCampaigns: async (page = 1, pageSize = 50, signal?: AbortSignal): Promise<Campaign[]> => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const res = await httpClient.get<any>(
-        `${CAMPAIGN_BASE}/campaigns?page=${page}&page_size=${pageSize}`
+        `${CAMPAIGN_BASE}/campaigns?page=${page}&page_size=${pageSize}`,
+        { signal }
       );
       const items = res.payload || (Array.isArray(res) ? res : []);
       if (!Array.isArray(items)) return [];
       return items.map(mapBackendCampaign);
-    } catch {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") throw err;
       return [];
     }
   },
@@ -136,11 +138,13 @@ export const campaignApi = {
 
   getMessageLogs: async (
     page = 1,
-    pageSize = 20
+    pageSize = 20,
+    signal?: AbortSignal
   ): Promise<{ logs: MessageLogResponse[]; total: number }> => {
     try {
       const res = await httpClient.get<MessageLogResponse[]>(
-        `${CAMPAIGN_BASE}/campaigns/logs?page=${page}&page_size=${pageSize}`
+        `${CAMPAIGN_BASE}/campaigns/logs?page=${page}&page_size=${pageSize}`,
+        { signal }
       );
       const logs = res.payload || (Array.isArray(res) ? res : []);
       const info = res.additional_info as { total?: number } | undefined;
@@ -151,7 +155,8 @@ export const campaignApi = {
             ? res.pagination.total_items
             : logs.length;
       return { logs, total };
-    } catch {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") throw err;
       return { logs: [], total: 0 };
     }
   },

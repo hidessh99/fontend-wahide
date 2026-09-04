@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,15 @@ export function ForgotPasswordForm() {
   const { t } = useI18n();
   const router = useRouter();
   const turnstileRef = useRef<TurnstileInstance>(null);
+  const redirectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (redirectTimerRef.current !== null) {
+        clearTimeout(redirectTimerRef.current);
+      }
+    };
+  }, []);
 
   const [formData, setFormData] = useState<ForgotPasswordInput>({
     email: "",
@@ -40,8 +49,11 @@ export function ForgotPasswordForm() {
       const res = await authApi.forgotPassword({ email: result.data.email });
       setSuccessMessage(res.message || t("auth.forgotPassword.redirectingNotice"));
 
-      // Auto redirect to /reset-password after 1.5s
-      setTimeout(() => {
+      // Auto redirect to /reset-password after 1.5s with safe cleanup
+      if (redirectTimerRef.current !== null) {
+        clearTimeout(redirectTimerRef.current);
+      }
+      redirectTimerRef.current = setTimeout(() => {
         router.push(`/reset-password?email=${encodeURIComponent(result.data.email)}`);
       }, 1500);
     } catch (err: unknown) {

@@ -68,16 +68,22 @@ export function useUserActivities() {
 
   useEffect(() => {
     let isMounted = true;
+    const controller = new AbortController();
+
     const init = async () => {
       setIsLoading(true);
       try {
-        const res = await activityApi.getUserActivities({ page: 1, pageSize: 15 });
+        const res = await activityApi.getUserActivities(
+          { page: 1, pageSize: 15 },
+          controller.signal
+        );
         if (isMounted) {
           setActivities(res.activities);
           setTotal(res.total);
           setPage(res.page);
         }
-      } catch {
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name === "AbortError") return;
         // Handled in api client
       } finally {
         if (isMounted) {
@@ -88,6 +94,7 @@ export function useUserActivities() {
     init();
     return () => {
       isMounted = false;
+      controller.abort();
     };
   }, []);
 

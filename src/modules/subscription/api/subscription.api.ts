@@ -240,27 +240,31 @@ function normalizePlan(raw: Record<string, unknown>): SubscriptionPlan {
 }
 
 export const subscriptionApi = {
-  getSubscription: async (): Promise<TenantSubscription> => {
+  getSubscription: async (signal?: AbortSignal): Promise<TenantSubscription> => {
     try {
       const res = await httpClient.get<Record<string, unknown>>(
-        `${SUBSCRIPTION_BASE}/subscription`
+        `${SUBSCRIPTION_BASE}/subscription`,
+        { signal }
       );
       return normalizeSubscription(res.payload);
-    } catch {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") throw err;
       return normalizeSubscription(null);
     }
   },
 
-  getPlans: async (): Promise<SubscriptionPlan[]> => {
+  getPlans: async (signal?: AbortSignal): Promise<SubscriptionPlan[]> => {
     try {
       const res = await httpClient.get<Record<string, unknown>[]>(
-        `${SUBSCRIPTION_BASE}/subscription/plans`
+        `${SUBSCRIPTION_BASE}/subscription/plans`,
+        { signal }
       );
       if (Array.isArray(res.payload) && res.payload.length > 0) {
         return res.payload.map(normalizePlan);
       }
       return DEFAULT_PLANS;
-    } catch {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") throw err;
       return DEFAULT_PLANS;
     }
   },
@@ -273,10 +277,11 @@ export const subscriptionApi = {
     return { success: res.success, invoiceUrl: res.payload?.invoiceUrl };
   },
 
-  getWebhookConfig: async (): Promise<WebhookConfig> => {
+  getWebhookConfig: async (signal?: AbortSignal): Promise<WebhookConfig> => {
     try {
       const res = await httpClient.get<Record<string, unknown>>(
-        `${SUBSCRIPTION_BASE}/subscription/webhook`
+        `${SUBSCRIPTION_BASE}/subscription/webhook`,
+        { signal }
       );
       const payload = res.payload;
       return {
@@ -290,7 +295,8 @@ export const subscriptionApi = {
         ),
         isEnabled: Boolean(payload?.isEnabled ?? payload?.is_enabled ?? true),
       };
-    } catch {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") throw err;
       return {
         url: "https://api.business.com/v1/whatsapp/webhook",
         secret: "whsec_live_9a7e60bd2c5a4fce87332185000bb181",

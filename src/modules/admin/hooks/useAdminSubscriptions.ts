@@ -41,24 +41,28 @@ export function useAdminSubscriptions() {
   }, [page, pageSize, searchQuery, statusFilter, planFilter, t]);
 
   useEffect(() => {
-    let isMounted = true;
+    const controller = new AbortController();
     const load = async () => {
       setIsLoading(true);
       try {
-        const res = await adminApi.getAdminSubscriptions({
-          page,
-          pageSize,
-          search: searchQuery || undefined,
-          status: statusFilter !== "ALL" ? statusFilter : undefined,
-          planId: planFilter !== "ALL" ? planFilter : undefined,
-        });
-        if (isMounted) {
+        const res = await adminApi.getAdminSubscriptions(
+          {
+            page,
+            pageSize,
+            search: searchQuery || undefined,
+            status: statusFilter !== "ALL" ? statusFilter : undefined,
+            planId: planFilter !== "ALL" ? planFilter : undefined,
+          },
+          controller.signal
+        );
+        if (!controller.signal.aborted) {
           setSubscriptions(res.subscriptions);
           setTotal(res.total);
           setIsLoading(false);
         }
-      } catch {
-        if (isMounted) {
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name === "AbortError") return;
+        if (!controller.signal.aborted) {
           setSubscriptions([]);
           setTotal(0);
           setIsLoading(false);
@@ -67,7 +71,7 @@ export function useAdminSubscriptions() {
     };
     load();
     return () => {
-      isMounted = false;
+      controller.abort();
     };
   }, [page, pageSize, searchQuery, statusFilter, planFilter]);
 

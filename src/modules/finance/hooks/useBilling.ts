@@ -97,11 +97,13 @@ export function useBilling() {
 
   useEffect(() => {
     let isMounted = true;
+    const controller = new AbortController();
+
     const init = async () => {
       try {
         const [balData, invRes] = await Promise.all([
-          financeApi.getBalance(),
-          financeApi.getInvoices({ page: 1, pageSize: 10 }),
+          financeApi.getBalance(controller.signal),
+          financeApi.getInvoices({ page: 1, pageSize: 10 }, controller.signal),
         ]);
         if (isMounted) {
           setBalance(balData);
@@ -110,13 +112,15 @@ export function useBilling() {
           setPage(invRes.page);
           setIsLoading(false);
         }
-      } catch {
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name === "AbortError") return;
         if (isMounted) setIsLoading(false);
       }
     };
     init();
     return () => {
       isMounted = false;
+      controller.abort();
     };
   }, []);
 

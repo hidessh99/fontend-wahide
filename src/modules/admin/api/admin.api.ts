@@ -268,8 +268,10 @@ export const adminApi = {
     };
   },
 
-  getAdminDashboardStats: async (): Promise<AdminDashboardStats> => {
-    const res = await httpClient.get<AdminDashboardStats>(`${ADMIN_BASE}/admin/dashboard/stats`);
+  getAdminDashboardStats: async (signal?: AbortSignal): Promise<AdminDashboardStats> => {
+    const res = await httpClient.get<AdminDashboardStats>(`${ADMIN_BASE}/admin/dashboard/stats`, {
+      signal,
+    });
     return (
       res.payload || {
         total_users: 0,
@@ -289,7 +291,8 @@ export const adminApi = {
   },
 
   getUserActivities: async (
-    params?: GetUserActivitiesParams
+    params?: GetUserActivitiesParams,
+    signal?: AbortSignal
   ): Promise<UserActivityListResponse> => {
     try {
       const page = params?.page ?? 1;
@@ -308,7 +311,8 @@ export const adminApi = {
       }
 
       const res = await httpClient.get<Record<string, unknown>[]>(
-        `${ADMIN_BASE}/admin/user-activity?${query.toString()}`
+        `${ADMIN_BASE}/admin/user-activity?${query.toString()}`,
+        { signal }
       );
 
       const rawActivities = Array.isArray(res.payload) ? res.payload : [];
@@ -325,7 +329,8 @@ export const adminApi = {
         page: resPage,
         pageSize: resSize,
       };
-    } catch {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") throw err;
       return {
         activities: [],
         total: 0,
@@ -340,9 +345,11 @@ export const adminApi = {
     return { success: res.success, message: res.message || "Aktivitas berhasil dihapus" };
   },
 
-  getAdminPlans: async (): Promise<AdminPlanItem[]> => {
+  getAdminPlans: async (signal?: AbortSignal): Promise<AdminPlanItem[]> => {
     try {
-      const res = await httpClient.get<Record<string, unknown>[]>(`${ADMIN_BASE}/plans`);
+      const res = await httpClient.get<Record<string, unknown>[]>(`${ADMIN_BASE}/plans`, {
+        signal,
+      });
       const rawList = Array.isArray(res.payload) ? res.payload : [];
       if (rawList.length > 0) {
         return rawList.map(normalizeAdminPlan);
@@ -423,7 +430,10 @@ export const adminApi = {
     return { success: res.success, message: res.message || "Paket berhasil dihapus" };
   },
 
-  getAdminBillings: async (params?: GetAdminBillingsParams): Promise<AdminBillingListResponse> => {
+  getAdminBillings: async (
+    params?: GetAdminBillingsParams,
+    signal?: AbortSignal
+  ): Promise<AdminBillingListResponse> => {
     try {
       const page = params?.page ?? 1;
       const pageSize = params?.pageSize ?? 10;
@@ -438,7 +448,8 @@ export const adminApi = {
       }
 
       const res = await httpClient.get<Record<string, unknown>[]>(
-        `${ADMIN_BASE}/admin/billing?${query.toString()}`
+        `${ADMIN_BASE}/admin/billing?${query.toString()}`,
+        { signal }
       );
 
       const rawBillings = Array.isArray(res.payload) ? res.payload : [];
@@ -460,7 +471,8 @@ export const adminApi = {
         page: resPage,
         pageSize: resSize,
       };
-    } catch {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") throw err;
       return {
         billings: [],
         total: 0,
@@ -470,8 +482,11 @@ export const adminApi = {
     }
   },
 
-  getAdminBillingById: async (id: string): Promise<AdminBillingItem> => {
-    const res = await httpClient.get<Record<string, unknown>>(`${ADMIN_BASE}/admin/billing/${id}`);
+  getAdminBillingById: async (id: string, signal?: AbortSignal): Promise<AdminBillingItem> => {
+    const res = await httpClient.get<Record<string, unknown>>(
+      `${ADMIN_BASE}/admin/billing/${id}`,
+      { signal }
+    );
     if (!res.payload) {
       throw new Error(res.message || "Data transaksi tidak ditemukan");
     }
@@ -498,7 +513,10 @@ export const adminApi = {
     return { success: res.success, message: res.message || "Data billing berhasil dihapus" };
   },
 
-  getAdminQueues: async (params?: GetAdminQueueParams): Promise<AdminQueueListResponse> => {
+  getAdminQueues: async (
+    params?: GetAdminQueueParams,
+    signal?: AbortSignal
+  ): Promise<AdminQueueListResponse> => {
     try {
       const page = params?.page ?? 1;
       const pageSize = params?.pageSize ?? 10;
@@ -510,7 +528,8 @@ export const adminApi = {
       }
 
       const res = await httpClient.get<Record<string, unknown>[]>(
-        `${ADMIN_BASE}/admin/queue?${query.toString()}`
+        `${ADMIN_BASE}/admin/queue?${query.toString()}`,
+        { signal }
       );
 
       const rawQueues = Array.isArray(res.payload) ? res.payload : [];
@@ -532,7 +551,8 @@ export const adminApi = {
         page: resPage,
         pageSize: resSize,
       };
-    } catch {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") throw err;
       return {
         queues: [],
         total: 0,
@@ -602,7 +622,8 @@ export const adminApi = {
   },
 
   getAdminMessageLogs: async (
-    params?: GetAdminMessageLogsParams
+    params?: GetAdminMessageLogsParams,
+    signal?: AbortSignal
   ): Promise<AdminMessageLogListResponse> => {
     try {
       const page = params?.page ?? 1;
@@ -627,7 +648,8 @@ export const adminApi = {
       }
 
       const res = await httpClient.get<Record<string, unknown>[]>(
-        `${ADMIN_BASE}/campaigns/logs?${query.toString()}`
+        `${ADMIN_BASE}/campaigns/logs?${query.toString()}`,
+        { signal }
       );
 
       const rawLogs = Array.isArray(res.payload) ? res.payload : [];
@@ -645,7 +667,8 @@ export const adminApi = {
         page: resPage,
         pageSize: resSize,
       };
-    } catch {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") throw err;
       return {
         logs: [],
         total: 0,
@@ -663,7 +686,10 @@ export const adminApi = {
     };
   },
 
-  getAdminDevices: async (params?: GetAdminDevicesParams): Promise<AdminDeviceListResponse> => {
+  getAdminDevices: async (
+    params?: GetAdminDevicesParams,
+    signal?: AbortSignal
+  ): Promise<AdminDeviceListResponse> => {
     try {
       const page = params?.page ?? 1;
       const pageSize = params?.pageSize ?? 15;
@@ -681,7 +707,8 @@ export const adminApi = {
       }
 
       const res = await httpClient.get<Record<string, unknown>[]>(
-        `${ADMIN_BASE}/admin/devices?${query.toString()}`
+        `${ADMIN_BASE}/admin/devices?${query.toString()}`,
+        { signal }
       );
 
       const rawDevices = Array.isArray(res.payload) ? res.payload : [];
@@ -699,7 +726,8 @@ export const adminApi = {
         page: resPage,
         pageSize: resSize,
       };
-    } catch {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") throw err;
       return {
         devices: [],
         total: 0,
@@ -718,7 +746,8 @@ export const adminApi = {
   },
 
   getAdminSubscriptions: async (
-    params?: GetAdminSubscriptionsParams
+    params?: GetAdminSubscriptionsParams,
+    signal?: AbortSignal
   ): Promise<AdminSubscriptionListResponse> => {
     try {
       const page = params?.page ?? 1;
@@ -740,7 +769,8 @@ export const adminApi = {
       }
 
       const res = await httpClient.get<Record<string, unknown>[]>(
-        `${ADMIN_BASE}/admin/subscriptions?${query.toString()}`
+        `${ADMIN_BASE}/admin/subscriptions?${query.toString()}`,
+        { signal }
       );
 
       const rawSubs = Array.isArray(res.payload) ? res.payload : [];
@@ -758,7 +788,8 @@ export const adminApi = {
         page: resPage,
         pageSize: resSize,
       };
-    } catch {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") throw err;
       return {
         subscriptions: [],
         total: 0,

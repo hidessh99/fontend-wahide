@@ -7,8 +7,8 @@ import { ChangePasswordInput } from "../schemas/auth.schema";
 const IAM_BASE = env.NEXT_PUBLIC_IAM_API_URL;
 
 export const userApi = {
-  getProfile: async (): Promise<User> => {
-    const res = await httpClient.get<BackendUserPayload>(`${IAM_BASE}/users/profile`);
+  getProfile: async (signal?: AbortSignal): Promise<User> => {
+    const res = await httpClient.get<BackendUserPayload>(`${IAM_BASE}/users/profile`, { signal });
     const p = res.payload || (res as unknown as BackendUserPayload);
     return {
       id: p.id || "",
@@ -68,8 +68,10 @@ export const userApi = {
     };
   },
 
-  getDashboardStats: async (): Promise<UserDashboardStats> => {
-    const res = await httpClient.get<UserDashboardStats>(`${IAM_BASE}/users/dashboard/stats`);
+  getDashboardStats: async (signal?: AbortSignal): Promise<UserDashboardStats> => {
+    const res = await httpClient.get<UserDashboardStats>(`${IAM_BASE}/users/dashboard/stats`, {
+      signal,
+    });
     return (
       res.payload || {
         balance: 0,
@@ -90,11 +92,13 @@ export const userApi = {
     );
   },
 
-  getActiveSessions: async (): Promise<import("../types/auth.types").ActiveSession[]> => {
+  getActiveSessions: async (
+    signal?: AbortSignal
+  ): Promise<import("../types/auth.types").ActiveSession[]> => {
     const res = await httpClient.get<{
       sessions: import("../types/auth.types").ActiveSession[];
       count: number;
-    }>(`${IAM_BASE}/users/sessions`);
+    }>(`${IAM_BASE}/users/sessions`, { signal });
     const payload =
       res.payload ||
       (res as unknown as { sessions: import("../types/auth.types").ActiveSession[] });

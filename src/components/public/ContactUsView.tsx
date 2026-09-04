@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/context";
 import { toast } from "sonner";
@@ -24,6 +24,18 @@ export function ContactUsView() {
   const [subject, setSubject] = useState("TECH");
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isMountedRef = useRef(true);
+  const submitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+      if (submitTimerRef.current !== null) {
+        clearTimeout(submitTimerRef.current);
+      }
+    };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,15 +46,20 @@ export function ContactUsView() {
 
     setIsSubmitting(true);
     try {
-      // Simulate API submission
-      await new Promise((r) => setTimeout(r, 700));
+      // Simulate API submission with unmount safety
+      await new Promise((resolve) => {
+        submitTimerRef.current = setTimeout(resolve, 700);
+      });
+      if (!isMountedRef.current) return;
       toast.success(t("contactUs.sendSuccess"));
       setName("");
       setEmail("");
       setPhone("");
       setMessage("");
     } finally {
-      setIsSubmitting(false);
+      if (isMountedRef.current) {
+        setIsSubmitting(false);
+      }
     }
   };
 

@@ -37,13 +37,15 @@ export function useSubscription() {
 
   useEffect(() => {
     let isMounted = true;
+    const controller = new AbortController();
+
     const init = async () => {
       try {
         const [subData, plansData, webhookData, profileData] = await Promise.all([
-          subscriptionApi.getSubscription(),
-          subscriptionApi.getPlans(),
-          subscriptionApi.getWebhookConfig(),
-          userApi.getProfile().catch(() => null),
+          subscriptionApi.getSubscription(controller.signal),
+          subscriptionApi.getPlans(controller.signal),
+          subscriptionApi.getWebhookConfig(controller.signal),
+          userApi.getProfile(controller.signal).catch(() => null),
         ]);
         if (isMounted) {
           setSubscription(subData);
@@ -52,13 +54,15 @@ export function useSubscription() {
           setBalance(profileData?.balance ?? 0);
           setIsLoading(false);
         }
-      } catch {
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name === "AbortError") return;
         if (isMounted) setIsLoading(false);
       }
     };
     init();
     return () => {
       isMounted = false;
+      controller.abort();
     };
   }, []);
 

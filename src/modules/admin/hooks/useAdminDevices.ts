@@ -39,23 +39,27 @@ export function useAdminDevices() {
   }, [page, pageSize, searchQuery, statusFilter, t]);
 
   useEffect(() => {
-    let isMounted = true;
+    const controller = new AbortController();
     const load = async () => {
       setIsLoading(true);
       try {
-        const res = await adminApi.getAdminDevices({
-          page,
-          pageSize,
-          search: searchQuery || undefined,
-          status: statusFilter !== "ALL" ? statusFilter : undefined,
-        });
-        if (isMounted) {
+        const res = await adminApi.getAdminDevices(
+          {
+            page,
+            pageSize,
+            search: searchQuery || undefined,
+            status: statusFilter !== "ALL" ? statusFilter : undefined,
+          },
+          controller.signal
+        );
+        if (!controller.signal.aborted) {
           setDevices(res.devices);
           setTotal(res.total);
           setIsLoading(false);
         }
-      } catch {
-        if (isMounted) {
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name === "AbortError") return;
+        if (!controller.signal.aborted) {
           setDevices([]);
           setTotal(0);
           setIsLoading(false);
@@ -64,7 +68,7 @@ export function useAdminDevices() {
     };
     load();
     return () => {
-      isMounted = false;
+      controller.abort();
     };
   }, [page, pageSize, searchQuery, statusFilter]);
 

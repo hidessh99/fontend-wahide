@@ -25,20 +25,24 @@ export function useTeam() {
 
   useEffect(() => {
     let isMounted = true;
+    const controller = new AbortController();
+
     const init = async () => {
       try {
-        const data = await teamApi.getAgents();
+        const data = await teamApi.getAgents(controller.signal);
         if (isMounted) {
           setAgents(data);
           setIsLoading(false);
         }
-      } catch {
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name === "AbortError") return;
         if (isMounted) setIsLoading(false);
       }
     };
     init();
     return () => {
       isMounted = false;
+      controller.abort();
     };
   }, []);
 

@@ -67,27 +67,27 @@ export function useUserActivities() {
   };
 
   useEffect(() => {
-    let isMounted = true;
+    const controller = new AbortController();
     const init = async () => {
       setIsLoading(true);
       try {
-        const res = await adminApi.getUserActivities({ page: 1, pageSize: 15 });
-        if (isMounted) {
+        const res = await adminApi.getUserActivities({ page: 1, pageSize: 15 }, controller.signal);
+        if (!controller.signal.aborted) {
           setActivities(res.activities);
           setTotal(res.total);
           setPage(res.page);
         }
-      } catch {
-        // Handled in api client
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name === "AbortError") return;
       } finally {
-        if (isMounted) {
+        if (!controller.signal.aborted) {
           setIsLoading(false);
         }
       }
     };
     init();
     return () => {
-      isMounted = false;
+      controller.abort();
     };
   }, []);
 

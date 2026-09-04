@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Device } from "@/modules/whatsapp/types/whatsapp.types";
 import { useQRPairing } from "@/modules/whatsapp/hooks/useQRPairing";
 import { useAuth } from "@/modules/iam/hooks/useAuth";
+import { useClipboard } from "@/hooks/useClipboard";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -40,7 +41,7 @@ export function LiveQRModal({ device, isOpen, onClose, onSuccess }: LiveQRModalP
   const authUserPhone = useAuth((s) => s.user?.phone || "");
   const [customPhone, setCustomPhone] = useState<string | null>(null);
   const phoneNumber = customPhone !== null ? customPhone : authUserPhone;
-  const [copied, setCopied] = useState<boolean>(false);
+  const { isCopied: copied, copy } = useClipboard();
 
   const handlePairingSuccess = () => {
     if (device) {
@@ -76,11 +77,9 @@ export function LiveQRModal({ device, isOpen, onClose, onSuccess }: LiveQRModalP
     await requestPairingCode(phoneNumber);
   };
 
-  const handleCopyCode = () => {
+  const handleCopyCode = async () => {
     if (pairingCode) {
-      navigator.clipboard.writeText(pairingCode);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      await copy(pairingCode);
     }
   };
 

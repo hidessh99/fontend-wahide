@@ -79,7 +79,7 @@ export function normalizeTicket(raw: Record<string, unknown>): Ticket {
 }
 
 export const supportApi = {
-  getTickets: async (params?: GetTicketsParams): Promise<TicketListResponse> => {
+  getTickets: async (params?: GetTicketsParams, signal?: AbortSignal): Promise<TicketListResponse> => {
     try {
       const page = params?.page ?? 1;
       const pageSize = params?.pageSize ?? 10;
@@ -93,7 +93,9 @@ export const supportApi = {
         query.set("status", params.status);
       }
       const queryString = `?${query.toString()}`;
-      const res = await httpClient.get<unknown>(`${SUPPORT_BASE}/support/tickets${queryString}`);
+      const res = await httpClient.get<unknown>(`${SUPPORT_BASE}/support/tickets${queryString}`, {
+        signal,
+      });
       const rawList = res.payload || (Array.isArray(res) ? res : []);
       const rawArray = Array.isArray(rawList) ? (rawList as Record<string, unknown>[]) : [];
       const tickets = rawArray.map(normalizeTicket);
@@ -110,7 +112,8 @@ export const supportApi = {
         page: resPage,
         pageSize: resSize,
       };
-    } catch {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") throw err;
       return {
         tickets: [],
         total: 0,

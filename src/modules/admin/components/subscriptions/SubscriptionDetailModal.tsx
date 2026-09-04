@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { AdminSubscriptionItem } from "@/modules/admin/types/admin.types";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { useClipboard } from "@/hooks/useClipboard";
 import {
   Dialog,
   DialogContent,
@@ -77,17 +78,15 @@ export function SubscriptionDetailModal({
   onClose,
 }: SubscriptionDetailModalProps) {
   const { t, locale } = useI18n();
-  const [copiedField, setCopiedField] = useState<string | null>(null);
+  const { copied: copiedField, copy } = useClipboard<string>();
 
   if (!subscription) return null;
 
   const handleCopy = async (text: string, label: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopiedField(label);
+    const success = await copy(text, label);
+    if (success) {
       toast.success(t("admin.subscriptions.copiedToast", { label }), { id: "clipboard-copy" });
-      setTimeout(() => setCopiedField(null), 2000);
-    } catch {
+    } else {
       toast.error(t("admin.subscriptions.copyFailedToast"), { id: "clipboard-copy" });
     }
   };

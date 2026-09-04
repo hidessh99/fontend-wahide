@@ -29,21 +29,24 @@ export function useAdmin() {
   }, []);
 
   useEffect(() => {
-    let isMounted = true;
+    const controller = new AbortController();
     const init = async () => {
       try {
-        const usrData = await adminApi.getUsers({ page: 1, pageSize: 100 });
-        if (isMounted) {
+        const usrData = await adminApi.getUsers({ page: 1, pageSize: 100 }, controller.signal);
+        if (!controller.signal.aborted) {
           setUsers(usrData.users);
           setIsLoading(false);
         }
-      } catch {
-        if (isMounted) setIsLoading(false);
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name === "AbortError") return;
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
+        }
       }
     };
     init();
     return () => {
-      isMounted = false;
+      controller.abort();
     };
   }, []);
 

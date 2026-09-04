@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { AdminDeviceItem } from "@/modules/admin/types/admin.types";
 import { useI18n } from "@/lib/i18n/context";
 import { Button } from "@/components/ui/button";
+import { useClipboard } from "@/hooks/useClipboard";
 import {
   Dialog,
   DialogContent,
@@ -79,17 +80,15 @@ function getDeviceStatusVisual(status: string, t: (key: string, params?: Record<
 
 export function DeviceDetailModal({ device, isOpen, onClose }: DeviceDetailModalProps) {
   const { t, locale } = useI18n();
-  const [copiedField, setCopiedField] = useState<string | null>(null);
+  const { copied: copiedField, copy } = useClipboard<string>();
 
   if (!device) return null;
 
   const handleCopy = async (text: string, label: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopiedField(label);
+    const success = await copy(text, label);
+    if (success) {
       toast.success(t("admin.devices.copiedToast", { field: label }), { id: "clipboard-copy" });
-      setTimeout(() => setCopiedField(null), 2000);
-    } catch {
+    } else {
       toast.error(t("admin.devices.copyFailedToast"), { id: "clipboard-copy" });
     }
   };

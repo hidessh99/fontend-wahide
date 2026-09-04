@@ -13,14 +13,15 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 20) {
   const [error, setError] = useState<string | null>(null);
 
   const fetchLogs = useCallback(
-    async (targetPage = page, targetSize = pageSize) => {
+    async (targetPage = page, targetSize = pageSize, signal?: AbortSignal) => {
       setIsLoading(true);
       setError(null);
       try {
-        const res = await campaignApi.getMessageLogs(targetPage, targetSize);
+        const res = await campaignApi.getMessageLogs(targetPage, targetSize, signal);
         setLogs(res.logs);
         setTotal(res.total);
       } catch (err: unknown) {
+        if (err instanceof Error && err.name === "AbortError") return;
         const msg = err instanceof Error ? err.message : "Gagal memuat log pesan";
         setError(msg);
       } finally {
@@ -32,14 +33,17 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 20) {
 
   useEffect(() => {
     let isMounted = true;
+    const controller = new AbortController();
+
     const loadLogs = async () => {
       try {
-        const res = await campaignApi.getMessageLogs(page, pageSize);
+        const res = await campaignApi.getMessageLogs(page, pageSize, controller.signal);
         if (isMounted) {
           setLogs(res.logs);
           setTotal(res.total);
         }
       } catch (err: unknown) {
+        if (err instanceof Error && err.name === "AbortError") return;
         if (isMounted) {
           const msg = err instanceof Error ? err.message : "Gagal memuat log pesan";
           setError(msg);
@@ -53,6 +57,7 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 20) {
     loadLogs();
     return () => {
       isMounted = false;
+      controller.abort();
     };
   }, [page, pageSize]);
 

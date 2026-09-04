@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Campaign } from "../../types/campaign.types";
 import { Button } from "@/components/ui/button";
+import { useClipboard } from "@/hooks/useClipboard";
 import {
   Dialog,
   DialogContent,
@@ -49,16 +50,14 @@ export function CampaignDetailModal({
   onResumeCampaign,
 }: CampaignDetailModalProps) {
   const { t, locale } = useI18n();
-  const [copied, setCopied] = useState(false);
+  const { isCopied: copied, copy } = useClipboard();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!campaign) return null;
 
   const handleCopyMessage = async () => {
     if (!campaign.messageTemplate) return;
-    await navigator.clipboard.writeText(campaign.messageTemplate);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    await copy(campaign.messageTemplate);
   };
 
   const formatDateTime = (dateStr?: string) => {

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Device } from "@/modules/whatsapp/types/whatsapp.types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useClipboard } from "@/hooks/useClipboard";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -61,7 +62,7 @@ export function DeviceCard({
 }: DeviceCardProps) {
   const { t } = useI18n();
   const [isActionLoading, setIsActionLoading] = useState(false);
-  const [copiedId, setCopiedId] = useState(false);
+  const { isCopied: copiedId, copy } = useClipboard();
 
   const handleAction = async (e: React.MouseEvent, actionFn: (id: string) => Promise<void>) => {
     e.stopPropagation();
@@ -73,12 +74,12 @@ export function DeviceCard({
     }
   };
 
-  const handleCopyId = (e: React.MouseEvent) => {
+  const handleCopyId = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    navigator.clipboard.writeText(device.id);
-    setCopiedId(true);
-    toast.success(t("whatsapp.deviceIdCopied") || "Device ID berhasil disalin!");
-    setTimeout(() => setCopiedId(false), 2000);
+    const success = await copy(device.id);
+    if (success) {
+      toast.success(t("whatsapp.deviceIdCopied") || "Device ID berhasil disalin!");
+    }
   };
 
   const renderStatusBadge = () => {

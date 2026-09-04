@@ -21,14 +21,18 @@ function normalizeUserAddress(raw: Record<string, unknown>): UserAddress {
 
 export const addressApi = {
   // Backend Go Wahide IAM Endpoints
-  getUserAddress: async (): Promise<UserAddress | null> => {
+  getUserAddress: async (signal?: AbortSignal): Promise<UserAddress | null> => {
     try {
-      const res = await httpClient.get<Record<string, unknown>>(`${IAM_BASE}/users/address/user`);
+      const res = await httpClient.get<Record<string, unknown>>(
+        `${IAM_BASE}/users/address/user`,
+        { signal }
+      );
       if (res.payload && typeof res.payload === "object") {
         return normalizeUserAddress(res.payload as Record<string, unknown>);
       }
       return null;
-    } catch {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") throw err;
       // Address not found or empty
       return null;
     }
@@ -45,46 +49,52 @@ export const addressApi = {
   },
 
   // Third-Party Indonesia Location API (apicodepos.hidessh.com)
-  getProvinces: async (): Promise<Province[]> => {
+  getProvinces: async (signal?: AbortSignal): Promise<Province[]> => {
     try {
       const response = await fetch(`${CODEPOS_BASE}/provinces.json`, {
         headers: { Accept: "application/json" },
         cache: "force-cache",
+        signal,
       });
       if (!response.ok) throw new Error("Gagal mengambil data provinsi");
       const data = await response.json();
       return Array.isArray(data) ? data : [];
     } catch (err) {
+      if (err instanceof Error && err.name === "AbortError") throw err;
       console.error("Error fetching provinces:", err);
       return [];
     }
   },
 
-  getCities: async (provinceId: string): Promise<City[]> => {
+  getCities: async (provinceId: string, signal?: AbortSignal): Promise<City[]> => {
     if (!provinceId) return [];
     try {
       const response = await fetch(`${CODEPOS_BASE}/regencies/${provinceId}.json`, {
         headers: { Accept: "application/json" },
+        signal,
       });
       if (!response.ok) throw new Error("Gagal mengambil data kota/kabupaten");
       const data = await response.json();
       return Array.isArray(data) ? data : [];
     } catch (err) {
+      if (err instanceof Error && err.name === "AbortError") throw err;
       console.error("Error fetching cities:", err);
       return [];
     }
   },
 
-  getDistricts: async (cityId: string): Promise<District[]> => {
+  getDistricts: async (cityId: string, signal?: AbortSignal): Promise<District[]> => {
     if (!cityId) return [];
     try {
       const response = await fetch(`${CODEPOS_BASE}/districts/${cityId}.json`, {
         headers: { Accept: "application/json" },
+        signal,
       });
       if (!response.ok) throw new Error("Gagal mengambil data kecamatan");
       const data = await response.json();
       return Array.isArray(data) ? data : [];
     } catch (err) {
+      if (err instanceof Error && err.name === "AbortError") throw err;
       console.error("Error fetching districts:", err);
       return [];
     }

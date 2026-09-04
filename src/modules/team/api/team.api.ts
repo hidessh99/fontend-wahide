@@ -29,14 +29,17 @@ export function normalizeTeamAgent(raw: Record<string, unknown>): TeamAgent {
 }
 
 export const teamApi = {
-  getAgents: async (): Promise<TeamAgent[]> => {
+  getAgents: async (signal?: AbortSignal): Promise<TeamAgent[]> => {
     try {
-      const res = await httpClient.get<Record<string, unknown>[]>(`${IAM_BASE}/tenant/team`);
+      const res = await httpClient.get<Record<string, unknown>[]>(`${IAM_BASE}/tenant/team`, {
+        signal,
+      });
       if (res.payload && Array.isArray(res.payload)) {
         return res.payload.map(normalizeTeamAgent);
       }
       return [];
-    } catch {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") throw err;
       return [];
     }
   },

@@ -50,7 +50,8 @@ function normalizeUserActivity(raw: Record<string, unknown>): UserActivityItem {
 
 export const activityApi = {
   getUserActivities: async (
-    params?: GetUserActivitiesParams
+    params?: GetUserActivitiesParams,
+    signal?: AbortSignal
   ): Promise<UserActivityListResponse> => {
     try {
       const page = params?.page ?? 1;
@@ -63,7 +64,8 @@ export const activityApi = {
       }
 
       const res = await httpClient.get<Record<string, unknown>[]>(
-        `${IAM_BASE}/users/activities?${query.toString()}`
+        `${IAM_BASE}/users/activities?${query.toString()}`,
+        { signal }
       );
 
       const rawActivities = Array.isArray(res.payload) ? res.payload : [];
@@ -80,7 +82,8 @@ export const activityApi = {
         page: resPage,
         pageSize: resSize,
       };
-    } catch {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") throw err;
       return {
         activities: [],
         total: 0,

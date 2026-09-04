@@ -12,13 +12,15 @@ export function useCampaigns() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchCampaigns = useCallback(async () => {
+  const fetchCampaigns = useCallback(async (signalOrEvent?: AbortSignal | unknown) => {
+    const signal = signalOrEvent instanceof AbortSignal ? signalOrEvent : undefined;
     setIsLoading(true);
     setError(null);
     try {
-      const data = await campaignApi.getCampaigns();
+      const data = await campaignApi.getCampaigns(1, 50, signal);
       setCampaigns(data);
     } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") return;
       const msg = err instanceof Error ? err.message : "Gagal memuat kampanye";
       setError(msg);
     } finally {
@@ -28,13 +30,16 @@ export function useCampaigns() {
 
   useEffect(() => {
     let isMounted = true;
+    const controller = new AbortController();
+
     const loadCampaigns = async () => {
       try {
-        const data = await campaignApi.getCampaigns();
+        const data = await campaignApi.getCampaigns(1, 50, controller.signal);
         if (isMounted) {
           setCampaigns(data);
         }
       } catch (err: unknown) {
+        if (err instanceof Error && err.name === "AbortError") return;
         if (isMounted) {
           const msg = err instanceof Error ? err.message : "Gagal memuat kampanye";
           setError(msg);
@@ -48,6 +53,7 @@ export function useCampaigns() {
     loadCampaigns();
     return () => {
       isMounted = false;
+      controller.abort();
     };
   }, []);
 

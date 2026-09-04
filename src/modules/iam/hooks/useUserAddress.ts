@@ -125,13 +125,14 @@ export function useUserAddress() {
   // Initial Data Fetching (Provinces + User Address from Backend)
   useEffect(() => {
     let isMounted = true;
+    const controller = new AbortController();
 
     async function loadInitial() {
       try {
         setIsLoadingInitial(true);
         const [provs, existingAddr] = await Promise.all([
-          addressApi.getProvinces(),
-          addressApi.getUserAddress(),
+          addressApi.getProvinces(controller.signal),
+          addressApi.getUserAddress(controller.signal),
         ]);
 
         if (!isMounted) return;
@@ -154,7 +155,7 @@ export function useUserAddress() {
               (p) => p.name.toUpperCase() === existingAddr.state.toUpperCase()
             );
             if (selectedProv) {
-              const citiesData = await addressApi.getCities(selectedProv.id);
+              const citiesData = await addressApi.getCities(selectedProv.id, controller.signal);
               if (isMounted) {
                 setCities(citiesData);
                 if (existingAddr.city) {
@@ -162,7 +163,7 @@ export function useUserAddress() {
                     (c) => c.name.toUpperCase() === existingAddr.city.toUpperCase()
                   );
                   if (selectedCity) {
-                    const distData = await addressApi.getDistricts(selectedCity.id);
+                    const distData = await addressApi.getDistricts(selectedCity.id, controller.signal);
                     if (isMounted) setDistricts(distData);
                   }
                 }
@@ -170,7 +171,8 @@ export function useUserAddress() {
             }
           }
         }
-      } catch (err) {
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name === "AbortError") return;
         console.error("Failed to load initial address data:", err);
       } finally {
         if (isMounted) setIsLoadingInitial(false);
@@ -181,6 +183,7 @@ export function useUserAddress() {
 
     return () => {
       isMounted = false;
+      controller.abort();
     };
   }, []);
 

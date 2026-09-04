@@ -41,24 +41,28 @@ export function useAdminMessageLogs() {
   }, [page, pageSize, searchQuery, statusFilter, directionFilter, t]);
 
   useEffect(() => {
-    let isMounted = true;
+    const controller = new AbortController();
     const load = async () => {
       setIsLoading(true);
       try {
-        const res = await adminApi.getAdminMessageLogs({
-          page,
-          pageSize,
-          search: searchQuery || undefined,
-          status: statusFilter !== "ALL" ? statusFilter : undefined,
-          direction: directionFilter !== "ALL" ? directionFilter : undefined,
-        });
-        if (isMounted) {
+        const res = await adminApi.getAdminMessageLogs(
+          {
+            page,
+            pageSize,
+            search: searchQuery || undefined,
+            status: statusFilter !== "ALL" ? statusFilter : undefined,
+            direction: directionFilter !== "ALL" ? directionFilter : undefined,
+          },
+          controller.signal
+        );
+        if (!controller.signal.aborted) {
           setLogs(res.logs);
           setTotal(res.total);
           setIsLoading(false);
         }
-      } catch {
-        if (isMounted) {
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name === "AbortError") return;
+        if (!controller.signal.aborted) {
           setLogs([]);
           setTotal(0);
           setIsLoading(false);
@@ -67,7 +71,7 @@ export function useAdminMessageLogs() {
     };
     load();
     return () => {
-      isMounted = false;
+      controller.abort();
     };
   }, [page, pageSize, searchQuery, statusFilter, directionFilter]);
 

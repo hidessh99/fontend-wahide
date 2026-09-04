@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/context";
 import {
@@ -23,13 +23,26 @@ export function MessageSimulator() {
   const [activeTab, setActiveTab] = useState<MessageType>("TEXT");
   const [isSimulating, setIsSimulating] = useState(false);
   const [showDelivered, setShowDelivered] = useState(true);
+  const simTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (simTimerRef.current !== null) {
+        clearTimeout(simTimerRef.current);
+      }
+    };
+  }, []);
 
   const handleSimulate = () => {
+    if (simTimerRef.current !== null) {
+      clearTimeout(simTimerRef.current);
+    }
     setIsSimulating(true);
     setShowDelivered(false);
-    setTimeout(() => {
+    simTimerRef.current = setTimeout(() => {
       setIsSimulating(false);
       setShowDelivered(true);
+      simTimerRef.current = null;
     }, 400);
   };
 

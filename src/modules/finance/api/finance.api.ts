@@ -95,19 +95,20 @@ export function normalizeBalance(raw: Record<string, unknown> | null | undefined
 }
 
 export const financeApi = {
-  getBalance: async (): Promise<TenantBalance> => {
+  getBalance: async (signal?: AbortSignal): Promise<TenantBalance> => {
     try {
-      const userProfile = await userApi.getProfile();
+      const userProfile = await userApi.getProfile(signal);
       return {
         amount: Number(userProfile.balance ?? 0),
         currency: "IDR",
       };
-    } catch {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") throw err;
       return normalizeBalance(null);
     }
   },
 
-  getInvoices: async (params?: GetInvoicesParams): Promise<InvoiceListResponse> => {
+  getInvoices: async (params?: GetInvoicesParams, signal?: AbortSignal): Promise<InvoiceListResponse> => {
     try {
       const page = params?.page ?? 1;
       const pageSize = params?.pageSize ?? 10;
@@ -122,7 +123,8 @@ export const financeApi = {
       }
       const queryString = `?${query.toString()}`;
       const res = await httpClient.get<Record<string, unknown>[]>(
-        `${BILLING_BASE}/billing/invoices${queryString}`
+        `${BILLING_BASE}/billing/invoices${queryString}`,
+        { signal }
       );
 
       const rawList = res.payload || (Array.isArray(res) ? res : []);
@@ -143,7 +145,8 @@ export const financeApi = {
         page: resPage,
         pageSize: resSize,
       };
-    } catch {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") throw err;
       return {
         invoices: [],
         total: 0,

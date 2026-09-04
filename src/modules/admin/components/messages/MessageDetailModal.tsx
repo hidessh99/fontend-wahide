@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { AdminMessageLogItem } from "@/modules/admin/types/admin.types";
 import { useI18n } from "@/lib/i18n/context";
 import { Button } from "@/components/ui/button";
+import { useClipboard } from "@/hooks/useClipboard";
 import {
   Dialog,
   DialogContent,
@@ -33,17 +34,15 @@ interface MessageDetailModalProps {
 
 export function MessageDetailModal({ message, isOpen, onClose }: MessageDetailModalProps) {
   const { t, locale } = useI18n();
-  const [hasCopied, setHasCopied] = useState(false);
+  const { isCopied: hasCopied, copy } = useClipboard();
 
   if (!message) return null;
 
   const handleCopyText = async () => {
-    try {
-      await navigator.clipboard.writeText(message.messageBody);
-      setHasCopied(true);
+    const success = await copy(message.messageBody);
+    if (success) {
       toast.success(t("admin.messages.copiedToast"), { id: "clipboard-copy" });
-      setTimeout(() => setHasCopied(false), 2000);
-    } catch {
+    } else {
       toast.error(t("admin.messages.copyFailedToast"), { id: "clipboard-copy" });
     }
   };
