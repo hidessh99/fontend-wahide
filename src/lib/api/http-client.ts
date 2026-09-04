@@ -1,6 +1,6 @@
 // ==============================================================================
 // Wahide Frontend HTTP Client & Standard Backend REST Response Envelope
-// Matches Go Backend: github.com/hidessh99/wahide/internal/shared/response
+// Enterprise Standard REST API Response Envelope
 // ==============================================================================
 
 import { getCookie, clearAllAuthStorage } from "@/lib/storage/cookies";

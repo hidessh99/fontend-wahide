@@ -170,7 +170,7 @@ export function VirtualizedTable({ rows }: { rows: RowItem[] }) {
 ## Fase 5: Runtime Schema Validation dengan Zod (P2 - Menengah)
 
 ### 5.1 Kebutuhan
-Memastikan data yang diterima dari respons microservice Go diproteksi oleh schema validation saat runtime, bukan hanya tipe statis TypeScript saat compile time.
+Memastikan data yang diterima dari respons backend service diproteksi oleh schema validation saat runtime, bukan hanya tipe statis TypeScript saat compile time.
 
 ### 5.2 Rencana Pembuatan Schema
 Buat file schema Zod di masing-masing modul:
@@ -223,7 +223,7 @@ Silakan tandai fase-fase berikut untuk disetujui atau disesuaikan sebelum diekse
 - [x] **Fase 2: SELESAI** — Purge 42 dead-code UI components & 7 heavy npm packages, relokasi `TurnstileWidget.tsx` ke shared, ekstraksi `<MetricCard>`, standarisasi accordion/alert/native-select/spinner, dan normalisasi 190 token `dark:bg-[#161715]`.
 - [ ] **Setujui Fase 3**: Restrukturisasi direktori rute publik (`components/public` & `components/home` $\rightarrow$ `modules/marketing` atau `modules/content`).
 - [ ] **Setujui Fase 4**: Implementasi `@tanstack/react-virtual` pada tabel dataset besar.
-- [ ] **Setujui Fase 5**: Standarisasi skema runtime Zod pada seluruh modul microservice.
+- [ ] **Setujui Fase 5**: Standarisasi skema runtime Zod pada seluruh modul backend service.
 
 ---
 *Dokumen ini dibuat sebagai dasar audit arsitektur independen untuk user review.*

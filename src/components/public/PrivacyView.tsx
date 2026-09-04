@@ -117,7 +117,7 @@ export function PrivacyView() {
             <span>Keamanan Data &amp; Isolasi Multi-Tenant</span>
           </h2>
           <p>
-            Seluruh infrastruktur basis data dipartisi secara ketat berdasarkan <code>tenant_id</code>. Seluruh token sesi disimpan menggunakan standar enkripsi simetris <strong>AES-GCM 256-bit</strong>. Akses antar tenant dibatasi secara ketat di tingkat arsitektur backend Go sehingga tidak ada kebocoran data antar pengguna.
+            Seluruh infrastruktur basis data dipartisi secara ketat berdasarkan <code>tenant_id</code>. Seluruh token sesi disimpan menggunakan standar enkripsi simetris <strong>AES-GCM 256-bit</strong>. Akses antar tenant dibatasi secara ketat di tingkat arsitektur backend terisolasi sehingga tidak ada kebocoran data antar pengguna.
           </p>
         </section>
 

@@ -4,7 +4,7 @@ import { HomeView } from "@/components/home/HomeView";
 export const metadata: Metadata = {
   title: "Platform WhatsApp Multi-Device SaaS & Gateway Skala Industri",
   description:
-    "Solusi Enterprise WhatsApp Multi-Device Gateway untuk bisnis dengan teknologi Session Hibernation hemat RAM 95%, 5 Lapis Anti-Ban, Spintax Engine acak kata, dan integrasi Go Microservices.",
+    "Solusi Enterprise WhatsApp Multi-Device Gateway untuk bisnis dengan teknologi Session Hibernation hemat RAM 95%, 5 Lapis Anti-Ban, Spintax Engine acak kata, dan integrasi High-Performance Cloud Engine.",
   alternates: {
     canonical: "/",
   },

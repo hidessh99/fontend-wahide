@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     "Session Hibernation",
     "WhatsApp Broadcast Massal",
     "Wahide Gateway",
-    "Go Microservices WhatsApp",
+    "Enterprise WhatsApp Gateway",
   ],
   authors: [{ name: "Hide Digital Security", url: siteUrl }],
   creator: "Wahide",
@@ -91,7 +91,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Wahide - Enterprise WhatsApp Multi-Tenant Gateway",
     description:
-      "Platform SaaS WhatsApp Multi-Device Gateway berkinerja tinggi dengan 5 Lapis Anti-Ban & Go Microservices.",
+      "Platform SaaS WhatsApp Multi-Device Gateway berkinerja tinggi dengan 5 Lapis Anti-Ban & Infrastruktur Cloud Skalabilitas Tinggi.",
     creator: "@wahide_app",
     images: [`${siteUrl}/icon.png`],
   },

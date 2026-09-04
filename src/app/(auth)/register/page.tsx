@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { RegisterForm } from "@/modules/iam/components/auth/RegisterForm";
 import { AuthLayout } from "@/components/layout/auth/AuthLayout";
 
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Daftar Akun Bisnis Gratis | Wahide WhatsApp Gateway",
     description:
-      "Mulai uji coba gratis WhatsApp Gateway dengan teknologi Session Hibernation dan Go Microservices.",
+      "Mulai uji coba gratis WhatsApp Gateway dengan teknologi Session Hibernation dan teknologi cloud berkinerja tinggi.",
     url: "/register",
   },
 };

@@ -9,7 +9,7 @@
   "mission2": "Mengimplementasikan sistem proteksi 5-lapis anti-ban dan simulasi perilaku pengetikan manusia yang aman.",
   "mission3": "Menghadirkan transparansi penuh, kepatuhan privasi data (UU PDP & GDPR), dan dukungan teknis 24/7.",
   "statsUptime": "SLA Uptime Infrastruktur",
-  "statsRam": "Konsumsi Memori Go Engine",
+  "statsRam": "Konsumsi Memori Socket Engine",
   "statsMessages": "Pesan Terkirim per Hari",
   "statsTenants": "Bisnis & Tenant Aktif",
   "techArchitectureTitle": "Keunggulan Rekayasa Arsitektur Wahide",

@@ -20,7 +20,7 @@ function normalizeUserAddress(raw: Record<string, unknown>): UserAddress {
 }
 
 export const addressApi = {
-  // Backend Go Wahide IAM Endpoints
+  // Wahide IAM API Endpoints
   getUserAddress: async (signal?: AbortSignal): Promise<UserAddress | null> => {
     try {
       const res = await httpClient.get<Record<string, unknown>>(

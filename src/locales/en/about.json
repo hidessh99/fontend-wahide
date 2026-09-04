@@ -9,7 +9,7 @@
   "mission2": "Implement 5-layer anti-ban protection systems and safe human typing behavior simulations.",
   "mission3": "Deliver full transparency, data privacy compliance (UU PDP & GDPR), and 24/7 technical customer support.",
   "statsUptime": "Infrastructure Uptime SLA",
-  "statsRam": "Go Engine Memory Footprint",
+  "statsRam": "Socket Engine Memory Footprint",
   "statsMessages": "Delivered Messages / Day",
   "statsTenants": "Active Business Tenants",
   "techArchitectureTitle": "Wahide Engineering Architecture Highlights",
