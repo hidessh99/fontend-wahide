@@ -5,8 +5,10 @@ import { useAdminDevices } from "@/modules/admin/hooks/useAdminDevices";
 import { DevicesManagementTable } from "@/modules/admin/components/devices/DevicesManagementTable";
 import { DeviceMetricsCards } from "@/modules/admin/components/devices/DeviceMetricsCards";
 import { Smartphone, ShieldCheck } from "lucide-react";
+import { useI18n } from "@/lib/i18n/context";
 
 export function AdminDevicesView() {
+  const { t } = useI18n();
   const {
     devices,
     isLoading,
@@ -38,12 +40,11 @@ export function AdminDevicesView() {
               <Smartphone className="size-4 sm:size-5" />
             </div>
             <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl lg:text-3xl">
-              Manajemen Perangkat WhatsApp Seluruh Pengguna
+              {t("admin.devices.title")}
             </h1>
           </div>
           <p className="text-foreground-secondary max-w-2xl text-xs font-semibold sm:text-sm">
-            Pantau dan kelola seluruh slot instance nomor WhatsApp yang terhubung di platform, audit
-            trust score, dan kelola pemutusan sesi jika diperlukan.
+            {t("admin.devices.subtitle")}
           </p>
         </div>
       </div>
@@ -57,7 +58,7 @@ export function AdminDevicesView() {
           <div className="flex items-center gap-2">
             <ShieldCheck className="dark:text-wise-green size-4 text-emerald-600" />
             <h2 className="text-foreground text-base font-black">
-              Daftar Seluruh Slot Perangkat WhatsApp
+              {t("admin.devices.listTitle")}
             </h2>
           </div>
         </div>

@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/table";
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
 import { useTableSort } from "@/hooks/useTableSort";
+import { useI18n } from "@/lib/i18n/context";
 
 interface UsersTableProps {
   users: UserItem[];
@@ -55,18 +56,21 @@ interface UsersTableProps {
   onUpdateUser: (userId: string, data: UpdateUserInput) => Promise<unknown>;
 }
 
-function getRoleBadge(role: string) {
+function getRoleBadge(
+  role: string,
+  t: (key: string, params?: Record<string, string | number>) => string
+) {
   const upper = (role || "").toUpperCase();
   if (upper === "SUPER_ADMIN" || upper === "ADMIN") {
-    return <Badge variant="danger">Super Admin</Badge>;
+    return <Badge variant="danger">{t("admin.users.badgeSuperAdmin")}</Badge>;
   }
   if (upper === "SELLER") {
-    return <Badge variant="success">Seller</Badge>;
+    return <Badge variant="success">{t("admin.users.badgeSeller")}</Badge>;
   }
   if (upper === "AGENT") {
-    return <Badge variant="info">CS Agent</Badge>;
+    return <Badge variant="info">{t("admin.users.badgeAgent")}</Badge>;
   }
-  return <Badge variant="neutral">{role || "User"}</Badge>;
+  return <Badge variant="neutral">{role || t("admin.users.filterUser")}</Badge>;
 }
 
 export function UsersTable({
@@ -91,6 +95,7 @@ export function UsersTable({
   onAdjustBalance,
   onUpdateUser,
 }: UsersTableProps) {
+  const { t, locale } = useI18n();
   const [searchInput, setSearchInput] = useState("");
   const [selectedUserForAdjust, setSelectedUserForAdjust] = useState<UserItem | null>(null);
   const [selectedUserForEdit, setSelectedUserForEdit] = useState<UserItem | null>(null);
@@ -130,7 +135,7 @@ export function UsersTable({
             onChange={setSearchInput}
             onSearch={() => onSearch(searchInput.trim())}
             onClear={handleResetSearch}
-            placeholder="Cari berdasarkan nama, email, atau nomor WhatsApp..."
+            placeholder={t("admin.users.searchPlaceholder")}
           />
 
           {/* Filters & Refresh */}
@@ -142,11 +147,11 @@ export function UsersTable({
               variant="pill"
               wrapperClassName="flex-1 sm:flex-initial"
             >
-              <option value="ALL">Semua Peran</option>
-              <option value="SELLER">Seller</option>
-              <option value="SUPER_ADMIN">Super Admin</option>
-              <option value="AGENT">CS Agent</option>
-              <option value="USER">User</option>
+              <option value="ALL">{t("admin.users.filterAllRoles")}</option>
+              <option value="SELLER">{t("admin.users.filterSeller")}</option>
+              <option value="SUPER_ADMIN">{t("admin.users.filterSuperAdmin")}</option>
+              <option value="AGENT">{t("admin.users.filterAgent")}</option>
+              <option value="USER">{t("admin.users.filterUser")}</option>
             </NativeSelect>
 
             {/* Status Filter */}
@@ -156,9 +161,9 @@ export function UsersTable({
               variant="pill"
               wrapperClassName="flex-1 sm:flex-initial"
             >
-              <option value="ALL">Semua Status</option>
-              <option value="ACTIVE">🟢 Aktif</option>
-              <option value="SUSPENDED">🔴 Ditangguhkan</option>
+              <option value="ALL">{t("admin.users.filterAllStatus")}</option>
+              <option value="ACTIVE">{t("admin.users.filterActive")}</option>
+              <option value="SUSPENDED">{t("admin.users.filterSuspended")}</option>
             </NativeSelect>
 
             {/* Refresh Button */}
@@ -168,10 +173,10 @@ export function UsersTable({
               onClick={onRefresh}
               disabled={isLoading}
               className="border-border hover:border-foreground-muted h-10 shrink-0 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold transition"
-              aria-label="Refresh Data Pengguna"
+              aria-label={t("admin.users.refreshAria")}
             >
               <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin" : ""}`} />
-              <span className="hidden sm:inline">Refresh</span>
+              <span className="hidden sm:inline">{t("refresh")}</span>
             </Button>
           </div>
         </div>
@@ -182,16 +187,16 @@ export function UsersTable({
         {isLoading ? (
           <div className="text-foreground-muted flex flex-col items-center justify-center space-y-3 py-16">
             <Loader2 className="dark:text-wise-green size-7 animate-spin text-emerald-600" />
-            <span className="text-xs font-bold">Memuat daftar pengguna platform...</span>
+            <span className="text-xs font-bold">{t("admin.users.loadingText")}</span>
           </div>
         ) : users.length === 0 ? (
           <EmptyState
             icon={<User />}
-            title="Tidak Ada Pengguna Ditemukan"
+            title={t("admin.users.emptyTitle")}
             description={
               activeSearch
-                ? `Tidak ditemukan hasil yang cocok dengan kata kunci "${activeSearch}". Coba kata kunci lain.`
-                : "Belum ada data pengguna yang terdaftar pada sistem."
+                ? t("admin.users.emptySearchDesc", { query: activeSearch })
+                : t("admin.users.emptyDesc")
             }
           />
         ) : (
@@ -222,16 +227,16 @@ export function UsersTable({
                       </div>
 
                       <div className="flex shrink-0 flex-col items-end gap-1">
-                        {getRoleBadge(u.role || u.roleName || "USER")}
+                        {getRoleBadge(u.role || u.roleName || "USER", t)}
                         {isActive ? (
                           <span className="dark:text-wise-green inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600">
                             <CheckCircle2 className="size-3" />
-                            <span>Aktif</span>
+                            <span>{t("admin.users.badgeActive")}</span>
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1 text-[10px] font-bold text-rose-600 dark:text-rose-400">
                             <ShieldAlert className="size-3" />
-                            <span>Ditangguhkan</span>
+                            <span>{t("admin.users.badgeSuspended")}</span>
                           </span>
                         )}
                       </div>
@@ -241,7 +246,7 @@ export function UsersTable({
                     <div className="border-border/40 grid grid-cols-2 gap-2 border-t pt-2 text-xs">
                       <div>
                         <span className="text-foreground-muted block text-[10px] font-bold uppercase">
-                          No. Telepon / WA
+                          {t("admin.users.phoneColLabel")}
                         </span>
                         <span className="text-foreground block truncate font-mono text-[11px] font-semibold">
                           {phone}
@@ -249,10 +254,10 @@ export function UsersTable({
                       </div>
                       <div className="text-right">
                         <span className="text-foreground-muted block text-[10px] font-bold uppercase">
-                          Saldo Dompet
+                          {t("admin.users.walletBalanceLabel")}
                         </span>
                         <span className="dark:text-wise-green block truncate font-mono text-xs font-bold text-emerald-700">
-                          Rp {balance.toLocaleString("id-ID")}
+                          Rp {balance.toLocaleString(locale === "en" ? "en-US" : "id-ID")}
                         </span>
                       </div>
                     </div>
@@ -267,7 +272,7 @@ export function UsersTable({
                         className="border-border hover:bg-muted h-8.5 justify-center gap-1.5 rounded-full text-xs font-bold"
                       >
                         <Edit className="dark:text-wise-green size-3.5 text-emerald-600" />
-                        <span>Ubah</span>
+                        <span>{t("admin.users.editBtn")}</span>
                       </Button>
 
                       <Button
@@ -278,7 +283,7 @@ export function UsersTable({
                         className="border-border hover:bg-muted h-8.5 justify-center gap-1.5 rounded-full text-xs font-bold"
                       >
                         <Sliders className="size-3.5 text-rose-600 dark:text-rose-400" />
-                        <span>Saldo</span>
+                        <span>{t("admin.users.balanceBtn")}</span>
                       </Button>
                     </div>
                   </div>
@@ -293,7 +298,7 @@ export function UsersTable({
                   <TableRow className="border-border bg-muted/50 hover:bg-muted/50">
                     <TableHead className="w-[25%] px-5 py-3.5">
                       <DataTableColumnHeader
-                        title="Nama Lengkap"
+                        title={t("admin.users.colName")}
                         columnKey="name"
                         currentSortKey={sortKey as string}
                         currentSortOrder={sortOrder}
@@ -302,7 +307,7 @@ export function UsersTable({
                     </TableHead>
                     <TableHead className="w-[20%] px-4 py-3.5">
                       <DataTableColumnHeader
-                        title="Email"
+                        title={t("admin.users.colEmail")}
                         columnKey="email"
                         currentSortKey={sortKey as string}
                         currentSortOrder={sortOrder}
@@ -311,22 +316,22 @@ export function UsersTable({
                     </TableHead>
                     <TableHead className="w-[18%] px-4 py-3.5">
                       <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
-                        Nomor Telepon / WhatsApp
+                        {t("admin.users.colPhone")}
                       </div>
                     </TableHead>
                     <TableHead className="w-[10%] px-3 py-3.5 text-center">
                       <div className="text-foreground-muted text-center text-[11px] font-extrabold tracking-wider uppercase select-none">
-                        Role / Peran
+                        {t("admin.users.colRole")}
                       </div>
                     </TableHead>
                     <TableHead className="w-[10%] px-3 py-3.5 text-center">
                       <div className="text-foreground-muted text-center text-[11px] font-extrabold tracking-wider uppercase select-none">
-                        Status Akun
+                        {t("admin.users.colStatus")}
                       </div>
                     </TableHead>
                     <TableHead className="w-[12%] px-4 py-3.5 text-right">
                       <DataTableColumnHeader
-                        title="Saldo Dompet"
+                        title={t("admin.users.colBalance")}
                         columnKey="depositBalance"
                         currentSortKey={sortKey as string}
                         currentSortOrder={sortOrder}
@@ -336,7 +341,7 @@ export function UsersTable({
                     </TableHead>
                     <TableHead className="w-[10%] px-5 py-3.5 text-right">
                       <div className="text-foreground-muted text-right text-[11px] font-extrabold tracking-wider uppercase select-none">
-                        Aksi
+                        {t("admin.users.colActions")}
                       </div>
                     </TableHead>
                   </TableRow>
@@ -380,7 +385,7 @@ export function UsersTable({
                         {/* 4. Role / Peran */}
                         <TableCell className="px-3 py-3.5 text-center align-middle">
                           <div className="inline-flex items-center justify-center">
-                            {getRoleBadge(u.role || u.roleName || "USER")}
+                            {getRoleBadge(u.role || u.roleName || "USER", t)}
                           </div>
                         </TableCell>
 
@@ -390,12 +395,12 @@ export function UsersTable({
                             {isActive ? (
                               <span className="dark:text-wise-green inline-flex items-center gap-1 text-xs font-bold text-emerald-600">
                                 <CheckCircle2 className="size-3.5" />
-                                <span>Aktif</span>
+                                <span>{t("admin.users.badgeActive")}</span>
                               </span>
                             ) : (
                               <span className="inline-flex items-center gap-1 text-xs font-bold text-rose-600 dark:text-rose-400">
                                 <ShieldAlert className="size-3.5" />
-                                <span>Ditangguhkan</span>
+                                <span>{t("admin.users.badgeSuspended")}</span>
                               </span>
                             )}
                           </div>
@@ -404,7 +409,7 @@ export function UsersTable({
                         {/* 6. Saldo Dompet */}
                         <TableCell className="text-foreground px-4 py-3.5 text-right align-middle font-mono font-bold">
                           <span className="dark:text-wise-green text-emerald-700">
-                            Rp {balance.toLocaleString("id-ID")}
+                            Rp {balance.toLocaleString(locale === "en" ? "en-US" : "id-ID")}
                           </span>
                         </TableCell>
 
@@ -417,10 +422,10 @@ export function UsersTable({
                               size="sm"
                               onClick={() => handleOpenEdit(u)}
                               className="border-border hover:border-foreground-muted hover:bg-muted h-8 gap-1 rounded-full px-2.5 text-xs font-bold"
-                              title="Ubah Data & Password"
+                              title={t("admin.users.editTooltip")}
                             >
                               <Edit className="dark:text-wise-green size-3.5 text-emerald-600" />
-                              <span>Ubah</span>
+                              <span>{t("admin.users.editBtn")}</span>
                             </Button>
 
                             <Button
@@ -429,10 +434,10 @@ export function UsersTable({
                               size="sm"
                               onClick={() => handleOpenAdjust(u)}
                               className="border-border hover:border-foreground-muted hover:bg-muted h-8 gap-1 rounded-full px-2.5 text-xs font-bold"
-                              title="Sesuaikan Saldo Dompet"
+                              title={t("admin.users.adjustTooltip")}
                             >
                               <Sliders className="size-3.5 text-rose-600 dark:text-rose-400" />
-                              <span>Saldo</span>
+                              <span>{t("admin.users.balanceBtn")}</span>
                             </Button>
                           </div>
                         </TableCell>
@@ -457,7 +462,7 @@ export function UsersTable({
             onNextPage={onNextPage}
             onPageSizeChange={onPageSizeChange}
             pageSizeOptions={[10, 25, 50]}
-            entityName="pengguna"
+            entityName={t("admin.users.entityName")}
           />
         )}
       </div>

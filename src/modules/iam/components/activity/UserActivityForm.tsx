@@ -21,8 +21,12 @@ import {
   Smartphone,
   Send,
 } from "lucide-react";
+import { useI18n } from "@/lib/i18n/context";
 
-export function formatHumanActivityDate(rawDate?: string): {
+export function formatHumanActivityDate(
+  rawDate?: string,
+  locale = "id"
+): {
   formattedDate: string;
   formattedTime: string;
   fullHuman: string;
@@ -39,28 +43,16 @@ export function formatHumanActivityDate(rawDate?: string): {
     return { formattedDate: rawDate, formattedTime: "", fullHuman: rawDate };
   }
 
-  const day = dateObj.getDate();
-  const months = [
-    "Januari",
-    "Februari",
-    "Maret",
-    "April",
-    "Mei",
-    "Juni",
-    "Juli",
-    "Agustus",
-    "September",
-    "Oktober",
-    "November",
-    "Desember",
-  ];
-  const monthName = months[dateObj.getMonth()];
-  const year = dateObj.getFullYear();
+  const formattedDate = new Intl.DateTimeFormat(locale === "en" ? "en-US" : "id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(dateObj);
+
   const hours = String(dateObj.getHours()).padStart(2, "0");
   const minutes = String(dateObj.getMinutes()).padStart(2, "0");
-
-  const formattedDate = `${day} ${monthName} ${year}`;
-  const formattedTime = `${hours}:${minutes} WIB`;
+  const timeSuffix = locale === "en" ? "UTC+7" : "WIB";
+  const formattedTime = `${hours}:${minutes} ${timeSuffix}`;
   const fullHuman = `${formattedDate}, ${formattedTime}`;
 
   return { formattedDate, formattedTime, fullHuman };
@@ -99,6 +91,7 @@ export function UserActivityForm({
   onNextPage,
   onRefresh,
 }: UserActivityFormProps) {
+  const { t, locale } = useI18n();
   const [searchInput, setSearchInput] = useState("");
 
   const handleClear = () => {
@@ -107,12 +100,12 @@ export function UserActivityForm({
   };
 
   const filterChips = [
-    { value: "ALL", label: "Semua Aktivitas" },
-    { value: "FINANCE", label: "Transaksi & Saldo" },
-    { value: "AUTH", label: "Autentikasi (Login/Logout)" },
-    { value: "SECURITY", label: "Keamanan & Password" },
-    { value: "WHATSAPP", label: "WhatsApp & Broadcast" },
-    { value: "PROFILE", label: "Profil Akun" },
+    { value: "ALL", label: t("activities.filterAll") },
+    { value: "FINANCE", label: t("activities.filterFinance") },
+    { value: "AUTH", label: t("activities.filterAuth") },
+    { value: "SECURITY", label: t("activities.filterSecurity") },
+    { value: "WHATSAPP", label: t("activities.filterWhatsapp") },
+    { value: "PROFILE", label: t("activities.filterProfile") },
   ];
 
   const renderTypeBadge = (rawType: string) => {
@@ -218,8 +211,8 @@ export function UserActivityForm({
               onChange={setSearchInput}
               onSearch={(val) => onSearch(val.trim())}
               onClear={handleClear}
-              placeholder="Cari keterangan aktivitas akun Anda..."
-              buttonText="Cari"
+              placeholder={t("activities.searchPlaceholder")}
+              buttonText={t("activities.searchBtn")}
             />
           </div>
 
@@ -231,8 +224,8 @@ export function UserActivityForm({
             onClick={onRefresh}
             disabled={isLoading}
             className="border-border hover:border-foreground-muted h-10 shrink-0 cursor-pointer gap-1.5 self-start rounded-full px-3.5 text-xs font-bold transition sm:self-auto"
-            aria-label="Refresh Rekaman Aktivitas"
-            title="Muat Ulang Data"
+            aria-label={t("activities.refreshAria")}
+            title={t("activities.refreshTitle")}
           >
             <RefreshCw
               className={`size-3.5 ${isLoading ? "dark:text-wise-green animate-spin text-emerald-700" : ""}`}
@@ -245,7 +238,7 @@ export function UserActivityForm({
         <div className="no-scrollbar border-border/50 flex items-center gap-1.5 overflow-x-auto scroll-smooth border-t pt-1">
           <div className="text-foreground-muted mr-1 flex shrink-0 items-center gap-1 text-[11px] font-bold">
             <Filter className="size-3" />
-            <span>Kategori:</span>
+            <span>{t("activities.categoryLabel")}</span>
           </div>
           {filterChips.map((chip) => {
             const isActive = typeFilter === chip.value;
@@ -275,17 +268,17 @@ export function UserActivityForm({
               <RefreshCw className="size-4.5" />
             </div>
             <p className="text-foreground text-xs font-bold">
-              Memuat rekaman log aktivitas akun...
+              {t("activities.loading")}
             </p>
           </div>
         ) : activities.length === 0 ? (
           <div className="space-y-2.5 p-10 text-center sm:p-14">
             <Activity className="text-foreground-muted mx-auto size-10" />
-            <h3 className="text-foreground text-sm font-bold">Tidak Ada Aktivitas Ditemukan</h3>
+            <h3 className="text-foreground text-sm font-bold">{t("activities.emptyTitle")}</h3>
             <p className="text-foreground-secondary mx-auto max-w-sm text-xs">
               {activeSearch
-                ? `Tidak ada hasil yang sesuai dengan kata kunci "${activeSearch}". Silakan periksa kembali filter Anda.`
-                : "Belum ada rekaman aktivitas yang tercatat pada akun Anda."}
+                ? t("activities.emptySearchDesc", { query: activeSearch })
+                : t("activities.emptyDesc")}
             </p>
             {activeSearch && (
               <Button
@@ -295,7 +288,7 @@ export function UserActivityForm({
                 onClick={handleClear}
                 className="mt-2 cursor-pointer rounded-full text-xs font-bold"
               >
-                Reset Pencarian
+                {t("activities.resetSearch")}
               </Button>
             )}
           </div>
@@ -304,7 +297,7 @@ export function UserActivityForm({
             {/* Mobile View: Card List (Visible on < 768px) */}
             <div className="divide-border/50 divide-y md:hidden">
               {activities.map((act) => {
-                const { fullHuman } = formatHumanActivityDate(act.createdAt);
+                const { fullHuman } = formatHumanActivityDate(act.createdAt, locale);
                 return (
                   <div key={act.id} className="bg-surface space-y-2.5 p-4 dark:bg-[#161715]">
                     <div className="flex items-center justify-between gap-2">
@@ -315,7 +308,7 @@ export function UserActivityForm({
                     </div>
 
                     <p className="text-foreground-secondary bg-muted/30 border-border/40 rounded-lg border p-2.5 text-xs leading-relaxed font-medium">
-                      {act.description || "Tidak ada deskripsi rinci aktivitas."}
+                      {act.description || t("activities.noDescription")}
                     </p>
 
                     <div className="text-foreground-muted border-border/30 flex items-center justify-between border-t pt-1 text-[11px]">
@@ -333,15 +326,15 @@ export function UserActivityForm({
             <div className="hidden md:block">
               {/* Header (No Action Column, Generous Layout) */}
               <div className="bg-muted/60 border-border text-foreground-muted grid grid-cols-12 gap-3 border-b px-5 py-3.5 text-xs font-extrabold tracking-wider uppercase select-none">
-                <div className="col-span-3">Tipe Aktivitas</div>
-                <div className="col-span-6">Deskripsi Kejadian</div>
-                <div className="col-span-3 text-right">Waktu Aktivitas</div>
+                <div className="col-span-3">{t("activities.colType")}</div>
+                <div className="col-span-6">{t("activities.colDescription")}</div>
+                <div className="col-span-3 text-right">{t("activities.colTime")}</div>
               </div>
 
               {/* Rows */}
               <div className="divide-border/50 divide-y text-xs font-semibold">
                 {activities.map((act) => {
-                  const { formattedDate, formattedTime } = formatHumanActivityDate(act.createdAt);
+                  const { formattedDate, formattedTime } = formatHumanActivityDate(act.createdAt, locale);
                   return (
                     <div
                       key={act.id}
@@ -355,7 +348,7 @@ export function UserActivityForm({
                       {/* Col 2: Deskripsi */}
                       <div className="text-foreground-secondary col-span-6 pr-2 text-xs font-medium">
                         <span className="line-clamp-2 leading-relaxed">
-                          {act.description || "Aktivitas tercatat pada akun."}
+                          {act.description || t("activities.defaultDescription")}
                         </span>
                       </div>
 
@@ -386,7 +379,7 @@ export function UserActivityForm({
             pageSize={pageSize}
             onPrevPage={onPrevPage}
             onNextPage={onNextPage}
-            entityName="rekaman aktivitas"
+            entityName={t("activities.entityName")}
           />
         )}
       </div>

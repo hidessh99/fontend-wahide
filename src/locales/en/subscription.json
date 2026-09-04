@@ -31,5 +31,22 @@
   "saving": "Saving...",
   "toastWebhookSaved": "Webhook settings saved successfully.",
   "toastSecretCopied": "Signing Secret copied to clipboard.",
-  "toastSecretRegenerated": "New Signing Secret generated successfully."
+  "toastSecretRegenerated": "New Signing Secret generated successfully.",
+  "confirmTitle": "Confirm Plan Payment",
+  "confirmSubtitle": "Activate {planName} plan with automatic deduction from your Wallet Balance.",
+  "selectedPlan": "Selected Plan:",
+  "validityPeriod": "Validity Period:",
+  "validityValue": "30 Days (1 Month)",
+  "totalBill": "Total Due:",
+  "walletBalance": "Your Wallet Balance:",
+  "remainingBalance": "Remaining Balance After Upgrade:",
+  "sufficientTitle": "Sufficient Balance.",
+  "sufficientDesc": "Your balance will be automatically deducted by {price} and a Paid Invoice will be issued.",
+  "insufficientTitle": "Insufficient Balance.",
+  "insufficientDesc": "You need an additional balance of {deficit} to activate this plan.",
+  "invoiceAssurance": "An official SUBSCRIPTION invoice will automatically be recorded in Billing.",
+  "cancel": "Cancel",
+  "processing": "Processing Payment...",
+  "payAndActivate": "Pay & Activate Plan",
+  "topUpAtBilling": "Top-Up Balance in Billing"
 }

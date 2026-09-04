@@ -14,6 +14,7 @@ import {
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 import { AlertTriangle, Trash2, Loader2, Clock, User, Mail } from "lucide-react";
+import { useI18n } from "@/lib/i18n/context";
 
 interface DeleteActivityConfirmModalProps {
   isOpen: boolean;
@@ -28,6 +29,7 @@ export function DeleteActivityConfirmModal({
   onClose,
   onConfirm,
 }: DeleteActivityConfirmModalProps) {
+  const { t, locale } = useI18n();
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -66,10 +68,10 @@ export function DeleteActivityConfirmModal({
           </div>
           <div>
             <AlertDialogTitle className="text-foreground text-base font-extrabold">
-              Hapus Rekaman Aktivitas
+              {t("admin.activities.deleteModalTitle")}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-foreground-secondary text-xs font-semibold">
-              Tindakan ini akan menghapus rekaman log audit secara permanen.
+              {t("admin.activities.deleteModalSubtitle", { id: activity.id.slice(-6) })}
             </AlertDialogDescription>
           </div>
         </AlertDialogHeader>
@@ -113,7 +115,7 @@ export function DeleteActivityConfirmModal({
               <div className="text-foreground-muted border-border/40 flex items-center justify-between border-t pt-1 text-[11px]">
                 <div className="text-foreground-secondary flex items-center gap-1.5 font-medium">
                   <Clock className="text-foreground-muted size-3" />
-                  <span>{formatHumanActivityDate(activity.createdAt).fullHuman}</span>
+                  <span>{formatHumanActivityDate(activity.createdAt, locale).fullHuman}</span>
                 </div>
                 <span className="font-mono text-[9px]">ID: {activity.id}</span>
               </div>
@@ -129,8 +131,7 @@ export function DeleteActivityConfirmModal({
                   className="border-border mt-0.5 size-4 cursor-pointer rounded text-rose-600 focus:ring-rose-500"
                 />
                 <span className="text-foreground-secondary group-hover:text-foreground text-xs leading-tight font-bold transition">
-                  Saya mengonfirmasi bahwa rekaman log audit ini akan dihapus secara permanen dan
-                  tidak dapat dipulihkan.
+                  {t("admin.activities.deleteWarning")}
                 </span>
               </label>
             </div>
@@ -142,7 +143,7 @@ export function DeleteActivityConfirmModal({
               disabled={isDeleting}
               className="border-border hover:border-foreground-muted cursor-pointer rounded-full px-4 text-xs font-bold"
             >
-              Batal
+              {t("actions.cancel")}
             </AlertDialogCancel>
             <Button
               type="submit"
@@ -154,12 +155,12 @@ export function DeleteActivityConfirmModal({
               {isDeleting ? (
                 <>
                   <Loader2 className="size-3.5 animate-spin" />
-                  <span>Menghapus...</span>
+                  <span>{t("admin.activities.deletingBtn")}</span>
                 </>
               ) : (
                 <>
                   <Trash2 className="size-3.5" />
-                  <span>Hapus Permanen</span>
+                  <span>{t("admin.activities.deleteConfirmBtn")}</span>
                 </>
               )}
             </Button>

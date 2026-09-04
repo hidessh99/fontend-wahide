@@ -28,6 +28,7 @@ import {
   User,
   Lock,
 } from "lucide-react";
+import { useI18n } from "@/lib/i18n/context";
 
 interface EditUserModalProps {
   user: UserItem | null;
@@ -43,6 +44,7 @@ interface EditUserModalContentProps {
 }
 
 function EditUserModalContent({ user, onClose, onSubmit }: EditUserModalContentProps) {
+  const { t, locale } = useI18n();
   const [name, setName] = useState(user.name || "");
   const [email, setEmail] = useState(user.email || "");
   const [phoneNumber, setPhoneNumber] = useState(user.phoneNumber || user.phone || "");
@@ -89,10 +91,10 @@ function EditUserModalContent({ user, onClose, onSubmit }: EditUserModalContentP
         </div>
         <div>
           <DialogTitle className="text-foreground text-lg font-black tracking-tight sm:text-xl">
-            Ubah Data Pengguna
+            {t("admin.users.editModalTitle")}
           </DialogTitle>
           <DialogDescription className="text-foreground-secondary text-xs font-semibold">
-            Kelola profil, kontak, peran, dan reset kata sandi akun {user.name}.
+            {t("admin.users.editModalSubtitle", { name: user.name })}
           </DialogDescription>
         </div>
       </DialogHeader>
@@ -107,7 +109,7 @@ function EditUserModalContent({ user, onClose, onSubmit }: EditUserModalContentP
               className="text-foreground-secondary mb-1 flex items-center gap-1.5 font-bold"
             >
               <User className="size-3.5" />
-              <span>Nama Lengkap:</span>
+              <span>{t("admin.users.fullNameLabel")}</span>
             </label>
             <Input
               id="edit-user-name"
@@ -115,7 +117,7 @@ function EditUserModalContent({ user, onClose, onSubmit }: EditUserModalContentP
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Contoh: John Doe"
+              placeholder={t("admin.users.fullNamePlaceholder")}
               variant="pill"
             />
           </div>
@@ -127,7 +129,7 @@ function EditUserModalContent({ user, onClose, onSubmit }: EditUserModalContentP
               className="text-foreground-secondary mb-1 flex items-center gap-1.5 font-bold"
             >
               <Mail className="size-3.5" />
-              <span>Alamat Email:</span>
+              <span>{t("admin.users.emailLabel")}</span>
             </label>
             <Input
               id="edit-user-email"
@@ -135,7 +137,7 @@ function EditUserModalContent({ user, onClose, onSubmit }: EditUserModalContentP
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="user@example.com"
+              placeholder={t("admin.users.emailPlaceholder")}
               variant="pill"
             />
           </div>
@@ -147,14 +149,14 @@ function EditUserModalContent({ user, onClose, onSubmit }: EditUserModalContentP
               className="text-foreground-secondary mb-1 flex items-center gap-1.5 font-bold"
             >
               <Phone className="size-3.5" />
-              <span>Nomor WhatsApp:</span>
+              <span>{t("admin.users.phoneLabel")}</span>
             </label>
             <Input
               id="edit-user-phone"
               type="tel"
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
-              placeholder="6281234567890"
+              placeholder={t("admin.users.phonePlaceholder")}
               variant="pill"
               className="font-mono"
             />
@@ -167,7 +169,7 @@ function EditUserModalContent({ user, onClose, onSubmit }: EditUserModalContentP
               className="text-foreground-secondary mb-1 flex items-center gap-1.5 font-bold"
             >
               <Shield className="size-3.5" />
-              <span>Peran Akun (Role):</span>
+              <span>{t("admin.users.roleLabel")}</span>
             </label>
             <NativeSelect
               id="edit-user-role"
@@ -175,24 +177,24 @@ function EditUserModalContent({ user, onClose, onSubmit }: EditUserModalContentP
               onChange={(e) => setRole(e.target.value)}
               variant="pill"
             >
-              <option value="SELLER">SELLER (Pengguna Standar)</option>
-              <option value="ADMIN">ADMIN (Staf Pengelola Platform)</option>
-              <option value="SUPERADMIN">SUPERADMIN (Akses Penuh)</option>
+              <option value="SELLER">{t("admin.users.roleSeller")}</option>
+              <option value="ADMIN">{t("admin.users.roleAdmin")}</option>
+              <option value="SUPERADMIN">{t("admin.users.roleSuperAdmin")}</option>
             </NativeSelect>
           </div>
 
           {/* Status Toggle */}
           <div className="border-border bg-muted/20 flex items-center justify-between rounded-lg border p-3">
             <div>
-              <span className="text-foreground block font-bold">Status Akun Aktif</span>
+              <span className="text-foreground block font-bold">{t("admin.users.statusActiveTitle")}</span>
               <span className="text-foreground-secondary text-[11px]">
-                Izinkan pengguna login dan mengakses seluruh modul Wahide.
+                {t("admin.users.statusActiveDesc")}
               </span>
             </div>
             <Switch
               checked={isActive}
               onCheckedChange={setIsActive}
-              aria-label="Status Akun Aktif"
+              aria-label={t("admin.users.statusActiveTitle")}
             />
           </div>
 
@@ -204,7 +206,7 @@ function EditUserModalContent({ user, onClose, onSubmit }: EditUserModalContentP
                 className="text-foreground-secondary flex items-center gap-1.5 font-bold"
               >
                 <Lock className="size-3.5" />
-                <span>Reset Kata Sandi (Opsional):</span>
+                <span>{t("admin.users.resetPasswordLabel")}</span>
               </label>
               <button
                 type="button"
@@ -212,7 +214,7 @@ function EditUserModalContent({ user, onClose, onSubmit }: EditUserModalContentP
                 className="dark:text-wise-green flex cursor-pointer items-center gap-1 font-mono text-[11px] font-bold text-emerald-600 hover:underline"
               >
                 <Sparkles className="size-3" />
-                <span>Acak Sandi Kuat</span>
+                <span>{t("admin.users.generatePasswordBtn")}</span>
               </button>
             </div>
             <div className="relative">
@@ -221,7 +223,7 @@ function EditUserModalContent({ user, onClose, onSubmit }: EditUserModalContentP
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Kosongkan jika tidak ingin mengubah sandi"
+                placeholder={t("admin.users.passwordPlaceholder")}
                 variant="pill"
                 className="pr-10 font-mono"
               />
@@ -229,14 +231,14 @@ function EditUserModalContent({ user, onClose, onSubmit }: EditUserModalContentP
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="text-foreground-muted hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
-                aria-label={showPassword ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}
+                aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
               </button>
             </div>
             {password && (
               <span className="text-[11px] font-medium text-amber-600 dark:text-amber-400">
-                ⚠️ Kata sandi pengguna akan langsung ditimpa menjadi:{" "}
+                {t("admin.users.passwordOverwriteWarning")}{" "}
                 <code className="bg-muted rounded px-1 font-mono font-bold">{password}</code>
               </span>
             )}
@@ -253,7 +255,7 @@ function EditUserModalContent({ user, onClose, onSubmit }: EditUserModalContentP
             disabled={isLoading}
             className="border-border hover:bg-muted rounded-full text-xs font-bold"
           >
-            Batalkan
+            {t("cancel")}
           </Button>
 
           <Button
@@ -266,12 +268,12 @@ function EditUserModalContent({ user, onClose, onSubmit }: EditUserModalContentP
             {isLoading ? (
               <>
                 <Loader2 className="size-3.5 animate-spin" />
-                <span>Menyimpan...</span>
+                <span>{t("admin.users.savingUserBtn")}</span>
               </>
             ) : (
               <>
                 <Save className="size-3.5" />
-                <span>Simpan Perubahan</span>
+                <span>{t("admin.users.saveUserBtn")}</span>
               </>
             )}
           </Button>

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { AdminDeviceItem } from "@/modules/admin/types/admin.types";
+import { useI18n } from "@/lib/i18n/context";
 import { DeleteDeviceModal } from "./DeleteDeviceModal";
 import { DeviceDetailModal } from "./DeviceDetailModal";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,6 @@ import { EmptyState } from "@/components/ui/empty";
 import { SearchInput } from "@/components/ui/search-input";
 import { DataTablePagination } from "@/components/ui/pagination";
 import { NativeSelect } from "@/components/ui/native-select";
-import { formatDateTime } from "@/lib/utils";
 import {
   RefreshCw,
   Smartphone,
@@ -54,42 +54,42 @@ interface DevicesManagementTableProps {
   onPrevPage: () => void;
 }
 
-function getDeviceStatusBadge(status: string) {
+function getDeviceStatusBadge(status: string, t: (key: string, params?: Record<string, string | number>) => string) {
   const upper = (status || "").toUpperCase();
   switch (upper) {
     case "ONLINE":
       return (
         <Badge variant="success">
           <Wifi className="size-3" />
-          <span>Online</span>
+          <span>{t("admin.devices.statusOnline")}</span>
         </Badge>
       );
     case "OFFLINE":
       return (
         <Badge variant="neutral">
           <WifiOff className="size-3" />
-          <span>Offline</span>
+          <span>{t("admin.devices.statusOffline")}</span>
         </Badge>
       );
     case "QR_PENDING":
       return (
         <Badge variant="warning">
           <QrCode className="size-3" />
-          <span>Scan QR</span>
+          <span>{t("admin.devices.statusQrPending")}</span>
         </Badge>
       );
     case "HIBERNATED":
       return (
         <Badge variant="info">
           <Moon className="size-3" />
-          <span>Hibernasi</span>
+          <span>{t("admin.devices.statusHibernated")}</span>
         </Badge>
       );
     case "BANNED":
       return (
         <Badge variant="danger">
           <Ban className="size-3" />
-          <span>Banned</span>
+          <span>{t("admin.devices.statusBanned")}</span>
         </Badge>
       );
     default:
@@ -120,6 +120,7 @@ export function DevicesManagementTable({
   onNextPage,
   onPrevPage,
 }: DevicesManagementTableProps) {
+  const { t, locale } = useI18n();
   const [searchInput, setSearchInput] = useState("");
   const [selectedDeviceForDelete, setSelectedDeviceForDelete] = useState<AdminDeviceItem | null>(
     null
@@ -136,6 +137,18 @@ export function DevicesManagementTable({
   });
 
   const sortedDevices = sortData(devices);
+
+  const formatLocalizedDateTime = (dateInput: string | Date | number): string => {
+    const date = new Date(dateInput);
+    if (isNaN(date.getTime())) return "-";
+    return new Intl.DateTimeFormat(locale === "en" ? "en-US" : "id-ID", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(date);
+  };
 
   const handleResetSearch = () => {
     setSearchInput("");
@@ -163,7 +176,7 @@ export function DevicesManagementTable({
             onChange={setSearchInput}
             onSearch={() => onSearch(searchInput.trim())}
             onClear={handleResetSearch}
-            placeholder="Cari berdasarkan nama perangkat, nomor WhatsApp, ID, atau Tenant..."
+            placeholder={t("admin.devices.searchPlaceholder")}
           />
 
           {/* Filter Status & Refresh */}
@@ -173,12 +186,12 @@ export function DevicesManagementTable({
               onChange={(e) => onStatusFilterChange(e.target.value)}
               variant="pill"
             >
-              <option value="ALL">Semua Status</option>
-              <option value="ONLINE">🟢 Online (Tersambung)</option>
-              <option value="OFFLINE">⚪ Offline (Terputus)</option>
-              <option value="QR_PENDING">🟡 Scan QR Pending</option>
-              <option value="HIBERNATED">🔵 Hibernated</option>
-              <option value="BANNED">🔴 Banned</option>
+              <option value="ALL">{t("admin.devices.filterAll")}</option>
+              <option value="ONLINE">🟢 {t("admin.devices.statusOnline")}</option>
+              <option value="OFFLINE">⚪ {t("admin.devices.statusOffline")}</option>
+              <option value="QR_PENDING">🟡 {t("admin.devices.statusQrPending")}</option>
+              <option value="HIBERNATED">🔵 {t("admin.devices.statusHibernated")}</option>
+              <option value="BANNED">🔴 {t("admin.devices.statusBanned")}</option>
             </NativeSelect>
 
             <Button
@@ -187,10 +200,10 @@ export function DevicesManagementTable({
               onClick={onRefresh}
               disabled={isLoading}
               className="border-border hover:border-foreground-muted h-10 shrink-0 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold transition"
-              aria-label="Refresh Data Perangkat"
+              aria-label={t("admin.devices.refreshAria")}
             >
               <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin" : ""}`} />
-              <span className="hidden sm:inline">Refresh</span>
+              <span className="hidden sm:inline">{t("common.refresh")}</span>
             </Button>
           </div>
         </div>
@@ -201,16 +214,16 @@ export function DevicesManagementTable({
         {isLoading ? (
           <div className="text-foreground-muted flex flex-col items-center justify-center space-y-3 py-16">
             <Loader2 className="dark:text-wise-green size-7 animate-spin text-emerald-600" />
-            <span className="text-xs font-bold">Memuat data perangkat WhatsApp...</span>
+            <span className="text-xs font-bold">{t("admin.devices.loadingText")}</span>
           </div>
         ) : devices.length === 0 ? (
           <EmptyState
             icon={<Smartphone />}
-            title="Tidak Ada Perangkat Ditemukan"
+            title={t("admin.devices.emptyTitle")}
             description={
               searchQuery
-                ? `Tidak ditemukan perangkat dengan kata kunci "${searchQuery}".`
-                : "Saat ini belum ada perangkat WhatsApp yang terdaftar di sistem."
+                ? t("admin.devices.emptySearchDesc", { query: searchQuery })
+                : t("admin.devices.emptyDesc")
             }
           />
         ) : (
@@ -225,18 +238,18 @@ export function DevicesManagementTable({
                         <span className="text-foreground text-sm font-bold">{d.pushName}</span>
                       </div>
                       <span className="text-foreground-secondary block font-mono text-xs font-bold">
-                        {d.jid || "(Belum terhubung)"}
+                        {d.jid || t("admin.devices.notConnected")}
                       </span>
                     </div>
 
-                    <div className="shrink-0">{getDeviceStatusBadge(d.status)}</div>
+                    <div className="shrink-0">{getDeviceStatusBadge(d.status, t)}</div>
                   </div>
 
                   {/* Metrics Bar */}
                   <div className="border-border bg-muted/20 grid grid-cols-3 gap-2 rounded-lg border p-2.5 text-center text-xs">
                     <div>
                       <span className="text-foreground-muted block text-[10px] font-bold uppercase">
-                        Trust
+                        {t("admin.devices.trustLabel")}
                       </span>
                       <span className="text-foreground font-mono font-bold">
                         {d.trustScore}/100
@@ -244,13 +257,13 @@ export function DevicesManagementTable({
                     </div>
                     <div>
                       <span className="text-foreground-muted block text-[10px] font-bold uppercase">
-                        Warmup
+                        {t("admin.devices.warmupLabel")}
                       </span>
                       <span className="text-foreground font-mono font-bold">H-{d.warmupDay}</span>
                     </div>
                     <div>
                       <span className="text-foreground-muted block text-[10px] font-bold uppercase">
-                        Terkirim
+                        {t("admin.devices.sentLabel")}
                       </span>
                       <span className="font-mono font-bold text-teal-600 dark:text-teal-400">
                         {d.dailySentCount}
@@ -262,7 +275,7 @@ export function DevicesManagementTable({
                     <span className="max-w-30 truncate font-mono text-[10px]">
                       Ten: {d.tenantId.slice(0, 10)}...
                     </span>
-                    <span>{formatDateTime(d.createdAt)}</span>
+                    <span>{formatLocalizedDateTime(d.createdAt)}</span>
                   </div>
 
                   {/* Actions */}
@@ -274,15 +287,16 @@ export function DevicesManagementTable({
                       className="border-border hover:bg-muted h-8 cursor-pointer gap-1 rounded-full px-2.5 text-xs font-bold"
                     >
                       <Eye className="size-3.5" />
-                      <span>Detail</span>
+                      <span>{t("admin.devices.detailBtn")}</span>
                     </Button>
 
                     <Button
+                      type="button"
                       variant="outline"
                       size="sm"
                       onClick={() => handleOpenDelete(d)}
                       className="border-border size-8 h-8 cursor-pointer rounded-full p-0 text-rose-600 hover:border-rose-500/50 hover:bg-rose-500/10"
-                      title="Hapus Perangkat"
+                      title={t("admin.devices.deleteConfirmBtn")}
                     >
                       <Trash2 className="size-3.5" />
                     </Button>
@@ -298,7 +312,7 @@ export function DevicesManagementTable({
                   <TableRow className="border-border bg-muted/50 hover:bg-muted/50">
                     <TableHead className="w-[22%] px-5 py-3.5">
                       <DataTableColumnHeader
-                        title="Nama & ID Perangkat"
+                        title={t("admin.devices.colDevice")}
                         columnKey="pushName"
                         currentSortKey={sortKey as string}
                         currentSortOrder={sortOrder}
@@ -307,17 +321,17 @@ export function DevicesManagementTable({
                     </TableHead>
                     <TableHead className="w-[20%] px-4 py-3.5">
                       <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
-                        Nomor WhatsApp (JID)
+                        {t("admin.devices.colJid")}
                       </div>
                     </TableHead>
                     <TableHead className="w-[14%] px-3 py-3.5">
                       <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
-                        Tenant ID
+                        {t("admin.devices.tenantIdLabel")}
                       </div>
                     </TableHead>
                     <TableHead className="w-[14%] px-3 py-3.5 text-center">
                       <DataTableColumnHeader
-                        title="Trust & Warmup"
+                        title={t("admin.devices.colTrustWarmup")}
                         columnKey="trustScore"
                         currentSortKey={sortKey as string}
                         currentSortOrder={sortOrder}
@@ -327,7 +341,7 @@ export function DevicesManagementTable({
                     </TableHead>
                     <TableHead className="w-[10%] px-3 py-3.5 text-center">
                       <DataTableColumnHeader
-                        title="Kirim Hari Ini"
+                        title={t("admin.devices.colDailySent")}
                         columnKey="dailySentCount"
                         currentSortKey={sortKey as string}
                         currentSortOrder={sortOrder}
@@ -337,7 +351,7 @@ export function DevicesManagementTable({
                     </TableHead>
                     <TableHead className="w-[10%] px-3 py-3.5 text-center">
                       <DataTableColumnHeader
-                        title="Status Live"
+                        title={t("admin.devices.colStatus")}
                         columnKey="status"
                         currentSortKey={sortKey as string}
                         currentSortOrder={sortOrder}
@@ -347,7 +361,7 @@ export function DevicesManagementTable({
                     </TableHead>
                     <TableHead className="w-[10%] px-5 py-3.5 text-right">
                       <div className="text-foreground-muted text-right text-[11px] font-extrabold tracking-wider uppercase select-none">
-                        Aksi
+                        {t("admin.devices.colActions")}
                       </div>
                     </TableHead>
                   </TableRow>
@@ -371,7 +385,7 @@ export function DevicesManagementTable({
                       <TableCell className="px-4 py-3.5 align-middle">
                         <div className="text-foreground flex items-center gap-1.5 font-mono text-xs font-bold">
                           <Smartphone className="text-foreground-muted size-3 shrink-0" />
-                          <span className="max-w-45 truncate">{d.jid || "(Belum terhubung)"}</span>
+                          <span className="max-w-45 truncate">{d.jid || t("admin.devices.notConnected")}</span>
                         </div>
                       </TableCell>
 
@@ -404,7 +418,7 @@ export function DevicesManagementTable({
                       {/* 6. Status Live */}
                       <TableCell className="px-3 py-3.5 text-center align-middle">
                         <div className="inline-flex items-center justify-center">
-                          {getDeviceStatusBadge(d.status)}
+                          {getDeviceStatusBadge(d.status, t)}
                         </div>
                       </TableCell>
 
@@ -417,10 +431,10 @@ export function DevicesManagementTable({
                             size="sm"
                             onClick={() => handleOpenDetail(d)}
                             className="border-border hover:bg-muted h-8 cursor-pointer gap-1 rounded-full px-2.5 text-xs font-bold"
-                            title="Lihat Detail Perangkat"
+                            title={t("admin.devices.detailBtn")}
                           >
                             <Eye className="text-foreground-secondary size-3.5" />
-                            <span>Detail</span>
+                            <span>{t("admin.devices.detailBtn")}</span>
                           </Button>
 
                           <Button
@@ -429,7 +443,7 @@ export function DevicesManagementTable({
                             size="sm"
                             onClick={() => handleOpenDelete(d)}
                             className="border-border size-8 h-8 cursor-pointer rounded-full p-0 text-rose-600 hover:border-rose-500/50 hover:bg-rose-500/10"
-                            title="Hapus Perangkat"
+                            title={t("admin.devices.deleteConfirmBtn")}
                           >
                             <Trash2 className="size-3.5" />
                           </Button>
@@ -455,7 +469,7 @@ export function DevicesManagementTable({
             onNextPage={onNextPage}
             onPageSizeChange={onPageSizeChange}
             pageSizeOptions={[10, 15, 25, 50, 100]}
-            entityName="perangkat WhatsApp"
+            entityName={t("admin.devices.entityName")}
           />
         )}
       </div>

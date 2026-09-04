@@ -34,8 +34,10 @@ import {
 } from "@/components/ui/table";
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
 import { useTableSort } from "@/hooks/useTableSort";
+import { useI18n } from "@/lib/i18n/context";
 
 export function PlansManagementTable() {
+  const { t, locale } = useI18n();
   const {
     paginatedPlans,
     isLoading,
@@ -114,7 +116,7 @@ export function PlansManagementTable() {
             onChange={setSearchInput}
             onSearch={() => executeSearch(searchInput.trim())}
             onClear={handleResetSearch}
-            placeholder="Cari berdasarkan nama paket langganan..."
+            placeholder={t("admin.plans.searchPlaceholder")}
           />
 
           {/* Action Buttons: Add Plan & Refresh */}
@@ -125,10 +127,10 @@ export function PlansManagementTable() {
               onClick={fetchPlans}
               disabled={isLoading}
               className="border-border hover:border-foreground-muted h-10 shrink-0 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold transition"
-              aria-label="Refresh Data Paket"
+              aria-label={t("admin.plans.refreshAria")}
             >
               <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin" : ""}`} />
-              <span className="hidden sm:inline">Refresh</span>
+              <span className="hidden sm:inline">{t("refresh")}</span>
             </Button>
 
             <Button
@@ -138,7 +140,7 @@ export function PlansManagementTable() {
               className="h-10 cursor-pointer gap-1.5 px-4 text-xs font-extrabold shadow-sm"
             >
               <Plus className="size-4" />
-              <span>Tambah Paket Baru</span>
+              <span>{t("admin.plans.addPlanBtn")}</span>
             </Button>
           </div>
         </div>
@@ -149,16 +151,16 @@ export function PlansManagementTable() {
         {isLoading ? (
           <div className="text-foreground-muted flex flex-col items-center justify-center space-y-3 py-16">
             <Loader2 className="dark:text-wise-green size-7 animate-spin text-emerald-600" />
-            <span className="text-xs font-bold">Memuat daftar paket langganan...</span>
+            <span className="text-xs font-bold">{t("admin.plans.loadingText")}</span>
           </div>
         ) : paginatedPlans.length === 0 ? (
           <EmptyState
             icon={<Layers />}
-            title="Tidak Ada Paket Ditemukan"
+            title={t("admin.plans.emptyTitle")}
             description={
               searchQuery
-                ? `Tidak ditemukan hasil yang cocok dengan kata kunci "${searchQuery}".`
-                : "Belum ada paket langganan yang dikonfigurasi pada sistem."
+                ? t("admin.plans.emptySearchDesc", { query: searchQuery })
+                : t("admin.plans.emptyDesc")
             }
           />
         ) : (
@@ -180,16 +182,16 @@ export function PlansManagementTable() {
                           <div className="flex items-center gap-2">
                             <span className="text-foreground text-sm font-bold">{p.name}</span>
                             {isFree ? (
-                              <Badge variant="info">Free Tier</Badge>
+                              <Badge variant="info">{t("admin.plans.freeTier")}</Badge>
                             ) : (
-                              <Badge variant="success">Paid Tier</Badge>
+                              <Badge variant="success">{t("admin.plans.paidTier")}</Badge>
                             )}
                           </div>
                           <span className="dark:text-wise-green font-mono text-xs font-bold text-emerald-700">
-                            Rp {p.price.toLocaleString("id-ID")}
+                            Rp {p.price.toLocaleString(locale === "en" ? "en-US" : "id-ID")}
                             <span className="text-foreground-muted text-[10px] font-normal">
                               {" "}
-                              / bulan
+                              {t("admin.plans.perMonth")}
                             </span>
                           </span>
                         </div>
@@ -201,7 +203,7 @@ export function PlansManagementTable() {
                           size="sm"
                           onClick={() => handleOpenEdit(p)}
                           className="border-border size-8 rounded-full p-0"
-                          title="Ubah Paket"
+                          title={t("admin.plans.editPlanTooltip")}
                         >
                           <Edit2 className="dark:text-wise-green size-3.5 text-emerald-600" />
                         </Button>
@@ -210,7 +212,7 @@ export function PlansManagementTable() {
                           size="sm"
                           onClick={() => handleOpenDelete(p)}
                           className="border-border size-8 rounded-full p-0 text-rose-600 hover:bg-rose-500/10"
-                          title="Hapus Paket"
+                          title={t("admin.plans.deletePlanTooltip")}
                         >
                           <Trash2 className="size-3.5" />
                         </Button>
@@ -221,26 +223,26 @@ export function PlansManagementTable() {
                     <div className="bg-muted/20 border-border/50 grid grid-cols-3 gap-2 rounded-lg border p-2.5 text-xs">
                       <div>
                         <span className="text-foreground-muted block text-[10px] font-bold uppercase">
-                          Kuota Pesan
+                          {t("admin.plans.quota")}
                         </span>
                         <span className="text-foreground font-mono font-bold">
-                          {p.monthly_message_limit.toLocaleString("id-ID")}
+                          {p.monthly_message_limit.toLocaleString(locale === "en" ? "en-US" : "id-ID")}
                         </span>
                       </div>
                       <div>
                         <span className="text-foreground-muted block text-[10px] font-bold uppercase">
-                          Slot WA
+                          {t("admin.plans.waSlot")}
                         </span>
                         <span className="text-foreground font-mono font-bold">
-                          {p.max_devices} Device
+                          {p.max_devices} {t("admin.plans.deviceUnit")}
                         </span>
                       </div>
                       <div>
                         <span className="text-foreground-muted block text-[10px] font-bold uppercase">
-                          CS Agent
+                          {t("admin.plans.csAgent")}
                         </span>
                         <span className="text-foreground font-mono font-bold">
-                          {p.max_agents} Agent
+                          {p.max_agents} {t("admin.plans.agentUnit")}
                         </span>
                       </div>
                     </div>
@@ -250,36 +252,36 @@ export function PlansManagementTable() {
                       {p.allow_attachment && (
                         <span className="bg-muted text-foreground-secondary border-border inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold">
                           <Paperclip className="size-2.5" />
-                          <span>Lampiran</span>
+                          <span>{t("admin.plans.featureAttachment")}</span>
                         </span>
                       )}
                       {p.allow_campaign && (
                         <span className="bg-muted text-foreground-secondary border-border inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold">
                           <Send className="size-2.5" />
-                          <span>Broadcast</span>
+                          <span>{t("admin.plans.featureCampaign")}</span>
                         </span>
                       )}
                       {p.allow_autoreply && (
                         <span className="bg-muted text-foreground-secondary border-border inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold">
                           <Bot className="size-2.5" />
-                          <span>Bot / Auto-Reply</span>
+                          <span>{t("admin.plans.featureAutoreply")}</span>
                         </span>
                       )}
                       {p.allow_schedule && (
                         <span className="bg-muted text-foreground-secondary border-border inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold">
                           <Clock className="size-2.5" />
-                          <span>Jadwal</span>
+                          <span>{t("admin.plans.featureSchedule")}</span>
                         </span>
                       )}
                       {p.has_watermark ? (
                         <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:text-amber-400">
                           <Tag className="size-2.5" />
-                          <span>Watermark</span>
+                          <span>{t("admin.plans.watermarkWith")}</span>
                         </span>
                       ) : (
                         <span className="dark:text-wise-green inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
                           <Sparkles className="size-2.5" />
-                          <span>No Watermark</span>
+                          <span>{t("admin.plans.watermarkNo")}</span>
                         </span>
                       )}
                     </div>
@@ -295,7 +297,7 @@ export function PlansManagementTable() {
                   <TableRow className="border-border bg-muted/50 hover:bg-muted/50">
                     <TableHead className="w-[20%] px-5 py-3.5">
                       <DataTableColumnHeader
-                        title="Nama Paket"
+                        title={t("admin.plans.colName")}
                         columnKey="name"
                         currentSortKey={sortKey as string}
                         currentSortOrder={sortOrder}
@@ -304,7 +306,7 @@ export function PlansManagementTable() {
                     </TableHead>
                     <TableHead className="w-[15%] px-4 py-3.5 text-right">
                       <DataTableColumnHeader
-                        title="Harga / Bulan"
+                        title={t("admin.plans.colPrice")}
                         columnKey="price"
                         currentSortKey={sortKey as string}
                         currentSortOrder={sortOrder}
@@ -314,7 +316,7 @@ export function PlansManagementTable() {
                     </TableHead>
                     <TableHead className="w-[16%] px-4 py-3.5 text-right">
                       <DataTableColumnHeader
-                        title="Batas Kuota Pesan"
+                        title={t("admin.plans.colQuota")}
                         columnKey="monthly_message_limit"
                         currentSortKey={sortKey as string}
                         currentSortOrder={sortOrder}
@@ -324,7 +326,7 @@ export function PlansManagementTable() {
                     </TableHead>
                     <TableHead className="w-[12%] px-3 py-3.5 text-center">
                       <DataTableColumnHeader
-                        title="Slot WhatsApp"
+                        title={t("admin.plans.colSlots")}
                         columnKey="max_devices"
                         currentSortKey={sortKey as string}
                         currentSortOrder={sortOrder}
@@ -334,7 +336,7 @@ export function PlansManagementTable() {
                     </TableHead>
                     <TableHead className="w-[12%] px-3 py-3.5 text-center">
                       <DataTableColumnHeader
-                        title="Batas CS Agent"
+                        title={t("admin.plans.colAgents")}
                         columnKey="max_agents"
                         currentSortKey={sortKey as string}
                         currentSortOrder={sortOrder}
@@ -344,12 +346,12 @@ export function PlansManagementTable() {
                     </TableHead>
                     <TableHead className="w-[15%] px-4 py-3.5">
                       <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
-                        Fitur &amp; Kemampuan
+                        {t("admin.plans.colFeatures")}
                       </div>
                     </TableHead>
                     <TableHead className="w-[10%] px-5 py-3.5 text-right">
                       <div className="text-foreground-muted text-right text-[11px] font-extrabold tracking-wider uppercase select-none">
-                        Aksi
+                        {t("admin.plans.colActions")}
                       </div>
                     </TableHead>
                   </TableRow>
@@ -370,9 +372,9 @@ export function PlansManagementTable() {
                               <div className="flex items-center gap-1.5">
                                 <span className="text-foreground text-sm font-bold">{p.name}</span>
                                 {isFree ? (
-                                  <Badge variant="info">Free</Badge>
+                                  <Badge variant="info">{t("admin.plans.free")}</Badge>
                                 ) : (
-                                  <Badge variant="success">Pro</Badge>
+                                  <Badge variant="success">{t("admin.plans.pro")}</Badge>
                                 )}
                               </div>
                             </div>
@@ -382,29 +384,29 @@ export function PlansManagementTable() {
                         {/* 2. Harga / Bulan */}
                         <TableCell className="px-4 py-3.5 text-right align-middle font-mono font-bold">
                           <span className="dark:text-wise-green text-sm text-emerald-700">
-                            Rp {p.price.toLocaleString("id-ID")}
+                            Rp {p.price.toLocaleString(locale === "en" ? "en-US" : "id-ID")}
                           </span>
                           <span className="text-foreground-muted block text-[10px] font-normal">
-                            / bulan
+                            {t("admin.plans.perMonth")}
                           </span>
                         </TableCell>
 
                         {/* 3. Batas Kuota Pesan */}
                         <TableCell className="text-foreground px-4 py-3.5 text-right align-middle font-mono font-bold">
-                          <span>{p.monthly_message_limit.toLocaleString("id-ID")}</span>
+                          <span>{p.monthly_message_limit.toLocaleString(locale === "en" ? "en-US" : "id-ID")}</span>
                           <span className="text-foreground-muted block text-[10px] font-normal">
-                            Pesan / bln
+                            {t("admin.plans.messagesPerMonth")}
                           </span>
                         </TableCell>
 
                         {/* 4. Slot WhatsApp */}
                         <TableCell className="text-foreground px-3 py-3.5 text-center align-middle font-mono font-bold">
-                          <span>{p.max_devices} Device</span>
+                          <span>{p.max_devices} {t("admin.plans.deviceUnit")}</span>
                         </TableCell>
 
                         {/* 5. Batas CS Agent */}
                         <TableCell className="text-foreground px-3 py-3.5 text-center align-middle font-mono font-bold">
-                          <span>{p.max_agents} Agent</span>
+                          <span>{p.max_agents} {t("admin.plans.agentUnit")}</span>
                         </TableCell>
 
                         {/* 6. Fitur & Kemampuan */}
@@ -413,54 +415,54 @@ export function PlansManagementTable() {
                             {p.allow_attachment && (
                               <span
                                 className="bg-muted text-foreground-secondary border-border inline-flex items-center gap-0.5 rounded border px-1.5 py-0.5 text-[10px] font-bold"
-                                title="Izinkan Kirim Dokumen & Media"
+                                title={t("admin.plans.featureAttachmentTooltip")}
                               >
                                 <Paperclip className="size-2.5" />
-                                <span>Lampiran</span>
+                                <span>{t("admin.plans.featureAttachment")}</span>
                               </span>
                             )}
                             {p.allow_campaign && (
                               <span
                                 className="bg-muted text-foreground-secondary border-border inline-flex items-center gap-0.5 rounded border px-1.5 py-0.5 text-[10px] font-bold"
-                                title="Izinkan Broadcast & Campaign"
+                                title={t("admin.plans.featureCampaignTooltip")}
                               >
                                 <Send className="size-2.5" />
-                                <span>Broadcast</span>
+                                <span>{t("admin.plans.featureCampaign")}</span>
                               </span>
                             )}
                             {p.allow_autoreply && (
                               <span
                                 className="bg-muted text-foreground-secondary border-border inline-flex items-center gap-0.5 rounded border px-1.5 py-0.5 text-[10px] font-bold"
-                                title="Izinkan Auto-Reply & Bot"
+                                title={t("admin.plans.featureAutoreplyTooltip")}
                               >
                                 <Bot className="size-2.5" />
-                                <span>Bot</span>
+                                <span>{t("admin.plans.featureAutoreply")}</span>
                               </span>
                             )}
                             {p.allow_schedule && (
                               <span
                                 className="bg-muted text-foreground-secondary border-border inline-flex items-center gap-0.5 rounded border px-1.5 py-0.5 text-[10px] font-bold"
-                                title="Izinkan Pesan Terjadwal"
+                                title={t("admin.plans.featureScheduleTooltip")}
                               >
                                 <Clock className="size-2.5" />
-                                <span>Jadwal</span>
+                                <span>{t("admin.plans.featureSchedule")}</span>
                               </span>
                             )}
                             {p.has_watermark ? (
                               <span
                                 className="inline-flex items-center gap-0.5 rounded border border-amber-500/20 bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-bold text-amber-700 dark:text-amber-400"
-                                title="Dengan Watermark Broadcast"
+                                title={t("admin.plans.watermarkWithTooltip")}
                               >
                                 <Tag className="size-2.5" />
-                                <span>Watermark</span>
+                                <span>{t("admin.plans.watermarkWith")}</span>
                               </span>
                             ) : (
                               <span
                                 className="dark:text-wise-green inline-flex items-center gap-0.5 rounded border border-emerald-500/20 bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-bold text-emerald-700"
-                                title="100% Bebas Watermark"
+                                title={t("admin.plans.watermarkNoTooltip")}
                               >
                                 <Sparkles className="size-2.5" />
-                                <span>No WM</span>
+                                <span>{t("admin.plans.watermarkNoShort")}</span>
                               </span>
                             )}
                           </div>
@@ -475,10 +477,10 @@ export function PlansManagementTable() {
                               size="sm"
                               onClick={() => handleOpenEdit(p)}
                               className="border-border hover:border-foreground-muted hover:bg-muted h-8 gap-1 rounded-full px-2.5 text-xs font-bold"
-                              title="Ubah Konfigurasi Paket"
+                              title={t("admin.plans.editPlanTooltip")}
                             >
                               <Edit2 className="dark:text-wise-green size-3.5 text-emerald-600" />
-                              <span>Ubah</span>
+                              <span>{t("admin.plans.editPlan")}</span>
                             </Button>
 
                             <Button
@@ -487,10 +489,10 @@ export function PlansManagementTable() {
                               size="sm"
                               onClick={() => handleOpenDelete(p)}
                               className="border-border h-8 gap-1 rounded-full px-2.5 text-xs font-bold text-rose-600 hover:border-rose-500/50 hover:bg-rose-500/10"
-                              title="Hapus Paket"
+                              title={t("admin.plans.deletePlanTooltip")}
                             >
                               <Trash2 className="size-3.5" />
-                              <span>Hapus</span>
+                              <span>{t("admin.plans.deletePlan")}</span>
                             </Button>
                           </div>
                         </TableCell>
@@ -515,7 +517,7 @@ export function PlansManagementTable() {
             onNextPage={nextPage}
             onPageSizeChange={setPageSize}
             pageSizeOptions={[10, 25, 50]}
-            entityName="paket layanan"
+            entityName={t("admin.plans.entityName")}
           />
         )}
       </div>

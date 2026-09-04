@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { AdminQueueItem } from "@/modules/admin/types/admin.types";
+import { useI18n } from "@/lib/i18n/context";
 import { DeleteQueueModal } from "./DeleteQueueModal";
 import { QueueDetailModal } from "./QueueDetailModal";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,6 @@ import { EmptyState } from "@/components/ui/empty";
 import { SearchInput } from "@/components/ui/search-input";
 import { DataTablePagination } from "@/components/ui/pagination";
 import { NativeSelect } from "@/components/ui/native-select";
-import { formatDateTime } from "@/lib/utils";
 import {
   RefreshCw,
   Layers,
@@ -54,35 +54,38 @@ interface QueueMonitorTableProps {
   onPrevPage: () => void;
 }
 
-function getQueueStatusBadge(status: string) {
+function getQueueStatusBadge(
+  status: string,
+  t: (key: string, params?: Record<string, string | number>) => string
+) {
   const upper = (status || "").toUpperCase();
   switch (upper) {
     case "COMPLETED":
       return (
         <Badge variant="success">
           <CheckCircle2 className="size-3" />
-          <span>Selesai</span>
+          <span>{t("admin.notifications.badgeCompleted")}</span>
         </Badge>
       );
     case "PENDING":
       return (
         <Badge variant="warning">
           <Clock className="size-3" />
-          <span>Menunggu</span>
+          <span>{t("admin.notifications.badgePending")}</span>
         </Badge>
       );
     case "PROCESSING":
       return (
         <Badge variant="info">
           <RotateCcw className="size-3 animate-spin" />
-          <span>Diproses</span>
+          <span>{t("admin.notifications.badgeProcessing")}</span>
         </Badge>
       );
     case "FAILED":
       return (
         <Badge variant="danger">
           <AlertCircle className="size-3" />
-          <span>Gagal</span>
+          <span>{t("admin.notifications.badgeFailed")}</span>
         </Badge>
       );
     default:
@@ -113,11 +116,27 @@ export function QueueMonitorTable({
   onNextPage,
   onPrevPage,
 }: QueueMonitorTableProps) {
+  const { t, locale } = useI18n();
   const [searchInput, setSearchInput] = useState("");
   const [selectedQueueForDelete, setSelectedQueueForDelete] = useState<AdminQueueItem | null>(null);
   const [selectedQueueForDetail, setSelectedQueueForDetail] = useState<AdminQueueItem | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+
+  const formatDate = (dateStr?: string) => {
+    if (!dateStr) return "-";
+    try {
+      return new Intl.DateTimeFormat(locale === "en" ? "en-US" : "id-ID", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }).format(new Date(dateStr));
+    } catch {
+      return dateStr;
+    }
+  };
 
   const { sortKey, sortOrder, handleSort, sortData } = useTableSort<AdminQueueItem>({
     initialKey: "createdAt",
@@ -152,7 +171,7 @@ export function QueueMonitorTable({
             onChange={setSearchInput}
             onSearch={() => onSearch(searchInput.trim())}
             onClear={handleResetSearch}
-            placeholder="Cari berdasarkan tipe tugas, target email, atau kata kunci..."
+            placeholder={t("admin.notifications.searchPlaceholder")}
           />
 
           {/* Filters & Refresh */}
@@ -163,11 +182,11 @@ export function QueueMonitorTable({
               variant="pill"
               wrapperClassName="flex-1 sm:flex-initial"
             >
-              <option value="ALL">Semua Status</option>
-              <option value="COMPLETED">🟢 Selesai (COMPLETED)</option>
-              <option value="PENDING">🟡 Menunggu (PENDING)</option>
-              <option value="PROCESSING">🔵 Diproses (PROCESSING)</option>
-              <option value="FAILED">🔴 Gagal (FAILED)</option>
+              <option value="ALL">{t("admin.notifications.filterAllStatus")}</option>
+              <option value="COMPLETED">{t("admin.notifications.statusCompleted")}</option>
+              <option value="PENDING">{t("admin.notifications.statusPending")}</option>
+              <option value="PROCESSING">{t("admin.notifications.statusProcessing")}</option>
+              <option value="FAILED">{t("admin.notifications.statusFailed")}</option>
             </NativeSelect>
 
             <Button
@@ -176,10 +195,10 @@ export function QueueMonitorTable({
               onClick={onRefresh}
               disabled={isLoading}
               className="border-border hover:border-foreground-muted h-10 shrink-0 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold transition"
-              aria-label="Refresh Data Antrean"
+              aria-label={t("admin.notifications.refreshAria")}
             >
               <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin" : ""}`} />
-              <span className="hidden sm:inline">Refresh</span>
+              <span className="hidden sm:inline">{t("common.refresh")}</span>
             </Button>
           </div>
         </div>
@@ -190,16 +209,16 @@ export function QueueMonitorTable({
         {isLoading ? (
           <div className="text-foreground-muted flex flex-col items-center justify-center space-y-3 py-16">
             <Loader2 className="dark:text-wise-green size-7 animate-spin text-emerald-600" />
-            <span className="text-xs font-bold">Memuat antrean tugas background worker...</span>
+            <span className="text-xs font-bold">{t("admin.notifications.loadingText")}</span>
           </div>
         ) : queues.length === 0 ? (
           <EmptyState
             icon={<Layers />}
-            title="Tidak Ada Antrean Ditemukan"
+            title={t("admin.notifications.emptyTitle")}
             description={
               searchQuery
-                ? `Tidak ditemukan antrean dengan kata kunci "${searchQuery}".`
-                : "Saat ini tidak ada antrean notifikasi atau pengiriman email."
+                ? t("admin.notifications.emptySearchDesc", { query: searchQuery })
+                : t("admin.notifications.emptyDesc")
             }
           />
         ) : (
@@ -219,7 +238,7 @@ export function QueueMonitorTable({
                       </span>
                     </div>
 
-                    <div className="shrink-0">{getQueueStatusBadge(q.status)}</div>
+                    <div className="shrink-0">{getQueueStatusBadge(q.status, t)}</div>
                   </div>
 
                   {q.lastError && (
@@ -230,9 +249,9 @@ export function QueueMonitorTable({
 
                   <div className="text-foreground-muted flex items-center justify-between pt-1 text-[11px]">
                     <span>
-                      Percobaan: {q.attempts}/{q.maxAttempts} (P: {q.priority})
+                      {t("admin.notifications.attemptsLabel")} {q.attempts}/{q.maxAttempts} ({t("admin.notifications.priorityPrefix")} {q.priority})
                     </span>
-                    <span>{formatDateTime(q.createdAt)}</span>
+                    <span>{formatDate(q.createdAt)}</span>
                   </div>
 
                   {/* Actions */}
@@ -244,7 +263,7 @@ export function QueueMonitorTable({
                       className="border-border hover:bg-muted h-8 gap-1 rounded-full px-2.5 text-xs font-bold"
                     >
                       <Eye className="size-3.5" />
-                      <span>Detail</span>
+                      <span>{t("admin.notifications.detailBtn")}</span>
                     </Button>
 
                     <Button
@@ -252,7 +271,7 @@ export function QueueMonitorTable({
                       size="sm"
                       onClick={() => handleOpenDelete(q)}
                       className="border-border size-8 h-8 rounded-full p-0 text-rose-600 hover:border-rose-500/50 hover:bg-rose-500/10"
-                      title="Hapus Antrean"
+                      title={t("admin.notifications.deleteBtn")}
                     >
                       <Trash2 className="size-3.5" />
                     </Button>
@@ -268,7 +287,7 @@ export function QueueMonitorTable({
                   <TableRow className="border-border bg-muted/50 hover:bg-muted/50">
                     <TableHead className="w-[20%] px-5 py-3.5">
                       <DataTableColumnHeader
-                        title="Tipe Tugas & ID"
+                        title={t("admin.notifications.colTaskType")}
                         columnKey="taskType"
                         currentSortKey={sortKey as string}
                         currentSortOrder={sortOrder}
@@ -277,12 +296,12 @@ export function QueueMonitorTable({
                     </TableHead>
                     <TableHead className="w-[25%] px-4 py-3.5">
                       <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
-                        Target Penerima
+                        {t("admin.notifications.colTarget")}
                       </div>
                     </TableHead>
                     <TableHead className="w-[15%] px-3 py-3.5 text-center">
                       <DataTableColumnHeader
-                        title="Percobaan"
+                        title={t("admin.notifications.colAttempts")}
                         columnKey="attempts"
                         currentSortKey={sortKey as string}
                         currentSortOrder={sortOrder}
@@ -292,7 +311,7 @@ export function QueueMonitorTable({
                     </TableHead>
                     <TableHead className="w-[12%] px-3 py-3.5 text-center">
                       <DataTableColumnHeader
-                        title="Status"
+                        title={t("admin.notifications.colStatus")}
                         columnKey="status"
                         currentSortKey={sortKey as string}
                         currentSortOrder={sortOrder}
@@ -302,7 +321,7 @@ export function QueueMonitorTable({
                     </TableHead>
                     <TableHead className="w-[16%] px-4 py-3.5">
                       <DataTableColumnHeader
-                        title="Jadwal / Waktu"
+                        title={t("admin.notifications.colScheduledTime")}
                         columnKey="createdAt"
                         currentSortKey={sortKey as string}
                         currentSortOrder={sortOrder}
@@ -311,7 +330,7 @@ export function QueueMonitorTable({
                     </TableHead>
                     <TableHead className="w-[12%] px-5 py-3.5 text-right">
                       <div className="text-foreground-muted text-right text-[11px] font-extrabold tracking-wider uppercase select-none">
-                        Aksi
+                        {t("admin.notifications.colActions")}
                       </div>
                     </TableHead>
                   </TableRow>
@@ -351,20 +370,20 @@ export function QueueMonitorTable({
                           {q.attempts} / {q.maxAttempts}
                         </span>
                         <span className="text-foreground-muted block text-[10px]">
-                          Prioritas: {q.priority}
+                          {t("admin.notifications.priorityLabel")} {q.priority}
                         </span>
                       </TableCell>
 
                       {/* 4. Status */}
                       <TableCell className="px-3 py-3.5 text-center align-middle">
                         <div className="inline-flex items-center justify-center">
-                          {getQueueStatusBadge(q.status)}
+                          {getQueueStatusBadge(q.status, t)}
                         </div>
                       </TableCell>
 
                       {/* 5. Jadwal / Waktu */}
                       <TableCell className="text-foreground-secondary px-4 py-3.5 align-middle font-mono text-[11px]">
-                        {formatDateTime(q.createdAt)}
+                        {formatDate(q.createdAt)}
                       </TableCell>
 
                       {/* 6. Aksi */}
@@ -376,10 +395,10 @@ export function QueueMonitorTable({
                             size="sm"
                             onClick={() => handleOpenDetail(q)}
                             className="border-border hover:bg-muted h-8 gap-1 rounded-full px-2.5 text-xs font-bold"
-                            title="Lihat Detail Payload & Error"
+                            title={t("admin.notifications.detailBtn")}
                           >
                             <Eye className="text-foreground-secondary size-3.5" />
-                            <span>Detail</span>
+                            <span>{t("admin.notifications.detailBtn")}</span>
                           </Button>
 
                           <Button
@@ -388,7 +407,7 @@ export function QueueMonitorTable({
                             size="sm"
                             onClick={() => handleOpenDelete(q)}
                             className="border-border size-8 h-8 rounded-full p-0 text-rose-600 hover:border-rose-500/50 hover:bg-rose-500/10"
-                            title="Hapus Antrean"
+                            title={t("admin.notifications.deleteBtn")}
                           >
                             <Trash2 className="size-3.5" />
                           </Button>
@@ -414,7 +433,7 @@ export function QueueMonitorTable({
             onNextPage={onNextPage}
             onPageSizeChange={onPageSizeChange}
             pageSizeOptions={[10, 25, 50]}
-            entityName="antrean notifikasi"
+            entityName={t("admin.notifications.entityName")}
           />
         )}
       </div>

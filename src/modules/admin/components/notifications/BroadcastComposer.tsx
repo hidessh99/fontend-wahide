@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { UserItem } from "@/modules/admin/types/admin.types";
 import { adminApi } from "@/modules/admin/api/admin.api";
+import { useI18n } from "@/lib/i18n/context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -37,6 +38,7 @@ export function BroadcastComposer({
   onSendDirect,
   onSendBatch,
 }: BroadcastComposerProps) {
+  const { t } = useI18n();
   const [broadcastTarget, setBroadcastTarget] = useState<"ALL" | "SPECIFIC">("ALL");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
@@ -143,20 +145,20 @@ export function BroadcastComposer({
     const errors: { subject?: string; message?: string; email?: string; target?: string } = {};
 
     if (!subject.trim()) {
-      errors.subject = "Subjek siaran wajib diisi.";
+      errors.subject = t("admin.notifications.errSubjectRequired");
     }
     if (!message.trim()) {
-      errors.message = "Isi pesan siaran wajib diisi.";
+      errors.message = t("admin.notifications.errMessageRequired");
     }
 
     if (broadcastTarget !== "ALL") {
       if (isManualMode) {
         if (!manualEmail.trim()) {
-          errors.email = "Alamat email penerima wajib diisi.";
+          errors.email = t("admin.notifications.errEmailRequired");
         }
       } else {
         if (selectedUsers.length === 0) {
-          errors.target = "Pilih minimal 1 pengguna penerima siaran.";
+          errors.target = t("admin.notifications.errTargetRequired");
         }
       }
     }
@@ -218,10 +220,10 @@ export function BroadcastComposer({
           </div>
           <div>
             <h2 className="text-foreground text-base font-black tracking-tight">
-              Kirim Siaran &amp; Email
+              {t("admin.notifications.composerTitle")}
             </h2>
             <p className="text-foreground-secondary text-[11px] font-semibold">
-              Broadcast massal ke seluruh member atau pilih pengguna terdaftar.
+              {t("admin.notifications.composerSubtitle")}
             </p>
           </div>
         </div>
@@ -230,8 +232,8 @@ export function BroadcastComposer({
           type="button"
           onClick={handleReset}
           className="text-foreground-muted hover:text-foreground hover:bg-muted flex size-7 cursor-pointer items-center justify-center rounded-full transition"
-          title="Reset Form"
-          aria-label="Reset Form"
+          title={t("admin.notifications.resetForm")}
+          aria-label={t("admin.notifications.resetForm")}
         >
           <RotateCcw className="size-3.5" />
         </button>
@@ -241,7 +243,7 @@ export function BroadcastComposer({
         {/* Target Switcher */}
         <div className="space-y-1.5">
           <label className="text-foreground-secondary block text-[11px] font-bold tracking-wider uppercase">
-            Target Penerima Siaran:
+            {t("admin.notifications.broadcastTargetLabel")}
           </label>
           <div className="grid grid-cols-2 gap-2">
             <button
@@ -254,7 +256,7 @@ export function BroadcastComposer({
               }`}
             >
               <Users className="size-3.5" />
-              <span>Semua Pengguna Aktif</span>
+              <span>{t("admin.notifications.targetAllUsers")}</span>
             </button>
 
             <button
@@ -267,7 +269,7 @@ export function BroadcastComposer({
               }`}
             >
               <Mail className="size-3.5" />
-              <span>Pilih Pengguna Tertentu</span>
+              <span>{t("admin.notifications.targetSpecificUsers")}</span>
             </button>
           </div>
         </div>
@@ -280,7 +282,7 @@ export function BroadcastComposer({
                 <div className="flex items-center justify-between">
                   <label className="text-foreground flex items-center gap-1.5 text-[11px] font-bold">
                     <UserCheck className="dark:text-wise-green size-3.5 text-emerald-600" />
-                    <span>Cari &amp; Pilih Pengguna Terdaftar:</span>
+                    <span>{t("admin.notifications.searchUsersLabel")}</span>
                   </label>
 
                   <button
@@ -288,7 +290,7 @@ export function BroadcastComposer({
                     onClick={() => setIsManualMode(true)}
                     className="dark:text-wise-green cursor-pointer text-[10px] font-bold text-emerald-700 hover:underline"
                   >
-                    + Input Email Manual
+                    {t("admin.notifications.inputManualEmailBtn")}
                   </button>
                 </div>
 
@@ -304,7 +306,7 @@ export function BroadcastComposer({
                         setIsDropdownOpen(true);
                       }}
                       onFocus={() => setIsDropdownOpen(true)}
-                      placeholder="Ketik nama atau email pengguna untuk mencari..."
+                      placeholder={t("admin.notifications.userSearchPlaceholder")}
                       className="bg-surface text-foreground border-border hover:border-foreground-muted dark:focus:border-wise-green h-9 w-full rounded-lg border pr-8 pl-9 text-xs font-semibold outline-none focus:border-emerald-600 dark:bg-[#10110e]"
                     />
                     {userSearchQuery && (
@@ -324,22 +326,22 @@ export function BroadcastComposer({
                       {isLoadingUsers ? (
                         <div className="text-foreground-muted flex items-center justify-center gap-2 p-4 text-center text-xs">
                           <Loader2 className="size-3.5 animate-spin text-emerald-600" />
-                          <span>Memuat daftar pengguna...</span>
+                          <span>{t("admin.notifications.loadingUsers")}</span>
                         </div>
                       ) : filteredUsers.length === 0 ? (
                         <div className="text-foreground-muted p-4 text-center text-xs">
-                          Tidak ditemukan pengguna dengan kata kunci &quot;{userSearchQuery}&quot;
+                          {t("admin.notifications.noUsersFound", { query: userSearchQuery })}
                         </div>
                       ) : (
                         <div>
                           <div className="border-border/50 text-foreground-muted mb-1 flex items-center justify-between border-b px-2 py-1 text-[10px]">
-                            <span>Ditemukan {filteredUsers.length} pengguna</span>
+                            <span>{t("admin.notifications.usersFoundCount", { count: filteredUsers.length })}</span>
                             <button
                               type="button"
                               onClick={handleSelectAllFiltered}
                               className="dark:text-wise-green font-bold text-emerald-700 hover:underline"
                             >
-                              Pilih Semua
+                              {t("admin.notifications.selectAllBtn")}
                             </button>
                           </div>
 
@@ -400,15 +402,17 @@ export function BroadcastComposer({
                   <div className="space-y-1.5 pt-1">
                     <div className="text-foreground-muted flex items-center justify-between text-[11px]">
                       <span>
-                        Penerima Terpilih:{" "}
-                        <strong className="text-foreground">{selectedUsers.length} Pengguna</strong>
+                        {t("admin.notifications.selectedRecipientsLabel")}{" "}
+                        <strong className="text-foreground">
+                          {t("admin.notifications.selectedUsersCount", { count: selectedUsers.length })}
+                        </strong>
                       </span>
                       <button
                         type="button"
                         onClick={handleClearSelectedUsers}
                         className="cursor-pointer font-bold text-rose-500 hover:underline"
                       >
-                        Hapus Semua
+                        {t("admin.notifications.clearAllBtn")}
                       </button>
                     </div>
 
@@ -443,20 +447,20 @@ export function BroadcastComposer({
               <div className="animate-in fade-in space-y-2.5">
                 <div className="flex items-center justify-between">
                   <span className="text-foreground text-[11px] font-bold">
-                    Input Email Manual / Kustom:
+                    {t("admin.notifications.manualEmailTitle")}
                   </span>
                   <button
                     type="button"
                     onClick={() => setIsManualMode(false)}
                     className="dark:text-wise-green cursor-pointer text-[10px] font-bold text-emerald-700 hover:underline"
                   >
-                    ← Kembali ke Pilih Pengguna
+                    {t("admin.notifications.backToSelectUsers")}
                   </button>
                 </div>
 
                 <div>
                   <label className="text-foreground-secondary mb-1 block text-[11px] font-bold">
-                    Alamat Email: <span className="text-rose-500">*</span>
+                    {t("admin.notifications.manualEmailLabel")} <span className="text-rose-500">*</span>
                   </label>
                   <Input
                     type="email"
@@ -467,7 +471,7 @@ export function BroadcastComposer({
                       if (formErrors.email)
                         setFormErrors((prev) => ({ ...prev, email: undefined }));
                     }}
-                    placeholder="contoh: user@tokoonline.com"
+                    placeholder={t("admin.notifications.manualEmailPlaceholder")}
                     variant="rounded"
                     isError={!!formErrors.email}
                     className="h-9"
@@ -479,13 +483,13 @@ export function BroadcastComposer({
 
                 <div>
                   <label className="text-foreground-secondary mb-1 block text-[11px] font-bold">
-                    Nama Penerima (Opsional):
+                    {t("admin.notifications.manualNameLabel")}
                   </label>
                   <Input
                     type="text"
                     value={manualName}
                     onChange={(e) => setManualName(e.target.value)}
-                    placeholder="contoh: Budi Santoso"
+                    placeholder={t("admin.notifications.manualNamePlaceholder")}
                     variant="rounded"
                     className="h-9"
                   />
@@ -498,7 +502,7 @@ export function BroadcastComposer({
         {/* Subject */}
         <div>
           <label className="text-foreground-secondary mb-1 block text-[11px] font-bold tracking-wider uppercase">
-            Subjek Email: <span className="text-rose-500">*</span>
+            {t("admin.notifications.subjectLabel")} <span className="text-rose-500">*</span>
           </label>
           <Input
             type="text"
@@ -508,7 +512,7 @@ export function BroadcastComposer({
               setSubject(e.target.value);
               if (formErrors.subject) setFormErrors((prev) => ({ ...prev, subject: undefined }));
             }}
-            placeholder="contoh: Pengumuman Pemeliharaan Server & Fitur Baru"
+            placeholder={t("admin.notifications.subjectPlaceholder")}
             variant="rounded"
             isError={!!formErrors.subject}
           />
@@ -520,7 +524,7 @@ export function BroadcastComposer({
         {/* Message Content */}
         <div>
           <label className="text-foreground-secondary mb-1 block text-[11px] font-bold tracking-wider uppercase">
-            Isi Pesan Siaran: <span className="text-rose-500">*</span>
+            {t("admin.notifications.messageLabel")} <span className="text-rose-500">*</span>
           </label>
           <Textarea
             rows={5}
@@ -530,7 +534,7 @@ export function BroadcastComposer({
               setMessage(e.target.value);
               if (formErrors.message) setFormErrors((prev) => ({ ...prev, message: undefined }));
             }}
-            placeholder="Tuliskan pesan lengkap yang akan dikirimkan ke email penerima..."
+            placeholder={t("admin.notifications.messagePlaceholder")}
             variant="rounded"
             isError={!!formErrors.message}
           />
@@ -550,19 +554,19 @@ export function BroadcastComposer({
           {isSending ? (
             <>
               <Loader2 className="size-3.5 animate-spin" />
-              <span>Memasukkan ke Antrean Worker...</span>
+              <span>{t("admin.notifications.sendingToQueue")}</span>
             </>
           ) : (
             <>
               <Send className="size-3.5" />
               <span>
                 {broadcastTarget === "ALL"
-                  ? "Kirim Siaran ke Semua Pengguna"
+                  ? t("admin.notifications.sendToAllUsers")
                   : isManualMode
-                    ? "Kirim Email ke Antrean"
+                    ? t("admin.notifications.sendToQueue")
                     : selectedUsers.length > 1
-                      ? `Kirim ke ${selectedUsers.length} Pengguna Terpilih`
-                      : "Kirim Email ke Antrean"}
+                      ? t("admin.notifications.sendToSelectedUsers", { count: selectedUsers.length })
+                      : t("admin.notifications.sendToQueue")}
               </span>
             </>
           )}
@@ -570,7 +574,7 @@ export function BroadcastComposer({
 
         <div className="text-foreground-muted flex items-center justify-center gap-1.5 pt-1 text-[11px]">
           <Sparkles className="size-3 text-amber-500" />
-          <span>Diproses di latar belakang via SumoPod &amp; Mailketing.</span>
+          <span>{t("admin.notifications.backgroundProcessingNote")}</span>
         </div>
       </form>
     </div>

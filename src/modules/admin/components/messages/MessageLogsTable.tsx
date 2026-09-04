@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { AdminMessageLogItem } from "@/modules/admin/types/admin.types";
+import { useI18n } from "@/lib/i18n/context";
 import { DeleteMessageModal } from "./DeleteMessageModal";
 import { MessageDetailModal } from "./MessageDetailModal";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,6 @@ import { EmptyState } from "@/components/ui/empty";
 import { SearchInput } from "@/components/ui/search-input";
 import { DataTablePagination } from "@/components/ui/pagination";
 import { NativeSelect } from "@/components/ui/native-select";
-import { formatDateTime } from "@/lib/utils";
 import {
   RefreshCw,
   MessageSquare,
@@ -58,21 +58,24 @@ interface MessageLogsTableProps {
   onPrevPage: () => void;
 }
 
-function getMessageStatusBadge(status: string) {
+function getMessageStatusBadge(
+  status: string,
+  t: (key: string, params?: Record<string, string | number>) => string
+) {
   const upper = (status || "").toUpperCase();
   switch (upper) {
     case "READ":
       return (
         <Badge variant="info">
           <CheckCheck className="size-3" />
-          <span>Terbaca</span>
+          <span>{t("admin.messages.badgeRead")}</span>
         </Badge>
       );
     case "DELIVERED":
       return (
         <Badge variant="success">
           <CheckCircle2 className="size-3" />
-          <span>Tersampaikan</span>
+          <span>{t("admin.messages.badgeDelivered")}</span>
         </Badge>
       );
     case "SENT":
@@ -82,21 +85,21 @@ function getMessageStatusBadge(status: string) {
           className="border-teal-500/20 bg-teal-500/10 text-teal-600 dark:text-teal-400"
         >
           <Send className="size-3" />
-          <span>Terkirim</span>
+          <span>{t("admin.messages.badgeSent")}</span>
         </Badge>
       );
     case "PENDING":
       return (
         <Badge variant="warning">
           <Clock className="size-3" />
-          <span>Menunggu</span>
+          <span>{t("admin.messages.badgePending")}</span>
         </Badge>
       );
     case "FAILED":
       return (
         <Badge variant="danger">
           <AlertCircle className="size-3" />
-          <span>Gagal</span>
+          <span>{t("admin.messages.badgeFailed")}</span>
         </Badge>
       );
     default:
@@ -129,6 +132,7 @@ export function MessageLogsTable({
   onNextPage,
   onPrevPage,
 }: MessageLogsTableProps) {
+  const { t, locale } = useI18n();
   const [searchInput, setSearchInput] = useState("");
   const [selectedMessageForDelete, setSelectedMessageForDelete] =
     useState<AdminMessageLogItem | null>(null);
@@ -136,6 +140,21 @@ export function MessageLogsTable({
     useState<AdminMessageLogItem | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+
+  const formatDate = (dateStr: string) => {
+    if (!dateStr) return "-";
+    try {
+      return new Intl.DateTimeFormat(locale === "en" ? "en-US" : "id-ID", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }).format(new Date(dateStr));
+    } catch {
+      return dateStr;
+    }
+  };
 
   const { sortKey, sortOrder, handleSort, sortData } = useTableSort<AdminMessageLogItem>({
     initialKey: "createdAt",
@@ -170,7 +189,7 @@ export function MessageLogsTable({
             onChange={setSearchInput}
             onSearch={() => onSearch(searchInput.trim())}
             onClear={handleResetSearch}
-            placeholder="Cari berdasarkan nomor WhatsApp, isi pesan, atau ID..."
+            placeholder={t("admin.messages.searchPlaceholder")}
           />
 
           {/* Filters & Refresh */}
@@ -181,9 +200,9 @@ export function MessageLogsTable({
               onChange={(e) => onDirectionFilterChange(e.target.value)}
               variant="pill"
             >
-              <option value="ALL">Semua Arah</option>
-              <option value="OUTBOUND">↗️ Keluar (OUTBOUND)</option>
-              <option value="INBOUND">↙️ Masuk (INBOUND)</option>
+              <option value="ALL">{t("admin.messages.filterAllDirections")}</option>
+              <option value="OUTBOUND">{t("admin.messages.filterOutbound")}</option>
+              <option value="INBOUND">{t("admin.messages.filterInbound")}</option>
             </NativeSelect>
 
             {/* Status Filter */}
@@ -192,12 +211,12 @@ export function MessageLogsTable({
               onChange={(e) => onStatusFilterChange(e.target.value)}
               variant="pill"
             >
-              <option value="ALL">Semua Status</option>
-              <option value="READ">🔵 Terbaca (READ)</option>
-              <option value="DELIVERED">🟢 Tersampaikan (DELIVERED)</option>
-              <option value="SENT">🟢 Terkirim (SENT)</option>
-              <option value="PENDING">🟡 Menunggu (PENDING)</option>
-              <option value="FAILED">🔴 Gagal (FAILED)</option>
+              <option value="ALL">{t("admin.messages.filterAllStatus")}</option>
+              <option value="READ">🔵 {t("admin.messages.statusRead")}</option>
+              <option value="DELIVERED">🟢 {t("admin.messages.statusDelivered")}</option>
+              <option value="SENT">🟢 {t("admin.messages.statusSent")}</option>
+              <option value="PENDING">🟡 {t("admin.messages.statusPending")}</option>
+              <option value="FAILED">🔴 {t("admin.messages.statusFailed")}</option>
             </NativeSelect>
 
             <Button
@@ -206,10 +225,10 @@ export function MessageLogsTable({
               onClick={onRefresh}
               disabled={isLoading}
               className="border-border hover:border-foreground-muted h-10 shrink-0 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold transition"
-              aria-label="Refresh Data Log Pesan"
+              aria-label={t("admin.messages.refreshAria")}
             >
               <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin" : ""}`} />
-              <span className="hidden sm:inline">Refresh</span>
+              <span className="hidden sm:inline">{t("common.refresh")}</span>
             </Button>
           </div>
         </div>
@@ -220,16 +239,16 @@ export function MessageLogsTable({
         {isLoading ? (
           <div className="text-foreground-muted flex flex-col items-center justify-center space-y-3 py-16">
             <Loader2 className="dark:text-wise-green size-7 animate-spin text-emerald-600" />
-            <span className="text-xs font-bold">Memuat riwayat log pesan WhatsApp...</span>
+            <span className="text-xs font-bold">{t("admin.messages.loadingText")}</span>
           </div>
         ) : logs.length === 0 ? (
           <EmptyState
             icon={<MessageSquare />}
-            title="Tidak Ada Pesan Ditemukan"
+            title={t("admin.messages.emptyTitle")}
             description={
               searchQuery
-                ? `Tidak ditemukan pesan dengan kata kunci "${searchQuery}".`
-                : "Saat ini belum ada riwayat pesan WhatsApp yang tercatat di sistem."
+                ? t("admin.messages.emptySearchDesc", { query: searchQuery })
+                : t("admin.messages.emptyDesc")
             }
           />
         ) : (
@@ -248,12 +267,12 @@ export function MessageLogsTable({
                               : "border-blue-500/20 bg-blue-500/10 text-blue-600 dark:text-blue-400"
                           }`}
                         >
-                          {m.direction === "OUTBOUND" ? "↗️ OUTBOUND" : "↙️ INBOUND"}
+                          {m.direction === "OUTBOUND" ? t("admin.messages.filterOutbound") : t("admin.messages.filterInbound")}
                         </span>
                         {m.mediaUrl && (
                           <span className="bg-muted text-foreground-muted border-border flex items-center gap-1 rounded border px-1.5 py-0.5 text-[9px] font-bold">
                             <Paperclip className="size-2.5" />
-                            <span>Media</span>
+                            <span>{t("admin.messages.mediaBadge")}</span>
                           </span>
                         )}
                       </div>
@@ -262,12 +281,12 @@ export function MessageLogsTable({
                       </span>
                     </div>
 
-                    <div className="shrink-0">{getMessageStatusBadge(m.status)}</div>
+                    <div className="shrink-0">{getMessageStatusBadge(m.status, t)}</div>
                   </div>
 
                   {/* Message body preview */}
                   <p className="text-foreground bg-muted/30 border-border/60 line-clamp-2 rounded-lg border p-2 text-xs font-medium italic">
-                    &quot;{m.messageBody}&quot;
+                    &quot;{m.messageBody || t("admin.messages.emptyMessage")}&quot;
                   </p>
 
                   {m.errorMessage && (
@@ -278,7 +297,7 @@ export function MessageLogsTable({
 
                   <div className="text-foreground-muted flex items-center justify-between pt-1 text-[11px]">
                     <span className="font-mono text-[10px]">Dev: {m.deviceId.slice(0, 10)}...</span>
-                    <span>{formatDateTime(m.createdAt)}</span>
+                    <span>{formatDate(m.createdAt)}</span>
                   </div>
 
                   {/* Actions */}
@@ -290,7 +309,7 @@ export function MessageLogsTable({
                       className="border-border hover:bg-muted h-8 cursor-pointer gap-1 rounded-full px-2.5 text-xs font-bold"
                     >
                       <Eye className="size-3.5" />
-                      <span>Detail</span>
+                      <span>{t("admin.messages.detailBtn")}</span>
                     </Button>
 
                     <Button
@@ -298,7 +317,7 @@ export function MessageLogsTable({
                       size="sm"
                       onClick={() => handleOpenDelete(m)}
                       className="border-border size-8 h-8 cursor-pointer rounded-full p-0 text-rose-600 hover:border-rose-500/50 hover:bg-rose-500/10"
-                      title="Hapus Log Pesan"
+                      title={t("admin.messages.deleteBtn")}
                     >
                       <Trash2 className="size-3.5" />
                     </Button>
@@ -314,7 +333,7 @@ export function MessageLogsTable({
                   <TableRow className="border-border bg-muted/50 hover:bg-muted/50">
                     <TableHead className="w-[18%] px-5 py-3.5">
                       <DataTableColumnHeader
-                        title="Waktu & ID"
+                        title={t("admin.messages.colTimeId")}
                         columnKey="createdAt"
                         currentSortKey={sortKey as string}
                         currentSortOrder={sortOrder}
@@ -323,7 +342,7 @@ export function MessageLogsTable({
                     </TableHead>
                     <TableHead className="w-[18%] px-4 py-3.5">
                       <DataTableColumnHeader
-                        title="Penerima (Nomor/JID)"
+                        title={t("admin.messages.colRecipient")}
                         columnKey="recipientJid"
                         currentSortKey={sortKey as string}
                         currentSortOrder={sortOrder}
@@ -332,22 +351,22 @@ export function MessageLogsTable({
                     </TableHead>
                     <TableHead className="w-[10%] px-3 py-3.5 text-center">
                       <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
-                        Arah
+                        {t("admin.messages.colDirection")}
                       </div>
                     </TableHead>
                     <TableHead className="w-[26%] px-4 py-3.5">
                       <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
-                        Cuplikan Pesan
+                        {t("admin.messages.colSnippet")}
                       </div>
                     </TableHead>
                     <TableHead className="w-[10%] px-3 py-3.5">
                       <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
-                        Perangkat
+                        {t("admin.messages.colDevice")}
                       </div>
                     </TableHead>
                     <TableHead className="w-[10%] px-3 py-3.5 text-center">
                       <DataTableColumnHeader
-                        title="Status"
+                        title={t("admin.messages.colStatus")}
                         columnKey="status"
                         currentSortKey={sortKey as string}
                         currentSortOrder={sortOrder}
@@ -357,7 +376,7 @@ export function MessageLogsTable({
                     </TableHead>
                     <TableHead className="w-[8%] px-5 py-3.5 text-right">
                       <div className="text-foreground-muted text-right text-[11px] font-extrabold tracking-wider uppercase select-none">
-                        Aksi
+                        {t("admin.messages.colActions")}
                       </div>
                     </TableHead>
                   </TableRow>
@@ -369,7 +388,7 @@ export function MessageLogsTable({
                       <TableCell className="px-5 py-3.5 align-middle">
                         <div className="space-y-0.5">
                           <span className="text-foreground block font-mono text-[11px] font-bold">
-                            {formatDateTime(m.createdAt)}
+                            {formatDate(m.createdAt)}
                           </span>
                           <span className="text-foreground-muted block font-mono text-[10px]">
                             {m.id.slice(0, 16)}...
@@ -402,12 +421,12 @@ export function MessageLogsTable({
                       <TableCell className="max-w-xs px-4 py-3.5 align-middle">
                         <div className="space-y-1">
                           <p className="text-foreground max-w-65 truncate text-xs font-medium">
-                            {m.messageBody || "(Pesan kosong)"}
+                            {m.messageBody || t("admin.messages.emptyMessage")}
                           </p>
                           {m.mediaUrl && (
                             <span className="bg-muted text-foreground-muted border-border inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[9px] font-bold">
                               <Paperclip className="size-2.5" />
-                              <span>Lampiran Media</span>
+                              <span>{t("admin.messages.mediaAttachment")}</span>
                             </span>
                           )}
                         </div>
@@ -423,7 +442,7 @@ export function MessageLogsTable({
                       {/* 6. Status */}
                       <TableCell className="px-3 py-3.5 text-center align-middle">
                         <div className="inline-flex items-center justify-center">
-                          {getMessageStatusBadge(m.status)}
+                          {getMessageStatusBadge(m.status, t)}
                         </div>
                       </TableCell>
 
@@ -436,10 +455,10 @@ export function MessageLogsTable({
                             size="sm"
                             onClick={() => handleOpenDetail(m)}
                             className="border-border hover:bg-muted h-8 cursor-pointer gap-1 rounded-full px-2.5 text-xs font-bold"
-                            title="Lihat Detail Pesan"
+                            title={t("admin.messages.detailBtn")}
                           >
                             <Eye className="text-foreground-secondary size-3.5" />
-                            <span>Detail</span>
+                            <span>{t("admin.messages.detailBtn")}</span>
                           </Button>
 
                           <Button
@@ -448,7 +467,7 @@ export function MessageLogsTable({
                             size="sm"
                             onClick={() => handleOpenDelete(m)}
                             className="border-border size-8 h-8 cursor-pointer rounded-full p-0 text-rose-600 hover:border-rose-500/50 hover:bg-rose-500/10"
-                            title="Hapus Log Pesan"
+                            title={t("admin.messages.deleteBtn")}
                           >
                             <Trash2 className="size-3.5" />
                           </Button>
@@ -474,7 +493,7 @@ export function MessageLogsTable({
             onNextPage={onNextPage}
             onPageSizeChange={onPageSizeChange}
             pageSizeOptions={[10, 15, 25, 50, 100]}
-            entityName="log pesan WhatsApp"
+            entityName={t("admin.messages.entityName")}
           />
         )}
       </div>

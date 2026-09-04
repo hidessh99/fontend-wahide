@@ -90,5 +90,21 @@
   "engineProtocol": "Protokol Mesin",
   "multiDeviceEngine": "whatsmeow Multi-Device (MD)",
   "btnTestMessage": "Kirim Pesan Tes",
-  "btnClose": "Tutup"
+  "btnClose": "Tutup",
+  "slotLabel": "Slot:",
+  "scanQRTab": "Pindai QR Code",
+  "phoneCodeTab": "Kode Nomor Telepon",
+  "qrExpiredReload": "QR Kedaluwarsa - Muat Ulang",
+  "enterPairingCodeInstruction": "Masukkan 8 karakter kode berikut di aplikasi WhatsApp ponsel Anda:",
+  "codeCopied": "Kode Tersalin!",
+  "copyCode": "Salin Kode",
+  "phoneLabel": "Nomor WhatsApp Ponsel",
+  "connecting": "Menghubungkan ke WhatsApp...",
+  "getPairingCode": "Dapatkan Kode Pairing",
+  "qrInstructionsTitle": "Petunjuk Pemindaian QR di Ponsel:",
+  "phoneCodeInstructionsTitle": "Petunjuk Memasukkan Kode di Ponsel:",
+  "phoneStep1": "Buka WhatsApp di ponsel → Ketuk Menu (titik tiga) atau Pengaturan.",
+  "phoneStep2": "Pilih Perangkat Tertaut → Tautkan Perangkat.",
+  "phoneStep3": "Pilih Tautkan dengan nomor telepon saja di bagian bawah layar.",
+  "phoneStep4": "Masukkan 8 karakter kode pairing yang tertera di atas."
 }

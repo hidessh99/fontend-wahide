@@ -26,18 +26,22 @@ import {
   Send,
   Trash2,
 } from "lucide-react";
+import { useI18n } from "@/lib/i18n/context";
 import {
   Table,
   TableHeader,
-  TableBody,
   TableRow,
   TableHead,
+  TableBody,
   TableCell,
 } from "@/components/ui/table";
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
 import { useTableSort } from "@/hooks/useTableSort";
 
-export function formatHumanActivityDate(rawDate?: string): {
+export function formatHumanActivityDate(
+  rawDate?: string,
+  locale = "id"
+): {
   formattedDate: string;
   formattedTime: string;
   fullHuman: string;
@@ -54,28 +58,16 @@ export function formatHumanActivityDate(rawDate?: string): {
     return { formattedDate: rawDate, formattedTime: "", fullHuman: rawDate };
   }
 
-  const day = dateObj.getDate();
-  const months = [
-    "Januari",
-    "Februari",
-    "Maret",
-    "April",
-    "Mei",
-    "Juni",
-    "Juli",
-    "Agustus",
-    "September",
-    "Oktober",
-    "November",
-    "Desember",
-  ];
-  const monthName = months[dateObj.getMonth()];
-  const year = dateObj.getFullYear();
+  const formattedDate = new Intl.DateTimeFormat(locale === "en" ? "en-US" : "id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(dateObj);
+
   const hours = String(dateObj.getHours()).padStart(2, "0");
   const minutes = String(dateObj.getMinutes()).padStart(2, "0");
-
-  const formattedDate = `${day} ${monthName} ${year}`;
-  const formattedTime = `${hours}:${minutes} WIB`;
+  const timeSuffix = locale === "en" ? "UTC+7" : "WIB";
+  const formattedTime = `${hours}:${minutes} ${timeSuffix}`;
   const fullHuman = `${formattedDate}, ${formattedTime}`;
 
   return { formattedDate, formattedTime, fullHuman };
@@ -116,6 +108,7 @@ export function UserActivitiesTable({
   onRefresh,
   onDeleteActivity,
 }: UserActivitiesTableProps) {
+  const { t, locale } = useI18n();
   const [searchInput, setSearchInput] = useState("");
   const [activityToDelete, setActivityToDelete] = useState<UserActivityItem | null>(null);
 
@@ -132,12 +125,12 @@ export function UserActivitiesTable({
   };
 
   const filterChips = [
-    { value: "ALL", label: "Semua Aktivitas" },
-    { value: "FINANCE", label: "Transaksi & Top-Up" },
-    { value: "AUTH", label: "Autentikasi (Login/Logout)" },
-    { value: "SECURITY", label: "Keamanan & Password" },
-    { value: "WHATSAPP", label: "WhatsApp & Broadcast" },
-    { value: "PROFILE", label: "Profil & Akun" },
+    { value: "ALL", label: t("activities.filterAll") },
+    { value: "FINANCE", label: t("activities.filterFinance") },
+    { value: "AUTH", label: t("activities.filterAuth") },
+    { value: "SECURITY", label: t("activities.filterSecurity") },
+    { value: "WHATSAPP", label: t("activities.filterWhatsapp") },
+    { value: "PROFILE", label: t("activities.filterProfile") },
   ];
 
   const renderTypeBadge = (rawType: string) => {
@@ -252,7 +245,7 @@ export function UserActivitiesTable({
               onChange={setSearchInput}
               onSearch={() => onSearch(searchInput.trim())}
               onClear={handleClear}
-              placeholder="Cari nama, email, atau deskripsi aktivitas..."
+              placeholder={t("admin.activities.searchPlaceholder")}
             />
           </div>
 
@@ -264,8 +257,8 @@ export function UserActivitiesTable({
             onClick={onRefresh}
             disabled={isLoading}
             className="border-border hover:border-foreground-muted h-10 shrink-0 cursor-pointer gap-1.5 self-start rounded-full px-3.5 text-xs font-bold transition sm:self-auto"
-            title="Muat Ulang Data"
-            aria-label="Refresh Data Aktivitas"
+            title={t("activities.refreshTitle")}
+            aria-label={t("admin.activities.refreshAria")}
           >
             <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin text-rose-500" : ""}`} />
             <span className="hidden sm:inline">Refresh</span>
@@ -277,7 +270,7 @@ export function UserActivitiesTable({
           <div className="flex items-center justify-between px-0.5">
             <div className="text-foreground-muted flex items-center gap-1.5 text-[11px] font-bold">
               <Filter className="size-3 text-rose-500" />
-              <span>Kategori Aktivitas:</span>
+              <span>{t("activities.categoryLabel")}</span>
             </div>
             <span className="text-foreground-muted text-[10px] font-semibold tracking-tight sm:hidden">
               Geser ke samping &rarr;
@@ -313,16 +306,16 @@ export function UserActivitiesTable({
             <div className="mx-auto flex size-9 animate-spin items-center justify-center rounded-full bg-rose-500/15 text-rose-600">
               <RefreshCw className="size-4.5" />
             </div>
-            <p className="text-foreground text-xs font-bold">Memuat rekaman log aktivitas...</p>
+            <p className="text-foreground text-xs font-bold">{t("activities.loading")}</p>
           </div>
         ) : activities.length === 0 ? (
           <EmptyState
             icon={<Activity />}
-            title="Tidak Ada Aktivitas Pengguna Ditemukan"
+            title={t("admin.activities.emptyTitle")}
             description={
               activeSearch
-                ? `Tidak ada hasil yang sesuai dengan kata kunci "${activeSearch}". Silakan periksa kembali filter Anda.`
-                : "Belum ada rekaman aktivitas pengguna yang tercatat pada sistem."
+                ? t("admin.activities.emptySearchDesc", { query: activeSearch })
+                : t("admin.activities.emptyDesc")
             }
             action={
               activeSearch && (
@@ -333,7 +326,7 @@ export function UserActivitiesTable({
                   onClick={handleClear}
                   className="cursor-pointer rounded-full text-xs font-bold"
                 >
-                  Reset Pencarian
+                  {t("activities.resetSearch")}
                 </Button>
               )
             }
@@ -343,7 +336,7 @@ export function UserActivitiesTable({
             {/* Mobile View: Card List (Visible on < 768px) */}
             <div className="divide-border/50 w-full min-w-0 divide-y md:hidden">
               {sortedActivities.map((act) => {
-                const { fullHuman } = formatHumanActivityDate(act.createdAt);
+                const { fullHuman } = formatHumanActivityDate(act.createdAt, locale);
                 return (
                   <div
                     key={act.id}
@@ -373,7 +366,7 @@ export function UserActivitiesTable({
                     </div>
 
                     <p className="text-foreground-secondary bg-muted/30 border-border/40 rounded-lg border p-2.5 text-xs leading-relaxed font-medium wrap-break-word">
-                      {act.description || "Tidak ada deskripsi rinci aktivitas."}
+                      {act.description || t("activities.noDescription")}
                     </p>
 
                     <div className="text-foreground-muted border-border/30 flex items-center justify-between border-t pt-1 text-[11px]">
@@ -386,8 +379,8 @@ export function UserActivitiesTable({
                         type="button"
                         onClick={() => setActivityToDelete(act)}
                         className="text-foreground-muted flex size-7 cursor-pointer items-center justify-center rounded-full border border-transparent transition hover:border-rose-500/30 hover:bg-rose-500/10 hover:text-rose-600"
-                        title="Hapus Rekaman Aktivitas"
-                        aria-label="Hapus Rekaman Aktivitas"
+                        title={t("admin.activities.deleteModalTitle")}
+                        aria-label={t("admin.activities.deleteModalTitle")}
                       >
                         <Trash2 className="size-3.5" />
                       </button>
@@ -404,12 +397,12 @@ export function UserActivitiesTable({
                   <TableRow className="border-border bg-muted/60 hover:bg-muted/60">
                     <TableHead className="w-[28%] px-5 py-3.5">
                       <div className="text-foreground-muted text-xs font-extrabold tracking-wider uppercase select-none">
-                        Pengguna / Akun
+                        {t("admin.activities.colTenant")}
                       </div>
                     </TableHead>
                     <TableHead className="w-[18%] px-4 py-3.5 text-center">
                       <DataTableColumnHeader
-                        title="Tipe Aktivitas"
+                        title={t("admin.activities.colType")}
                         columnKey="type"
                         currentSortKey={sortKey as string}
                         currentSortOrder={sortOrder}
@@ -419,12 +412,12 @@ export function UserActivitiesTable({
                     </TableHead>
                     <TableHead className="w-[30%] px-4 py-3.5">
                       <div className="text-foreground-muted text-xs font-extrabold tracking-wider uppercase select-none">
-                        Deskripsi Kejadian
+                        {t("admin.activities.colDescription")}
                       </div>
                     </TableHead>
                     <TableHead className="w-[16%] px-4 py-3.5 text-right">
                       <DataTableColumnHeader
-                        title="Waktu Aktivitas"
+                        title={t("admin.activities.colTime")}
                         columnKey="createdAt"
                         currentSortKey={sortKey as string}
                         currentSortOrder={sortOrder}
@@ -434,14 +427,14 @@ export function UserActivitiesTable({
                     </TableHead>
                     <TableHead className="w-[8%] px-5 py-3.5 text-right">
                       <div className="text-foreground-muted text-right text-xs font-extrabold tracking-wider uppercase select-none">
-                        Aksi
+                        {t("admin.tableHeaderAction")}
                       </div>
                     </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {sortedActivities.map((act) => {
-                    const { formattedDate, formattedTime } = formatHumanActivityDate(act.createdAt);
+                    const { formattedDate, formattedTime } = formatHumanActivityDate(act.createdAt, locale);
                     return (
                       <TableRow key={act.id} className="hover:bg-muted/40 transition-colors">
                         {/* Col 1: Pengguna */}
@@ -475,7 +468,7 @@ export function UserActivitiesTable({
                         {/* Col 3: Deskripsi */}
                         <TableCell className="text-foreground-secondary px-4 py-3.5 align-middle text-xs font-medium">
                           <span className="line-clamp-2 leading-relaxed">
-                            {act.description || "Aktivitas tercatat pada sistem."}
+                            {act.description || t("activities.defaultDescription")}
                           </span>
                         </TableCell>
 
@@ -499,8 +492,8 @@ export function UserActivitiesTable({
                               type="button"
                               onClick={() => setActivityToDelete(act)}
                               className="text-foreground-muted flex size-8 cursor-pointer items-center justify-center rounded-full border border-transparent transition hover:border-rose-500/30 hover:bg-rose-500/10 hover:text-rose-600"
-                              title="Hapus Rekaman Log Aktivitas"
-                              aria-label="Hapus Rekaman Log Aktivitas"
+                              title={t("admin.activities.deleteModalTitle")}
+                              aria-label={t("admin.activities.deleteModalTitle")}
                             >
                               <Trash2 className="size-3.5" />
                             </button>
@@ -524,7 +517,7 @@ export function UserActivitiesTable({
             pageSize={pageSize}
             onPrevPage={onPrevPage}
             onNextPage={onNextPage}
-            entityName="rekaman aktivitas"
+            entityName={t("admin.activities.entityName")}
           />
         )}
       </div>

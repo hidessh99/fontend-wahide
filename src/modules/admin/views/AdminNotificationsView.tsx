@@ -6,8 +6,10 @@ import { BroadcastComposer } from "@/modules/admin/components/notifications/Broa
 import { QueueMonitorTable } from "@/modules/admin/components/notifications/QueueMonitorTable";
 import { NotificationMetricsCards } from "@/modules/admin/components/notifications/NotificationMetricsCards";
 import { Bell } from "lucide-react";
+import { useI18n } from "@/lib/i18n/context";
 
 export function AdminNotificationsView() {
+  const { t } = useI18n();
   const {
     queues,
     isLoading,
@@ -43,12 +45,11 @@ export function AdminNotificationsView() {
               <Bell className="size-4 sm:size-5" />
             </div>
             <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl lg:text-3xl">
-              Siaran &amp; Antrean Notifikasi
+              {t("admin.notifications.title")}
             </h1>
           </div>
           <p className="text-foreground-secondary max-w-2xl text-xs font-semibold sm:text-sm">
-            Kirim pengumuman siaran email massal, kelola pesan ke email tertentu, dan pantau status
-            antrean worker.
+            {t("admin.notifications.subtitle")}
           </p>
         </div>
       </div>

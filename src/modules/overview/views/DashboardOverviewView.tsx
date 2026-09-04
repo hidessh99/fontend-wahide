@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty";
+import { useI18n } from "@/lib/i18n/context";
 import {
   Smartphone,
   Send,
@@ -31,6 +32,7 @@ export function DashboardOverviewView() {
   const { isSuperAdmin, userStats, adminStats, isLoading, error, refetch } = useDashboardStats();
   const { devices } = useDevices();
   const { campaigns } = useCampaigns();
+  const { t } = useI18n();
 
   if (isLoading) {
     return <DashboardSkeleton />;
@@ -48,7 +50,7 @@ export function DashboardOverviewView() {
             className="gap-1.5 rounded-full text-xs font-bold"
           >
             <RefreshCw className="size-3.5" />
-            <span>Coba Lagi</span>
+            <span>{t("overview.retry")}</span>
           </Button>
         </div>
       </div>
@@ -96,6 +98,7 @@ interface UserDashboardOverviewProps {
 }
 
 function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverviewProps) {
+  const { t, locale } = useI18n();
   const connectedCount =
     stats.connected_devices || devices.filter((d) => d.status === "CONNECTED").length;
   const totalDevCount = stats.total_devices || devices.length;
@@ -106,7 +109,7 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
     stats.plan_name.toUpperCase() === "FREE" ||
     stats.plan_name.toUpperCase() === "STARTER";
 
-  let expirationLabel = "Masa Aktif Langganan: Selamanya (Unlimited)";
+  let expirationLabel = t("overview.planUnlimited");
   let isExpiringSoon = false;
   let isExpired = false;
 
@@ -116,7 +119,7 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
     const diffTime = expDate.getTime() - now.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    const formattedDate = expDate.toLocaleDateString("id-ID", {
+    const formattedDate = expDate.toLocaleDateString(locale === "en" ? "en-US" : "id-ID", {
       day: "numeric",
       month: "short",
       year: "numeric",
@@ -124,12 +127,12 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
 
     if (diffDays <= 0 || stats.plan_status === "EXPIRED") {
       isExpired = true;
-      expirationLabel = `Masa Aktif Berakhir (${formattedDate})`;
+      expirationLabel = t("overview.planExpired", { date: formattedDate });
     } else if (diffDays <= 7) {
       isExpiringSoon = true;
-      expirationLabel = `Berlaku s/d ${formattedDate} (Sisa ${diffDays} Hari)`;
+      expirationLabel = t("overview.planExpiring", { date: formattedDate, days: diffDays });
     } else {
-      expirationLabel = `Berlaku s/d ${formattedDate} (Sisa ${diffDays} Hari)`;
+      expirationLabel = t("overview.planExpiring", { date: formattedDate, days: diffDays });
     }
   }
 
@@ -151,7 +154,7 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
               <span className="text-foreground font-black">Paket {stats.plan_name}</span>
               <span className="text-foreground-muted">•</span>
               <span>
-                {isFreePlan ? "Masa Aktif Langganan: Selamanya (Unlimited)" : expirationLabel}
+                {isFreePlan ? t("overview.planUnlimited") : expirationLabel}
               </span>
             </span>
 
@@ -161,20 +164,19 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
             >
               <span>
                 {isFreePlan
-                  ? "Tingkatkan Paket"
+                  ? t("overview.upgradePlan")
                   : isExpiringSoon || isExpired
-                    ? "Perpanjang"
-                    : "Ubah Paket"}
+                    ? t("overview.renewPlan")
+                    : t("overview.changePlan")}
               </span>
               <ArrowUpRight className="stroke-2.5 size-3" />
             </Link>
           </div>
           <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl lg:text-3xl">
-            Dasbor Bisnis &amp; Ringkasan
+            {t("overview.dashboardTitle")}
           </h1>
           <p className="text-foreground-secondary max-w-2xl text-xs font-semibold sm:text-sm">
-            Pantau status operasional gateway WhatsApp, sisa kuota bulanan, dan antrean kampanye
-            broadcast pesan.
+            {t("overview.dashboardSubtitle")}
           </p>
         </div>
 
@@ -188,7 +190,7 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
             >
               <Smartphone className="text-dark-green dark:text-wise-green size-3.5" />
               <span>
-                Perangkat ({totalDevCount}/{stats.device_limit})
+                {t("overview.devicesButton", { count: totalDevCount, limit: stats.device_limit })}
               </span>
             </Button>
           </Link>
@@ -199,7 +201,7 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
               className="gap-1.5 rounded-full text-xs font-bold shadow-sm"
             >
               <Plus className="size-3.5" />
-              <span>Broadcast Baru</span>
+              <span>{t("overview.newBroadcastButton")}</span>
             </Button>
           </Link>
         </div>
@@ -210,17 +212,17 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
         <div className="border-border bg-surface space-y-2 rounded-xl border p-4 shadow-xs sm:p-5 dark:bg-[#161715]">
           <div className="flex items-center justify-between">
             <span className="text-foreground-muted text-xs font-bold tracking-wider uppercase">
-              WhatsApp Terhubung
+              {t("overview.whatsappConnected")}
             </span>
             <div className="bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex size-8 items-center justify-center rounded-full">
               <Smartphone className="size-4" />
             </div>
           </div>
           <div className="text-foreground text-2xl font-black tracking-tight">
-            {connectedCount} / {totalDevCount} Sesi
+            {t("overview.sessionUnit", { connected: connectedCount, total: totalDevCount })}
           </div>
           <span className="block text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
-            {connectedCount > 0 ? "Node Aktif & Siap Kirim" : "Belum Ada Node Terhubung"}
+            {connectedCount > 0 ? t("overview.nodesReady") : t("overview.noNodesConnected")}
           </span>
         </div>
 
@@ -228,17 +230,19 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
         <div className="border-border bg-surface space-y-2 rounded-xl border p-5 shadow-xs dark:bg-[#161715]">
           <div className="flex items-center justify-between">
             <span className="text-foreground-muted text-xs font-bold tracking-wider uppercase">
-              Sisa Kuota Pesan
+              {t("overview.remainingQuota")}
             </span>
             <div className="flex size-8 items-center justify-center rounded-full bg-sky-500/15 text-sky-500">
               <TrendingUp className="size-4" />
             </div>
           </div>
           <div className="text-foreground text-2xl font-black tracking-tight">
-            {quotaRemaining.toLocaleString("id-ID")}
+            {quotaRemaining.toLocaleString(locale === "en" ? "en-US" : "id-ID")}
           </div>
           <span className="text-foreground-muted block text-[11px] font-semibold">
-            Dari {stats.monthly_message_limit.toLocaleString("id-ID")} kuota bulanan
+            {t("overview.monthlyQuotaInfo", {
+              limit: stats.monthly_message_limit.toLocaleString(locale === "en" ? "en-US" : "id-ID"),
+            })}
           </span>
         </div>
 
@@ -246,20 +250,22 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
         <div className="border-border bg-surface space-y-2 rounded-xl border p-5 shadow-xs dark:bg-[#161715]">
           <div className="flex items-center justify-between">
             <span className="text-foreground-muted text-xs font-bold tracking-wider uppercase">
-              Buku Kontak &amp; Saldo
+              {t("overview.contactsAndBalance")}
             </span>
             <div className="flex size-8 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-500">
               <Users className="size-4" />
             </div>
           </div>
           <div className="text-foreground text-2xl font-black tracking-tight">
-            {stats.total_contacts.toLocaleString("id-ID")} Kontak
+            {t("overview.contactsUnit", {
+              count: stats.total_contacts.toLocaleString(locale === "en" ? "en-US" : "id-ID"),
+            })}
           </div>
           <div className="flex items-center justify-between pt-0.5">
             <span className="text-foreground-muted text-[11px] font-semibold">
-              Saldo:{" "}
+              {t("overview.balanceLabel")}{" "}
               <strong className="text-foreground font-mono">
-                Rp {stats.balance.toLocaleString("id-ID")}
+                Rp {stats.balance.toLocaleString(locale === "en" ? "en-US" : "id-ID")}
               </strong>
             </span>
             <Link
@@ -267,7 +273,7 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
               className="bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green border-wise-green/30 inline-flex cursor-pointer items-center gap-1 rounded-full border px-2.5 py-0.5 text-[10px] font-bold transition hover:opacity-80"
             >
               <Plus className="size-2.5" />
-              <span>Top-Up</span>
+              <span>{t("overview.topUp")}</span>
             </Link>
           </div>
         </div>
@@ -276,17 +282,19 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
         <div className="border-border bg-surface space-y-2 rounded-xl border p-5 shadow-xs dark:bg-[#161715]">
           <div className="flex items-center justify-between">
             <span className="text-foreground-muted text-xs font-bold tracking-wider uppercase">
-              Kampanye Aktif
+              {t("overview.activeCampaigns")}
             </span>
             <div className="flex size-8 items-center justify-center rounded-full bg-amber-500/15 text-amber-500">
               <Send className="size-4" />
             </div>
           </div>
           <div className="text-foreground text-2xl font-black tracking-tight">
-            {stats.total_campaigns || campaigns.length} Batch
+            {t("overview.batchUnit", { count: stats.total_campaigns || campaigns.length })}
           </div>
           <span className="text-foreground-muted block text-[11px] font-semibold">
-            {stats.total_messages_sent.toLocaleString("id-ID")} Pesan Terkirim
+            {t("overview.messagesSentUnit", {
+              count: stats.total_messages_sent.toLocaleString(locale === "en" ? "en-US" : "id-ID"),
+            })}
           </span>
         </div>
       </div>{" "}
@@ -299,14 +307,14 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
               <div className="flex items-center gap-2">
                 <Radio className="text-dark-green dark:text-wise-green size-4" />
                 <h2 className="text-foreground text-sm font-extrabold sm:text-base">
-                  Node Sesi WhatsApp
+                  {t("overview.whatsappNodesTitle")}
                 </h2>
               </div>
               <Link
                 href="/devices"
                 className="text-dark-green dark:text-wise-green inline-flex items-center gap-1 text-xs font-bold hover:underline"
               >
-                <span>Lihat Semua</span>
+                <span>{t("overview.viewAll")}</span>
                 <ArrowRight className="size-3" />
               </Link>
             </div>
@@ -314,8 +322,8 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
             {devices.length === 0 ? (
               <EmptyState
                 icon={<Smartphone className="size-6" />}
-                title="Belum ada perangkat terhubung"
-                description="Hubungkan perangkat WhatsApp untuk mulai mengirim pesan dan kampanye."
+                title={t("overview.noConnectedDevicesTitle")}
+                description={t("overview.noConnectedDevicesDesc")}
                 className="p-6 sm:p-8"
               />
             ) : (
@@ -334,7 +342,7 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
                           {d.push_name || d.pushName || d.name || "WhatsApp Device"}
                         </span>
                         <span className="text-foreground-muted font-mono text-[11px]">
-                          +{d.phone || "Menunggu Pairing"}
+                          +{d.phone || t("overview.waitingPairing")}
                         </span>
                       </div>
                     </div>
@@ -360,14 +368,14 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
               <div className="flex items-center gap-2">
                 <Layers className="text-dark-green dark:text-wise-green size-4" />
                 <h2 className="text-foreground text-sm font-extrabold sm:text-base">
-                  Kampanye Broadcast Terkini
+                  {t("overview.recentCampaignsTitle")}
                 </h2>
               </div>
               <Link
                 href="/campaigns"
                 className="text-dark-green dark:text-wise-green inline-flex items-center gap-1 text-xs font-bold hover:underline"
               >
-                <span>Lihat Semua</span>
+                <span>{t("overview.viewAll")}</span>
                 <ArrowRight className="size-3" />
               </Link>
             </div>
@@ -376,8 +384,8 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
             (!stats.recent_invoices || stats.recent_invoices.length === 0) ? (
               <EmptyState
                 icon={<Layers className="size-6" />}
-                title="Belum ada kampanye siaran"
-                description="Buat kampanye broadcast baru untuk menjangkau kontak pelanggan Anda."
+                title={t("overview.noCampaignsTitle")}
+                description={t("overview.noCampaignsDesc")}
                 className="p-6 sm:p-8"
               />
             ) : (
@@ -390,7 +398,10 @@ function UserDashboardOverview({ stats, devices, campaigns }: UserDashboardOverv
                     <div className="space-y-0.5">
                       <span className="text-foreground block text-xs font-bold">{c.name}</span>
                       <span className="text-foreground-muted block text-[10px]">
-                        {c.sentCount} dari {c.totalRecipients} pesan terkirim
+                        {t("overview.campaignProgress", {
+                          sent: c.sentCount,
+                          total: c.totalRecipients,
+                        })}
                       </span>
                     </div>
 
@@ -418,6 +429,8 @@ interface AdminDashboardOverviewProps {
 }
 
 function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
+  const { t, locale } = useI18n();
+
   return (
     <div className="mx-auto max-w-7xl space-y-6 p-3 sm:space-y-8 sm:p-6 lg:p-8">
       {/* Welcome & Quick Action Header */}
@@ -426,15 +439,14 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/15 px-2.5 py-0.5 text-xs font-bold text-amber-500">
               <ShieldCheck className="size-3.5" />
-              <span>Super Administrator Portal</span>
+              <span>{t("overview.adminBadge")}</span>
             </span>
           </div>
           <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl lg:text-3xl">
-            Dasbor Platform &amp; Analitik Global
+            {t("overview.adminDashboardTitle")}
           </h1>
           <p className="text-foreground-secondary max-w-2xl text-xs font-semibold sm:text-sm">
-            Pantau kesehatan kluster server, total pengguna &amp; organisasi bisnis, serta volume
-            pesan gateway WhatsApp di seluruh sistem.
+            {t("overview.adminDashboardSubtitle")}
           </p>
         </div>
 
@@ -447,7 +459,7 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
               className="border-border hover:border-foreground-muted gap-1.5 rounded-full text-xs font-bold"
             >
               <Users className="text-dark-green dark:text-wise-green size-3.5" />
-              <span>Kelola Pengguna</span>
+              <span>{t("overview.adminManageUsers")}</span>
             </Button>
           </Link>
           <Link href="/admin/plans">
@@ -457,7 +469,7 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
               className="gap-1.5 rounded-full text-xs font-bold shadow-sm"
             >
               <Layers className="size-3.5" />
-              <span>Kelola Paket</span>
+              <span>{t("overview.adminManagePlans")}</span>
             </Button>
           </Link>
         </div>
@@ -469,17 +481,21 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
         <div className="border-border bg-surface space-y-2 rounded-xl border p-4 shadow-xs sm:p-5 dark:bg-[#161715]">
           <div className="flex items-center justify-between">
             <span className="text-foreground-muted text-xs font-bold tracking-wider uppercase">
-              Pengguna Platform
+              {t("overview.adminPlatformUsers")}
             </span>
             <div className="bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green flex size-8 items-center justify-center rounded-full">
               <Users className="size-4" />
             </div>
           </div>
           <div className="text-foreground text-2xl font-black tracking-tight">
-            {stats.total_users.toLocaleString("id-ID")} User
+            {t("overview.adminUserUnit", {
+              count: stats.total_users.toLocaleString(locale === "en" ? "en-US" : "id-ID"),
+            })}
           </div>
           <span className="text-foreground-muted block text-[11px] font-semibold">
-            {stats.total_tenants.toLocaleString("id-ID")} Organisasi Bisnis
+            {t("overview.adminTenantUnit", {
+              count: stats.total_tenants.toLocaleString(locale === "en" ? "en-US" : "id-ID"),
+            })}
           </span>
         </div>
 
@@ -487,17 +503,20 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
         <div className="border-border bg-surface space-y-2 rounded-xl border p-4 shadow-xs sm:p-5 dark:bg-[#161715]">
           <div className="flex items-center justify-between">
             <span className="text-foreground-muted text-xs font-bold tracking-wider uppercase">
-              Node WhatsApp Global
+              {t("overview.adminGlobalNodes")}
             </span>
             <div className="flex size-8 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-500">
               <Smartphone className="size-4" />
             </div>
           </div>
           <div className="text-foreground text-2xl font-black tracking-tight">
-            {stats.connected_devices} / {stats.total_devices} Sesi
+            {t("overview.sessionUnit", {
+              connected: stats.connected_devices,
+              total: stats.total_devices,
+            })}
           </div>
           <span className="block text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
-            Koneksi Multi-Device Aktif
+            {t("overview.adminMultiDeviceActive")}
           </span>
         </div>
 
@@ -505,17 +524,19 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
         <div className="border-border bg-surface space-y-2 rounded-xl border p-4 shadow-xs sm:p-5 dark:bg-[#161715]">
           <div className="flex items-center justify-between">
             <span className="text-foreground-muted text-xs font-bold tracking-wider uppercase">
-              Volume Pesan Gateway
+              {t("overview.adminGatewayVolume")}
             </span>
             <div className="flex size-8 items-center justify-center rounded-full bg-sky-500/15 text-sky-500">
               <Send className="size-4" />
             </div>
           </div>
           <div className="text-foreground text-2xl font-black tracking-tight">
-            {stats.total_messages_sent.toLocaleString("id-ID")}
+            {stats.total_messages_sent.toLocaleString(locale === "en" ? "en-US" : "id-ID")}
           </div>
           <span className="text-foreground-muted block text-[11px] font-semibold">
-            Dari {stats.total_campaigns.toLocaleString("id-ID")} Kampanye Broadcast
+            {t("overview.adminCampaignCount", {
+              count: stats.total_campaigns.toLocaleString(locale === "en" ? "en-US" : "id-ID"),
+            })}
           </span>
         </div>
 
@@ -523,17 +544,17 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
         <div className="border-border bg-surface space-y-2 rounded-xl border p-4 shadow-xs sm:p-5 dark:bg-[#161715]">
           <div className="flex items-center justify-between">
             <span className="text-foreground-muted text-xs font-bold tracking-wider uppercase">
-              Omset &amp; Tiket Bantuan
+              {t("overview.adminRevenueAndTickets")}
             </span>
             <div className="flex size-8 items-center justify-center rounded-full bg-amber-500/15 text-amber-500">
               <Wallet className="size-4" />
             </div>
           </div>
           <div className="text-foreground text-2xl font-black tracking-tight">
-            Rp {stats.total_transactions.toLocaleString("id-ID")}
+            Rp {stats.total_transactions.toLocaleString(locale === "en" ? "en-US" : "id-ID")}
           </div>
           <span className="block text-[11px] font-semibold text-amber-600 dark:text-amber-400">
-            {stats.active_tickets} Tiket Support Aktif
+            {t("overview.adminActiveTickets", { count: stats.active_tickets })}
           </span>
         </div>
       </div>
@@ -547,14 +568,14 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
               <div className="flex items-center gap-2">
                 <Users className="text-dark-green dark:text-wise-green size-4" />
                 <h2 className="text-foreground text-sm font-extrabold sm:text-base">
-                  Pengguna Baru Mendaftar
+                  {t("overview.adminRecentUsersTitle")}
                 </h2>
               </div>
               <Link
                 href="/admin/users"
                 className="text-dark-green dark:text-wise-green inline-flex items-center gap-1 text-xs font-bold hover:underline"
               >
-                <span>Kelola Semua</span>
+                <span>{t("overview.adminManageAll")}</span>
                 <ArrowRight className="size-3" />
               </Link>
             </div>
@@ -562,8 +583,8 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
             {stats.recent_users.length === 0 ? (
               <EmptyState
                 icon={<Users className="size-6" />}
-                title="Belum ada pengguna baru"
-                description="Belum ada pendaftaran akun pengguna baru pada sistem."
+                title={t("overview.adminNoUsersTitle")}
+                description={t("overview.adminNoUsersDesc")}
                 className="p-6 sm:p-8"
               />
             ) : (
@@ -597,14 +618,14 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
               <div className="flex items-center gap-2">
                 <CreditCard className="text-dark-green dark:text-wise-green size-4" />
                 <h2 className="text-foreground text-sm font-extrabold sm:text-base">
-                  Transaksi &amp; Pembayaran Terkini
+                  {t("overview.adminRecentTransactionsTitle")}
                 </h2>
               </div>
               <Link
                 href="/admin/users"
                 className="text-dark-green dark:text-wise-green inline-flex items-center gap-1 text-xs font-bold hover:underline"
               >
-                <span>Lihat Laporan</span>
+                <span>{t("overview.adminViewReport")}</span>
                 <ArrowRight className="size-3" />
               </Link>
             </div>
@@ -612,8 +633,8 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
             {stats.recent_transactions.length === 0 ? (
               <EmptyState
                 icon={<CreditCard className="size-6" />}
-                title="Belum ada transaksi"
-                description="Belum ada riwayat transaksi pembayaran tercatat pada platform."
+                title={t("overview.adminNoTransactionsTitle")}
+                description={t("overview.adminNoTransactionsDesc")}
                 className="p-6 sm:p-8"
               />
             ) : (
@@ -626,13 +647,13 @@ function AdminDashboardOverview({ stats }: AdminDashboardOverviewProps) {
                     <div className="space-y-0.5">
                       <span className="text-foreground block text-xs font-bold">{tx.title}</span>
                       <span className="text-foreground-muted block font-mono text-[10px]">
-                        Ref: {tx.ref}
+                        {t("overview.adminRef", { ref: tx.ref })}
                       </span>
                     </div>
 
                     <div className="space-y-0.5 text-right">
                       <span className="text-foreground block text-xs font-bold">
-                        Rp {tx.total_price.toLocaleString("id-ID")}
+                        Rp {tx.total_price.toLocaleString(locale === "en" ? "en-US" : "id-ID")}
                       </span>
                       <Badge variant="success" className="text-[10px]">
                         {tx.status}

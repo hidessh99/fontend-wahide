@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/table";
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
 import { useTableSort } from "@/hooks/useTableSort";
+import { useI18n } from "@/lib/i18n/context";
 
 interface SubscriptionsTableProps {
   subscriptions: AdminSubscriptionItem[];
@@ -54,35 +55,38 @@ interface SubscriptionsTableProps {
   onPrevPage: () => void;
 }
 
-function getSubscriptionStatusBadge(status: string) {
+function getSubscriptionStatusBadge(
+  status: string,
+  t: (key: string, params?: Record<string, string | number>) => string
+) {
   const upper = (status || "").toUpperCase();
   switch (upper) {
     case "ACTIVE":
       return (
         <Badge variant="success">
           <CheckCircle2 className="size-3" />
-          <span>Aktif</span>
+          <span>{t("admin.subscriptions.statusBadgeActive")}</span>
         </Badge>
       );
     case "EXPIRED":
       return (
         <Badge variant="danger">
           <Clock className="size-3" />
-          <span>Expired</span>
+          <span>{t("admin.subscriptions.statusBadgeExpired")}</span>
         </Badge>
       );
     case "TRIAL":
       return (
         <Badge variant="warning">
           <Sparkles className="size-3" />
-          <span>Trial</span>
+          <span>{t("admin.subscriptions.statusBadgeTrial")}</span>
         </Badge>
       );
     case "SUSPENDED":
       return (
         <Badge variant="neutral">
           <Ban className="size-3" />
-          <span>Suspended</span>
+          <span>{t("admin.subscriptions.statusBadgeSuspended")}</span>
         </Badge>
       );
     default:
@@ -113,6 +117,7 @@ export function SubscriptionsTable({
   onNextPage,
   onPrevPage,
 }: SubscriptionsTableProps) {
+  const { t } = useI18n();
   const [searchInput, setSearchInput] = useState("");
   const [selectedSubForExpire, setSelectedSubForExpire] = useState<AdminSubscriptionItem | null>(
     null
@@ -156,7 +161,7 @@ export function SubscriptionsTable({
             onChange={setSearchInput}
             onSearch={() => onSearch(searchInput.trim())}
             onClear={handleResetSearch}
-            placeholder="Cari berdasarkan nama tenant, ID, atau nama paket..."
+            placeholder={t("admin.subscriptions.searchPlaceholder")}
           />
 
           {/* Filter Status & Refresh */}
@@ -166,11 +171,11 @@ export function SubscriptionsTable({
               onChange={(e) => onStatusFilterChange(e.target.value)}
               variant="pill"
             >
-              <option value="ALL">Semua Status</option>
-              <option value="ACTIVE">🟢 Aktif (ACTIVE)</option>
-              <option value="EXPIRED">🔴 Expired (EXPIRED)</option>
-              <option value="TRIAL">🟡 Masa Uji Coba (TRIAL)</option>
-              <option value="SUSPENDED">⚪ Suspended</option>
+              <option value="ALL">{t("admin.subscriptions.filterAllStatus")}</option>
+              <option value="ACTIVE">{t("admin.subscriptions.filterActive")}</option>
+              <option value="EXPIRED">{t("admin.subscriptions.filterExpired")}</option>
+              <option value="TRIAL">{t("admin.subscriptions.filterTrial")}</option>
+              <option value="SUSPENDED">{t("admin.subscriptions.filterSuspended")}</option>
             </NativeSelect>
 
             <Button
@@ -179,10 +184,10 @@ export function SubscriptionsTable({
               onClick={onRefresh}
               disabled={isLoading}
               className="border-border hover:border-foreground-muted h-10 shrink-0 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold transition"
-              aria-label="Refresh Data Langganan"
+              aria-label={t("admin.subscriptions.refreshAria")}
             >
               <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin" : ""}`} />
-              <span className="hidden sm:inline">Refresh</span>
+              <span className="hidden sm:inline">{t("refresh")}</span>
             </Button>
           </div>
         </div>
@@ -193,16 +198,16 @@ export function SubscriptionsTable({
         {isLoading ? (
           <div className="text-foreground-muted flex flex-col items-center justify-center space-y-3 py-16">
             <Loader2 className="dark:text-wise-green size-7 animate-spin text-emerald-600" />
-            <span className="text-xs font-bold">Memuat data paket langganan pengguna...</span>
+            <span className="text-xs font-bold">{t("admin.subscriptions.loadingText")}</span>
           </div>
         ) : subscriptions.length === 0 ? (
           <EmptyState
             icon={<CreditCard />}
-            title="Tidak Ada Langganan Ditemukan"
+            title={t("admin.subscriptions.emptyTitle")}
             description={
               searchQuery
-                ? `Tidak ditemukan langganan dengan kata kunci "${searchQuery}".`
-                : "Saat ini belum ada data langganan yang tercatat di sistem."
+                ? t("admin.subscriptions.emptySearchDesc", { query: searchQuery })
+                : t("admin.subscriptions.emptyDesc")
             }
           />
         ) : (
@@ -229,14 +234,14 @@ export function SubscriptionsTable({
                         </span>
                       </div>
 
-                      <div className="shrink-0">{getSubscriptionStatusBadge(s.status)}</div>
+                      <div className="shrink-0">{getSubscriptionStatusBadge(s.status, t)}</div>
                     </div>
 
                     {/* Quota Progress */}
                     <div className="bg-muted/20 border-border/60 space-y-1 rounded-lg border p-2.5 text-xs">
                       <div className="flex items-center justify-between text-[11px]">
                         <span className="text-foreground-muted font-semibold">
-                          Penggunaan Kuota:
+                          {t("admin.subscriptions.quotaUsage")}
                         </span>
                         <span className="text-foreground font-mono font-bold">
                           {s.currentMonthUsage} / {quotaLimit} ({usagePercent}%)
@@ -246,7 +251,7 @@ export function SubscriptionsTable({
                     </div>
 
                     <div className="text-foreground-muted flex items-center justify-between pt-1 text-[11px]">
-                      <span>Berakhir: {formatDateTime(s.expiredAt)}</span>
+                      <span>{t("admin.subscriptions.expiresAt", { date: formatDateTime(s.expiredAt) })}</span>
                       <span className="font-mono text-[10px]">ID: {s.id.slice(0, 10)}...</span>
                     </div>
 
@@ -259,7 +264,7 @@ export function SubscriptionsTable({
                         className="border-border hover:bg-muted h-8 cursor-pointer gap-1 rounded-full px-2.5 text-xs font-bold"
                       >
                         <Eye className="size-3.5" />
-                        <span>Detail</span>
+                        <span>{t("admin.subscriptions.detailBtn")}</span>
                       </Button>
 
                       {!isExpired && (
@@ -268,10 +273,10 @@ export function SubscriptionsTable({
                           size="sm"
                           onClick={() => handleOpenExpire(s)}
                           className="h-8 cursor-pointer gap-1 rounded-full border-amber-500/30 px-2.5 text-xs font-bold text-amber-700 hover:bg-amber-500/10 dark:text-amber-400"
-                          title="Tandai Expired"
+                          title={t("admin.subscriptions.setExpiredTooltip")}
                         >
                           <Clock className="size-3.5" />
-                          <span>Set Expired</span>
+                          <span>{t("admin.subscriptions.setExpiredBtn")}</span>
                         </Button>
                       )}
                     </div>
@@ -287,17 +292,17 @@ export function SubscriptionsTable({
                   <TableRow className="border-border bg-muted/50 hover:bg-muted/50">
                     <TableHead className="w-[25%] px-5 py-3.5">
                       <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
-                        Tenant &amp; ID Langganan
+                        {t("admin.subscriptions.colTenantId")}
                       </div>
                     </TableHead>
                     <TableHead className="w-[18%] px-4 py-3.5">
                       <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
-                        Paket Langganan
+                        {t("admin.subscriptions.colPlan")}
                       </div>
                     </TableHead>
                     <TableHead className="w-[18%] px-4 py-3.5">
                       <DataTableColumnHeader
-                        title="Penggunaan Kuota"
+                        title={t("admin.subscriptions.colQuotaUsage")}
                         columnKey="currentMonthUsage"
                         currentSortKey={sortKey as string}
                         currentSortOrder={sortOrder}
@@ -306,7 +311,7 @@ export function SubscriptionsTable({
                     </TableHead>
                     <TableHead className="w-[15%] px-4 py-3.5">
                       <DataTableColumnHeader
-                        title="Masa Berlaku"
+                        title={t("admin.subscriptions.colValidity")}
                         columnKey="expiredAt"
                         currentSortKey={sortKey as string}
                         currentSortOrder={sortOrder}
@@ -315,7 +320,7 @@ export function SubscriptionsTable({
                     </TableHead>
                     <TableHead className="w-[10%] px-3 py-3.5 text-center">
                       <DataTableColumnHeader
-                        title="Status"
+                        title={t("admin.subscriptions.colStatus")}
                         columnKey="status"
                         currentSortKey={sortKey as string}
                         currentSortOrder={sortOrder}
@@ -325,7 +330,7 @@ export function SubscriptionsTable({
                     </TableHead>
                     <TableHead className="w-[10%] px-3 py-3.5">
                       <DataTableColumnHeader
-                        title="Dibuat Pada"
+                        title={t("admin.subscriptions.colCreatedAt")}
                         columnKey="createdAt"
                         currentSortKey={sortKey as string}
                         currentSortOrder={sortOrder}
@@ -334,7 +339,7 @@ export function SubscriptionsTable({
                     </TableHead>
                     <TableHead className="w-[10%] px-5 py-3.5 text-right">
                       <div className="text-foreground-muted text-right text-[11px] font-extrabold tracking-wider uppercase select-none">
-                        Aksi
+                        {t("admin.subscriptions.colActions")}
                       </div>
                     </TableHead>
                   </TableRow>
@@ -399,10 +404,10 @@ export function SubscriptionsTable({
                         <TableCell className="px-4 py-3.5 align-middle">
                           <div className="space-y-0.5 font-mono text-[11px]">
                             <span className="text-foreground-muted block text-[10px]">
-                              Mulai: {formatDateTime(s.startedAt)}
+                              {t("admin.subscriptions.validityStart", { date: formatDateTime(s.startedAt) })}
                             </span>
                             <span className="text-foreground block font-bold">
-                              Hingga: {formatDateTime(s.expiredAt)}
+                              {t("admin.subscriptions.validityUntil", { date: formatDateTime(s.expiredAt) })}
                             </span>
                           </div>
                         </TableCell>
@@ -410,7 +415,7 @@ export function SubscriptionsTable({
                         {/* 5. Status */}
                         <TableCell className="px-3 py-3.5 text-center align-middle">
                           <div className="inline-flex items-center justify-center">
-                            {getSubscriptionStatusBadge(s.status)}
+                            {getSubscriptionStatusBadge(s.status, t)}
                           </div>
                         </TableCell>
 
@@ -430,10 +435,10 @@ export function SubscriptionsTable({
                               size="sm"
                               onClick={() => handleOpenDetail(s)}
                               className="border-border hover:bg-muted h-8 cursor-pointer gap-1 rounded-full px-2.5 text-xs font-bold"
-                              title="Lihat Detail Langganan"
+                              title={t("admin.subscriptions.detailTooltip")}
                             >
                               <Eye className="text-foreground-secondary size-3.5" />
-                              <span>Detail</span>
+                              <span>{t("admin.subscriptions.detailBtn")}</span>
                             </Button>
 
                             {!isExpired && (
@@ -443,10 +448,10 @@ export function SubscriptionsTable({
                                 size="sm"
                                 onClick={() => handleOpenExpire(s)}
                                 className="h-8 cursor-pointer gap-1 rounded-full border-amber-500/30 px-2.5 text-xs font-bold text-amber-700 hover:bg-amber-500/10 dark:text-amber-400"
-                                title="Ubah Status Menjadi Expired"
+                                title={t("admin.subscriptions.setExpiredTooltip")}
                               >
                                 <Clock className="size-3.5" />
-                                <span>Set Expired</span>
+                                <span>{t("admin.subscriptions.setExpiredBtn")}</span>
                               </Button>
                             )}
                           </div>
@@ -472,7 +477,7 @@ export function SubscriptionsTable({
             onNextPage={onNextPage}
             onPageSizeChange={onPageSizeChange}
             pageSizeOptions={[10, 15, 25, 50, 100]}
-            entityName="langganan"
+            entityName={t("admin.subscriptions.entityName")}
           />
         )}
       </div>

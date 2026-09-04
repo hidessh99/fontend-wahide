@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { AdminMessageLogItem } from "@/modules/admin/types/admin.types";
+import { useI18n } from "@/lib/i18n/context";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,7 +11,6 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { formatDateTime } from "@/lib/utils";
 import { toast } from "sonner";
 import {
   MessageSquare,
@@ -32,6 +32,7 @@ interface MessageDetailModalProps {
 }
 
 export function MessageDetailModal({ message, isOpen, onClose }: MessageDetailModalProps) {
+  const { t, locale } = useI18n();
   const [hasCopied, setHasCopied] = useState(false);
 
   if (!message) return null;
@@ -40,11 +41,23 @@ export function MessageDetailModal({ message, isOpen, onClose }: MessageDetailMo
     try {
       await navigator.clipboard.writeText(message.messageBody);
       setHasCopied(true);
-      toast.success("Isi pesan disalin ke clipboard", { id: "clipboard-copy" });
+      toast.success(t("admin.messages.copiedToast"), { id: "clipboard-copy" });
       setTimeout(() => setHasCopied(false), 2000);
     } catch {
-      toast.error("Gagal menyalin teks", { id: "clipboard-copy" });
+      toast.error(t("admin.messages.copyFailedToast"), { id: "clipboard-copy" });
     }
+  };
+
+  const formatLocalizedDateTime = (dateInput: string | Date | number): string => {
+    const date = new Date(dateInput);
+    if (isNaN(date.getTime())) return "-";
+    return new Intl.DateTimeFormat(locale === "en" ? "en-US" : "id-ID", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(date);
   };
 
   return (
@@ -57,7 +70,7 @@ export function MessageDetailModal({ message, isOpen, onClose }: MessageDetailMo
           </div>
           <div>
             <DialogTitle className="text-foreground text-base font-black tracking-tight">
-              Detail Log Pesan WhatsApp
+              {t("admin.messages.detailModalTitle")}
             </DialogTitle>
             <span className="text-foreground-muted block font-mono text-[11px]">
               ID: {message.id}
@@ -71,18 +84,18 @@ export function MessageDetailModal({ message, isOpen, onClose }: MessageDetailMo
           <div className="grid grid-cols-2 gap-2">
             <div className="border-border bg-muted/20 rounded-lg border p-2.5">
               <span className="text-foreground-muted mb-0.5 block text-[10px] font-bold uppercase">
-                Arah Pesan
+                {t("admin.messages.colDirection")}
               </span>
               <div className="text-foreground flex items-center gap-1.5 font-bold">
                 {message.direction === "OUTBOUND" ? (
                   <>
                     <Send className="dark:text-wise-green size-3 text-emerald-600" />
-                    <span>Keluar (OUTBOUND)</span>
+                    <span>{t("admin.messages.directionOutbound")}</span>
                   </>
                 ) : (
                   <>
                     <Download className="size-3 text-blue-500" />
-                    <span>Masuk (INBOUND)</span>
+                    <span>{t("admin.messages.directionInbound")}</span>
                   </>
                 )}
               </div>
@@ -90,7 +103,7 @@ export function MessageDetailModal({ message, isOpen, onClose }: MessageDetailMo
 
             <div className="border-border bg-muted/20 rounded-lg border p-2.5">
               <span className="text-foreground-muted mb-0.5 block text-[10px] font-bold uppercase">
-                Status Pengiriman
+                {t("admin.messages.colStatus")}
               </span>
               <span className="text-foreground font-mono font-bold uppercase">
                 {message.status}
@@ -103,7 +116,7 @@ export function MessageDetailModal({ message, isOpen, onClose }: MessageDetailMo
             <div className="flex items-center justify-between">
               <span className="text-foreground-secondary flex items-center gap-1.5 font-semibold">
                 <Smartphone className="text-foreground-muted size-3.5" />
-                <span>Penerima (JID):</span>
+                <span>{t("admin.messages.recipientJidLabel")}</span>
               </span>
               <span className="text-foreground font-mono font-bold">{message.recipientJid}</span>
             </div>
@@ -113,44 +126,44 @@ export function MessageDetailModal({ message, isOpen, onClose }: MessageDetailMo
           <div className="border-border bg-muted/20 space-y-1.5 rounded-xl border p-3.5">
             <div className="flex items-center justify-between">
               <span className="text-foreground-secondary text-[11px] font-bold tracking-wider uppercase">
-                Isi Konten Pesan:
+                {t("admin.messages.messageContentLabel")}
               </span>
               <button
                 type="button"
                 onClick={handleCopyText}
                 className="text-foreground-muted hover:text-foreground flex cursor-pointer items-center gap-1 text-[11px] font-semibold transition"
-                title="Salin Pesan"
+                title={t("admin.messages.copy")}
               >
                 {hasCopied ? (
                   <>
                     <Check className="dark:text-wise-green size-3 text-emerald-600" />
-                    <span className="dark:text-wise-green text-emerald-600">Tersalin</span>
+                    <span className="dark:text-wise-green text-emerald-600">{t("admin.messages.copied")}</span>
                   </>
                 ) : (
                   <>
                     <Copy className="size-3" />
-                    <span>Salin</span>
+                    <span>{t("admin.messages.copy")}</span>
                   </>
                 )}
               </button>
             </div>
 
             <div className="bg-surface border-border/60 text-foreground max-h-48 overflow-y-auto rounded-lg border p-3 text-xs leading-relaxed whitespace-pre-wrap select-text dark:bg-[#10110e]">
-              {message.messageBody || "(Pesan kosong / payload non-teks)"}
+              {message.messageBody || t("admin.messages.emptyBody")}
             </div>
           </div>
 
           {/* Media URL if present */}
           {message.mediaUrl && (
             <div className="border-border bg-muted/20 flex items-center justify-between rounded-xl border p-3 text-xs">
-              <span className="text-foreground-secondary font-semibold">Lampiran Media:</span>
+              <span className="text-foreground-secondary font-semibold">{t("admin.messages.mediaAttachment")}</span>
               <a
                 href={message.mediaUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="dark:text-wise-green inline-flex items-center gap-1 font-mono font-bold text-emerald-600 hover:underline"
               >
-                <span>Buka Media</span>
+                <span>{t("admin.messages.openMedia")}</span>
                 <ExternalLink className="size-3" />
               </a>
             </div>
@@ -161,7 +174,7 @@ export function MessageDetailModal({ message, isOpen, onClose }: MessageDetailMo
             <div className="space-y-1 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-xs text-rose-700 dark:text-rose-400">
               <div className="flex items-center gap-1.5 font-bold">
                 <AlertCircle className="size-3.5" />
-                <span>Penyebab Kegagalan:</span>
+                <span>{t("admin.messages.failureReason")}</span>
               </div>
               <p className="font-mono text-[11px] leading-relaxed select-text">
                 {message.errorMessage}
@@ -200,10 +213,10 @@ export function MessageDetailModal({ message, isOpen, onClose }: MessageDetailMo
             <div className="border-border/50 flex items-center justify-between border-t pt-1.5">
               <span className="text-foreground-secondary flex items-center gap-1.5 font-semibold">
                 <Clock className="text-foreground-muted size-3.5" />
-                <span>Waktu Dibuat:</span>
+                <span>{t("admin.messages.createdAtLabel")}</span>
               </span>
               <span className="text-foreground font-mono text-[11px] font-semibold">
-                {formatDateTime(message.createdAt)}
+                {formatLocalizedDateTime(message.createdAt)}
               </span>
             </div>
           </div>
@@ -218,7 +231,7 @@ export function MessageDetailModal({ message, isOpen, onClose }: MessageDetailMo
             onClick={onClose}
             className="border-border hover:bg-muted h-8.5 cursor-pointer rounded-full px-4 text-xs font-bold"
           >
-            Tutup
+            {t("admin.messages.closeBtn")}
           </Button>
         </DialogFooter>
       </DialogContent>

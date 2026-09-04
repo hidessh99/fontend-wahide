@@ -4,8 +4,10 @@ import React from "react";
 import { useUserActivities } from "@/modules/iam/hooks/useUserActivities";
 import { UserActivityForm } from "@/modules/iam/components/activity/UserActivityForm";
 import { Activity, ShieldCheck } from "lucide-react";
+import { useI18n } from "@/lib/i18n/context";
 
 export function UserActivitiesView() {
+  const { t } = useI18n();
   const {
     filteredActivities,
     isLoading,
@@ -33,23 +35,22 @@ export function UserActivitiesView() {
               <Activity className="size-5" />
             </div>
             <h1 className="text-foreground text-2xl font-black tracking-tight sm:text-3xl">
-              Log Aktivitas Akun
+              {t("activities.title")}
             </h1>
             <span className="bg-wise-green/10 text-dark-green dark:text-wise-green border-wise-green/20 hidden items-center gap-1 rounded-full border px-2.5 py-0.5 font-mono text-[11px] font-bold sm:inline-flex">
               <ShieldCheck className="size-3" />
-              <span>Audit Akun Pribadi</span>
+              <span>{t("activities.badgeAudit")}</span>
             </span>
           </div>
           <p className="text-foreground-secondary max-w-2xl text-sm font-semibold">
-            Pantau seluruh rekaman riwayat autentikasi sesi, transaksi saldo/top-up, perubahan
-            profil, dan koneksi WhatsApp pada akun Anda.
+            {t("activities.subtitle")}
           </p>
         </div>
 
         {/* Live Total Indicator */}
         <div className="bg-muted border-border text-foreground-secondary flex items-center gap-2 self-start rounded-full border px-3.5 py-1.5 text-xs font-bold sm:self-auto">
           <span className="bg-wise-green size-2 animate-pulse rounded-full" />
-          <span>{total} Total Rekaman</span>
+          <span>{t("activities.totalRecords", { total })}</span>
         </div>
       </div>
 

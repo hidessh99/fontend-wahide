@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { AdminBillingItem } from "@/modules/admin/types/admin.types";
+import { useI18n } from "@/lib/i18n/context";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -26,6 +27,7 @@ export function UpdateBillingStatusModal({
   onClose,
   onSubmit,
 }: UpdateBillingStatusModalProps) {
+  const { t, locale } = useI18n();
   const [selectedStatus, setSelectedStatus] = useState<"EXPIRED" | "CANCELLED">("CANCELLED");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -52,10 +54,10 @@ export function UpdateBillingStatusModal({
           </div>
           <div>
             <DialogTitle className="text-foreground text-lg font-black tracking-tight">
-              Ubah Status Transaksi
+              {t("admin.billing.updateStatusModalTitle")}
             </DialogTitle>
             <DialogDescription className="text-foreground-secondary text-xs font-semibold">
-              Tandai transaksi kadaluarsa atau batalkan tagihan.
+              {t("admin.billing.updateStatusModalSubtitle", { invoiceNumber: billing.id.slice(0, 8) })}
             </DialogDescription>
           </div>
         </DialogHeader>
@@ -68,20 +70,20 @@ export function UpdateBillingStatusModal({
               <div className="flex items-center justify-between text-xs">
                 <span className="text-foreground-secondary flex items-center gap-1.5 font-semibold">
                   <User className="text-foreground-muted size-3.5" />
-                  <span>Pengguna:</span>
+                  <span>{t("admin.billing.userLabel")}</span>
                 </span>
                 <span className="text-foreground max-w-50 truncate font-bold">
                   {billing.user?.name || `User ${billing.userId.slice(-6)}`}
                 </span>
               </div>
               <div className="border-border/50 flex items-center justify-between border-t pt-1.5 text-xs">
-                <span className="text-foreground-secondary font-semibold">Nominal Topup:</span>
+                <span className="text-foreground-secondary font-semibold">{t("admin.billing.colAmount")}:</span>
                 <span className="text-foreground font-mono font-bold">
-                  Rp {billing.amount.toLocaleString("id-ID")}
+                  Rp {billing.amount.toLocaleString(locale === "en" ? "en-US" : "id-ID")}
                 </span>
               </div>
               <div className="border-border/50 flex items-center justify-between border-t pt-1.5 text-xs">
-                <span className="text-foreground-secondary font-semibold">Status Saat Ini:</span>
+                <span className="text-foreground-secondary font-semibold">{t("admin.billing.currentStatusLabel")}</span>
                 <span className="rounded border border-amber-500/20 bg-amber-500/15 px-2 py-0.5 text-[10px] font-black tracking-wider text-amber-700 uppercase dark:text-amber-400">
                   {billing.status}
                 </span>
@@ -91,7 +93,7 @@ export function UpdateBillingStatusModal({
             {/* Status Selection (EXPIRED vs CANCELLED only) */}
             <div className="space-y-2">
               <label className="text-foreground block text-xs font-bold tracking-wider uppercase">
-                Pilih Status Baru:
+                {t("admin.billing.newStatusLabel")}
               </label>
 
               <div className="space-y-2.5">
@@ -114,10 +116,10 @@ export function UpdateBillingStatusModal({
                   <div className="min-w-0 space-y-0.5">
                     <div className="flex items-center gap-1.5 text-xs font-bold text-rose-600 dark:text-rose-400">
                       <Ban className="size-3.5" />
-                      <span>🔴 Batalkan Transaksi (CANCELLED)</span>
+                      <span>{t("admin.billing.statusCancelledTitle")}</span>
                     </div>
                     <p className="text-foreground-muted text-[11px] leading-tight">
-                      Membatalkan tagihan atas permintaan pengguna atau penolakan administratif.
+                      {t("admin.billing.statusCancelledDesc")}
                     </p>
                   </div>
                 </label>
@@ -141,10 +143,10 @@ export function UpdateBillingStatusModal({
                   <div className="min-w-0 space-y-0.5">
                     <div className="flex items-center gap-1.5 text-xs font-bold text-zinc-600 dark:text-zinc-400">
                       <Clock className="size-3.5" />
-                      <span>⚪ Tandai Kadaluarsa (EXPIRED)</span>
+                      <span>{t("admin.billing.statusExpiredTitle")}</span>
                     </div>
                     <p className="text-foreground-muted text-[11px] leading-tight">
-                      Menandai transaksi sudah melewati batas waktu pembayaran (*timeout*).
+                      {t("admin.billing.statusExpiredDesc")}
                     </p>
                   </div>
                 </label>
@@ -155,8 +157,7 @@ export function UpdateBillingStatusModal({
             <div className="flex items-start gap-2 rounded-lg border border-amber-500/20 bg-amber-500/10 p-3 text-[11px] text-amber-700 dark:text-amber-400">
               <AlertTriangle className="mt-0.5 size-4 shrink-0" />
               <span>
-                Catatan: Status <strong>PAID</strong> (Lunas) hanya diproses otomatis oleh Webhook
-                resmi Payment Gateway agar integritas saldo dompet terjamin.
+                {t("admin.billing.paidWebhookNotice")}
               </span>
             </div>
           </div>
@@ -171,7 +172,7 @@ export function UpdateBillingStatusModal({
               disabled={isLoading}
               className="border-border hover:bg-muted rounded-full text-xs font-bold"
             >
-              Batalkan
+              {t("common.cancel")}
             </Button>
 
             <Button
@@ -184,12 +185,12 @@ export function UpdateBillingStatusModal({
               {isLoading ? (
                 <>
                   <Loader2 className="size-3.5 animate-spin" />
-                  <span>Menyimpan...</span>
+                  <span>{t("admin.billing.updatingBtn")}</span>
                 </>
               ) : (
                 <>
                   <Save className="size-3.5" />
-                  <span>Simpan Perubahan Status</span>
+                  <span>{t("admin.billing.updateConfirmBtn")}</span>
                 </>
               )}
             </Button>

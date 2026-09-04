@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { AdminDeviceItem } from "@/modules/admin/types/admin.types";
+import { useI18n } from "@/lib/i18n/context";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -22,6 +23,7 @@ interface DeleteDeviceModalProps {
 }
 
 export function DeleteDeviceModal({ device, isOpen, onClose, onConfirm }: DeleteDeviceModalProps) {
+  const { t } = useI18n();
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleOpenChange = (open: boolean) => {
@@ -52,10 +54,10 @@ export function DeleteDeviceModal({ device, isOpen, onClose, onConfirm }: Delete
           </div>
           <div>
             <AlertDialogTitle className="text-foreground text-base font-black tracking-tight">
-              Hapus Perangkat WhatsApp
+              {t("admin.devices.deleteModalTitle")}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-foreground-secondary text-xs font-semibold">
-              Konfirmasi pemutusan sesi dan penghapusan slot perangkat.
+              {t("admin.devices.deleteModalSubtitle")}
             </AlertDialogDescription>
           </div>
         </AlertDialogHeader>
@@ -67,22 +69,22 @@ export function DeleteDeviceModal({ device, isOpen, onClose, onConfirm }: Delete
             <div className="flex items-center justify-between">
               <span className="text-foreground-secondary flex items-center gap-1 font-semibold">
                 <Smartphone className="text-foreground-muted size-3" />
-                <span>Nama Perangkat:</span>
+                <span>{t("admin.devices.deviceNameLabel")}</span>
               </span>
               <span className="text-foreground font-bold">{device.pushName}</span>
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-foreground-secondary font-semibold">Nomor / JID:</span>
+              <span className="text-foreground-secondary font-semibold">{t("admin.devices.numberJidLabel")}</span>
               <span className="text-foreground font-mono font-bold">
-                {device.jid || "(Belum terhubung)"}
+                {device.jid || t("admin.devices.notConnected")}
               </span>
             </div>
 
             <div className="flex items-center justify-between">
               <span className="text-foreground-secondary flex items-center gap-1 font-semibold">
                 <Building2 className="text-foreground-muted size-3" />
-                <span>Tenant ID:</span>
+                <span>{t("admin.devices.tenantIdLabel")}</span>
               </span>
               <span className="text-foreground-muted max-w-40 truncate font-mono text-[11px]">
                 {device.tenantId}
@@ -90,7 +92,7 @@ export function DeleteDeviceModal({ device, isOpen, onClose, onConfirm }: Delete
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-foreground-secondary font-semibold">Status Saat Ini:</span>
+              <span className="text-foreground-secondary font-semibold">{t("admin.devices.currentStatusLabel")}</span>
               <span className="text-foreground font-mono font-bold uppercase">{device.status}</span>
             </div>
           </div>
@@ -99,8 +101,7 @@ export function DeleteDeviceModal({ device, isOpen, onClose, onConfirm }: Delete
           <div className="flex items-start gap-2.5 rounded-xl border border-amber-500/20 bg-amber-500/10 p-3 text-xs text-amber-700 dark:text-amber-400">
             <AlertTriangle className="mt-0.5 size-4 shrink-0" />
             <span className="leading-relaxed font-semibold">
-              Tindakan ini akan secara permanen memutuskan koneksi WhatsApp aktif (*gateway socket
-              session*) dan menghapus data slot perangkat dari akun pengguna.
+              {t("admin.devices.deleteWarning")}
             </span>
           </div>
         </div>
@@ -111,7 +112,7 @@ export function DeleteDeviceModal({ device, isOpen, onClose, onConfirm }: Delete
             disabled={isDeleting}
             className="border-border hover:bg-muted h-9 cursor-pointer rounded-full px-4 text-xs font-bold"
           >
-            Batal
+            {t("common.cancel")}
           </AlertDialogCancel>
 
           <Button
@@ -125,12 +126,12 @@ export function DeleteDeviceModal({ device, isOpen, onClose, onConfirm }: Delete
             {isDeleting ? (
               <>
                 <Loader2 className="size-3.5 animate-spin" />
-                <span>Menghapus...</span>
+                <span>{t("admin.devices.deletingBtn")}</span>
               </>
             ) : (
               <>
                 <Trash2 className="size-3.5" />
-                <span>Hapus Perangkat</span>
+                <span>{t("admin.devices.deleteConfirmBtn")}</span>
               </>
             )}
           </Button>

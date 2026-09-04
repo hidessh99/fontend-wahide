@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { useI18n } from "@/lib/i18n/context";
 import { AdminDeviceItem } from "@/modules/admin/types/admin.types";
 import { adminApi } from "@/modules/admin/api/admin.api";
 import { toast } from "sonner";
 
 export function useAdminDevices() {
+  const { t } = useI18n();
   const [devices, setDevices] = useState<AdminDeviceItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -27,14 +29,14 @@ export function useAdminDevices() {
       setDevices(res.devices);
       setTotal(res.total);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal memuat daftar perangkat WhatsApp";
+      const msg = err instanceof Error ? err.message : t("admin.devices.toastFetchFailed");
       toast.error(msg);
       setDevices([]);
       setTotal(0);
     } finally {
       setIsLoading(false);
     }
-  }, [page, pageSize, searchQuery, statusFilter]);
+  }, [page, pageSize, searchQuery, statusFilter, t]);
 
   useEffect(() => {
     let isMounted = true;
@@ -71,9 +73,9 @@ export function useAdminDevices() {
       await adminApi.deleteAdminDevice(id);
       setDevices((prev) => prev.filter((d) => d.id !== id));
       setTotal((prev) => Math.max(0, prev - 1));
-      toast.success("Perangkat WhatsApp berhasil dihapus dan diputus.");
+      toast.success(t("admin.devices.toastDeleteSuccess"));
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal menghapus perangkat WhatsApp";
+      const msg = err instanceof Error ? err.message : t("admin.devices.toastDeleteFailed");
       toast.error(msg);
       throw err;
     }

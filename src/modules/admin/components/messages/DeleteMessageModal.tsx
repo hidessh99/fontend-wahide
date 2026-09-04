@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { AdminMessageLogItem } from "@/modules/admin/types/admin.types";
+import { useI18n } from "@/lib/i18n/context";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -27,6 +28,7 @@ export function DeleteMessageModal({
   onClose,
   onConfirm,
 }: DeleteMessageModalProps) {
+  const { t } = useI18n();
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleOpenChange = (open: boolean) => {
@@ -57,10 +59,10 @@ export function DeleteMessageModal({
           </div>
           <div>
             <AlertDialogTitle className="text-foreground text-base font-black tracking-tight">
-              Hapus Log Pesan WhatsApp
+              {t("admin.messages.deleteModalTitle")}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-foreground-secondary text-xs font-semibold">
-              Konfirmasi penghapusan riwayat pengiriman pesan.
+              {t("admin.messages.deleteModalSubtitle")}
             </AlertDialogDescription>
           </div>
         </AlertDialogHeader>
@@ -69,7 +71,7 @@ export function DeleteMessageModal({
         <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-5 text-xs sm:p-6">
           <div className="border-border bg-muted/20 space-y-2 rounded-xl border p-3.5 text-xs">
             <div className="flex items-center justify-between">
-              <span className="text-foreground-secondary font-semibold">ID Pesan:</span>
+              <span className="text-foreground-secondary font-semibold">{t("admin.messages.messageIdLabel")}</span>
               <span className="text-foreground font-mono font-bold">
                 {message.id.slice(0, 16)}...
               </span>
@@ -78,7 +80,7 @@ export function DeleteMessageModal({
             <div className="flex items-center justify-between">
               <span className="text-foreground-secondary flex items-center gap-1 font-semibold">
                 <MessageSquare className="text-foreground-muted size-3" />
-                <span>Penerima:</span>
+                <span>{t("admin.messages.recipientLabel")}</span>
               </span>
               <span className="text-foreground font-mono font-bold">{message.recipientJid}</span>
             </div>
@@ -86,7 +88,7 @@ export function DeleteMessageModal({
             <div className="flex items-center justify-between">
               <span className="text-foreground-secondary flex items-center gap-1 font-semibold">
                 <Smartphone className="text-foreground-muted size-3" />
-                <span>Arah &amp; Status:</span>
+                <span>{t("admin.messages.directionStatusLabel")}</span>
               </span>
               <span className="text-foreground font-bold">
                 {message.direction} ({message.status})
@@ -94,7 +96,7 @@ export function DeleteMessageModal({
             </div>
 
             <div className="border-border/50 border-t pt-1.5">
-              <span className="text-foreground-muted mb-1 block text-[11px]">Cuplikan Pesan:</span>
+              <span className="text-foreground-muted mb-1 block text-[11px]">{t("admin.messages.snippetLabel")}</span>
               <p className="text-foreground bg-surface border-border/60 line-clamp-2 rounded border p-2 text-[11px] font-semibold italic dark:bg-[#10110e]">
                 &quot;{message.messageBody}&quot;
               </p>
@@ -105,8 +107,7 @@ export function DeleteMessageModal({
           <div className="flex items-start gap-2.5 rounded-xl border border-amber-500/20 bg-amber-500/10 p-3 text-xs text-amber-700 dark:text-amber-400">
             <AlertTriangle className="mt-0.5 size-4 shrink-0" />
             <span className="leading-relaxed font-semibold">
-              Tindakan ini bersifat permanen. Catatan log pengiriman pesan ini akan dihapus dari
-              basis data audit trail.
+              {t("admin.messages.deleteWarning")}
             </span>
           </div>
         </div>
@@ -117,7 +118,7 @@ export function DeleteMessageModal({
             disabled={isDeleting}
             className="border-border hover:bg-muted h-9 cursor-pointer rounded-full px-4 text-xs font-bold"
           >
-            Batal
+            {t("common.cancel")}
           </AlertDialogCancel>
 
           <Button
@@ -131,12 +132,12 @@ export function DeleteMessageModal({
             {isDeleting ? (
               <>
                 <Loader2 className="size-3.5 animate-spin" />
-                <span>Menghapus...</span>
+                <span>{t("admin.messages.deletingBtn")}</span>
               </>
             ) : (
               <>
                 <Trash2 className="size-3.5" />
-                <span>Hapus Log Pesan</span>
+                <span>{t("admin.messages.deleteConfirmBtn")}</span>
               </>
             )}
           </Button>

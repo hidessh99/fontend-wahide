@@ -90,5 +90,21 @@
   "engineProtocol": "Engine Protocol",
   "multiDeviceEngine": "whatsmeow Multi-Device (MD)",
   "btnTestMessage": "Send Test Message",
-  "btnClose": "Close"
+  "btnClose": "Close",
+  "slotLabel": "Slot:",
+  "scanQRTab": "Scan QR Code",
+  "phoneCodeTab": "Phone Number Code",
+  "qrExpiredReload": "QR Expired - Reload",
+  "enterPairingCodeInstruction": "Enter the following 8-character code in your WhatsApp mobile app:",
+  "codeCopied": "Code Copied!",
+  "copyCode": "Copy Code",
+  "phoneLabel": "Mobile WhatsApp Number",
+  "connecting": "Connecting to WhatsApp...",
+  "getPairingCode": "Get Pairing Code",
+  "qrInstructionsTitle": "QR Scanning Instructions on Mobile:",
+  "phoneCodeInstructionsTitle": "Code Entry Instructions on Mobile:",
+  "phoneStep1": "Open WhatsApp on phone → Tap Menu (three dots) or Settings.",
+  "phoneStep2": "Select Linked Devices → Link a Device.",
+  "phoneStep3": "Tap 'Link with phone number instead' at the bottom of the screen.",
+  "phoneStep4": "Enter the 8-character pairing code shown above."
 }

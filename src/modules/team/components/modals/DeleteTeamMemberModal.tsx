@@ -49,10 +49,10 @@ export function DeleteTeamMemberModal({
           </div>
           <div>
             <AlertDialogTitle className="text-foreground text-base font-extrabold tracking-tight">
-              Hapus Anggota Tim
+              {t("team.deleteModalTitle")}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-foreground-secondary mt-0.5 text-xs font-semibold">
-              Konfirmasi penghapusan akses staf agen.
+              {t("team.deleteModalSubtitle")}
             </AlertDialogDescription>
           </div>
         </AlertDialogHeader>
@@ -60,7 +60,7 @@ export function DeleteTeamMemberModal({
         {/* Modal Body with Member Context */}
         <div className="text-foreground-secondary min-h-0 flex-1 space-y-4 overflow-y-auto p-5 text-xs font-semibold">
           <p className="leading-relaxed">
-            Apakah Anda yakin ingin menghapus akses anggota tim ini secara permanen dari akun Anda?
+            {t("team.deleteConfirmDesc")}
           </p>
 
           <div className="border-border bg-muted/40 space-y-1 rounded-lg border p-3.5">
@@ -72,8 +72,7 @@ export function DeleteTeamMemberModal({
           </div>
 
           <p className="text-[11px] font-medium text-rose-500">
-            ⚠️ Tindakan ini tidak dapat dibatalkan. Staf tidak akan lagi dapat mengelola chat
-            pelanggan atau membalas pesan.
+            {t("team.deleteWarning")}
           </p>
         </div>
 
@@ -83,7 +82,7 @@ export function DeleteTeamMemberModal({
             disabled={isDeleting}
             className="border-border hover:border-foreground-muted h-9 cursor-pointer rounded-full px-4 text-xs font-bold"
           >
-            {t("common.cancel") || "Batal"}
+            {t("team.cancel")}
           </AlertDialogCancel>
 
           <Button
@@ -97,12 +96,12 @@ export function DeleteTeamMemberModal({
             {isDeleting ? (
               <>
                 <Loader2 className="size-3.5 animate-spin" />
-                <span>Menghapus...</span>
+                <span>{t("team.deletingBtn")}</span>
               </>
             ) : (
               <>
                 <Trash2 className="size-3.5" />
-                <span>Ya, Hapus Anggota</span>
+                <span>{t("team.confirmDeleteBtn")}</span>
               </>
             )}
           </Button>

@@ -4,8 +4,10 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { UserItem, AdjustBalanceInput, UpdateUserInput } from "../types/admin.types";
 import { adminApi } from "../api/admin.api";
 import { toast } from "sonner";
+import { useI18n } from "@/lib/i18n/context";
 
 export function useAdmin() {
+  const { t, locale } = useI18n();
   const [users, setUsers] = useState<UserItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeSearch, setActiveSearch] = useState("");
@@ -67,11 +69,15 @@ export function useAdmin() {
       );
       toast.success(
         payload.type === "ADD"
-          ? `Berhasil menambahkan saldo Rp ${payload.amount.toLocaleString("id-ID")}.`
-          : `Berhasil mengurangi saldo Rp ${payload.amount.toLocaleString("id-ID")}.`
+          ? t("admin.users.toastAddBalanceSuccess", {
+              amount: payload.amount.toLocaleString(locale === "en" ? "en-US" : "id-ID"),
+            })
+          : t("admin.users.toastReduceBalanceSuccess", {
+              amount: payload.amount.toLocaleString(locale === "en" ? "en-US" : "id-ID"),
+            })
       );
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal menyesuaikan saldo";
+      const msg = err instanceof Error ? err.message : t("admin.users.toastAdjustBalanceFailed");
       toast.error(msg);
       throw err;
     }
@@ -103,9 +109,9 @@ export function useAdmin() {
           return u;
         })
       );
-      toast.success("Data pengguna berhasil diperbarui.");
+      toast.success(t("admin.users.toastUpdateUserSuccess"));
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal memperbarui data pengguna";
+      const msg = err instanceof Error ? err.message : t("admin.users.toastUpdateUserFailed");
       toast.error(msg);
       throw err;
     }

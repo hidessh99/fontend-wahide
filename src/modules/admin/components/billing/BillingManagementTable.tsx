@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useI18n } from "@/lib/i18n/context";
 import { useAdminBilling } from "@/modules/admin/hooks/useAdminBilling";
 import { AdminBillingItem } from "@/modules/admin/types/admin.types";
 import { UpdateBillingStatusModal } from "./UpdateBillingStatusModal";
@@ -10,7 +11,6 @@ import { EmptyState } from "@/components/ui/empty";
 import { SearchInput } from "@/components/ui/search-input";
 import { DataTablePagination } from "@/components/ui/pagination";
 import { NativeSelect } from "@/components/ui/native-select";
-import { formatDateTime } from "@/lib/utils";
 import {
   RefreshCw,
   Receipt,
@@ -34,42 +34,42 @@ import {
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
 import { useTableSort } from "@/hooks/useTableSort";
 
-function getStatusBadge(status: string) {
+function getStatusBadge(status: string, t: (key: string, params?: Record<string, string | number>) => string) {
   const upper = (status || "").toUpperCase();
   switch (upper) {
     case "PAID":
       return (
         <Badge variant="success">
           <CheckCircle2 className="size-3" />
-          <span>Lunas (PAID)</span>
+          <span>{t("admin.billing.statusPaid")}</span>
         </Badge>
       );
     case "PENDING":
       return (
         <Badge variant="warning">
           <Clock className="size-3" />
-          <span>Menunggu</span>
+          <span>{t("admin.billing.statusPending")}</span>
         </Badge>
       );
     case "PROCESSING":
       return (
         <Badge variant="info">
           <RotateCcw className="size-3" />
-          <span>Diproses</span>
+          <span>{t("admin.billing.statusProcessing")}</span>
         </Badge>
       );
     case "EXPIRED":
       return (
         <Badge variant="neutral">
           <AlertCircle className="size-3" />
-          <span>Kadaluarsa</span>
+          <span>{t("admin.billing.statusExpired")}</span>
         </Badge>
       );
     case "CANCELLED":
       return (
         <Badge variant="danger">
           <Ban className="size-3" />
-          <span>Dibatalkan</span>
+          <span>{t("admin.billing.statusCancelled")}</span>
         </Badge>
       );
     default:
@@ -81,18 +81,19 @@ function getStatusBadge(status: string) {
   }
 }
 
-function formatPaymentMethod(method: string) {
+function formatPaymentMethod(method: string, locale: string) {
   const upper = (method || "").toUpperCase();
   if (upper.includes("QRIS")) return "QRIS";
   if (upper.includes("TRIPAY")) return "Tripay Gateway";
   if (upper.includes("DUITKU")) return "Duitku Gateway";
   if (upper.includes("MIDTRANS")) return "Midtrans Gateway";
   if (upper.includes("XENDIT")) return "Xendit Gateway";
-  if (upper.includes("MANUAL")) return "Transfer Manual";
+  if (upper.includes("MANUAL")) return locale === "en" ? "Manual Transfer" : "Transfer Manual";
   return method || "Payment Gateway";
 }
 
 export function BillingManagementTable() {
+  const { t, locale } = useI18n();
   const {
     billings,
     isLoading,
@@ -127,6 +128,18 @@ export function BillingManagementTable() {
 
   const sortedBillings = sortData(billings);
 
+  const formatLocalizedDateTime = (dateInput: string | Date | number): string => {
+    const date = new Date(dateInput);
+    if (isNaN(date.getTime())) return "-";
+    return new Intl.DateTimeFormat(locale === "en" ? "en-US" : "id-ID", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(date);
+  };
+
   const handleOpenStatusModal = (b: AdminBillingItem) => {
     setSelectedBillingForStatus(b);
     setIsStatusModalOpen(true);
@@ -143,48 +156,62 @@ export function BillingManagementTable() {
       <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         <div className="border-border bg-surface rounded-xl border p-4 shadow-xs dark:bg-[#161715]">
           <div className="text-foreground-muted mb-1 flex items-center justify-between">
-            <span className="text-[11px] font-bold tracking-wider uppercase">Total Lunas</span>
+            <span className="text-[11px] font-bold tracking-wider uppercase">
+              {t("admin.billing.metricPaidTotal")}
+            </span>
             <CheckCircle2 className="dark:text-wise-green size-4 text-emerald-600" />
           </div>
           <div className="dark:text-wise-green font-mono text-lg font-black text-emerald-700 sm:text-xl">
-            Rp {metrics.paidTotal.toLocaleString("id-ID")}
+            Rp {metrics.paidTotal.toLocaleString(locale === "en" ? "en-US" : "id-ID")}
           </div>
-          <span className="text-foreground-muted text-[10px]">Transaksi berstatus PAID</span>
-        </div>
-
-        <div className="border-border bg-surface rounded-xl border p-4 shadow-xs dark:bg-[#161715]">
-          <div className="text-foreground-muted mb-1 flex items-center justify-between">
-            <span className="text-[11px] font-bold tracking-wider uppercase">Menunggu Bayar</span>
-            <Clock className="size-4 text-amber-500" />
-          </div>
-          <div className="font-mono text-lg font-black text-amber-600 sm:text-xl dark:text-amber-400">
-            {metrics.pendingCount} Tagihan
-          </div>
-          <span className="text-foreground-muted text-[10px]">Perlu rekonsiliasi gateway</span>
+          <span className="text-foreground-muted text-[10px]">
+            {t("admin.billing.metricPaidDesc")}
+          </span>
         </div>
 
         <div className="border-border bg-surface rounded-xl border p-4 shadow-xs dark:bg-[#161715]">
           <div className="text-foreground-muted mb-1 flex items-center justify-between">
             <span className="text-[11px] font-bold tracking-wider uppercase">
-              Batal / Kadaluarsa
+              {t("admin.billing.metricPendingTotal")}
             </span>
-            <Ban className="size-4 text-rose-500" />
+            <Clock className="size-4 text-amber-500" />
           </div>
-          <div className="font-mono text-lg font-black text-rose-600 sm:text-xl dark:text-rose-400">
-            {metrics.closedCount} Tagihan
+          <div className="font-mono text-lg font-black text-amber-600 sm:text-xl dark:text-amber-400">
+            {t("admin.billing.pendingBills", { count: metrics.pendingCount })}
           </div>
-          <span className="text-foreground-muted text-[10px]">Expired &amp; Cancelled</span>
+          <span className="text-foreground-muted text-[10px]">
+            {t("admin.billing.metricPendingDesc")}
+          </span>
         </div>
 
         <div className="border-border bg-surface rounded-xl border p-4 shadow-xs dark:bg-[#161715]">
           <div className="text-foreground-muted mb-1 flex items-center justify-between">
-            <span className="text-[11px] font-bold tracking-wider uppercase">Total Transaksi</span>
+            <span className="text-[11px] font-bold tracking-wider uppercase">
+              {t("admin.billing.metricClosedTotal")}
+            </span>
+            <Ban className="size-4 text-rose-500" />
+          </div>
+          <div className="font-mono text-lg font-black text-rose-600 sm:text-xl dark:text-rose-400">
+            {t("admin.billing.closedBills", { count: metrics.closedCount })}
+          </div>
+          <span className="text-foreground-muted text-[10px]">
+            {t("admin.billing.metricClosedDesc")}
+          </span>
+        </div>
+
+        <div className="border-border bg-surface rounded-xl border p-4 shadow-xs dark:bg-[#161715]">
+          <div className="text-foreground-muted mb-1 flex items-center justify-between">
+            <span className="text-[11px] font-bold tracking-wider uppercase">
+              {t("admin.billing.metricTotalTransactions")}
+            </span>
             <Receipt className="text-foreground-secondary size-4" />
           </div>
           <div className="text-foreground font-mono text-lg font-black sm:text-xl">
-            {total} Transaksi
+            {t("admin.billing.totalBills", { count: total })}
           </div>
-          <span className="text-foreground-muted text-[10px]">Keseluruhan entri billing</span>
+          <span className="text-foreground-muted text-[10px]">
+            {t("admin.billing.metricTotalDesc")}
+          </span>
         </div>
       </div>
 
@@ -197,7 +224,7 @@ export function BillingManagementTable() {
             onChange={setSearchInput}
             onSearch={() => executeSearch(searchInput.trim())}
             onClear={handleResetSearch}
-            placeholder="Cari berdasarkan ID transaksi, nama pengguna, email, atau metode..."
+            placeholder={t("admin.billing.searchPlaceholder")}
           />
 
           {/* Filters & Refresh */}
@@ -209,12 +236,12 @@ export function BillingManagementTable() {
               variant="pill"
               wrapperClassName="flex-1 sm:flex-initial"
             >
-              <option value="ALL">Semua Status</option>
-              <option value="PAID">🟢 PAID (Lunas)</option>
-              <option value="PENDING">🟡 PENDING (Menunggu)</option>
-              <option value="PROCESSING">🔵 PROCESSING (Diproses)</option>
-              <option value="EXPIRED">⚪ EXPIRED (Kadaluarsa)</option>
-              <option value="CANCELLED">🔴 CANCELLED (Dibatalkan)</option>
+              <option value="ALL">{t("admin.devices.filterAll")}</option>
+              <option value="PAID">🟢 {t("admin.billing.statusPaid")}</option>
+              <option value="PENDING">🟡 {t("admin.billing.statusPending")}</option>
+              <option value="PROCESSING">🔵 {t("admin.billing.statusProcessing")}</option>
+              <option value="EXPIRED">⚪ {t("admin.billing.statusExpired")}</option>
+              <option value="CANCELLED">🔴 {t("admin.billing.statusCancelled")}</option>
             </NativeSelect>
 
             {/* Refresh Button */}
@@ -224,10 +251,10 @@ export function BillingManagementTable() {
               onClick={fetchBillings}
               disabled={isLoading}
               className="border-border hover:border-foreground-muted h-10 shrink-0 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold transition"
-              aria-label="Refresh Data Billing"
+              aria-label={t("admin.billing.refreshAria")}
             >
               <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin" : ""}`} />
-              <span className="hidden sm:inline">Refresh</span>
+              <span className="hidden sm:inline">{t("common.refresh")}</span>
             </Button>
           </div>
         </div>
@@ -239,17 +266,17 @@ export function BillingManagementTable() {
           <div className="text-foreground-muted flex flex-col items-center justify-center space-y-3 py-16">
             <Loader2 className="dark:text-wise-green size-7 animate-spin text-emerald-600" />
             <span className="text-xs font-bold">
-              Memuat daftar transaksi billing &amp; topup...
+              {t("admin.billing.loadingText")}
             </span>
           </div>
         ) : billings.length === 0 ? (
           <EmptyState
             icon={<Receipt />}
-            title="Tidak Ada Transaksi Ditemukan"
+            title={t("admin.billing.emptyTitle")}
             description={
               searchQuery
-                ? `Tidak ditemukan hasil yang cocok dengan kata kunci "${searchQuery}".`
-                : "Belum ada riwayat transaksi billing atau topup saldo pada sistem."
+                ? t("admin.billing.emptySearchDesc", { query: searchQuery })
+                : t("admin.billing.emptyDesc")
             }
           />
         ) : (
@@ -277,26 +304,26 @@ export function BillingManagementTable() {
                         </div>
                       </div>
 
-                      <div className="shrink-0">{getStatusBadge(b.status)}</div>
+                      <div className="shrink-0">{getStatusBadge(b.status, t)}</div>
                     </div>
 
                     {/* Amount & Method Grid */}
                     <div className="bg-muted/20 border-border/50 grid grid-cols-2 gap-2 rounded-lg border p-2.5 text-xs">
                       <div>
                         <span className="text-foreground-muted block text-[10px] font-bold uppercase">
-                          Nominal Topup
+                          {t("admin.billing.colAmount")}
                         </span>
                         <span className="dark:text-wise-green font-mono text-sm font-bold text-emerald-700">
-                          Rp {b.amount.toLocaleString("id-ID")}
+                          Rp {b.amount.toLocaleString(locale === "en" ? "en-US" : "id-ID")}
                         </span>
                       </div>
 
                       <div className="text-right">
                         <span className="text-foreground-muted block text-[10px] font-bold uppercase">
-                          Metode Bayar
+                          {t("admin.billing.colMethod")}
                         </span>
                         <span className="text-foreground text-xs font-semibold">
-                          {formatPaymentMethod(b.method)}
+                          {formatPaymentMethod(b.method, locale)}
                         </span>
                       </div>
                     </div>
@@ -304,7 +331,7 @@ export function BillingManagementTable() {
                     {/* Reference & Date */}
                     <div className="text-foreground-muted flex items-center justify-between pt-1 text-[11px]">
                       <span className="font-mono">ID: {b.id.slice(0, 16)}...</span>
-                      <span>{formatDateTime(b.createdAt)}</span>
+                      <span>{formatLocalizedDateTime(b.createdAt)}</span>
                     </div>
 
                     {/* Actions */}
@@ -317,7 +344,7 @@ export function BillingManagementTable() {
                           className="border-border text-foreground-secondary hover:text-foreground hover:bg-muted flex h-8 items-center gap-1 rounded-full border px-2.5 text-xs font-bold transition"
                         >
                           <ExternalLink className="size-3" />
-                          <span>Invoice</span>
+                          <span>{t("admin.billing.invoiceBtn")}</span>
                         </a>
                       )}
 
@@ -334,7 +361,7 @@ export function BillingManagementTable() {
                         }
                       >
                         <Ban className="size-3.5 text-rose-500" />
-                        <span>Tutup / Batal</span>
+                        <span>{t("admin.billing.closeCancelBtn")}</span>
                       </Button>
                     </div>
                   </div>
@@ -349,17 +376,17 @@ export function BillingManagementTable() {
                   <TableRow className="border-border bg-muted/50 hover:bg-muted/50">
                     <TableHead className="w-[18%] px-5 py-3.5">
                       <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
-                        ID Transaksi
+                        {t("admin.billing.colId")}
                       </div>
                     </TableHead>
                     <TableHead className="w-[20%] px-4 py-3.5">
                       <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
-                        Pengguna / Seller
+                        {t("admin.billing.colTenant")}
                       </div>
                     </TableHead>
                     <TableHead className="w-[15%] px-4 py-3.5 text-right">
                       <DataTableColumnHeader
-                        title="Nominal Topup"
+                        title={t("admin.billing.colAmount")}
                         columnKey="amount"
                         currentSortKey={sortKey as string}
                         currentSortOrder={sortOrder}
@@ -369,12 +396,12 @@ export function BillingManagementTable() {
                     </TableHead>
                     <TableHead className="w-[15%] px-4 py-3.5">
                       <div className="text-foreground-muted text-[11px] font-extrabold tracking-wider uppercase select-none">
-                        Metode Pembayaran
+                        {t("admin.billing.colMethod")}
                       </div>
                     </TableHead>
                     <TableHead className="w-[12%] px-3 py-3.5 text-center">
                       <DataTableColumnHeader
-                        title="Status"
+                        title={t("admin.billing.colStatus")}
                         columnKey="status"
                         currentSortKey={sortKey as string}
                         currentSortOrder={sortOrder}
@@ -384,7 +411,7 @@ export function BillingManagementTable() {
                     </TableHead>
                     <TableHead className="w-[12%] px-4 py-3.5">
                       <DataTableColumnHeader
-                        title="Tanggal Transaksi"
+                        title={t("admin.billing.colDate")}
                         columnKey="createdAt"
                         currentSortKey={sortKey as string}
                         currentSortOrder={sortOrder}
@@ -393,7 +420,7 @@ export function BillingManagementTable() {
                     </TableHead>
                     <TableHead className="w-[8%] px-5 py-3.5 text-right">
                       <div className="text-foreground-muted text-right text-[11px] font-extrabold tracking-wider uppercase select-none">
-                        Aksi
+                        {t("admin.billing.colActions")}
                       </div>
                     </TableHead>
                   </TableRow>
@@ -442,7 +469,7 @@ export function BillingManagementTable() {
                         {/* 3. Nominal Topup */}
                         <TableCell className="px-4 py-3.5 text-right align-middle font-mono font-bold">
                           <span className="dark:text-wise-green text-sm text-emerald-700">
-                            Rp {b.amount.toLocaleString("id-ID")}
+                            Rp {b.amount.toLocaleString(locale === "en" ? "en-US" : "id-ID")}
                           </span>
                         </TableCell>
 
@@ -450,20 +477,20 @@ export function BillingManagementTable() {
                         <TableCell className="px-4 py-3.5 align-middle">
                           <div className="text-foreground flex items-center gap-1.5 font-semibold">
                             <CreditCard className="text-foreground-muted size-3.5 shrink-0" />
-                            <span>{formatPaymentMethod(b.method)}</span>
+                            <span>{formatPaymentMethod(b.method, locale)}</span>
                           </div>
                         </TableCell>
 
                         {/* 5. Status Pembayaran */}
                         <TableCell className="px-3 py-3.5 text-center align-middle">
                           <div className="inline-flex items-center justify-center">
-                            {getStatusBadge(b.status)}
+                            {getStatusBadge(b.status, t)}
                           </div>
                         </TableCell>
 
                         {/* 6. Tanggal Transaksi */}
                         <TableCell className="text-foreground-secondary px-4 py-3.5 align-middle font-mono text-[11px]">
-                          {formatDateTime(b.createdAt)}
+                          {formatLocalizedDateTime(b.createdAt)}
                         </TableCell>
 
                         {/* 7. Aksi */}
@@ -483,7 +510,7 @@ export function BillingManagementTable() {
                               }
                             >
                               <Ban className="size-3.5 text-rose-500" />
-                              <span>Batal / Expired</span>
+                              <span>{t("admin.billing.closeCancelBtn")}</span>
                             </Button>
                           </div>
                         </TableCell>
@@ -508,7 +535,7 @@ export function BillingManagementTable() {
             onNextPage={nextPage}
             onPageSizeChange={setPageSize}
             pageSizeOptions={[10, 25, 50]}
-            entityName="transaksi billing"
+            entityName={t("admin.billing.entityName")}
           />
         )}
       </div>

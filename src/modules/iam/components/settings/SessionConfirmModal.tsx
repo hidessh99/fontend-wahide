@@ -11,6 +11,7 @@ import {
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 import { AlertTriangle, Trash2, ShieldAlert, Loader2, Smartphone } from "lucide-react";
+import { useI18n } from "@/lib/i18n/context";
 
 interface SessionConfirmModalProps {
   isOpen: boolean;
@@ -33,6 +34,7 @@ export function SessionConfirmModal({
   onClose,
   onConfirm,
 }: SessionConfirmModalProps) {
+  const { t } = useI18n();
   const isLogoutAll = mode === "LOGOUT_ALL";
 
   const handleOpenChange = (open: boolean) => {
@@ -61,12 +63,12 @@ export function SessionConfirmModal({
           </div>
           <div>
             <AlertDialogTitle className="text-foreground text-lg font-black tracking-tight sm:text-xl">
-              {isLogoutAll ? "Keluar dari Semua Perangkat?" : "Cabut Sesi Perangkat?"}
+              {isLogoutAll ? t("settings.logoutAllTitle") : t("settings.revokeSingleTitle")}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-foreground-secondary text-xs font-semibold">
               {isLogoutAll
-                ? "Tindakan keamanan pencabutan akses massal sesi akun."
-                : "Konfirmasi pencabutan akses login perangkat tertentu."}
+                ? t("settings.logoutAllSubtitle")
+                : t("settings.revokeSingleSubtitle")}
             </AlertDialogDescription>
           </div>
         </AlertDialogHeader>
@@ -89,29 +91,17 @@ export function SessionConfirmModal({
                     : "text-amber-700 dark:text-amber-400"
                 }
               >
-                ⚠️ Perhatian Keamanan Sesi:
+                {t("settings.sessionSecurityWarning")}
               </span>
             </div>
 
             <p className="text-foreground-secondary text-xs leading-relaxed font-medium">
-              {isLogoutAll ? (
-                <>
-                  Seluruh sesi login yang sedang aktif di browser atau perangkat lain akan{" "}
-                  <strong className="text-foreground font-bold">
-                    dikeluarkan seketika secara permanen
-                  </strong>
-                  . Sesi pada perangkat ini akan tetap aktif.
-                </>
-              ) : (
-                <>
-                  Sesi perangkat{" "}
-                  <strong className="text-foreground font-bold">
-                    {targetSession?.device || "terpilih"}
-                  </strong>{" "}
-                  ({targetSession?.ip || "IP Unknown"}) akan langsung dicabut dan pengguna pada
-                  perangkat tersebut wajib login ulang.
-                </>
-              )}
+              {isLogoutAll
+                ? t("settings.logoutAllWarningDesc")
+                : t("settings.revokeSingleWarningDesc", {
+                    device: targetSession?.device || "device",
+                    ip: targetSession?.ip || "Unknown IP",
+                  })}
             </p>
           </div>
 
@@ -139,7 +129,7 @@ export function SessionConfirmModal({
             disabled={isLoading}
             className="text-foreground border-border hover:bg-muted rounded-full text-xs font-bold"
           >
-            Batalkan
+            {t("actions.cancel")}
           </AlertDialogCancel>
 
           <Button
@@ -156,13 +146,15 @@ export function SessionConfirmModal({
             {isLoading ? (
               <>
                 <Loader2 className="size-4 animate-spin" />
-                <span>Memproses...</span>
+                <span>{t("settings.processingBtn")}</span>
               </>
             ) : (
               <>
                 <Trash2 className="size-4" />
                 <span>
-                  {isLogoutAll ? "Ya, Keluar Semua Perangkat" : "Ya, Cabut Sesi Perangkat"}
+                  {isLogoutAll
+                    ? t("settings.logoutAllConfirmBtn")
+                    : t("settings.revokeSingleConfirmBtn")}
                 </span>
               </>
             )}

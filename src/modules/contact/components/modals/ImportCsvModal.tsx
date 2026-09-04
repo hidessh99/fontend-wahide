@@ -132,10 +132,10 @@ export function ImportCsvModal({ isOpen, onClose, onImport }: ImportCsvModalProp
           </div>
           <div>
             <DialogTitle className="text-foreground text-lg font-black tracking-tight sm:text-xl">
-              {t("contact.importCsvModalTitle")}
+              {t("contact.importModalTitle")}
             </DialogTitle>
             <DialogDescription className="text-foreground-secondary text-xs font-semibold">
-              {t("contact.importCsvModalSubtitle")}
+              {t("contact.importModalSubtitle")}
             </DialogDescription>
           </div>
         </DialogHeader>
@@ -183,7 +183,7 @@ export function ImportCsvModal({ isOpen, onClose, onImport }: ImportCsvModalProp
               <FileSpreadsheet className="size-6" />
             </div>
             <span className="text-foreground mt-3 text-xs font-bold sm:text-sm">
-              {fileName ? fileName : t("contact.dropCsvLabel")}
+              {fileName ? fileName : t("contact.importDropzone")}
             </span>
             <span className="text-foreground-muted mt-1 text-[11px]">
               {fileName ? "Klik untuk mengganti file" : "Format yang didukung: .csv (Maksimal 5MB)"}

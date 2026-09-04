@@ -51,5 +51,14 @@
   "toastUpdated": "Contact updated successfully.",
   "toastDeleted": "Contact deleted successfully.",
   "toastBulkDeleted": "{count} contacts deleted successfully.",
-  "toastImportSuccess": "Successfully imported {count} contacts from CSV."
+  "toastImportSuccess": "Successfully imported {count} contacts from CSV.",
+  "errNameRequired": "Contact name is required.",
+  "errPhonePrefix": "WhatsApp number must start with 62 (e.g. 6281234567890).",
+  "errPhoneTooShort": "WhatsApp number is too short.",
+  "errSaveFailed": "Failed to save contact",
+  "tagSegmentationLabel": "Contact Tags / Segmentation",
+  "optional": "Optional",
+  "noTagsAvailable": "No contact tags available yet.",
+  "newTagPlaceholder": "+ Create new tag (e.g. VIP)...",
+  "addTagBtn": "Add"
 }

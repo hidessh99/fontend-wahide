@@ -112,5 +112,20 @@
   "replyLabel": "Balas Pesan",
   "toastCreated": "Tiket bantuan berhasil dibuat.",
   "toastReplySent": "Balasan berhasil dikirim.",
-  "toastStatusUpdated": "Status tiket berhasil diperbarui."
+  "toastStatusUpdated": "Status tiket berhasil diperbarui.",
+  "createTicketTitle": "Buat Tiket Bantuan Baru",
+  "createTicketSubtitle": "Tim dukungan teknis Wahide akan merespons kendala Anda secepat mungkin.",
+  "catWhatsApp": "WhatsApp Gateway & QR",
+  "catBilling": "Faktur & Pembayaran",
+  "catAccount": "Akun & Keanggotaan",
+  "catFeature": "Permintaan Fitur",
+  "catOther": "Lainnya",
+  "priorityUrgent": "Mendesak",
+  "attachmentNotice": "Format PNG, JPG, JPEG (Maks. 1 MB)",
+  "attachScreenshot": "Pilih Gambar Screenshot",
+  "loadingMessages": "Memuat pesan percakapan...",
+  "statusUpdatedError": "Gagal memperbarui status tiket.",
+  "updateStatusTitle": "Perbarui Status Tiket",
+  "updateStatusDesc": "Pilih status penanganan baru untuk tiket bantuan ini.",
+  "selectNewStatus": "Pilih Status Baru"
 }
