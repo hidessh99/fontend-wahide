@@ -20,6 +20,7 @@ import {
   ClipboardList,
   MessageSquare,
   Megaphone,
+  ShieldCheck,
 } from "lucide-react";
 import { useAuth } from "@/modules/iam/hooks/useAuth";
 import { useI18n } from "@/lib/i18n/context";
@@ -58,10 +59,18 @@ export const DASHBOARD_NAV_GROUPS: DashboardNavGroup[] = [
     groupKey: "dashboardMenu.groupWhatsapp",
     items: [
       {
-        key: "dashboardMenu.whatsappSlots",
-        href: "/devices",
+        key: "dashboardMenu.whatsappUnofficial",
+        href: "/wa/devices",
         icon: Smartphone,
-        badge: "Engine",
+        badge: "Socket",
+      },
+      {
+        key: "dashboardMenu.whatsappWaba",
+        href: "/waba/devices",
+        icon: ShieldCheck,
+        badge: "Official",
+        roles: SELLER_ROLES,
+        hideForCS: true,
       },
       {
         key: "dashboardMenu.messages",
@@ -222,7 +231,9 @@ export function DashboardSidebar({
                 const isActive =
                   item.href === "/dashboard"
                     ? pathname === "/dashboard" || pathname === "/"
-                    : pathname.startsWith(item.href);
+                    : item.href === "/wa/devices"
+                      ? pathname.startsWith("/wa/devices") || pathname === "/devices" || pathname.startsWith("/devices/")
+                      : pathname.startsWith(item.href);
 
                 const Icon = item.icon;
 

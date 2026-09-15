@@ -290,6 +290,8 @@
     "groupSupport": "Helpdesk & Support",
     "overview": "Overview",
     "whatsappSlots": "Devices",
+    "whatsappUnofficial": "Web (Phone)",
+    "whatsappWaba": "Official (WABA)",
     "messages": "Messages",
     "campaigns": "Broadcast",
     "contacts": "Contacts",

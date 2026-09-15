@@ -5,6 +5,8 @@ import type { NextRequest } from "next/server";
 const PROTECTED_PREFIXES = [
   "/dashboard",
   "/devices",
+  "/wa",
+  "/waba",
   "/campaigns",
   "/contacts",
   "/templates",
