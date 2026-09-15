@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { DashboardOverviewView } from "@/modules/overview/views/DashboardOverviewView";
+import { OverviewSellerDashboardView } from "@/modules/overview/views/seller/OverviewSellerDashboardView";
 
 export const metadata: Metadata = {
   title: "Ringkasan Bisnis & Status Gateway",
@@ -12,5 +12,5 @@ export const metadata: Metadata = {
 };
 
 export default function DashboardOverviewPage() {
-  return <DashboardOverviewView />;
+  return <OverviewSellerDashboardView />;
 }

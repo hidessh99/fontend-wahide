@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { FormsView } from "@/modules/form/views/FormsView";
+import { FormSellerManagementView } from "@/modules/form/views/seller/FormSellerManagementView";
 import { SellerRouteGuard } from "@/components/layout/shared/SellerRouteGuard";
 
 export const metadata: Metadata = {
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 export default function FormsPage() {
   return (
     <SellerRouteGuard>
-      <FormsView />
+      <FormSellerManagementView />
     </SellerRouteGuard>
   );
 }

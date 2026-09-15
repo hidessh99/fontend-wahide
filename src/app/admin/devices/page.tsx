@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { AdminDevicesView } from "@/modules/admin/views";
+import { WhatsAppAdminDevicesView } from "@/modules/whatsapp/views/admin/WhatsAppAdminDevicesView";
 
 export const metadata: Metadata = {
   title: "Manajemen Perangkat WhatsApp Seluruh Pengguna",
@@ -12,5 +12,5 @@ export const metadata: Metadata = {
 };
 
 export default function AdminDevicesPage() {
-  return <AdminDevicesView />;
+  return <WhatsAppAdminDevicesView />;
 }

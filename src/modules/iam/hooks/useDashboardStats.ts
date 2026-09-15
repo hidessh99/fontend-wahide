@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "./useAuth";
 import { isAdmin } from "../types/auth.types";
 import { userApi } from "../api/user.api";
-import { adminApi } from "@/modules/admin/api/admin.api";
+import { iamAdminApi } from "../api/admin.api";
 import {
   UserDashboardStats,
   AdminDashboardStats,
@@ -34,7 +34,7 @@ export function useDashboardStats() {
 
     try {
       if (isSuperAdmin) {
-        const data = await adminApi.getAdminDashboardStats();
+        const data = await iamAdminApi.getAdminDashboardStats();
         setAdminStats(data);
       } else {
         const data = await userApi.getDashboardStats();
@@ -104,7 +104,7 @@ export function useDashboardStats() {
     const loadInitialStats = async () => {
       try {
         if (isSuperAdmin) {
-          const data = await adminApi.getAdminDashboardStats();
+          const data = await iamAdminApi.getAdminDashboardStats();
           if (isMounted) setAdminStats(data);
         } else {
           const data = await userApi.getDashboardStats();

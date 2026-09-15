@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { MessagesView } from "@/modules/whatsapp/views/MessagesView";
+import { WhatsAppUserMessagesView } from "@/modules/whatsapp/views/user/WhatsAppUserMessagesView";
 
 export const metadata: Metadata = {
   title: "WhatsApp Chats & Messages | Wahide",
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function MessagesPage() {
-  return <MessagesView />;
+  return <WhatsAppUserMessagesView />;
 }

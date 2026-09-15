@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { AdminActivitiesView } from "@/modules/admin/views";
+import { IamAdminActivitiesView } from "@/modules/iam/views/admin/IamAdminActivitiesView";
 
 export const metadata: Metadata = {
   title: "Log Aktivitas Pengguna | Wahide Superadmin",
@@ -12,5 +12,5 @@ export const metadata: Metadata = {
 };
 
 export default function AdminActivitiesPage() {
-  return <AdminActivitiesView />;
+  return <IamAdminActivitiesView />;
 }

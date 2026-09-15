@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { AdminSubscriptionsView } from "@/modules/admin/views";
+import { SubscriptionAdminSubscriptionsView } from "@/modules/subscription/views/admin/SubscriptionAdminSubscriptionsView";
 
 export const metadata: Metadata = {
   title: "Manajemen Langganan Pengguna Platform",
@@ -12,5 +12,5 @@ export const metadata: Metadata = {
 };
 
 export default function AdminSubscriptionsPage() {
-  return <AdminSubscriptionsView />;
+  return <SubscriptionAdminSubscriptionsView />;
 }

@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import { SettingsView } from "@/modules/iam/views/SettingsView";
+import { IamSellerSettingsView } from "@/modules/iam/views/seller/IamSellerSettingsView";
 import { SellerRouteGuard } from "@/components/layout/shared/SellerRouteGuard";
 
 export const metadata: Metadata = {
@@ -32,7 +32,7 @@ export default function SettingsPage() {
           </div>
         }
       >
-        <SettingsView />
+        <IamSellerSettingsView />
       </Suspense>
     </SellerRouteGuard>
   );

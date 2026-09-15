@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { DevicesView } from "@/modules/whatsapp/views/DevicesView";
+import { WhatsAppSellerDevicesView } from "@/modules/whatsapp/views/seller/WhatsAppSellerDevicesView";
 
 export const metadata: Metadata = {
   title: "Perangkat WhatsApp & Pairing QR",
@@ -15,5 +15,5 @@ export const metadata: Metadata = {
 };
 
 export default function DevicesPage() {
-  return <DevicesView />;
+  return <WhatsAppSellerDevicesView />;
 }

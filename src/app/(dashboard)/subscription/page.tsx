@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SubscriptionView } from "@/modules/subscription/views/SubscriptionView";
+import { SubscriptionSellerPlansView } from "@/modules/subscription/views/seller/SubscriptionSellerPlansView";
 import { SellerRouteGuard } from "@/components/layout/shared/SellerRouteGuard";
 
 export const metadata: Metadata = {
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 export default function SubscriptionPage() {
   return (
     <SellerRouteGuard>
-      <SubscriptionView />
+      <SubscriptionSellerPlansView />
     </SellerRouteGuard>
   );
 }

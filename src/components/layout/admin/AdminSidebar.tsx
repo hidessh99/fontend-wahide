@@ -19,6 +19,7 @@ import {
   UserCheck,
   Receipt,
   ChevronDown,
+  LayoutDashboard,
 } from "lucide-react";
 import { useI18n } from "@/lib/i18n/context";
 
@@ -48,6 +49,12 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
     groupKey: "admin.adminMenu.groupPlatformControl",
     defaultTitle: "Kontrol Platform",
     items: [
+      {
+        titleKey: "admin.adminMenu.overview",
+        defaultTitle: "Ringkasan Portal",
+        href: "/admin",
+        icon: LayoutDashboard,
+      },
       {
         titleKey: "admin.adminMenu.usersAndMembers",
         defaultTitle: "Pengguna & Member",

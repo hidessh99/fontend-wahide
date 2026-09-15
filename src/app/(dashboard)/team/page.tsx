@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import { TeamView } from "@/modules/team/views/TeamView";
+import { TeamSellerManagementView } from "@/modules/team/views/seller/TeamSellerManagementView";
 import { SellerRouteGuard } from "@/components/layout/shared/SellerRouteGuard";
+import { RoleGuard } from "@/components/layout/shared/RoleGuard";
+import { RBACGuard } from "@/components/shared/RBACGuard";
 
 export const metadata: Metadata = {
   title: "Manajemen Tim & Agen CS",
@@ -18,7 +20,11 @@ export const metadata: Metadata = {
 export default function TeamPage() {
   return (
     <SellerRouteGuard>
-      <TeamView />
+      <RoleGuard requireTeamManagement>
+        <RBACGuard allowedRoles={["admin", "seller", "owner", "manager"]}>
+          <TeamSellerManagementView />
+        </RBACGuard>
+      </RoleGuard>
     </SellerRouteGuard>
   );
 }

@@ -1,7 +1,8 @@
 import React, { Suspense } from "react";
 import type { Metadata } from "next";
-import { BillingView } from "@/modules/finance/views/BillingView";
+import { FinanceSellerBillingView } from "@/modules/finance/views/seller/FinanceSellerBillingView";
 import { SellerRouteGuard } from "@/components/layout/shared/SellerRouteGuard";
+import { RoleGuard } from "@/components/layout/shared/RoleGuard";
 
 export const metadata: Metadata = {
   title: "Faktur & Tagihan Pembayaran",
@@ -19,13 +20,15 @@ export const metadata: Metadata = {
 export default function BillingPage() {
   return (
     <SellerRouteGuard>
-      <Suspense
-        fallback={
-          <div className="flex h-96 animate-pulse items-center justify-center" />
-        }
-      >
-        <BillingView />
-      </Suspense>
+      <RoleGuard requireBilling>
+        <Suspense
+          fallback={
+            <div className="flex h-96 animate-pulse items-center justify-center" />
+          }
+        >
+          <FinanceSellerBillingView />
+        </Suspense>
+      </RoleGuard>
     </SellerRouteGuard>
   );
 }

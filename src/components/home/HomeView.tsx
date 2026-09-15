@@ -9,6 +9,8 @@ import dynamic from "next/dynamic";
 import { FaqAccordion } from "./FaqAccordion";
 import { SmartFeatureTabs } from "./SmartFeatureTabs";
 import { BusinessSolutionsSection } from "./BusinessSolutionsSection";
+import { ApiCodeSandbox } from "./ApiCodeSandbox";
+import { SpintaxSandbox } from "./SpintaxSandbox";
 
 const MessageSimulator = dynamic(
   () => import("./MessageSimulator").then((mod) => mod.MessageSimulator),
@@ -114,6 +116,12 @@ export function HomeView() {
 
       {/* 4. Smart Interactive Solution Tabs (OTP API, Broadcast, Business Tools) */}
       <SmartFeatureTabs />
+
+      {/* 4.5. Live API Code & Spintax Simulator Sandboxes */}
+      <section className="mx-auto max-w-5xl space-y-6 px-4 sm:px-6">
+        <ApiCodeSandbox />
+        <SpintaxSandbox />
+      </section>
 
       {/* 5. How It Works (3 Steps) */}
       <section

@@ -7,6 +7,9 @@ export type UserRole =
   | "SUPER_ADMIN"
   | "SELLER"
   | "AGENT"
+  | "CS"
+  | "SUPERVISOR"
+  | "OWNER"
   | string;
 
 export function isAdmin(role?: string): boolean {
@@ -18,7 +21,36 @@ export function isAdmin(role?: string): boolean {
 export function isSeller(role?: string): boolean {
   if (!role) return false;
   const r = role.toLowerCase();
-  return r === "seller" || r === "owner";
+  return r === "seller";
+}
+
+export function isCS(role?: string): boolean {
+  if (!role) return false;
+  const r = role.toLowerCase();
+  return r === "cs" || r === "agent" || r === "staff";
+}
+
+export function isTenantOwner(role?: string): boolean {
+  if (!role) return true; // Default to owner if role unspecified
+  const r = role.toLowerCase();
+  if (isCS(r) || isAdmin(r) || isSeller(r)) return false;
+  return true; // "user", "owner", "tenant_admin", etc.
+}
+
+export function canAccessBilling(role?: string): boolean {
+  return !isCS(role);
+}
+
+export function canManageTeam(role?: string): boolean {
+  return !isCS(role);
+}
+
+export function canPairQRDevice(role?: string): boolean {
+  return !isCS(role);
+}
+
+export function canAccessCampaigns(role?: string): boolean {
+  return !isCS(role);
 }
 
 export function isUserAgent(role?: string): boolean {

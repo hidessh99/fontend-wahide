@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { RemindersView } from "@/modules/reminder/views/RemindersView";
+import { ReminderSellerAutomationsView } from "@/modules/reminder/views/seller/ReminderSellerAutomationsView";
 import { SellerRouteGuard } from "@/components/layout/shared/SellerRouteGuard";
 
 export const metadata: Metadata = {
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 export default function RemindersPage() {
   return (
     <SellerRouteGuard>
-      <RemindersView />
+      <ReminderSellerAutomationsView />
     </SellerRouteGuard>
   );
 }

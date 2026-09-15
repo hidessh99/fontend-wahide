@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { AdminMessagesView } from "@/modules/admin/views";
+import { WhatsAppAdminMessagesView } from "@/modules/whatsapp/views/admin/WhatsAppAdminMessagesView";
 
 export const metadata: Metadata = {
   title: "Log Pesan WhatsApp Seluruh Pengguna",
@@ -12,5 +12,5 @@ export const metadata: Metadata = {
 };
 
 export default function AdminMessagesPage() {
-  return <AdminMessagesView />;
+  return <WhatsAppAdminMessagesView />;
 }

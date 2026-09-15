@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/modules/iam/hooks/useAuth";
 import { useI18n } from "@/lib/i18n/context";
-import { UserRole, isAdmin } from "@/modules/iam/types/auth.types";
+import { UserRole, isAdmin, isCS } from "@/modules/iam/types/auth.types";
 
 export interface DashboardNavItem {
   key: string;
@@ -31,6 +31,7 @@ export interface DashboardNavItem {
   icon: React.ComponentType<{ className?: string }>;
   badge?: string;
   roles?: UserRole[];
+  hideForCS?: boolean;
 }
 
 export interface DashboardNavGroup {
@@ -78,6 +79,7 @@ export const DASHBOARD_NAV_GROUPS: DashboardNavGroup[] = [
         href: "/campaigns",
         icon: Megaphone,
         roles: SELLER_ROLES,
+        hideForCS: true,
       },
       {
         key: "dashboardMenu.contacts",
@@ -89,6 +91,7 @@ export const DASHBOARD_NAV_GROUPS: DashboardNavGroup[] = [
         href: "/templates",
         icon: FileText,
         roles: SELLER_ROLES,
+        hideForCS: true,
       },
     ],
   },
@@ -101,18 +104,21 @@ export const DASHBOARD_NAV_GROUPS: DashboardNavGroup[] = [
         href: "/reservations",
         icon: CalendarDays,
         roles: SELLER_ROLES,
+        hideForCS: true,
       },
       {
         key: "dashboardMenu.reminders",
         href: "/reminders",
         icon: BellRing,
         roles: SELLER_ROLES,
+        hideForCS: true,
       },
       {
         key: "dashboardMenu.forms",
         href: "/forms",
         icon: ClipboardList,
         roles: SELLER_ROLES,
+        hideForCS: true,
       },
     ],
   },
@@ -125,12 +131,14 @@ export const DASHBOARD_NAV_GROUPS: DashboardNavGroup[] = [
         href: "/subscription",
         icon: CreditCard,
         roles: SELLER_ROLES,
+        hideForCS: true,
       },
       {
         key: "dashboardMenu.billing",
         href: "/billing",
         icon: Receipt,
         roles: SELLER_ROLES,
+        hideForCS: true,
       },
       {
         key: "dashboardMenu.activities",
@@ -142,6 +150,7 @@ export const DASHBOARD_NAV_GROUPS: DashboardNavGroup[] = [
         href: "/settings",
         icon: Settings,
         roles: SELLER_ROLES,
+        hideForCS: true,
       },
     ],
   },
@@ -170,6 +179,7 @@ export function DashboardSidebar({
   const pathname = usePathname();
   const user = useAuth((s) => s.user);
   const { t } = useI18n();
+  const userIsCS = isCS(user?.role);
 
   return (
     <aside
@@ -193,6 +203,7 @@ export function DashboardSidebar({
       <div className="flex-1 space-y-5 overflow-y-auto px-3 py-5">
         {DASHBOARD_NAV_GROUPS.map((group, gIdx) => {
           const visibleItems = group.items.filter((item) => {
+            if (userIsCS && item.hideForCS) return false;
             if (!item.roles || !user?.role) return true;
             const userRoleLower = user.role.toLowerCase();
             return item.roles.some((r) => r.toLowerCase() === userRoleLower);

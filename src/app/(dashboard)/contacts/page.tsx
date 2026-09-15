@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ContactsView } from "@/modules/contact/views/ContactsView";
+import { ContactSellerDatabaseView } from "@/modules/contact/views/seller/ContactSellerDatabaseView";
 
 export const metadata: Metadata = {
   title: "Buku Kontak & Segmentasi Audiens",
@@ -15,5 +15,5 @@ export const metadata: Metadata = {
 };
 
 export default function ContactsPage() {
-  return <ContactsView />;
+  return <ContactSellerDatabaseView />;
 }

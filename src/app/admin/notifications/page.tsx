@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { AdminNotificationsView } from "@/modules/admin/views";
+import { SystemAdminNotificationsView } from "@/modules/system/views/admin/SystemAdminNotificationsView";
 
 export const metadata: Metadata = {
   title: "Siaran Massal & Antrean Notifikasi",
@@ -12,5 +12,5 @@ export const metadata: Metadata = {
 };
 
 export default function AdminNotificationsPage() {
-  return <AdminNotificationsView />;
+  return <SystemAdminNotificationsView />;
 }

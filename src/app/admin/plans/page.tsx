@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { AdminPlansView } from "@/modules/admin/views";
+import { SubscriptionAdminPlansView } from "@/modules/subscription/views/admin/SubscriptionAdminPlansView";
 
 export const metadata: Metadata = {
   title: "Kelola Paket Langganan Platform",
@@ -12,5 +12,5 @@ export const metadata: Metadata = {
 };
 
 export default function AdminPlansPage() {
-  return <AdminPlansView />;
+  return <SubscriptionAdminPlansView />;
 }

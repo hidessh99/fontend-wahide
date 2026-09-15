@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SupportView } from "@/modules/support/views/SupportView";
+import { SupportSellerTicketsView } from "@/modules/support/views/seller/SupportSellerTicketsView";
 
 export const metadata: Metadata = {
   title: "Tiket Bantuan & Dukungan Teknis",
@@ -15,5 +15,5 @@ export const metadata: Metadata = {
 };
 
 export default function SupportPage() {
-  return <SupportView />;
+  return <SupportSellerTicketsView />;
 }

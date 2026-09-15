@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ReservationsView } from "@/modules/reservation/views/ReservationsView";
+import { ReservationSellerCalendarView } from "@/modules/reservation/views/seller/ReservationSellerCalendarView";
 import { SellerRouteGuard } from "@/components/layout/shared/SellerRouteGuard";
 
 export const metadata: Metadata = {
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 export default function ReservationsPage() {
   return (
     <SellerRouteGuard>
-      <ReservationsView />
+      <ReservationSellerCalendarView />
     </SellerRouteGuard>
   );
 }

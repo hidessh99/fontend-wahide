@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { AdminUsersView } from "@/modules/admin/views";
+import { IamAdminUsersView } from "@/modules/iam/views/admin/IamAdminUsersView";
 
 export const metadata: Metadata = {
   title: "Kelola Pengguna Platform",
@@ -11,5 +11,5 @@ export const metadata: Metadata = {
 };
 
 export default function AdminUsersPage() {
-  return <AdminUsersView />;
+  return <IamAdminUsersView />;
 }

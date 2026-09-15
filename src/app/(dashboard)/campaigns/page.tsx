@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { CampaignsView } from "@/modules/campaign/views/CampaignsView";
+import { CampaignSellerBroadcastView } from "@/modules/campaign/views/seller/CampaignSellerBroadcastView";
 import { SellerRouteGuard } from "@/components/layout/shared/SellerRouteGuard";
 
 export const metadata: Metadata = {
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 export default function CampaignsPage() {
   return (
     <SellerRouteGuard>
-      <CampaignsView />
+      <CampaignSellerBroadcastView />
     </SellerRouteGuard>
   );
 }

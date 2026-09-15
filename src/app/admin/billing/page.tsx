@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { AdminBillingView } from "@/modules/admin/views";
+import { FinanceAdminBillingView } from "@/modules/finance/views/admin/FinanceAdminBillingView";
 
 export const metadata: Metadata = {
   title: "Kelola Billing & Topup Platform",
@@ -12,5 +12,5 @@ export const metadata: Metadata = {
 };
 
 export default function AdminBillingPage() {
-  return <AdminBillingView />;
+  return <FinanceAdminBillingView />;
 }

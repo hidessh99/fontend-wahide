@@ -1,6 +1,6 @@
 import React, { Suspense } from "react";
 import type { Metadata } from "next";
-import { AddressView } from "@/modules/iam/views/AddressView";
+import { IamSellerAddressView } from "@/modules/iam/views/seller/IamSellerAddressView";
 
 export const metadata: Metadata = {
   title: "Alamat Bisnis & Penagihan",
@@ -22,7 +22,7 @@ export default function SettingsAddressPage() {
         <div className="flex h-96 animate-pulse items-center justify-center" />
       }
     >
-      <AddressView />
+      <IamSellerAddressView />
     </Suspense>
   );
 }

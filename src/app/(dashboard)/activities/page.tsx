@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { UserActivitiesView } from "@/modules/iam/views/UserActivitiesView";
+import { IamUserActivitiesView } from "@/modules/iam/views/user/IamUserActivitiesView";
 
 export const metadata: Metadata = {
   title: "Log Aktivitas Akun",
@@ -15,5 +15,5 @@ export const metadata: Metadata = {
 };
 
 export default function ActivitiesPage() {
-  return <UserActivitiesView />;
+  return <IamUserActivitiesView />;
 }

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SupportView } from "@/modules/support/views/SupportView";
+import { SupportAdminTicketsView } from "@/modules/support/views/admin/SupportAdminTicketsView";
 
 export const metadata: Metadata = {
   title: "Pusat Bantuan & Helpdesk Platform",
@@ -12,5 +12,5 @@ export const metadata: Metadata = {
 };
 
 export default function AdminSupportPage() {
-  return <SupportView />;
+  return <SupportAdminTicketsView />;
 }

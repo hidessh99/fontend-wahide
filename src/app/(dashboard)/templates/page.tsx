@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { TemplatesView } from "@/modules/template/views/TemplatesView";
+import { TemplateSellerLibraryView } from "@/modules/template/views/seller/TemplateSellerLibraryView";
 import { SellerRouteGuard } from "@/components/layout/shared/SellerRouteGuard";
 
 export const metadata: Metadata = {
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 export default function TemplatesPage() {
   return (
     <SellerRouteGuard>
-      <TemplatesView />
+      <TemplateSellerLibraryView />
     </SellerRouteGuard>
   );
 }
