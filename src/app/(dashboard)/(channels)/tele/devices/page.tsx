@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { TelegramBotsView } from "@/modules/telegram/views/TelegramBotsView";
+import { TelegramBotsView } from "@/modules/telegram/views/seller/TelegramBotsView";
 import { SellerRouteGuard } from "@/components/layout/shared/SellerRouteGuard";
 
 export const metadata: Metadata = {

@@ -14,7 +14,6 @@ import {
   Bot,
   ExternalLink,
   BellOff,
-  Sparkles,
 } from "lucide-react";
 import { formatDisplayPhone } from "@/lib/phone";
 import { OmnichannelChannelType } from "../types/omnichannel.types";

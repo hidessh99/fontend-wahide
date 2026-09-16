@@ -1,0 +1,75 @@
+"use client";
+
+import React from "react";
+import { useTelegramLogs } from "../../hooks/useTelegramLogs";
+import { TelegramLogsTable } from "../../components/seller/TelegramLogsTable";
+import { Button } from "@/components/ui/button";
+import { ScrollText, RefreshCw } from "lucide-react";
+
+export function TelegramLogsView() {
+  const {
+    logs,
+    total,
+    page,
+    setPage,
+    pageSize,
+    searchQuery,
+    setSearchQuery,
+    directionFilter,
+    setDirectionFilter,
+    statusFilter,
+    setStatusFilter,
+    isLoading,
+    reload,
+  } = useTelegramLogs(1, 20);
+
+  return (
+    <div className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6 lg:p-8">
+      {/* Header */}
+      <div className="border-border flex flex-col justify-between gap-4 border-b pb-5 sm:flex-row sm:items-center">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2.5">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-sky-500/10 text-sky-600 dark:bg-sky-500/20 dark:text-sky-400">
+              <ScrollText className="size-5" />
+            </div>
+            <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl">
+              Log Pengiriman Telegram
+            </h1>
+          </div>
+          <p className="text-foreground-secondary text-xs font-medium sm:text-sm">
+            Audit riwayat pesan masuk dan keluar bot Telegram dengan status pengiriman real-time.
+          </p>
+        </div>
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => reload()}
+          disabled={isLoading}
+          className="text-xs font-semibold"
+        >
+          <RefreshCw className={`mr-1.5 size-3.5 ${isLoading ? "animate-spin" : ""}`} />
+          <span>Muat Ulang</span>
+        </Button>
+      </div>
+
+      {/* Logs Table Component */}
+      <TelegramLogsTable
+        logs={logs}
+        total={total}
+        page={page}
+        pageSize={pageSize}
+        isLoading={isLoading}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        directionFilter={directionFilter}
+        onDirectionFilterChange={setDirectionFilter}
+        statusFilter={statusFilter}
+        onStatusFilterChange={setStatusFilter}
+        onPageChange={setPage}
+      />
+    </div>
+  );
+}
+
+export default TelegramLogsView;

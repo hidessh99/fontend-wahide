@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import {
   Smartphone,
@@ -10,17 +10,13 @@ import {
   AlertCircle,
   ArrowRight,
   Sparkles,
-  ShieldCheck,
   Bot,
   HelpCircle,
-  FileText,
   Image as ImageIcon,
   MapPin,
   MessageSquare,
   Paperclip,
-  CheckCircle2,
 } from "lucide-react";
-import { useI18n } from "@/lib/i18n/context";
 import { Button } from "@/components/ui/button";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Input } from "@/components/ui/input";
@@ -88,8 +84,6 @@ export function OmnichannelComposer({
   onTelegramSilentChange,
   onSuccess,
 }: OmnichannelComposerProps) {
-  const { t } = useI18n();
-
   // Selected Sender ID for current channel
   const [selectedSenderId, setSelectedSenderId] = useState<string>("");
 
@@ -132,7 +126,9 @@ export function OmnichannelComposer({
   const [isSending, setIsSending] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const currentSenders = sendersByChannel[selectedChannel] || [];
+  const currentSenders = useMemo(() => {
+    return sendersByChannel[selectedChannel] || [];
+  }, [sendersByChannel, selectedChannel]);
   const hasActiveSender = currentSenders.length > 0;
 
   // Auto-select first active sender when channel changes
@@ -912,6 +908,30 @@ export function OmnichannelComposer({
             className="text-xs sm:text-sm font-medium resize-none rounded-2xl p-3.5 leading-relaxed"
           />
         </div>
+
+        {/* WhatsApp Web Extra Options */}
+        {selectedChannel === "WHATSMEOW_UNOFFICIAL" && (
+          <div className="flex flex-wrap items-center gap-6 pt-1 text-xs">
+            <label className="flex items-center gap-2 cursor-pointer font-medium text-foreground-secondary hover:text-foreground">
+              <input
+                type="checkbox"
+                checked={simulateTyping}
+                onChange={(e) => setSimulateTyping(e.target.checked)}
+                className="rounded border-border accent-wise-green size-4"
+              />
+              <span>Simulasi Mengetik (Human-like Typing)</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer font-medium text-foreground-secondary hover:text-foreground">
+              <input
+                type="checkbox"
+                checked={parseSpintax}
+                onChange={(e) => setParseSpintax(e.target.checked)}
+                className="rounded border-border accent-wise-green size-4"
+              />
+              <span>Parse Spintax {"{A|B}"}</span>
+            </label>
+          </div>
+        )}
 
         {/* SUBMIT BUTTON */}
         <Button

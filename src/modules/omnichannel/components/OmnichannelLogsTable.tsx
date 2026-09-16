@@ -175,7 +175,8 @@ export function OmnichannelLogsTable({
           <div className="flex-1">
             <SearchInput
               value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
+              onChange={(val) => onSearchChange(val)}
+              onSearch={(val) => onSearchChange(val)}
               onClear={() => onSearchChange("")}
               placeholder="Cari penerima atau isi pesan..."
               className="h-10 text-xs sm:text-sm rounded-full"
@@ -227,7 +228,7 @@ export function OmnichannelLogsTable({
               <tr>
                 <td colSpan={6} className="py-12">
                   <EmptyState
-                    icon={Inbox}
+                    icon={<Inbox className="size-10" />}
                     title="Tidak ada pesan ditemukan"
                     description="Belum ada riwayat pesan yang sesuai dengan filter pencarian Anda."
                     action={
@@ -385,11 +386,12 @@ export function OmnichannelLogsTable({
       {!isLoading && logs.length > 0 && (
         <div className="border-t border-border/80 p-4">
           <DataTablePagination
-            pageIndex={page}
+            page={page}
             pageSize={pageSize}
-            totalItems={total}
+            total={total}
             totalPages={totalPages}
             onPageChange={onPageChange}
+            entityName="pesan"
           />
         </div>
       )}

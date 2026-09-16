@@ -63,7 +63,7 @@ export function useOmnichannelSenders() {
   const activeDevices = useMemo(() => {
     return devices.filter(
       (d) =>
-        (d.status === "CONNECTED" || d.status === "ONLINE") &&
+        d.status === "CONNECTED" &&
         !d.is_over_limit &&
         !d.isOverLimit,
     );
