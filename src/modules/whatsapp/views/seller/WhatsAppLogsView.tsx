@@ -17,13 +17,19 @@ export function WhatsAppLogsView() {
     page,
     setPage,
     pageSize,
+    setPageSize,
     isLoading,
     fetchLogs,
     searchQuery,
     setSearchQuery,
     statusFilter,
     setStatusFilter,
-  } = useMessageLogs(1, 20);
+  } = useMessageLogs(1, 10);
+
+  const handlePageSizeChange = (newSize: number) => {
+    setPageSize(newSize);
+    setPage(1);
+  };
 
   const failedCount = logs.filter(
     (l) => l.status?.toUpperCase() === "FAILED",
@@ -73,13 +79,12 @@ export function WhatsAppLogsView() {
             page={page}
             pageSize={pageSize}
             onPageChange={setPage}
+            onPageSizeChange={handlePageSizeChange}
             isLoading={isLoading}
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             statusFilter={statusFilter}
             onStatusFilterChange={setStatusFilter}
-            onRefresh={fetchLogs}
-            onNewMessage={() => {}}
           />
         </div>
       </ErrorBoundary>

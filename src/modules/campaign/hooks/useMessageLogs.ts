@@ -4,13 +4,12 @@ import { useState, useEffect, useCallback } from "react";
 import { MessageLogResponse } from "../types/campaign.types";
 import { campaignApi } from "../api/campaign.api";
 
-export function useMessageLogs(initialPage = 1, initialPageSize = 20) {
+export function useMessageLogs(initialPage = 1, initialPageSize = 10) {
   const [logs, setLogs] = useState<MessageLogResponse[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(initialPage);
   const [pageSize, setPageSize] = useState(initialPageSize);
   const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [deviceIdFilter, setDeviceIdFilter] = useState<string | undefined>(
     undefined,
@@ -18,18 +17,10 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 20) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Debounce search query by 300ms to avoid network storms
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(searchQuery);
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
-  // Reset page to 1 when debounced search or filter changes
+  // Reset page to 1 when search, filter, or pageSize changes
   useEffect(() => {
     setPage(1);
-  }, [debouncedSearch, statusFilter, deviceIdFilter]);
+  }, [searchQuery, statusFilter, deviceIdFilter, pageSize]);
 
   const fetchLogs = useCallback(
     async (
@@ -51,7 +42,7 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 20) {
           search:
             overrideParams?.search !== undefined
               ? overrideParams.search
-              : debouncedSearch,
+              : searchQuery,
           status:
             overrideParams?.status !== undefined
               ? overrideParams.status
@@ -73,7 +64,7 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 20) {
         setIsLoading(false);
       }
     },
-    [page, pageSize, debouncedSearch, statusFilter, deviceIdFilter],
+    [page, pageSize, searchQuery, statusFilter, deviceIdFilter],
   );
 
   useEffect(() => {
@@ -87,7 +78,7 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 20) {
         const res = await campaignApi.getMessageLogs({
           page,
           pageSize,
-          search: debouncedSearch,
+          search: searchQuery,
           status: statusFilter,
           deviceId: deviceIdFilter,
           signal: controller.signal,
@@ -115,7 +106,7 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 20) {
       isMounted = false;
       controller.abort();
     };
-  }, [page, pageSize, debouncedSearch, statusFilter, deviceIdFilter]);
+  }, [page, pageSize, searchQuery, statusFilter, deviceIdFilter]);
 
   return {
     logs,

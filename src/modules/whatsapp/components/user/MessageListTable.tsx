@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import {
   Send,
   Download,
-  RefreshCw,
   Inbox,
   Check,
   CheckCheck,
@@ -21,7 +20,7 @@ import { SearchInput } from "@/components/ui/search-input";
 import { NativeSelect } from "@/components/ui/native-select";
 import { DataTablePagination } from "@/components/ui/pagination";
 import { EmptyState } from "@/components/ui/empty";
-import { cn } from "@/lib/utils";
+import { MessageLogDetailDialog } from "./MessageLogDetailDialog";
 
 interface MessageListTableProps {
   logs: MessageLogResponse[];
@@ -30,7 +29,8 @@ interface MessageListTableProps {
   pageSize: number;
   isLoading: boolean;
   onPageChange: (newPage: number) => void;
-  onNewMessage: () => void;
+  onPageSizeChange?: (newPageSize: number) => void;
+  onNewMessage?: () => void;
   onRefresh?: () => void;
   searchQuery?: string;
   onSearchChange?: (q: string) => void;
@@ -45,28 +45,37 @@ export function MessageListTable({
   pageSize,
   isLoading,
   onPageChange,
+  onPageSizeChange,
   onNewMessage,
-  onRefresh,
   searchQuery,
   onSearchChange,
   statusFilter,
   onStatusFilterChange,
 }: MessageListTableProps) {
   const { t } = useI18n();
-  const [internalSearch, setInternalSearch] = useState("");
+  const [draftSearch, setDraftSearch] = useState(searchQuery ?? "");
   const [internalStatus, setInternalStatus] = useState<string>("ALL");
+  const [selectedLog, setSelectedLog] = useState<MessageLogResponse | null>(
+    null,
+  );
 
-  const effectiveSearch =
-    searchQuery !== undefined ? searchQuery : internalSearch;
+  // Keep draftSearch synchronized if external searchQuery changes
+  React.useEffect(() => {
+    if (searchQuery !== undefined) {
+      setDraftSearch(searchQuery);
+    }
+  }, [searchQuery]);
+
   const effectiveStatus =
     statusFilter !== undefined ? statusFilter : internalStatus;
 
-  const handleSearch = (val: string) => {
-    if (onSearchChange) {
-      onSearchChange(val);
-    } else {
-      setInternalSearch(val);
-    }
+  const handleSearchSubmit = (val: string) => {
+    onSearchChange?.(val.trim());
+  };
+
+  const handleSearchClear = () => {
+    setDraftSearch("");
+    onSearchChange?.("");
   };
 
   const handleStatus = (val: string) => {
@@ -156,12 +165,13 @@ export function MessageListTable({
       <div className="border-border flex flex-col justify-between gap-3 border-b p-3.5 sm:flex-row sm:items-center sm:p-4">
         <div className="w-full sm:max-w-xs md:max-w-sm">
           <SearchInput
-            value={effectiveSearch}
-            onChange={handleSearch}
-            onSearch={handleSearch}
-            onClear={() => handleSearch("")}
+            value={draftSearch}
+            onChange={setDraftSearch}
+            onSearch={handleSearchSubmit}
+            onClear={handleSearchClear}
             placeholder={t("whatsapp.messagesSearchPlaceholder")}
             buttonText={t("common.search")}
+            hideSubmitButton={false}
           />
         </div>
 
@@ -179,23 +189,6 @@ export function MessageListTable({
             <option value="FAILED">FAILED</option>
           </NativeSelect>
 
-          {onRefresh && (
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={onRefresh}
-              disabled={isLoading}
-              className="border-border hover:border-foreground-muted h-10 cursor-pointer gap-1.5 rounded-full px-3 text-xs font-bold"
-              title={t("common.refresh")}
-            >
-              <RefreshCw
-                className={cn("size-3.5", isLoading && "animate-spin")}
-              />
-              <span className="hidden sm:inline">{t("common.refresh")}</span>
-            </Button>
-          )}
-
           <Button
             type="button"
             variant="outline"
@@ -208,16 +201,18 @@ export function MessageListTable({
             <span>{t("whatsapp.messagesExport")}</span>
           </Button>
 
-          <Button
-            type="button"
-            variant="primaryPill"
-            size="sm"
-            onClick={onNewMessage}
-            className="h-10 cursor-pointer gap-1.5 px-4 text-xs font-bold shadow-xs"
-          >
-            <Send className="size-3.5" />
-            <span>{t("whatsapp.messagesNewMessage")}</span>
-          </Button>
+          {onNewMessage && (
+            <Button
+              type="button"
+              variant="primaryPill"
+              size="sm"
+              onClick={onNewMessage}
+              className="h-10 cursor-pointer gap-1.5 px-4 text-xs font-bold shadow-xs"
+            >
+              <Send className="size-3.5" />
+              <span>{t("whatsapp.messagesNewMessage")}</span>
+            </Button>
+          )}
         </div>
       </div>
 
@@ -236,16 +231,18 @@ export function MessageListTable({
           title={t("whatsapp.messagesNoFound")}
           description={t("whatsapp.messagesNoFoundDesc")}
           action={
-            <Button
-              type="button"
-              variant="primaryPill"
-              size="sm"
-              onClick={onNewMessage}
-              className="gap-1.5 text-xs font-bold shadow-xs"
-            >
-              <Send className="size-3.5" />
-              <span>{t("whatsapp.messagesSendFirst")}</span>
-            </Button>
+            onNewMessage ? (
+              <Button
+                type="button"
+                variant="primaryPill"
+                size="sm"
+                onClick={onNewMessage}
+                className="gap-1.5 text-xs font-bold shadow-xs"
+              >
+                <Send className="size-3.5" />
+                <span>{t("whatsapp.messagesSendFirst")}</span>
+              </Button>
+            ) : undefined
           }
         />
       ) : (
@@ -266,7 +263,16 @@ export function MessageListTable({
               return (
                 <div
                   key={log.id}
-                  className="bg-surface hover:bg-muted/30 p-3.5 sm:p-4 space-y-2.5 transition-colors"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setSelectedLog(log)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setSelectedLog(log);
+                    }
+                  }}
+                  className="bg-surface hover:bg-muted/40 cursor-pointer active:scale-[0.99] p-3.5 sm:p-4 space-y-2.5 transition-all outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-mono text-xs font-bold text-foreground truncate">
@@ -334,7 +340,16 @@ export function MessageListTable({
                   return (
                     <tr
                       key={log.id}
-                      className="hover:bg-muted/40 transition-colors"
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => setSelectedLog(log)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          setSelectedLog(log);
+                        }
+                      }}
+                      className="hover:bg-muted/40 cursor-pointer transition-colors outline-none focus-visible:bg-muted/50"
                     >
                       <td className="py-3 px-4 font-mono font-medium text-foreground whitespace-nowrap">
                         <span>+{phone.replace(/^\+/, "")}</span>
@@ -382,9 +397,17 @@ export function MessageListTable({
         total={total}
         pageSize={pageSize}
         onPageChange={onPageChange}
+        onPageSizeChange={onPageSizeChange}
+        pageSizeOptions={[10, 30, 50]}
         prevText={t("whatsapp.messagesPrev")}
         nextText={t("whatsapp.messagesNext")}
         entityName={t("whatsapp.messagesColMessage").toLowerCase()}
+      />
+
+      <MessageLogDetailDialog
+        log={selectedLog}
+        isOpen={Boolean(selectedLog)}
+        onClose={() => setSelectedLog(null)}
       />
     </div>
   );

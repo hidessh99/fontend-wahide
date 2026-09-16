@@ -115,19 +115,44 @@ export const telegramApi = {
       if (query.bot_id?.trim()) searchParams.set("bot_id", query.bot_id.trim());
       if (query.direction && query.direction !== "ALL") searchParams.set("direction", query.direction);
       if (query.status && query.status !== "ALL") searchParams.set("status", query.status);
+      if (query.page_size) {
+        searchParams.set("limit", String(query.page_size));
+      }
 
       const qs = searchParams.toString();
       const url = `${BASE_URL}/telegram/messages${qs ? `?${qs}` : ""}`;
-      const res = await httpClient.get<TelegramMessage[]>(url, { signal });
+      const res = await httpClient.get<unknown>(url, { signal });
 
-      const logs = Array.isArray(res?.payload) ? res.payload : [];
-      const info = res?.additional_info as { total?: number } | undefined;
-      const total =
-        typeof info?.total === "number"
-          ? info.total
-          : typeof res?.pagination?.total_items === "number"
-            ? res.pagination.total_items
-            : logs.length;
+      let logs: TelegramMessage[] = [];
+      let total = 0;
+
+      const rawPayload = res?.payload as
+        | { items?: TelegramMessage[]; total?: number }
+        | TelegramMessage[]
+        | undefined;
+
+      if (Array.isArray(rawPayload)) {
+        logs = rawPayload;
+        total = logs.length;
+      } else if (rawPayload && typeof rawPayload === "object") {
+        if (Array.isArray(rawPayload.items)) {
+          logs = rawPayload.items;
+        }
+        if (typeof rawPayload.total === "number") {
+          total = rawPayload.total;
+        }
+      }
+
+      if (total === 0) {
+        const info = res?.additional_info as { total?: number } | undefined;
+        if (typeof info?.total === "number") {
+          total = info.total;
+        } else if (typeof res?.pagination?.total_items === "number") {
+          total = res.pagination.total_items;
+        } else {
+          total = logs.length;
+        }
+      }
 
       return { logs, total };
     } catch (err: unknown) {
