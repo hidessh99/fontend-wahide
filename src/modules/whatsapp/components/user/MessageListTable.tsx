@@ -22,6 +22,20 @@ import { DataTablePagination } from "@/components/ui/pagination";
 import { EmptyState } from "@/components/ui/empty";
 import { MessageLogDetailDialog } from "./MessageLogDetailDialog";
 
+const idDateFormatter = new Intl.DateTimeFormat("id-ID", {
+  day: "2-digit",
+  month: "short",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+});
+
+const formatLogTime = (dateStr?: string) => {
+  if (!dateStr) return "-";
+  const d = new Date(dateStr);
+  return isNaN(d.getTime()) ? "-" : idDateFormatter.format(d);
+};
+
 interface MessageListTableProps {
   logs: MessageLogResponse[];
   total: number;
@@ -90,6 +104,9 @@ export function MessageListTable({
 
   const handleExportCSV = () => {
     if (logs.length === 0) return;
+    const escapeCell = (val: unknown) =>
+      `"${String(val ?? "").replace(/"/g, '""')}"`;
+
     const headers = [
       "ID",
       "Recipient",
@@ -99,24 +116,31 @@ export function MessageListTable({
       "Created At",
     ];
     const rows = logs.map((l) => [
-      l.id,
-      `"${l.recipient_jid || ""}"`,
-      `"${(l.message_body || "").replace(/"/g, '""')}"`,
-      l.device_id,
-      l.status,
-      l.created_at,
+      escapeCell(l.id),
+      escapeCell(l.recipient_jid),
+      escapeCell(l.message_body),
+      escapeCell(l.device_id),
+      escapeCell(l.status),
+      escapeCell(l.created_at),
     ]);
 
     const csvContent =
-      "data:text/csv;charset=utf-8," +
-      [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
-    const encodedUri = encodeURI(csvContent);
+      [headers.join(","), ...rows.map((r) => r.join(","))].join("\r\n");
+    const blob = new Blob(["\uFEFF" + csvContent], {
+      type: "text/csv;charset=utf-8;",
+    });
+    const objectUrl = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `whatsapp-messages-page-${page}.csv`);
+    link.href = objectUrl;
+    link.download = `whatsapp-messages-page-${page}-${Date.now()}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+
+    // Free allocated memory immediately
+    setTimeout(() => {
+      URL.revokeObjectURL(objectUrl);
+    }, 1000);
   };
 
   const renderStatusBadge = (status?: string) => {
@@ -250,15 +274,7 @@ export function MessageListTable({
           <div className="divide-border/50 divide-y lg:hidden">
             {logs.map((log) => {
               const phone = log.recipient_jid?.split("@")[0] || "-";
-              const timeFormatted = log.created_at
-                ? new Date(log.created_at).toLocaleString("id-ID", {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })
-                : "-";
+              const timeFormatted = formatLogTime(log.created_at);
 
               return (
                 <div
@@ -327,15 +343,7 @@ export function MessageListTable({
               <tbody className="divide-y divide-border/60 text-xs">
                 {logs.map((log) => {
                   const phone = log.recipient_jid?.split("@")[0] || "-";
-                  const timeFormatted = log.created_at
-                    ? new Date(log.created_at).toLocaleString("id-ID", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })
-                    : "-";
+                  const timeFormatted = formatLogTime(log.created_at);
 
                   return (
                     <tr

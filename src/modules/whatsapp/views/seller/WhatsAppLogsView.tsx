@@ -14,6 +14,7 @@ export function WhatsAppLogsView() {
   const {
     logs,
     total,
+    failedTotal,
     page,
     setPage,
     pageSize,
@@ -30,10 +31,6 @@ export function WhatsAppLogsView() {
     setPageSize(newSize);
     setPage(1);
   };
-
-  const failedCount = logs.filter(
-    (l) => l.status?.toUpperCase() === "FAILED",
-  ).length;
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6 lg:p-8">
@@ -68,7 +65,7 @@ export function WhatsAppLogsView() {
       <ErrorBoundary fallbackTitle={t("whatsapp.messagesErrorLoadHistory")}>
         <MessageStatsCards
           total={total}
-          failedCount={failedCount}
+          failedCount={failedTotal}
           isLoading={isLoading}
         />
 

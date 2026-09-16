@@ -16,6 +16,7 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 10) {
   );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [failedTotal, setFailedTotal] = useState(0);
 
   // Reset page to 1 when search, filter, or pageSize changes
   useEffect(() => {
@@ -36,25 +37,45 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 10) {
       setIsLoading(true);
       setError(null);
       try {
-        const res = await campaignApi.getMessageLogs({
-          page: overrideParams?.page ?? page,
-          pageSize: overrideParams?.pageSize ?? pageSize,
-          search:
-            overrideParams?.search !== undefined
-              ? overrideParams.search
-              : searchQuery,
-          status:
-            overrideParams?.status !== undefined
-              ? overrideParams.status
-              : statusFilter,
-          deviceId:
-            overrideParams?.deviceId !== undefined
-              ? overrideParams.deviceId
-              : deviceIdFilter,
-          signal,
-        });
+        const targetStatus =
+          overrideParams?.status !== undefined
+            ? overrideParams.status
+            : statusFilter;
+        const targetSearch =
+          overrideParams?.search !== undefined
+            ? overrideParams.search
+            : searchQuery;
+
+        const [res, failedProbe] = await Promise.all([
+          campaignApi.getMessageLogs({
+            page: overrideParams?.page ?? page,
+            pageSize: overrideParams?.pageSize ?? pageSize,
+            search: targetSearch,
+            status: targetStatus,
+            deviceId:
+              overrideParams?.deviceId !== undefined
+                ? overrideParams.deviceId
+                : deviceIdFilter,
+            signal,
+          }),
+          targetStatus === "ALL" && !targetSearch
+            ? campaignApi
+                .getMessageLogs({
+                  status: "FAILED",
+                  pageSize: 1,
+                  signal,
+                })
+                .catch(() => null)
+            : Promise.resolve(null),
+        ]);
+
         setLogs(res.logs);
         setTotal(res.total);
+        if (targetStatus === "FAILED") {
+          setFailedTotal(res.total);
+        } else if (failedProbe) {
+          setFailedTotal(failedProbe.total);
+        }
       } catch (err: unknown) {
         if (err instanceof Error && err.name === "AbortError") return;
         const msg =
@@ -75,17 +96,35 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 10) {
       try {
         setIsLoading(true);
         setError(null);
-        const res = await campaignApi.getMessageLogs({
-          page,
-          pageSize,
-          search: searchQuery,
-          status: statusFilter,
-          deviceId: deviceIdFilter,
-          signal: controller.signal,
-        });
+
+        const [res, failedProbe] = await Promise.all([
+          campaignApi.getMessageLogs({
+            page,
+            pageSize,
+            search: searchQuery,
+            status: statusFilter,
+            deviceId: deviceIdFilter,
+            signal: controller.signal,
+          }),
+          statusFilter === "ALL" && !searchQuery
+            ? campaignApi
+                .getMessageLogs({
+                  status: "FAILED",
+                  pageSize: 1,
+                  signal: controller.signal,
+                })
+                .catch(() => null)
+            : Promise.resolve(null),
+        ]);
+
         if (isMounted) {
           setLogs(res.logs);
           setTotal(res.total);
+          if (statusFilter === "FAILED") {
+            setFailedTotal(res.total);
+          } else if (failedProbe) {
+            setFailedTotal(failedProbe.total);
+          }
         }
       } catch (err: unknown) {
         if (err instanceof Error && err.name === "AbortError") return;
@@ -111,6 +150,7 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 10) {
   return {
     logs,
     total,
+    failedTotal,
     page,
     setPage,
     pageSize,
