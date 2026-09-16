@@ -7,6 +7,8 @@ const PROTECTED_PREFIXES = [
   "/devices",
   "/wa",
   "/waba",
+  "/tele",
+  "/telegram",
   "/campaigns",
   "/contacts",
   "/templates",
@@ -38,6 +40,11 @@ export function proxy(request: NextRequest) {
   const userRole = (
     request.cookies.get("wahide_user_role")?.value || ""
   ).toUpperCase();
+
+  // 0. Exempt OAuth Callback from Edge Session Interception
+  if (pathname === "/waba/callback") {
+    return NextResponse.next();
+  }
 
   // 1. Guard User Protected Dashboard Routes (0ms Edge Redirect)
   if (PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix))) {

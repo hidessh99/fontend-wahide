@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -18,9 +18,15 @@ import {
   BellRing,
   CalendarDays,
   ClipboardList,
-  MessageSquare,
   Megaphone,
   ShieldCheck,
+  Bot,
+  LayoutTemplate,
+  ScrollText,
+  BarChart3,
+  ChevronDown,
+  ChevronRight,
+  Radio,
 } from "lucide-react";
 import { useAuth } from "@/modules/iam/hooks/useAuth";
 import { useI18n } from "@/lib/i18n/context";
@@ -41,7 +47,120 @@ export interface DashboardNavGroup {
   items: DashboardNavItem[];
 }
 
+export interface ChannelSubItem {
+  key: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  badge?: string;
+  roles?: UserRole[];
+  hideForCS?: boolean;
+}
+
+export interface ChannelNavSection {
+  id: "wa" | "waba" | "tele";
+  titleKey: string;
+  baseRoute: string;
+  icon: React.ComponentType<{ className?: string }>;
+  badge?: string;
+  roles?: UserRole[];
+  hideForCS?: boolean;
+  items: ChannelSubItem[];
+}
+
 const SELLER_ROLES: UserRole[] = ["admin", "seller", "SUPER_ADMIN", "SELLER"];
+
+export const CHANNEL_NAV_SECTIONS: ChannelNavSection[] = [
+  {
+    id: "wa",
+    titleKey: "dashboardMenu.channelWaUnofficial",
+    baseRoute: "/wa",
+    icon: Smartphone,
+    badge: "Socket",
+    items: [
+      {
+        key: "dashboardMenu.channelDevices",
+        href: "/wa/devices",
+        icon: Smartphone,
+      },
+      {
+        key: "dashboardMenu.channelTemplates",
+        href: "/wa/templates",
+        icon: LayoutTemplate,
+      },
+      {
+        key: "dashboardMenu.channelLogs",
+        href: "/wa/logs",
+        icon: ScrollText,
+      },
+      {
+        key: "dashboardMenu.channelStats",
+        href: "/wa/stats",
+        icon: BarChart3,
+      },
+    ],
+  },
+  {
+    id: "waba",
+    titleKey: "dashboardMenu.channelWabaOfficial",
+    baseRoute: "/waba",
+    icon: ShieldCheck,
+    badge: "Official",
+    roles: SELLER_ROLES,
+    hideForCS: true,
+    items: [
+      {
+        key: "dashboardMenu.channelDevices",
+        href: "/waba/devices",
+        icon: ShieldCheck,
+      },
+      {
+        key: "dashboardMenu.channelTemplates",
+        href: "/waba/templates",
+        icon: LayoutTemplate,
+      },
+      {
+        key: "dashboardMenu.channelLogs",
+        href: "/waba/logs",
+        icon: ScrollText,
+      },
+      {
+        key: "dashboardMenu.channelStats",
+        href: "/waba/stats",
+        icon: BarChart3,
+      },
+    ],
+  },
+  {
+    id: "tele",
+    titleKey: "dashboardMenu.channelTelegram",
+    baseRoute: "/tele",
+    icon: Bot,
+    badge: "Bot",
+    roles: SELLER_ROLES,
+    items: [
+      {
+        key: "dashboardMenu.channelDevices",
+        href: "/tele/devices",
+        icon: Bot,
+      },
+      {
+        key: "dashboardMenu.channelTemplates",
+        href: "/tele/templates",
+        icon: LayoutTemplate,
+      },
+      {
+        key: "dashboardMenu.channelLogs",
+        href: "/tele/logs",
+        icon: ScrollText,
+      },
+      {
+        key: "dashboardMenu.channelStats",
+        href: "/tele/stats",
+        icon: BarChart3,
+      },
+    ],
+  },
+];
 
 export const DASHBOARD_NAV_GROUPS: DashboardNavGroup[] = [
   {
@@ -51,31 +170,6 @@ export const DASHBOARD_NAV_GROUPS: DashboardNavGroup[] = [
         key: "dashboardMenu.overview",
         href: "/dashboard",
         icon: LayoutDashboard,
-      },
-    ],
-  },
-  {
-    // WhatsApp (Perangkat & Pesan Langsung)
-    groupKey: "dashboardMenu.groupWhatsapp",
-    items: [
-      {
-        key: "dashboardMenu.whatsappUnofficial",
-        href: "/wa/devices",
-        icon: Smartphone,
-        badge: "Socket",
-      },
-      {
-        key: "dashboardMenu.whatsappWaba",
-        href: "/waba/devices",
-        icon: ShieldCheck,
-        badge: "Official",
-        roles: SELLER_ROLES,
-        hideForCS: true,
-      },
-      {
-        key: "dashboardMenu.messages",
-        href: "/messages",
-        icon: MessageSquare,
       },
     ],
   },
@@ -190,6 +284,46 @@ export function DashboardSidebar({
   const { t } = useI18n();
   const userIsCS = isCS(user?.role);
 
+  // Collapsible channel accordions state
+  const [openChannels, setOpenChannels] = useState<Record<string, boolean>>({
+    wa: true,
+    waba: false,
+    tele: false,
+  });
+
+  // Auto-expand channel based on current route
+  useEffect(() => {
+    if (pathname.startsWith("/wa") || pathname === "/devices" || pathname.startsWith("/devices/")) {
+      setOpenChannels((prev) => ({ ...prev, wa: true }));
+    } else if (pathname.startsWith("/waba")) {
+      setOpenChannels((prev) => ({ ...prev, waba: true }));
+    } else if (pathname.startsWith("/tele")) {
+      setOpenChannels((prev) => ({ ...prev, tele: true }));
+    }
+  }, [pathname]);
+
+  const toggleChannel = (channelId: string) => {
+    setOpenChannels((prev) => ({
+      ...prev,
+      [channelId]: !prev[channelId],
+    }));
+  };
+
+  const isItemActive = (href: string) => {
+    if (href === "/dashboard") {
+      return pathname === "/dashboard" || pathname === "/";
+    }
+    if (href === "/wa/devices") {
+      return (
+        pathname === "/wa/devices" ||
+        pathname.startsWith("/wa/devices/") ||
+        pathname === "/devices" ||
+        pathname.startsWith("/devices/")
+      );
+    }
+    return pathname === href || pathname.startsWith(href + "/");
+  };
+
   return (
     <aside
       className={cn(
@@ -197,7 +331,7 @@ export function DashboardSidebar({
         className,
       )}
     >
-      {/* Brand Header - Clean without badge */}
+      {/* Brand Header */}
       <div className="border-border flex h-14 items-center justify-between border-b px-6 sm:h-16 lg:h-18">
         <Link href="/" className="flex items-center gap-2.5">
           <span className="bg-wise-green h-3.5 w-3.5 animate-pulse rounded-full" />
@@ -210,6 +344,134 @@ export function DashboardSidebar({
 
       {/* Nav List with Grouping */}
       <div className="flex-1 space-y-5 overflow-y-auto px-3 py-5">
+        {/* Overview Item */}
+        <div className="space-y-1">
+          <Link
+            href="/dashboard"
+            onClick={onItemClick}
+            className={cn(
+              "flex items-center justify-between rounded-full px-3.5 py-2 text-xs font-semibold transition-all duration-150",
+              isItemActive("/dashboard")
+                ? "bg-wise-green text-dark-green font-bold shadow-sm"
+                : "text-foreground-secondary hover:text-foreground hover:bg-muted",
+            )}
+          >
+            <div className="flex items-center gap-3">
+              <LayoutDashboard
+                className={cn(
+                  "size-4",
+                  isItemActive("/dashboard")
+                    ? "text-dark-green"
+                    : "text-foreground-muted",
+                )}
+              />
+              <span>{t("dashboardMenu.overview")}</span>
+            </div>
+          </Link>
+        </div>
+
+        {/* Channels Section (Saluran Komunikasi) */}
+        <div className="space-y-2">
+          <div className="flex items-center gap-1.5 px-3">
+            <Radio className="size-3 text-wise-green" />
+            <p className="text-foreground-muted text-[10px] font-bold tracking-wider uppercase">
+              {t("dashboardMenu.groupChannels")}
+            </p>
+          </div>
+
+          <div className="space-y-1">
+            {CHANNEL_NAV_SECTIONS.map((channel) => {
+              if (userIsCS && channel.hideForCS) return null;
+              if (channel.roles && user?.role) {
+                const userRoleLower = user.role.toLowerCase();
+                const hasRole = channel.roles.some((r) => r.toLowerCase() === userRoleLower);
+                if (!hasRole) return null;
+              }
+
+              const isOpen = !!openChannels[channel.id];
+              const isChannelActive = pathname.startsWith(channel.baseRoute);
+              const ChannelIcon = channel.icon;
+
+              return (
+                <div key={channel.id} className="rounded-xl transition-colors">
+                  {/* Channel Header / Accordion Trigger */}
+                  <button
+                    type="button"
+                    onClick={() => toggleChannel(channel.id)}
+                    aria-expanded={isOpen}
+                    className={cn(
+                      "flex w-full items-center justify-between rounded-full px-3.5 py-2 text-xs font-bold transition-all duration-150 cursor-pointer",
+                      isChannelActive && !isOpen
+                        ? "bg-muted text-foreground"
+                        : "text-foreground-secondary hover:text-foreground hover:bg-muted",
+                    )}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <ChannelIcon className="size-4 text-foreground-muted" />
+                      <span className="truncate">{t(channel.titleKey)}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      {channel.badge && (
+                        <span className="rounded-full bg-[#eef2eb] px-1.5 py-0.5 text-[9px] font-bold text-foreground-muted dark:bg-[#212320]">
+                          {channel.badge}
+                        </span>
+                      )}
+                      {isOpen ? (
+                        <ChevronDown className="size-3.5 text-foreground-muted" />
+                      ) : (
+                        <ChevronRight className="size-3.5 text-foreground-muted" />
+                      )}
+                    </div>
+                  </button>
+
+                  {/* Channel Submenu (Accordion Panel) */}
+                  {isOpen && (
+                    <div className="border-border/60 ml-5 pl-2.5 my-1 space-y-0.5 border-l">
+                      {channel.items.map((subItem) => {
+                        if (userIsCS && subItem.hideForCS) return null;
+                        const isActive = isItemActive(subItem.href);
+                        const SubIcon = subItem.icon;
+
+                        return (
+                          <Link
+                            key={subItem.href}
+                            href={subItem.href}
+                            onClick={onItemClick}
+                            className={cn(
+                              "flex items-center justify-between rounded-full px-3 py-1.5 text-xs font-semibold transition-all duration-150",
+                              isActive
+                                ? "bg-wise-green text-dark-green font-bold shadow-sm"
+                                : "text-foreground-secondary hover:text-foreground hover:bg-muted",
+                            )}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <SubIcon
+                                className={cn(
+                                  "size-3.5",
+                                  isActive
+                                    ? "text-dark-green"
+                                    : "text-foreground-muted",
+                                )}
+                              />
+                              <span>{t(subItem.key)}</span>
+                            </div>
+                            {subItem.badge && !isActive && (
+                              <span className="rounded-full bg-[#eef2eb] px-1.5 py-0.2 text-[9px] font-bold text-foreground-muted dark:bg-[#212320]">
+                                {subItem.badge}
+                              </span>
+                            )}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Other Dashboard Nav Groups */}
         {DASHBOARD_NAV_GROUPS.map((group, gIdx) => {
           const visibleItems = group.items.filter((item) => {
             if (userIsCS && item.hideForCS) return false;
@@ -228,13 +490,7 @@ export function DashboardSidebar({
                 </p>
               )}
               {visibleItems.map((item) => {
-                const isActive =
-                  item.href === "/dashboard"
-                    ? pathname === "/dashboard" || pathname === "/"
-                    : item.href === "/wa/devices"
-                      ? pathname.startsWith("/wa/devices") || pathname === "/devices" || pathname.startsWith("/devices/")
-                      : pathname.startsWith(item.href);
-
+                const isActive = isItemActive(item.href);
                 const Icon = item.icon;
 
                 return (
@@ -272,7 +528,7 @@ export function DashboardSidebar({
           );
         })}
 
-        {/* Superadmin Menu (Jika Role admin / super_admin) */}
+        {/* Superadmin Menu */}
         {isAdmin(user?.role) && (
           <div className="border-border space-y-1 border-t pt-2">
             <p className="mb-1.5 px-3 text-[10px] font-bold tracking-wider text-rose-600 uppercase dark:text-rose-400">

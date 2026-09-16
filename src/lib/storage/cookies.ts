@@ -12,7 +12,7 @@ export function setCookie(
   const isSecure =
     typeof window !== "undefined" && window.location.protocol === "https:";
   const secureFlag = isSecure ? "; Secure" : "";
-  document.cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value)}; Path=/; Max-Age=${maxAgeSeconds}; SameSite=Strict${secureFlag}`;
+  document.cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value)}; Path=/; Max-Age=${maxAgeSeconds}; SameSite=Lax${secureFlag}`;
 }
 
 export function getCookie(name: string): string | null {
@@ -30,7 +30,7 @@ export function getCookie(name: string): string | null {
 export function deleteCookie(name: string) {
   if (typeof document === "undefined") return;
   // Use explicit 1970 expiration date and Max-Age=0 to guarantee instant purge across all browsers & localhost
-  document.cookie = `${encodeURIComponent(name)}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Max-Age=0; SameSite=Strict`;
+  document.cookie = `${encodeURIComponent(name)}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Max-Age=0; SameSite=Lax`;
 }
 
 export function clearAllAuthStorage() {

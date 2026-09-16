@@ -15,8 +15,25 @@ export function DashboardBreadcrumb() {
     switch (segment.toLowerCase()) {
       case "dashboard":
         return t("common.breadcrumbDashboard");
+      case "wa":
+        return t("dashboardMenu.channelWaUnofficial");
+      case "waba":
+        return t("dashboardMenu.channelWabaOfficial");
+      case "tele":
+      case "telegram":
+        return t("dashboardMenu.channelTelegram");
       case "devices":
-        return t("dashboardMenu.whatsappSlots");
+      case "device":
+        return t("dashboardMenu.channelDevices");
+      case "bots":
+      case "bot":
+        return t("dashboardMenu.channelBots");
+      case "logs":
+      case "log":
+        return t("dashboardMenu.channelLogs");
+      case "stats":
+      case "statistics":
+        return t("dashboardMenu.channelStats");
       case "campaigns":
         return t("dashboardMenu.campaigns");
       case "contacts":

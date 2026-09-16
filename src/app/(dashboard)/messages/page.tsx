@@ -1,12 +1,13 @@
 import { Metadata } from "next";
-import { WhatsAppUserMessagesView } from "@/modules/whatsapp/views/user/WhatsAppUserMessagesView";
+import { OmnichannelMessagesView } from "@/modules/omnichannel/views/OmnichannelMessagesView";
 
 export const metadata: Metadata = {
-  title: "WhatsApp Chats & Messages | Wahide",
+  title: "Omnichannel Chats & Messages | Wahide",
   description:
-    "Monitor real-time WhatsApp message logs, check delivery statuses, and compose instant messages with live preview.",
+    "Pantau riwayat pesan multi-saluran, cek status delivery, dan kirim pesan instan via WhatsApp Web, Meta WABA Official, dan Telegram Bot dengan live preview.",
 };
 
 export default function MessagesPage() {
-  return <WhatsAppUserMessagesView />;
+  return <OmnichannelMessagesView />;
 }
+
