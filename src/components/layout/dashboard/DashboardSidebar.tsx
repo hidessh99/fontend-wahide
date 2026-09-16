@@ -14,7 +14,6 @@ import {
   LifeBuoy,
   Settings,
   ShieldAlert,
-  FileText,
   BellRing,
   CalendarDays,
   ClipboardList,
@@ -28,6 +27,7 @@ import {
   ChevronRight,
   Radio,
   MessageSquare,
+  SendHorizontal,
 } from "lucide-react";
 import { useAuth } from "@/modules/iam/hooks/useAuth";
 import { useI18n } from "@/lib/i18n/context";
@@ -169,58 +169,79 @@ export const MAIN_NAV_ITEMS: DashboardNavItem[] = [
     href: "/dashboard",
     icon: LayoutDashboard,
   },
-  {
-    key: "dashboardMenu.messages",
-    href: "/messages",
-    icon: MessageSquare,
-    badge: "Omni",
-  },
 ];
+
+export interface SendSubItem {
+  key: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  badge?: string;
+  roles?: UserRole[];
+  hideForCS?: boolean;
+}
+
+export interface SendNavSection {
+  id: "send";
+  titleKey: string;
+  baseRoute: string;
+  icon: React.ComponentType<{ className?: string }>;
+  badge?: string;
+  items: SendSubItem[];
+}
+
+export const SEND_NAV_SECTION: SendNavSection = {
+  id: "send",
+  titleKey: "dashboardMenu.groupSend",
+  baseRoute: "/send",
+  icon: SendHorizontal,
+  badge: "Hub",
+  items: [
+    {
+      key: "dashboardMenu.sendQuickMessage",
+      href: "/send/message",
+      icon: MessageSquare,
+      badge: "Omni",
+    },
+    {
+      key: "dashboardMenu.sendBroadcast",
+      href: "/send/broadcast",
+      icon: Megaphone,
+      roles: SELLER_ROLES,
+      hideForCS: true,
+    },
+    {
+      key: "dashboardMenu.sendReminder",
+      href: "/send/reminder",
+      icon: BellRing,
+      roles: SELLER_ROLES,
+      hideForCS: true,
+    },
+    {
+      key: "dashboardMenu.sendReservation",
+      href: "/send/reservation",
+      icon: CalendarDays,
+      roles: SELLER_ROLES,
+      hideForCS: true,
+    },
+  ],
+};
 
 export const DASHBOARD_NAV_GROUPS: DashboardNavGroup[] = [
   {
-    // Broadcast & Kontak (Pemasaran & Kontak)
-    groupKey: "dashboardMenu.groupBroadcast",
+    // Audiens & Pelanggan (Kontak)
+    groupKey: "dashboardMenu.contacts",
     items: [
-      {
-        key: "dashboardMenu.campaigns",
-        href: "/campaigns",
-        icon: Megaphone,
-        roles: SELLER_ROLES,
-        hideForCS: true,
-      },
       {
         key: "dashboardMenu.contacts",
         href: "/contacts",
         icon: Users,
       },
-      {
-        key: "dashboardMenu.templates",
-        href: "/templates",
-        icon: FileText,
-        roles: SELLER_ROLES,
-        hideForCS: true,
-      },
     ],
   },
   {
-    // Otomasi Solusi Bisnis
+    // Otomasi Solusi Bisnis (Formulir)
     groupKey: "dashboardMenu.groupBusiness",
     items: [
-      {
-        key: "dashboardMenu.reservations",
-        href: "/reservations",
-        icon: CalendarDays,
-        roles: SELLER_ROLES,
-        hideForCS: true,
-      },
-      {
-        key: "dashboardMenu.reminders",
-        href: "/reminders",
-        icon: BellRing,
-        roles: SELLER_ROLES,
-        hideForCS: true,
-      },
       {
         key: "dashboardMenu.forms",
         href: "/forms",
@@ -289,6 +310,9 @@ export function DashboardSidebar({
   const { t } = useI18n();
   const userIsCS = isCS(user?.role);
 
+  // Collapsible Send accordion state
+  const [openSend, setOpenSend] = useState<boolean>(true);
+
   // Collapsible channel accordions state
   const [openChannels, setOpenChannels] = useState<Record<string, boolean>>({
     wa: true,
@@ -296,8 +320,22 @@ export function DashboardSidebar({
     tele: false,
   });
 
-  // Auto-expand channel based on current route
+  // Auto-expand Send & channel accordions based on current route
   useEffect(() => {
+    if (
+      pathname.startsWith("/send") ||
+      pathname === "/messages" ||
+      pathname.startsWith("/messages/") ||
+      pathname === "/campaigns" ||
+      pathname.startsWith("/campaigns/") ||
+      pathname === "/reminders" ||
+      pathname.startsWith("/reminders/") ||
+      pathname === "/reservations" ||
+      pathname.startsWith("/reservations/")
+    ) {
+      setOpenSend(true);
+    }
+
     if (pathname.startsWith("/wa") || pathname === "/devices" || pathname.startsWith("/devices/")) {
       setOpenChannels((prev) => ({ ...prev, wa: true }));
     } else if (pathname.startsWith("/waba")) {
@@ -306,6 +344,10 @@ export function DashboardSidebar({
       setOpenChannels((prev) => ({ ...prev, tele: true }));
     }
   }, [pathname]);
+
+  const toggleSend = () => {
+    setOpenSend((prev) => !prev);
+  };
 
   const toggleChannel = (channelId: string) => {
     setOpenChannels((prev) => ({
@@ -326,8 +368,51 @@ export function DashboardSidebar({
         pathname.startsWith("/devices/")
       );
     }
+    if (href === "/send/message") {
+      return (
+        pathname === "/send/message" ||
+        pathname.startsWith("/send/message/") ||
+        pathname === "/messages" ||
+        pathname.startsWith("/messages/")
+      );
+    }
+    if (href === "/send/broadcast") {
+      return (
+        pathname === "/send/broadcast" ||
+        pathname.startsWith("/send/broadcast/") ||
+        pathname === "/campaigns" ||
+        pathname.startsWith("/campaigns/")
+      );
+    }
+    if (href === "/send/reminder") {
+      return (
+        pathname === "/send/reminder" ||
+        pathname.startsWith("/send/reminder/") ||
+        pathname === "/reminders" ||
+        pathname.startsWith("/reminders/")
+      );
+    }
+    if (href === "/send/reservation") {
+      return (
+        pathname === "/send/reservation" ||
+        pathname.startsWith("/send/reservation/") ||
+        pathname === "/reservations" ||
+        pathname.startsWith("/reservations/")
+      );
+    }
     return pathname === href || pathname.startsWith(href + "/");
   };
+
+  const isSendActive =
+    pathname.startsWith("/send") ||
+    pathname === "/messages" ||
+    pathname.startsWith("/messages/") ||
+    pathname === "/campaigns" ||
+    pathname.startsWith("/campaigns/") ||
+    pathname === "/reminders" ||
+    pathname.startsWith("/reminders/") ||
+    pathname === "/reservations" ||
+    pathname.startsWith("/reservations/");
 
   return (
     <aside
@@ -483,6 +568,94 @@ export function DashboardSidebar({
                 </div>
               );
             })}
+          </div>
+        </div>
+
+        {/* Outbound Transmission Hub (Kirim Pesan Dropdown) */}
+        <div className="space-y-1">
+          <div className="rounded-xl transition-colors">
+            {/* Send Header / Accordion Trigger */}
+            <button
+              type="button"
+              onClick={toggleSend}
+              aria-expanded={openSend}
+              className={cn(
+                "flex w-full items-center justify-between rounded-full px-3.5 py-2 text-xs font-bold transition-all duration-150 cursor-pointer",
+                isSendActive && !openSend
+                  ? "bg-muted text-foreground"
+                  : "text-foreground-secondary hover:text-foreground hover:bg-muted",
+              )}
+            >
+              <div className="flex items-center gap-2.5">
+                <SendHorizontal
+                  className={cn(
+                    "size-4",
+                    isSendActive ? "text-wise-green" : "text-foreground-muted",
+                  )}
+                />
+                <span className="truncate">{t(SEND_NAV_SECTION.titleKey)}</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                {SEND_NAV_SECTION.badge && (
+                  <span className="rounded-full bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 px-1.5 py-0.5 text-[9px] font-bold">
+                    {SEND_NAV_SECTION.badge}
+                  </span>
+                )}
+                {openSend ? (
+                  <ChevronDown className="size-3.5 text-foreground-muted" />
+                ) : (
+                  <ChevronRight className="size-3.5 text-foreground-muted" />
+                )}
+              </div>
+            </button>
+
+            {/* Send Submenu (Accordion Panel) */}
+            {openSend && (
+              <div className="border-border/60 ml-5 pl-2.5 my-1 space-y-0.5 border-l">
+                {SEND_NAV_SECTION.items.map((subItem) => {
+                  if (userIsCS && subItem.hideForCS) return null;
+                  if (subItem.roles && user?.role) {
+                    const userRoleLower = user.role.toLowerCase();
+                    const hasRole = subItem.roles.some((r) => r.toLowerCase() === userRoleLower);
+                    if (!hasRole) return null;
+                  }
+
+                  const isActive = isItemActive(subItem.href);
+                  const SubIcon = subItem.icon;
+
+                  return (
+                    <Link
+                      key={subItem.href}
+                      href={subItem.href}
+                      onClick={onItemClick}
+                      className={cn(
+                        "flex items-center justify-between rounded-full px-3 py-1.5 text-xs font-semibold transition-all duration-150",
+                        isActive
+                          ? "bg-wise-green text-dark-green font-bold shadow-sm"
+                          : "text-foreground-secondary hover:text-foreground hover:bg-muted",
+                      )}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <SubIcon
+                          className={cn(
+                            "size-3.5",
+                            isActive
+                              ? "text-dark-green"
+                              : "text-foreground-muted",
+                          )}
+                        />
+                        <span>{t(subItem.key)}</span>
+                      </div>
+                      {subItem.badge && !isActive && (
+                        <span className="rounded-full bg-[#eef2eb] px-1.5 py-0.2 text-[9px] font-bold text-foreground-muted dark:bg-[#212320]">
+                          {subItem.badge}
+                        </span>
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
 

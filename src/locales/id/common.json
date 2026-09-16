@@ -283,6 +283,11 @@
   "dashboardMenu": {
     "businessMenu": "Menu Bisnis",
     "groupGeneral": "Menu Utama",
+    "groupSend": "Kirim Pesan",
+    "sendQuickMessage": "Pesan Cepat",
+    "sendBroadcast": "Broadcast Siaran",
+    "sendReminder": "Pengingat Otomatis",
+    "sendReservation": "Jadwal Reservasi",
     "groupChannels": "Saluran Komunikasi",
     "channelWaUnofficial": "Web (Unofficial)",
     "channelWabaOfficial": "WABA (Official)",

@@ -59,6 +59,36 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+
+  async redirects() {
+    return [
+      {
+        source: "/messages",
+        destination: "/send/message",
+        permanent: true,
+      },
+      {
+        source: "/campaigns",
+        destination: "/send/broadcast",
+        permanent: true,
+      },
+      {
+        source: "/reminders",
+        destination: "/send/reminder",
+        permanent: true,
+      },
+      {
+        source: "/reservations",
+        destination: "/send/reservation",
+        permanent: true,
+      },
+      {
+        source: "/templates",
+        destination: "/wa/templates",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

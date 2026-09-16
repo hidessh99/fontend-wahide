@@ -283,6 +283,11 @@
   "dashboardMenu": {
     "businessMenu": "Business Menu",
     "groupGeneral": "General",
+    "groupSend": "Send Messages",
+    "sendQuickMessage": "Quick Message",
+    "sendBroadcast": "Broadcast Campaigns",
+    "sendReminder": "Automated Reminders",
+    "sendReservation": "Reservation Schedule",
     "groupChannels": "Channels",
     "channelWaUnofficial": "Web (Unofficial)",
     "channelWabaOfficial": "WABA (Official)",

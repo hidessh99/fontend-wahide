@@ -4,6 +4,8 @@ import type { NextRequest } from "next/server";
 // Canonical protected routes requiring active session
 const PROTECTED_PREFIXES = [
   "/dashboard",
+  "/send",
+  "/messages",
   "/devices",
   "/wa",
   "/waba",
