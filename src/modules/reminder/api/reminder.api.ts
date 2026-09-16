@@ -27,6 +27,7 @@ const mapBackendReminder = (r: any): Reminder => {
       id: "",
       recipientName: "",
       phone: "",
+      channelType: "WHATSAPP_WEB",
       targetDate: new Date().toISOString().slice(0, 10),
       notes: "",
       status: "ACTIVE",
@@ -46,6 +47,8 @@ const mapBackendReminder = (r: any): Reminder => {
     tenantId: r.tenant_id || r.tenantId,
     recipientName: r.recipient_name || r.recipientName || "",
     phone: r.phone || "",
+    channelType: r.channel_type || r.channelType || "WHATSAPP_WEB",
+    targetChatId: r.target_chat_id || r.targetChatId || undefined,
     targetDate,
     notes: r.notes || "",
     status: (r.status || "ACTIVE").toUpperCase(),
@@ -61,6 +64,7 @@ const mapBackendReminderRule = (rule: any): ReminderRule => {
       id: "",
       tenantId: "",
       deviceId: "",
+      channelType: "WHATSAPP_WEB",
       sendTime: "09:00",
       showInChat: true,
       rules: [
@@ -68,6 +72,7 @@ const mapBackendReminderRule = (rule: any): ReminderRule => {
           daysOffset: -1,
           name: "Pengingat H-1",
           isEnabled: true,
+          channelType: "WHATSAPP_WEB",
           template:
             "Halo Kak {{nama}}, besok {{tanggal}} ada jadwal: {{catatan}}.",
         },
@@ -75,6 +80,7 @@ const mapBackendReminderRule = (rule: any): ReminderRule => {
           daysOffset: 0,
           name: "Pengingat Hari H",
           isEnabled: true,
+          channelType: "WHATSAPP_WEB",
           template:
             "Halo Kak {{nama}}, hari ini kami tunggu untuk jadwal: {{catatan}}.",
         },
@@ -82,6 +88,7 @@ const mapBackendReminderRule = (rule: any): ReminderRule => {
           daysOffset: 3,
           name: "Follow Up H+3",
           isEnabled: false,
+          channelType: "WHATSAPP_WEB",
           template:
             "Halo Kak {{nama}}, bagaimana kondisi setelah kunjungan tanggal {{tanggal}}?",
         },
@@ -102,6 +109,7 @@ const mapBackendReminderRule = (rule: any): ReminderRule => {
     id: rule.id || "",
     tenantId: rule.tenant_id || rule.tenantId || "",
     deviceId: rule.device_id || rule.deviceId || "",
+    channelType: rule.channel_type || rule.channelType || "WHATSAPP_WEB",
     sendTime: rule.send_time || rule.sendTime || "09:00",
     showInChat: rule.show_in_chat ?? rule.showInChat ?? true,
     rules: Array.isArray(items)
@@ -110,6 +118,20 @@ const mapBackendReminderRule = (rule: any): ReminderRule => {
           name: (i.name as string) || "",
           isEnabled: Boolean(i.is_enabled ?? i.isEnabled ?? false),
           template: (i.template as string) || "",
+          channelType: (i.channel_type || i.channelType || undefined) as
+            | "WHATSAPP_WEB"
+            | "WHATSAPP_OFFICIAL"
+            | "TELEGRAM"
+            | undefined,
+          templateId: (i.template_id || i.templateId || undefined) as
+            | string
+            | undefined,
+          templateParams: (i.template_params ||
+            i.templateParams ||
+            undefined) as Record<string, string> | undefined,
+          telegramParseMode: (i.telegram_parse_mode ||
+            i.telegramParseMode ||
+            undefined) as "HTML" | "MarkdownV2" | undefined,
         }))
       : [],
     createdAt: rule.created_at || rule.createdAt,
@@ -126,6 +148,7 @@ const mapBackendReminderLog = (log: any): ReminderLog => {
     daysOffset: Number(log.days_offset ?? log.daysOffset ?? 0),
     recipientName: log.recipient_name || log.recipientName || "",
     phone: log.phone || "",
+    channelType: log.channel_type || log.channelType || undefined,
     messageContent: log.message_content || log.messageContent || "",
     status:
       (log.status || "SENT").toUpperCase() === "FAILED" ? "FAILED" : "SENT",
@@ -186,6 +209,8 @@ export const reminderApi = {
     const payload = {
       recipient_name: input.recipientName,
       phone: input.phone,
+      channel_type: input.channelType || "WHATSAPP_WEB",
+      target_chat_id: input.targetChatId,
       target_date: input.targetDate,
       notes: input.notes || "",
     };
@@ -206,6 +231,9 @@ export const reminderApi = {
     if (input.recipientName !== undefined)
       payload.recipient_name = input.recipientName;
     if (input.phone !== undefined) payload.phone = input.phone;
+    if (input.channelType !== undefined) payload.channel_type = input.channelType;
+    if (input.targetChatId !== undefined)
+      payload.target_chat_id = input.targetChatId;
     if (input.targetDate !== undefined) payload.target_date = input.targetDate;
     if (input.notes !== undefined) payload.notes = input.notes;
     if (input.status !== undefined) payload.status = input.status;
@@ -234,6 +262,7 @@ export const reminderApi = {
   ): Promise<ReminderRule> => {
     const payload = {
       device_id: input.deviceId || "",
+      channel_type: input.channelType || "WHATSAPP_WEB",
       send_time: input.sendTime,
       show_in_chat: input.showInChat,
       rules: input.rules.map((r) => ({
@@ -241,6 +270,10 @@ export const reminderApi = {
         name: r.name,
         is_enabled: r.isEnabled,
         template: r.template,
+        channel_type: r.channelType,
+        template_id: r.templateId,
+        template_params: r.templateParams,
+        telegram_parse_mode: r.telegramParseMode,
       })),
     };
 
@@ -261,6 +294,8 @@ export const reminderApi = {
     if (params?.pageSize) query.set("page_size", params.pageSize.toString());
     if (params?.search) query.set("search", params.search);
     if (params?.reminderId) query.set("reminder_id", params.reminderId);
+    if (params?.channelType && params.channelType !== "ALL")
+      query.set("channel_type", params.channelType);
     if (params?.status && params.status !== "ALL")
       query.set("status", params.status);
 

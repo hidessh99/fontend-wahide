@@ -27,6 +27,7 @@ import {
   ChevronDown,
   ChevronRight,
   Radio,
+  MessageSquare,
 } from "lucide-react";
 import { useAuth } from "@/modules/iam/hooks/useAuth";
 import { useI18n } from "@/lib/i18n/context";
@@ -162,17 +163,21 @@ export const CHANNEL_NAV_SECTIONS: ChannelNavSection[] = [
   },
 ];
 
-export const DASHBOARD_NAV_GROUPS: DashboardNavGroup[] = [
+export const MAIN_NAV_ITEMS: DashboardNavItem[] = [
   {
-    // General / Menu Utama
-    items: [
-      {
-        key: "dashboardMenu.overview",
-        href: "/dashboard",
-        icon: LayoutDashboard,
-      },
-    ],
+    key: "dashboardMenu.overview",
+    href: "/dashboard",
+    icon: LayoutDashboard,
   },
+  {
+    key: "dashboardMenu.messages",
+    href: "/messages",
+    icon: MessageSquare,
+    badge: "Omni",
+  },
+];
+
+export const DASHBOARD_NAV_GROUPS: DashboardNavGroup[] = [
   {
     // Broadcast & Kontak (Pemasaran & Kontak)
     groupKey: "dashboardMenu.groupBroadcast",
@@ -344,30 +349,40 @@ export function DashboardSidebar({
 
       {/* Nav List with Grouping */}
       <div className="flex-1 space-y-5 overflow-y-auto px-3 py-5">
-        {/* Overview Item */}
+        {/* Primary Menu (Overview & Omnichannel Messages) */}
         <div className="space-y-1">
-          <Link
-            href="/dashboard"
-            onClick={onItemClick}
-            className={cn(
-              "flex items-center justify-between rounded-full px-3.5 py-2 text-xs font-semibold transition-all duration-150",
-              isItemActive("/dashboard")
-                ? "bg-wise-green text-dark-green font-bold shadow-sm"
-                : "text-foreground-secondary hover:text-foreground hover:bg-muted",
-            )}
-          >
-            <div className="flex items-center gap-3">
-              <LayoutDashboard
+          {MAIN_NAV_ITEMS.map((item) => {
+            const isActive = isItemActive(item.href);
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={onItemClick}
                 className={cn(
-                  "size-4",
-                  isItemActive("/dashboard")
-                    ? "text-dark-green"
-                    : "text-foreground-muted",
+                  "flex items-center justify-between rounded-full px-3.5 py-2 text-xs font-semibold transition-all duration-150",
+                  isActive
+                    ? "bg-wise-green text-dark-green font-bold shadow-sm"
+                    : "text-foreground-secondary hover:text-foreground hover:bg-muted",
                 )}
-              />
-              <span>{t("dashboardMenu.overview")}</span>
-            </div>
-          </Link>
+              >
+                <div className="flex items-center gap-3">
+                  <Icon
+                    className={cn(
+                      "size-4",
+                      isActive ? "text-dark-green" : "text-foreground-muted",
+                    )}
+                  />
+                  <span>{t(item.key)}</span>
+                </div>
+                {item.badge && !isActive && (
+                  <span className="rounded-full bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 px-2 py-0.5 text-[9px] font-bold">
+                    {item.badge}
+                  </span>
+                )}
+              </Link>
+            );
+          })}
         </div>
 
         {/* Channels Section (Saluran Komunikasi) */}

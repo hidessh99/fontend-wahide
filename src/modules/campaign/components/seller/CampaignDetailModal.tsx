@@ -29,6 +29,7 @@ import {
   AlertCircle,
   CheckCircle2,
   Tag as TagIcon,
+  Bot,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -242,14 +243,32 @@ export function CampaignDetailModal({
               </div>
             </div>
 
-            {/* Device Info */}
+            {/* Channel & Sender Info */}
             <div className="border-border bg-muted/30 flex items-center gap-3 rounded-lg border p-3 dark:bg-[#10110e]">
-              <Smartphone className="dark:text-wise-green size-4 shrink-0 text-emerald-700" />
+              {campaign.channelType === "META_WABA_OFFICIAL" ? (
+                <ShieldCheck className="size-5 shrink-0 text-sky-600" />
+              ) : campaign.channelType === "TELEGRAM_BOT" ? (
+                <Bot className="size-5 shrink-0 text-blue-600" />
+              ) : (
+                <Smartphone className="dark:text-wise-green size-5 shrink-0 text-emerald-700" />
+              )}
               <div>
                 <span className="text-foreground-muted block text-[11px]">
-                  {t("campaign.deviceInfoLabel")}
+                  {campaign.channelType === "META_WABA_OFFICIAL"
+                    ? "Saluran Meta WABA Official"
+                    : campaign.channelType === "TELEGRAM_BOT"
+                      ? "Saluran Bot Telegram"
+                      : t("campaign.deviceInfoLabel")}
                 </span>
-                {campaign.deviceIds && campaign.deviceIds.length > 1 ? (
+                {campaign.channelType === "META_WABA_OFFICIAL" ? (
+                  <span className="text-foreground font-bold">
+                    {campaign.wabaAccountName || "Akun Meta WABA Resmi"}
+                  </span>
+                ) : campaign.channelType === "TELEGRAM_BOT" ? (
+                  <span className="text-foreground font-bold">
+                    {campaign.telegramBotUsername ? `@${campaign.telegramBotUsername}` : "Bot Telegram"}
+                  </span>
+                ) : campaign.deviceIds && campaign.deviceIds.length > 1 ? (
                   <div>
                     <span className="text-foreground font-bold block">
                       {t("campaign.poolMultiDevice", {
@@ -320,33 +339,61 @@ export function CampaignDetailModal({
               </div>
             </div>
 
-            {/* Anti-Ban Settings */}
+            {/* Dispatch & Anti-Ban Settings */}
             <div className="border-border bg-muted/30 flex items-center gap-3 rounded-lg border p-3 dark:bg-[#10110e]">
-              <ShieldCheck className="dark:text-wise-green size-4 shrink-0 text-emerald-700" />
-              <div>
-                <span className="text-foreground-muted block text-[11px]">
-                  {t("campaign.antiBanProtection")}
-                </span>
-                <div className="text-foreground flex flex-wrap items-center gap-2 pt-0.5 text-[11px] font-bold">
-                  <span>Jitter: {campaign.jitterDelaySeconds ?? 3}s</span>
-                  <span>•</span>
-                  <span className="inline-flex items-center gap-1">
-                    <Sparkles className="size-3 text-amber-500" />
-                    Typing:{" "}
-                    {campaign.enableHumanTyping
-                      ? t("campaign.active")
-                      : t("campaign.inactive")}
-                  </span>
-                  <span>•</span>
-                  <span className="inline-flex items-center gap-1">
-                    <ShieldCheck className="size-3 text-emerald-500" />
-                    USync:{" "}
-                    {campaign.autoScrubDeadNumbers !== false
-                      ? t("campaign.active")
-                      : t("campaign.inactive")}
-                  </span>
-                </div>
-              </div>
+              {campaign.channelType === "META_WABA_OFFICIAL" ? (
+                <>
+                  <ShieldCheck className="size-4 shrink-0 text-sky-600" />
+                  <div>
+                    <span className="text-foreground-muted block text-[11px]">
+                      Konfigurasi Saluran & Dispatch
+                    </span>
+                    <span className="text-foreground text-[11px] font-bold">
+                      Meta Cloud API Official (High-Speed Throughput, Zero Ban Risk)
+                    </span>
+                  </div>
+                </>
+              ) : campaign.channelType === "TELEGRAM_BOT" ? (
+                <>
+                  <Bot className="size-4 shrink-0 text-blue-600" />
+                  <div>
+                    <span className="text-foreground-muted block text-[11px]">
+                      Konfigurasi Saluran & Dispatch
+                    </span>
+                    <span className="text-foreground text-[11px] font-bold">
+                      Telegram Bot API (Flood-Control Limiter 30 msg/sec, 100% Gratis)
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <ShieldCheck className="dark:text-wise-green size-4 shrink-0 text-emerald-700" />
+                  <div>
+                    <span className="text-foreground-muted block text-[11px]">
+                      {t("campaign.antiBanProtection")}
+                    </span>
+                    <div className="text-foreground flex flex-wrap items-center gap-2 pt-0.5 text-[11px] font-bold">
+                      <span>Jitter: {campaign.jitterDelaySeconds ?? 3}s</span>
+                      <span>•</span>
+                      <span className="inline-flex items-center gap-1">
+                        <Sparkles className="size-3 text-amber-500" />
+                        Typing:{" "}
+                        {campaign.enableHumanTyping
+                          ? t("campaign.active")
+                          : t("campaign.inactive")}
+                      </span>
+                      <span>•</span>
+                      <span className="inline-flex items-center gap-1">
+                        <ShieldCheck className="size-3 text-emerald-500" />
+                        USync:{" "}
+                        {campaign.autoScrubDeadNumbers !== false
+                          ? t("campaign.active")
+                          : t("campaign.inactive")}
+                      </span>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
 

@@ -44,6 +44,9 @@ const mapBackendReservation = (r: any): Reservation => {
     tenantId: r.tenant_id || r.tenantId,
     customerName: r.customer_name || r.customerName || "",
     phone: r.phone || "",
+    channelType: r.channel_type || r.channelType || "WHATSAPP_WEB",
+    targetChatId: r.target_chat_id || r.targetChatId || undefined,
+    deviceId: r.device_id || r.deviceId || undefined,
     bookingDate,
     bookingTime: r.booking_time || r.bookingTime || "",
     serviceName: r.service_name || r.serviceName || "",
@@ -72,6 +75,8 @@ export const reservationApi = {
     if (params?.search) query.set("search", params.search);
     if (params?.status && params.status !== "ALL")
       query.set("status", params.status);
+    if (params?.channelType && params.channelType !== "ALL")
+      query.set("channel_type", params.channelType);
     if (params?.date) query.set("date", params.date);
 
     const qs = query.toString();
@@ -122,6 +127,11 @@ export const reservationApi = {
     const payload = {
       customer_name: input.customerName,
       phone: input.phone,
+      channel_type: input.channelType || "WHATSAPP_WEB",
+      target_chat_id: input.targetChatId,
+      device_id: input.deviceId,
+      waba_template_id: input.wabaTemplateId,
+      waba_template_params: input.wabaTemplateParams,
       booking_date: input.bookingDate,
       booking_time: input.bookingTime || "",
       service_name: input.serviceName || "",
@@ -144,6 +154,10 @@ export const reservationApi = {
     if (input.customerName !== undefined)
       payload.customer_name = input.customerName;
     if (input.phone !== undefined) payload.phone = input.phone;
+    if (input.channelType !== undefined) payload.channel_type = input.channelType;
+    if (input.targetChatId !== undefined)
+      payload.target_chat_id = input.targetChatId;
+    if (input.deviceId !== undefined) payload.device_id = input.deviceId;
     if (input.bookingDate !== undefined)
       payload.booking_date = input.bookingDate;
     if (input.bookingTime !== undefined)

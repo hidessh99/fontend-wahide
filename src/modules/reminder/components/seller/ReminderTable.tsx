@@ -41,6 +41,8 @@ import {
   Clock,
   CheckCircle2,
   XCircle,
+  Bot,
+  ShieldCheck,
 } from "lucide-react";
 import { useI18n } from "@/lib/i18n/context";
 
@@ -252,7 +254,13 @@ export function ReminderTable({
                   {/* Middle: Phone & Date/Time */}
                   <div className="space-y-1.5 text-xs font-medium text-foreground-secondary">
                     <div className="flex items-center gap-1.5 font-mono">
-                      <Phone className="size-3 shrink-0 text-emerald-500/80" />
+                      {rem.channelType === "TELEGRAM" ? (
+                        <Bot className="size-3.5 shrink-0 text-blue-500" />
+                      ) : rem.channelType === "WHATSAPP_OFFICIAL" ? (
+                        <ShieldCheck className="size-3.5 shrink-0 text-sky-500" />
+                      ) : (
+                        <Phone className="size-3 shrink-0 text-emerald-500/80" />
+                      )}
                       <span>{rem.phone}</span>
                     </div>
                     <div className="flex items-center gap-1.5 font-bold text-foreground">
@@ -395,8 +403,20 @@ export function ReminderTable({
                       </div>
                     </TableCell>
                     <TableCell className="text-foreground-muted text-xs">
-                      <div className="flex items-center gap-1 font-mono">
-                        <Phone className="size-3 text-emerald-500/70" />
+                      <div className="flex items-center gap-1.5 font-mono">
+                        {rem.channelType === "TELEGRAM" ? (
+                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] bg-blue-500/10 text-blue-600 dark:text-blue-400 font-sans font-semibold">
+                            <Bot className="size-2.5" />
+                            <span>Telegram</span>
+                          </span>
+                        ) : rem.channelType === "WHATSAPP_OFFICIAL" ? (
+                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] bg-sky-500/10 text-sky-600 dark:text-sky-400 font-sans font-semibold">
+                            <ShieldCheck className="size-2.5" />
+                            <span>WABA</span>
+                          </span>
+                        ) : (
+                          <Phone className="size-3 text-emerald-500/70 shrink-0" />
+                        )}
                         <span>{rem.phone}</span>
                       </div>
                     </TableCell>

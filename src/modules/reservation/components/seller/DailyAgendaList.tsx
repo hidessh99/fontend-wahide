@@ -13,6 +13,9 @@ import {
   Calendar as CalendarIcon,
   ChevronDown,
   Plus,
+  Smartphone,
+  ShieldCheck,
+  Bot,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -107,6 +110,31 @@ export function DailyAgendaList({
       default:
         return <Badge variant="outline">{resStatus}</Badge>;
     }
+  };
+
+  const getChannelBadge = (ch?: string) => {
+    if (ch === "WHATSAPP_OFFICIAL") {
+      return (
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
+          <ShieldCheck className="size-3" />
+          <span>WABA</span>
+        </span>
+      );
+    }
+    if (ch === "TELEGRAM") {
+      return (
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+          <Bot className="size-3" />
+          <span>Telegram</span>
+        </span>
+      );
+    }
+    return (
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+        <Smartphone className="size-3" />
+        <span>WA Web</span>
+      </span>
+    );
   };
 
   return (
@@ -222,12 +250,19 @@ export function DailyAgendaList({
                     {item.customerName}
                   </span>
                   {getStatusBadge(item.status)}
+                  {getChannelBadge(item.channelType)}
                 </div>
 
                 <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 flex-wrap">
-                  <span className="flex items-center gap-1">
-                    <Phone className="h-3 w-3" />
-                    {item.phone}
+                  <span className="flex items-center gap-1 font-mono">
+                    {item.channelType === "TELEGRAM" ? (
+                      <Bot className="h-3 w-3 text-blue-500" />
+                    ) : item.channelType === "WHATSAPP_OFFICIAL" ? (
+                      <ShieldCheck className="h-3 w-3 text-sky-500" />
+                    ) : (
+                      <Phone className="h-3 w-3 text-emerald-500" />
+                    )}
+                    <span>{item.phone}</span>
                   </span>
                   <span className="flex items-center gap-1 font-mono font-medium">
                     <CalendarIcon className="h-3 w-3" />

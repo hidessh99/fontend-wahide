@@ -37,7 +37,6 @@ const CampaignDetailModal = dynamic(
 );
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { whatsappApi } from "@/modules/whatsapp/api/whatsapp.api";
 import { contactApi } from "@/modules/contact/api/contact.api";
 import {
   Send,
@@ -56,11 +55,24 @@ import {
   Calendar,
   ExternalLink,
   Users,
+  Bot,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { CampaignChannelType } from "@/modules/campaign/types/campaign.types";
+import { useOmnichannelSenders } from "@/modules/omnichannel/hooks/useOmnichannelSenders";
 
 export function CampaignList() {
   const router = useRouter();
   const { t } = useI18n();
+  const {
+    activeDevices,
+    activeWabaAccounts,
+    activeTelegramBots,
+  } = useOmnichannelSenders();
+
+  const [channelFilter, setChannelFilter] =
+    useState<"ALL" | CampaignChannelType>("ALL");
+
   const {
     campaigns,
     isLoading,
@@ -127,18 +139,14 @@ export function CampaignList() {
     if (isCheckingPreflight) return;
     setIsCheckingPreflight(true);
     try {
-      // 1. Cek Ketersediaan Perangkat WhatsApp Aktif
-      const devices = await whatsappApi.getDevices();
-      const onlineDevices = devices.filter(
-        (d) =>
-          (d.status === "CONNECTED" || (d.status as string) === "ONLINE") &&
-          !d.is_over_limit &&
-          !d.isOverLimit,
-      );
+      // 1. Cek Ketersediaan Pengirim Omnichannel Aktif (WA Web / Meta WABA / Telegram)
+      const totalActiveSenders =
+        activeDevices.length + activeWabaAccounts.length + activeTelegramBots.length;
 
-      if (onlineDevices.length === 0) {
-        toast.error(t("campaign.noActiveDeviceRedirect"));
-        router.push("/devices");
+      if (totalActiveSenders === 0) {
+        toast.error(
+          "Belum ada saluran pengirim aktif. Hubungkan WhatsApp Web, Meta WABA, atau Bot Telegram terlebih dahulu.",
+        );
         return;
       }
 
@@ -159,6 +167,35 @@ export function CampaignList() {
       setIsCheckingPreflight(false);
     }
   };
+
+  const renderChannelBadge = (ch?: CampaignChannelType) => {
+    if (ch === "META_WABA_OFFICIAL") {
+      return (
+        <span className="inline-flex items-center gap-1 rounded-full bg-sky-500/10 text-sky-700 dark:text-sky-400 px-2.5 py-0.5 text-[10px] font-bold">
+          <ShieldCheck className="size-3" />
+          Meta WABA
+        </span>
+      );
+    }
+    if (ch === "TELEGRAM_BOT") {
+      return (
+        <span className="inline-flex items-center gap-1 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 px-2.5 py-0.5 text-[10px] font-bold">
+          <Bot className="size-3" />
+          Telegram
+        </span>
+      );
+    }
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 px-2.5 py-0.5 text-[10px] font-bold">
+        <Smartphone className="size-3" />
+        WA Web
+      </span>
+    );
+  };
+
+  const filteredCampaigns = campaigns.filter(
+    (c) => channelFilter === "ALL" || (c.channelType || "WHATSMEOW_UNOFFICIAL") === channelFilter,
+  );
 
   const renderStatusBadge = (status: CampaignStatus, scheduledAt?: string) => {
     if (scheduledAt && status === "DRAFT") {
@@ -275,6 +312,56 @@ export function CampaignList() {
         </div>
       </div>
 
+      {/* Channel Filter Pills */}
+      <div className="flex flex-wrap items-center gap-1.5 border-b border-border/60 pb-3">
+        {[
+          { id: "ALL" as const, label: "Semua Saluran", count: campaigns.length },
+          {
+            id: "WHATSMEOW_UNOFFICIAL" as const,
+            label: "WhatsApp Web",
+            icon: Smartphone,
+            count: campaigns.filter(
+              (c) => c.channelType === "WHATSMEOW_UNOFFICIAL" || !c.channelType,
+            ).length,
+          },
+          {
+            id: "META_WABA_OFFICIAL" as const,
+            label: "Meta WABA",
+            icon: ShieldCheck,
+            count: campaigns.filter((c) => c.channelType === "META_WABA_OFFICIAL")
+              .length,
+          },
+          {
+            id: "TELEGRAM_BOT" as const,
+            label: "Telegram",
+            icon: Bot,
+            count: campaigns.filter((c) => c.channelType === "TELEGRAM_BOT").length,
+          },
+        ].map((tab) => {
+          const isSelected = channelFilter === tab.id;
+          const Icon = tab.icon;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setChannelFilter(tab.id)}
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all cursor-pointer select-none",
+                isSelected
+                  ? "bg-wise-green text-dark-green font-black shadow-xs"
+                  : "bg-muted text-foreground-secondary hover:bg-muted/80 hover:text-foreground",
+              )}
+            >
+              {Icon && <Icon className="size-3.5" />}
+              <span>{tab.label}</span>
+              <span className="rounded-full bg-black/10 dark:bg-white/10 px-1.5 py-0.2 text-[10px]">
+                {tab.count}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
       {/* Campaign List Grid */}
       {isLoading && campaigns.length === 0 ? (
         <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2">
@@ -282,11 +369,19 @@ export function CampaignList() {
             <Skeleton key={i} className="h-56 w-full rounded-md" />
           ))}
         </div>
-      ) : campaigns.length === 0 ? (
+      ) : filteredCampaigns.length === 0 ? (
         <EmptyState
           icon={<Send className="size-6" />}
-          title={t("campaign.noCampaigns")}
-          description={t("campaign.noCampaignsDesc")}
+          title={
+            channelFilter === "ALL"
+              ? t("campaign.noCampaigns")
+              : "Tidak Ada Kampanye di Saluran Ini"
+          }
+          description={
+            channelFilter === "ALL"
+              ? t("campaign.noCampaignsDesc")
+              : "Belum ada kampanye siaran yang dibuat untuk saluran yang dipilih."
+          }
           action={
             <Button
               variant="primaryPill"
@@ -306,7 +401,7 @@ export function CampaignList() {
         />
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2">
-          {campaigns.map((campaign) => {
+          {filteredCampaigns.map((campaign) => {
             const totalRecipients = campaign.totalRecipients ?? 0;
             const sentCount = campaign.sentCount ?? 0;
             const percent =
@@ -318,7 +413,7 @@ export function CampaignList() {
               <Card
                 key={campaign.id}
                 onClick={() => setSelectedCampaignForDetail(campaign)}
-                className="border-border bg-surface hover:border-wise-green/60 group flex cursor-pointer flex-col justify-between space-y-4 rounded-md border p-5 transition hover:shadow-md sm:p-6"
+                className="border-border bg-surface hover:border-wise-green/60 group flex cursor-pointer flex-col justify-between space-y-4 rounded-xl border p-5 transition hover:shadow-md sm:p-6"
                 title={t("campaign.cardClickHint")}
               >
                 {/* Header */}
@@ -332,23 +427,56 @@ export function CampaignList() {
                     </div>
                     <div className="text-foreground-muted flex flex-wrap items-center gap-2 text-xs font-semibold">
                       <div className="flex items-center gap-1">
-                        <Smartphone className="size-3.5" />
-                        {campaign.deviceIds && campaign.deviceIds.length > 1 ? (
-                          <span className="font-bold text-emerald-700 dark:text-wise-green">
-                            {t("campaign.poolMultiDevice", {
-                              count: String(campaign.deviceIds.length),
-                            })}
-                          </span>
+                        {campaign.channelType === "META_WABA_OFFICIAL" ? (
+                          <>
+                            <ShieldCheck className="size-3.5 text-sky-600" />
+                            <span>
+                              {campaign.wabaAccountName || "Nomor Resmi Meta"}
+                            </span>
+                          </>
+                        ) : campaign.channelType === "TELEGRAM_BOT" ? (
+                          <>
+                            <Bot className="size-3.5 text-blue-600" />
+                            <span>
+                              {campaign.telegramBotUsername
+                                ? `@${campaign.telegramBotUsername}`
+                                : "Telegram Bot"}
+                            </span>
+                          </>
                         ) : (
-                          <span>
-                            {campaign.deviceName || "Perangkat Utama"}
-                          </span>
+                          <>
+                            <Smartphone className="size-3.5" />
+                            {campaign.deviceIds &&
+                            campaign.deviceIds.length > 1 ? (
+                              <span className="font-bold text-emerald-700 dark:text-wise-green">
+                                {t("campaign.poolMultiDevice", {
+                                  count: String(campaign.deviceIds.length),
+                                })}
+                              </span>
+                            ) : (
+                              <span>
+                                {campaign.deviceName || "Perangkat Utama"}
+                              </span>
+                            )}
+                          </>
                         )}
                       </div>
                       <span>•</span>
                       <div className="flex items-center gap-1">
-                        <ShieldCheck className="dark:text-wise-green size-3.5 text-emerald-700" />
-                        <span>Jitter {campaign.jitterDelaySeconds ?? 3}s</span>
+                        {campaign.channelType === "META_WABA_OFFICIAL" ? (
+                          <span className="text-sky-600 font-bold">
+                            Cloud API HSM
+                          </span>
+                        ) : campaign.channelType === "TELEGRAM_BOT" ? (
+                          <span className="text-blue-600 font-bold">
+                            Bot 30 msg/s
+                          </span>
+                        ) : (
+                          <>
+                            <ShieldCheck className="dark:text-wise-green size-3.5 text-emerald-700" />
+                            <span>Jitter {campaign.jitterDelaySeconds ?? 3}s</span>
+                          </>
+                        )}
                       </div>
                       <span>•</span>
                       <div className="flex items-center gap-1">
@@ -367,8 +495,9 @@ export function CampaignList() {
                       </div>
                     </div>
                   </div>
-                  <div className="shrink-0">
+                  <div className="flex flex-col items-end gap-1.5 shrink-0">
                     {renderStatusBadge(campaign.status, campaign.scheduledAt)}
+                    {renderChannelBadge(campaign.channelType)}
                   </div>
                 </div>
 

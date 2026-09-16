@@ -6,11 +6,19 @@
 export type ReservationStatus =
   "CONFIRMED" | "COMPLETED" | "CANCELLED" | "NO_SHOW";
 
+export type ReservationChannelType =
+  | "WHATSAPP_WEB"
+  | "WHATSAPP_OFFICIAL"
+  | "TELEGRAM";
+
 export interface Reservation {
   id: string;
   tenantId?: string;
   customerName: string;
   phone: string;
+  channelType?: ReservationChannelType;
+  targetChatId?: string;
+  deviceId?: string;
   bookingDate: string; // YYYY-MM-DD
   bookingTime: string; // HH:mm
   serviceName: string;
@@ -24,6 +32,11 @@ export interface Reservation {
 export interface CreateReservationInput {
   customerName: string;
   phone: string;
+  channelType?: ReservationChannelType;
+  targetChatId?: string;
+  deviceId?: string;
+  wabaTemplateId?: string;
+  wabaTemplateParams?: Record<string, string>;
   bookingDate: string; // YYYY-MM-DD
   bookingTime?: string; // HH:mm
   serviceName?: string;
@@ -33,6 +46,9 @@ export interface CreateReservationInput {
 export interface UpdateReservationInput {
   customerName?: string;
   phone?: string;
+  channelType?: ReservationChannelType;
+  targetChatId?: string;
+  deviceId?: string;
   bookingDate?: string; // YYYY-MM-DD
   bookingTime?: string; // HH:mm
   serviceName?: string;
@@ -45,6 +61,7 @@ export interface ListReservationsQuery {
   pageSize?: number;
   search?: string;
   status?: ReservationStatus | "ALL";
+  channelType?: ReservationChannelType | "ALL";
   date?: string; // YYYY-MM-DD
 }
 

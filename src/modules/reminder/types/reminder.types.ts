@@ -7,11 +7,18 @@ export type ReminderStatus = "ACTIVE" | "PAUSED" | "COMPLETED" | "CANCELLED";
 
 export type ReminderLogStatus = "SENT" | "FAILED";
 
+export type ReminderChannelType =
+  | "WHATSAPP_WEB"
+  | "WHATSAPP_OFFICIAL"
+  | "TELEGRAM";
+
 export interface Reminder {
   id: string;
   tenantId?: string;
   recipientName: string;
   phone: string;
+  channelType?: ReminderChannelType;
+  targetChatId?: string;
   targetDate: string; // YYYY-MM-DD
   notes: string;
   status: ReminderStatus;
@@ -22,6 +29,8 @@ export interface Reminder {
 export interface CreateReminderInput {
   recipientName: string;
   phone: string;
+  channelType?: ReminderChannelType;
+  targetChatId?: string;
   targetDate: string; // YYYY-MM-DD
   notes?: string;
 }
@@ -29,6 +38,8 @@ export interface CreateReminderInput {
 export interface UpdateReminderInput {
   recipientName?: string;
   phone?: string;
+  channelType?: ReminderChannelType;
+  targetChatId?: string;
   targetDate?: string; // YYYY-MM-DD
   notes?: string;
   status?: ReminderStatus;
@@ -39,6 +50,7 @@ export interface ListRemindersQuery {
   pageSize?: number;
   search?: string;
   status?: ReminderStatus | "ALL";
+  channelType?: ReminderChannelType | "ALL";
   startDate?: string;
   endDate?: string;
 }
@@ -48,12 +60,17 @@ export interface DripRuleItem {
   name: string;
   isEnabled: boolean;
   template: string;
+  channelType?: ReminderChannelType;
+  templateId?: string;
+  templateParams?: Record<string, string>;
+  telegramParseMode?: "HTML" | "MarkdownV2";
 }
 
 export interface ReminderRule {
   id: string;
   tenantId: string;
   deviceId: string;
+  channelType?: ReminderChannelType;
   sendTime: string; // HH:mm
   showInChat: boolean;
   rules: DripRuleItem[];
@@ -63,6 +80,7 @@ export interface ReminderRule {
 
 export interface UpdateReminderRuleInput {
   deviceId?: string;
+  channelType?: ReminderChannelType;
   sendTime: string;
   showInChat: boolean;
   rules: DripRuleItem[];
@@ -75,6 +93,7 @@ export interface ReminderLog {
   daysOffset: number;
   recipientName: string;
   phone: string;
+  channelType?: ReminderChannelType;
   messageContent: string;
   status: ReminderLogStatus;
   errorReason?: string;
@@ -86,6 +105,7 @@ export interface ListReminderLogsQuery {
   pageSize?: number;
   search?: string;
   reminderId?: string;
+  channelType?: ReminderChannelType | "ALL";
   status?: ReminderLogStatus | "ALL";
 }
 

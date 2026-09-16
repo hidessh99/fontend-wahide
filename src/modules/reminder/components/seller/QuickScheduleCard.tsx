@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { CreateReminderInput } from "../../types/reminder.types";
+import { CreateReminderInput, ReminderChannelType } from "../../types/reminder.types";
 import {
   Card,
   CardHeader,
@@ -25,6 +25,7 @@ import {
   AlertTriangle,
   ArrowRight,
   Smartphone,
+  Bot,
 } from "lucide-react";
 import { toast } from "sonner";
 import { isValidE164, formatDisplayPhone } from "@/lib/phone";
@@ -49,8 +50,11 @@ export function QuickScheduleCard({
   onNavigateToRules,
 }: QuickScheduleCardProps) {
   const { t } = useI18n();
+  const [channelType, setChannelType] =
+    useState<ReminderChannelType>("WHATSAPP_WEB");
   const [recipientName, setRecipientName] = useState("");
   const [phone, setPhone] = useState("");
+  const [telegramChatId, setTelegramChatId] = useState("");
   const [selectedCountry, setSelectedCountry] =
     useState<CountryCodeItem>(DEFAULT_COUNTRY);
   const [displayDate, setDisplayDate] = useState("");
@@ -147,31 +151,38 @@ export function QuickScheduleCard({
     e.preventDefault();
 
     if (!hasConfiguredDevice) {
-      toast.warning(t("reminder.quick.warnToastTitle"), {
-        description: t("reminder.quick.warnToastDesc"),
+      toast.warning(t("reminder.quick.warnToastTitle") || "Perangkat Belum Diatur", {
+        description: t("reminder.quick.warnToastDesc") || "Silakan atur saluran pengirim terlebih dahulu.",
       });
       onNavigateToRules?.();
       return;
     }
 
     if (!recipientName.trim()) {
-      toast.error(t("reminder.quick.errNameRequired"));
+      toast.error(t("reminder.quick.errNameRequired") || "Nama penerima wajib diisi.");
       return;
     }
 
-    if (!cleanDigits) {
-      toast.error(t("reminder.quick.errPhoneRequired"));
-      return;
-    }
+    if (channelType === "TELEGRAM") {
+      if (!telegramChatId.trim()) {
+        toast.error("Telegram Chat ID / Username wajib diisi.");
+        return;
+      }
+    } else {
+      if (!cleanDigits) {
+        toast.error(t("reminder.quick.errPhoneRequired") || "Nomor telepon wajib diisi.");
+        return;
+      }
 
-    if (!isValidE164(fullPhone) || cleanDigits.length < 8) {
-      toast.error(t("reminder.quick.errPhoneInvalid"));
-      return;
+      if (!isValidE164(fullPhone) || cleanDigits.length < 8) {
+        toast.error(t("reminder.quick.errPhoneInvalid") || "Format nomor telepon tidak valid.");
+        return;
+      }
     }
 
     const finalDate = displayDate.trim();
     if (!finalDate) {
-      toast.error(t("reminder.quick.errDateRequired"));
+      toast.error(t("reminder.quick.errDateRequired") || "Tanggal target wajib diisi.");
       return;
     }
 
@@ -179,7 +190,10 @@ export function QuickScheduleCard({
     try {
       const success = await onSchedule({
         recipientName: recipientName.trim(),
-        phone: fullPhone,
+        phone: channelType === "TELEGRAM" ? telegramChatId.trim() : fullPhone,
+        channelType,
+        targetChatId:
+          channelType === "TELEGRAM" ? telegramChatId.trim() : undefined,
         targetDate: finalDate,
         notes: notes.trim(),
       });
@@ -187,6 +201,7 @@ export function QuickScheduleCard({
       if (success) {
         setRecipientName("");
         setPhone("");
+        setTelegramChatId("");
         setSelectedCountry(DEFAULT_COUNTRY);
         setNotes("");
         // reset to tomorrow
@@ -205,19 +220,49 @@ export function QuickScheduleCard({
 
   return (
     <Card className="p-4 sm:p-5 overflow-visible relative z-20">
-      <CardHeader className="p-0">
+      <CardHeader className="p-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="flex items-center gap-2.5">
           <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
             <CalendarPlus className="size-4" />
           </div>
           <div>
             <CardTitle className="text-sm font-bold">
-              {t("reminder.quick.title")}
+              {t("reminder.quick.title") || "Buat Jadwal Pengingat Cepat"}
             </CardTitle>
             <CardDescription className="text-xs">
-              {t("reminder.quick.subtitle")}
+              {t("reminder.quick.subtitle") || "Jadwalkan pengingat tanggal acara atau janji temu secara langsung."}
             </CardDescription>
           </div>
+        </div>
+
+        {/* Channel Selector Pills */}
+        <div className="inline-flex items-center gap-1 p-1 rounded-full bg-surface-raised border border-border self-start sm:self-auto">
+          <button
+            type="button"
+            onClick={() => setChannelType("WHATSAPP_WEB")}
+            className={cn(
+              "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer",
+              channelType === "WHATSAPP_WEB"
+                ? "bg-emerald-500 text-white shadow-xs"
+                : "text-foreground-muted hover:text-foreground hover:bg-surface"
+            )}
+          >
+            <Smartphone className="size-3.5" />
+            <span>WhatsApp</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setChannelType("TELEGRAM")}
+            className={cn(
+              "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer",
+              channelType === "TELEGRAM"
+                ? "bg-blue-500 text-white shadow-xs"
+                : "text-foreground-muted hover:text-foreground hover:bg-surface"
+            )}
+          >
+            <Bot className="size-3.5" />
+            <span>Telegram</span>
+          </button>
         </div>
       </CardHeader>
 
@@ -233,23 +278,23 @@ export function QuickScheduleCard({
             <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between w-full">
               <div>
                 <AlertTitle className="text-xs sm:text-sm font-bold text-amber-950 dark:text-amber-100">
-                  {t("reminder.quick.warnNoDeviceTitle")}
+                  {t("reminder.quick.warnNoDeviceTitle") || "Saluran Pengirim Belum Dikonfigurasi"}
                 </AlertTitle>
                 <AlertDescription className="text-xs text-amber-800/90 dark:text-amber-300/90 mt-0.5">
-                  {t("reminder.quick.warnNoDeviceDesc")}
+                  {t("reminder.quick.warnNoDeviceDesc") || "Atur nomor pengirim atau bot pada tab Aturan Pengiriman agar pesan dapat terkirim."}
                 </AlertDescription>
               </div>
               <Button
                 type="button"
                 size="sm"
                 onClick={() => {
-                  toast.info(t("reminder.quick.errNoDevice"));
+                  toast.info(t("reminder.quick.errNoDevice") || "Silakan atur saluran terlebih dahulu.");
                   onNavigateToRules?.();
                 }}
                 className="h-8.5 px-3.5 text-xs font-bold rounded-lg bg-amber-600 hover:bg-amber-700 text-white shrink-0 self-start sm:self-auto gap-1.5 shadow-xs cursor-pointer transition-all"
               >
                 <Smartphone className="size-3.5" />
-                <span>{t("reminder.quick.setupSender")}</span>
+                <span>{t("reminder.quick.setupSender") || "Atur Pengirim"}</span>
                 <ArrowRight className="size-3" />
               </Button>
             </div>
@@ -267,100 +312,124 @@ export function QuickScheduleCard({
               className="flex items-center gap-1.5 text-xs"
             >
               <User className="size-3.5 text-primary" />
-              <span>{t("reminder.quick.recipientName")} *</span>
+              <span>{t("reminder.quick.recipientName") || "Nama Penerima"} *</span>
             </Label>
             <Input
               id="rem-name"
               value={recipientName}
               onChange={(e) => setRecipientName(e.target.value)}
-              placeholder={t("reminder.quick.namePlaceholder")}
+              placeholder={t("reminder.quick.namePlaceholder") || "Contoh: Budi Santoso"}
               className="h-10 text-xs rounded-xl"
               disabled={isSubmitting}
               required
             />
           </div>
 
-          {/* WhatsApp Phone with CountryCodeSelector */}
-          <div className="flex flex-col gap-1.5">
-            <Label
-              htmlFor="rem-phone"
-              className="flex items-center justify-between text-xs"
-            >
-              <div className="flex items-center gap-1.5">
-                <Phone className="size-3.5 text-emerald-500" />
-                <span>{t("reminder.quick.phoneLabel")} *</span>
-              </div>
-              {phone.length > 0 && !isPhoneValid && (
-                <span className="text-[10px] font-mono text-foreground-muted">
-                  {cleanDigits.length}/8+ digit
-                </span>
-              )}
-            </Label>
-            <div
-              className={cn(
-                "flex h-10 w-full items-center rounded-xl border bg-surface transition shadow-xs",
-                isPhoneValid
-                  ? "border-emerald-500/70 focus-within:ring-2 focus-within:ring-emerald-500/30"
-                  : isPhoneTooLong
-                    ? "border-rose-500 focus-within:ring-2 focus-within:ring-rose-500/30"
-                    : "border-border hover:border-foreground-muted focus-within:border-wise-green focus-within:ring-2 focus-within:ring-wise-green",
-              )}
-            >
-              <CountryCodeSelector
-                selectedCountry={selectedCountry}
-                onSelectCountry={(c) => {
-                  setSelectedCountry(c);
-                  if (phone) {
-                    setPhone(sanitizeSubscriberInput(phone, c.dialCode));
-                  }
-                }}
-                disabled={isSubmitting}
-                variant="rounded"
-                className="h-full rounded-l-xl rounded-r-none border-y-0 border-l-0 px-2.5"
-              />
-              <input
-                id="rem-phone"
-                type="tel"
-                inputMode="tel"
-                autoComplete="tel"
-                value={phone}
-                onChange={handlePhoneChange}
-                placeholder={
-                  selectedCountry.formatHint ||
-                  t("reminder.quick.phonePlaceholder") ||
-                  "812 3456 7890"
-                }
-                className="bg-transparent text-foreground h-full flex-1 rounded-r-xl px-3 text-xs font-semibold outline-none placeholder:text-foreground-muted/60"
+          {/* Dynamic Target Input: Telegram Chat ID or WhatsApp Phone */}
+          {channelType === "TELEGRAM" ? (
+            <div className="flex flex-col gap-1.5">
+              <Label
+                htmlFor="rem-tele-id"
+                className="flex items-center gap-1.5 text-xs"
+              >
+                <Bot className="size-3.5 text-blue-500" />
+                <span>Telegram Chat ID / Username *</span>
+              </Label>
+              <Input
+                id="rem-tele-id"
+                value={telegramChatId}
+                onChange={(e) => setTelegramChatId(e.target.value)}
+                placeholder="@username atau 123456789"
+                className="h-10 text-xs rounded-xl font-mono"
                 disabled={isSubmitting}
                 required
               />
+              <span className="text-[10px] text-foreground-muted">
+                Chat ID atau username pelanggan di Telegram.
+              </span>
             </div>
-            {/* Live Micro-Feedback */}
-            <div className="min-h-4 text-[11px] leading-tight">
-              {isPhoneValid ? (
-                <span className="text-emerald-700 dark:text-wise-green font-medium flex items-center gap-1">
-                  <span>✓</span>
-                  <span>
-                    {t("reminder.quick.phoneReadyPreview", {
-                      formatted: formatDisplayPhone(fullPhone),
-                    })}
+          ) : (
+            <div className="flex flex-col gap-1.5">
+              <Label
+                htmlFor="rem-phone"
+                className="flex items-center justify-between text-xs"
+              >
+                <div className="flex items-center gap-1.5">
+                  <Phone className="size-3.5 text-emerald-500" />
+                  <span>{t("reminder.quick.phoneLabel") || "Nomor WhatsApp"} *</span>
+                </div>
+                {phone.length > 0 && !isPhoneValid && (
+                  <span className="text-[10px] font-mono text-foreground-muted">
+                    {cleanDigits.length}/8+ digit
                   </span>
-                </span>
-              ) : isPhoneTooLong ? (
-                <span className="text-rose-600 dark:text-rose-400 font-medium">
-                  {t("reminder.quick.phoneTooLong")}
-                </span>
-              ) : phone.length > 0 ? (
-                <span className="text-foreground-muted">
-                  +{selectedCountry.dialCode} {cleanDigits} (min. 8 digit)
-                </span>
-              ) : (
-                <span className="text-foreground-muted/70 text-[10px]">
-                  {t("reminder.quick.phoneHelperHint")}
-                </span>
-              )}
+                )}
+              </Label>
+              <div
+                className={cn(
+                  "flex h-10 w-full items-center rounded-xl border bg-surface transition shadow-xs",
+                  isPhoneValid
+                    ? "border-emerald-500/70 focus-within:ring-2 focus-within:ring-emerald-500/30"
+                    : isPhoneTooLong
+                      ? "border-rose-500 focus-within:ring-2 focus-within:ring-rose-500/30"
+                      : "border-border hover:border-foreground-muted focus-within:border-wise-green focus-within:ring-2 focus-within:ring-wise-green",
+                )}
+              >
+                <CountryCodeSelector
+                  selectedCountry={selectedCountry}
+                  onSelectCountry={(c) => {
+                    setSelectedCountry(c);
+                    if (phone) {
+                      setPhone(sanitizeSubscriberInput(phone, c.dialCode));
+                    }
+                  }}
+                  disabled={isSubmitting}
+                  variant="rounded"
+                  className="h-full rounded-l-xl rounded-r-none border-y-0 border-l-0 px-2.5"
+                />
+                <input
+                  id="rem-phone"
+                  type="tel"
+                  inputMode="tel"
+                  autoComplete="tel"
+                  value={phone}
+                  onChange={handlePhoneChange}
+                  placeholder={
+                    selectedCountry.formatHint ||
+                    t("reminder.quick.phonePlaceholder") ||
+                    "812 3456 7890"
+                  }
+                  className="bg-transparent text-foreground h-full flex-1 rounded-r-xl px-3 text-xs font-semibold outline-none placeholder:text-foreground-muted/60"
+                  disabled={isSubmitting}
+                  required
+                />
+              </div>
+              {/* Live Micro-Feedback */}
+              <div className="min-h-4 text-[11px] leading-tight">
+                {isPhoneValid ? (
+                  <span className="text-emerald-700 dark:text-wise-green font-medium flex items-center gap-1">
+                    <span>✓</span>
+                    <span>
+                      {t("reminder.quick.phoneReadyPreview", {
+                        formatted: formatDisplayPhone(fullPhone),
+                      }) || `Siap kirim ke ${formatDisplayPhone(fullPhone)}`}
+                    </span>
+                  </span>
+                ) : isPhoneTooLong ? (
+                  <span className="text-rose-600 dark:text-rose-400 font-medium">
+                    {t("reminder.quick.phoneTooLong") || "Nomor terlalu panjang"}
+                  </span>
+                ) : phone.length > 0 ? (
+                  <span className="text-foreground-muted">
+                    +{selectedCountry.dialCode} {cleanDigits} (min. 8 digit)
+                  </span>
+                ) : (
+                  <span className="text-foreground-muted/70 text-[10px]">
+                    {t("reminder.quick.phoneHelperHint") || "Masukkan nomor tanpa awalan 0 atau kode negara"}
+                  </span>
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Target Date */}
           <div className="flex flex-col gap-1.5">

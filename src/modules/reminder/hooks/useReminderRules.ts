@@ -10,6 +10,7 @@ const DEFAULT_RULE: ReminderRule = {
   id: "",
   tenantId: "",
   deviceId: "",
+  channelType: "WHATSAPP_WEB",
   sendTime: "09:00",
   showInChat: true,
   rules: [

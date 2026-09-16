@@ -2,6 +2,7 @@ import { httpClient } from "@/lib/api/http-client";
 import { env } from "@/lib/config/env";
 import {
   Campaign,
+  CampaignChannelType,
   CreateCampaignInput,
   MessageLogResponse,
 } from "../types/campaign.types";
@@ -15,6 +16,7 @@ const mapBackendCampaign = (c: any): Campaign => {
     return {
       id: "",
       name: "Kampanye Siaran",
+      channelType: "WHATSMEOW_UNOFFICIAL",
       deviceId: "",
       messageTemplate: "",
       jitterDelaySeconds: 3,
@@ -29,6 +31,13 @@ const mapBackendCampaign = (c: any): Campaign => {
       createdAt: new Date().toISOString(),
     };
   }
+
+  const channelType: CampaignChannelType =
+    c.channel_type === "META_WABA_OFFICIAL"
+      ? "META_WABA_OFFICIAL"
+      : c.channel_type === "TELEGRAM_BOT"
+        ? "TELEGRAM_BOT"
+        : "WHATSMEOW_UNOFFICIAL";
 
   const totalRecipients = Number(c.total_target ?? c.totalRecipients ?? 0);
   const sentCount = Number(c.total_sent ?? c.sentCount ?? 0);
@@ -93,10 +102,16 @@ const mapBackendCampaign = (c: any): Campaign => {
   return {
     id: String(c.id || ""),
     name: c.name || "Kampanye Siaran",
+    channelType,
     deviceId: primaryDeviceId,
     deviceIds,
     deviceName: c.device_name || c.deviceName || undefined,
+    wabaAccountId: c.waba_account_id || c.wabaAccountId || undefined,
+    wabaAccountName: c.waba_account_name || c.wabaAccountName || undefined,
+    telegramBotId: c.telegram_bot_id || c.telegramBotId || undefined,
+    telegramBotUsername: c.telegram_bot_username || c.telegramBotUsername || undefined,
     messageTemplate: c.message_template || c.messageTemplate || "",
+    mediaUrl: c.media_url || c.mediaUrl || undefined,
     jitterDelaySeconds: Number(
       c.jitter_delay_seconds ?? c.jitterDelaySeconds ?? 3,
     ),
@@ -155,9 +170,13 @@ export const campaignApi = {
       tagIDs = ["ALL"];
     } else if (input.targetType === "TAGS" && input.targetTags) {
       tagIDs = input.targetTags;
-    } else if (input.targetType === "CUSTOM" && input.targetNumbers) {
+    } else if (input.targetType === "CUSTOM" && input.targetNumbers && input.targetNumbers.length > 0) {
       tagIDs = input.targetNumbers.map((num) => `phone:${num}`);
+    } else if (input.targetType === "CUSTOM" && input.targetChatIds && input.targetChatIds.length > 0) {
+      tagIDs = input.targetChatIds.map((cid) => `telegram:${cid}`);
     }
+
+    const channelType = input.channelType || "WHATSMEOW_UNOFFICIAL";
 
     const primaryDeviceId =
       input.deviceId ||
@@ -170,16 +189,23 @@ export const campaignApi = {
           : [];
 
     const payload = {
-      device_id: primaryDeviceId,
-      device_ids: deviceIds,
+      channel_type: channelType,
+      device_id: channelType === "WHATSMEOW_UNOFFICIAL" ? primaryDeviceId : undefined,
+      device_ids: channelType === "WHATSMEOW_UNOFFICIAL" ? deviceIds : undefined,
+      waba_account_id: channelType === "META_WABA_OFFICIAL" ? input.wabaAccountId : undefined,
+      telegram_bot_id: channelType === "TELEGRAM_BOT" ? input.telegramBotId : undefined,
+      waba_config: input.wabaConfig,
+      telegram_config: input.telegramConfig,
       auto_scrub_dead_numbers: input.autoScrubDeadNumbers ?? true,
       name: input.name,
       message_template: input.messageTemplate,
+      media_url: input.mediaUrl,
       target_type: input.targetType,
       tag_ids: tagIDs,
       target_numbers: input.targetNumbers,
-      jitter_delay_seconds: input.jitterDelaySeconds,
-      enable_human_typing: input.enableHumanTyping,
+      target_chat_ids: input.targetChatIds,
+      jitter_delay_seconds: channelType === "WHATSMEOW_UNOFFICIAL" ? input.jitterDelaySeconds : 0,
+      enable_human_typing: channelType === "WHATSMEOW_UNOFFICIAL" ? input.enableHumanTyping : false,
       scheduled_at: input.scheduledAt || null,
     };
 

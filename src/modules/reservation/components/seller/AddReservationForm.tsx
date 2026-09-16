@@ -10,6 +10,10 @@ import {
   FileText,
   Info,
   Loader2,
+  Smartphone,
+  ShieldCheck,
+  Bot,
+  Sparkles,
 } from "lucide-react";
 import {
   Dialog,
@@ -34,7 +38,10 @@ import {
 import { CountryCodeSelector } from "@/components/shared/CountryCodeSelector";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { CreateReservationInput } from "../../types/reservation.types";
+import {
+  CreateReservationInput,
+  ReservationChannelType,
+} from "../../types/reservation.types";
 
 interface AddReservationFormProps {
   isOpen: boolean;
@@ -51,10 +58,13 @@ export function AddReservationForm({
 }: AddReservationFormProps) {
   const { t } = useI18n();
 
+  const [channelType, setChannelType] =
+    useState<ReservationChannelType>("WHATSAPP_WEB");
   const [customerName, setCustomerName] = useState("");
   const [selectedCountry, setSelectedCountry] =
     useState<CountryCodeItem>(DEFAULT_COUNTRY);
   const [phone, setPhone] = useState("");
+  const [targetChatId, setTargetChatId] = useState("");
   const [displayDate, setDisplayDate] = useState("");
   const [isoDate, setIsoDate] = useState("");
   const [bookingTime, setBookingTime] = useState("");
@@ -65,8 +75,10 @@ export function AddReservationForm({
 
   useEffect(() => {
     if (isOpen) {
+      setChannelType("WHATSAPP_WEB");
       setCustomerName("");
       setPhone("");
+      setTargetChatId("");
       setSelectedCountry(DEFAULT_COUNTRY);
       setBookingTime("10:00");
       setServiceName("");
@@ -164,21 +176,31 @@ export function AddReservationForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const finalDate = isoDate || displayDate;
-    if (!customerName.trim() || !phone.trim() || !finalDate.trim()) {
+    if (!customerName.trim() || !finalDate.trim()) {
       return;
     }
 
-    if (!isPhoneValid) {
-      toast.error(
-        t("contact.errPhonePrefix") || "Format nomor WhatsApp tidak valid.",
-      );
-      return;
+    if (channelType === "TELEGRAM") {
+      if (!targetChatId.trim()) {
+        toast.error("Telegram Chat ID / Username wajib diisi.");
+        return;
+      }
+    } else {
+      if (!cleanDigits || !isPhoneValid) {
+        toast.error(
+          t("contact.errPhonePrefix") || "Format nomor WhatsApp tidak valid.",
+        );
+        return;
+      }
     }
 
     setIsSubmitting(true);
     const success = await onSubmit({
       customerName: customerName.trim(),
-      phone: fullPhone,
+      phone: channelType === "TELEGRAM" ? targetChatId.trim() : fullPhone,
+      channelType,
+      targetChatId:
+        channelType === "TELEGRAM" ? targetChatId.trim() : undefined,
       bookingDate: finalDate.trim(),
       bookingTime: bookingTime.trim() || undefined,
       serviceName: serviceName.trim() || undefined,
@@ -209,6 +231,64 @@ export function AddReservationForm({
           className="flex flex-col flex-1 min-h-0 overflow-hidden"
         >
           <div className="flex-1 overflow-y-auto p-4 sm:p-5 flex flex-col gap-3.5 text-xs">
+            {/* Channel Selector */}
+            <div className="flex flex-col gap-1.5 p-3 rounded-xl bg-surface-raised/70 border border-border/70">
+              <div className="flex items-center justify-between">
+                <Label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                  <Sparkles className="size-3.5 text-primary" />
+                  <span>Kanal Konfirmasi & Pengingat</span>
+                </Label>
+                <div className="inline-flex items-center gap-1 p-0.5 rounded-full bg-surface border border-border">
+                  <button
+                    type="button"
+                    onClick={() => setChannelType("WHATSAPP_WEB")}
+                    className={cn(
+                      "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer",
+                      channelType === "WHATSAPP_WEB"
+                        ? "bg-emerald-500 text-white shadow-xs"
+                        : "text-foreground-muted hover:text-foreground"
+                    )}
+                  >
+                    <Smartphone className="size-3" />
+                    <span>WA Web</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setChannelType("WHATSAPP_OFFICIAL")}
+                    className={cn(
+                      "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer",
+                      channelType === "WHATSAPP_OFFICIAL"
+                        ? "bg-sky-500 text-white shadow-xs"
+                        : "text-foreground-muted hover:text-foreground"
+                    )}
+                  >
+                    <ShieldCheck className="size-3" />
+                    <span>WABA Resmi</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setChannelType("TELEGRAM")}
+                    className={cn(
+                      "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer",
+                      channelType === "TELEGRAM"
+                        ? "bg-blue-500 text-white shadow-xs"
+                        : "text-foreground-muted hover:text-foreground"
+                    )}
+                  >
+                    <Bot className="size-3" />
+                    <span>Telegram</span>
+                  </button>
+                </div>
+              </div>
+              <p className="text-[11px] text-foreground-muted">
+                {channelType === "WHATSAPP_WEB"
+                  ? "Pesan konfirmasi instan & pengingat dikirim via nomor WhatsApp toko (personal socket)."
+                  : channelType === "WHATSAPP_OFFICIAL"
+                  ? "Pesan konfirmasi instan dikirim via akun resmi Meta WABA (Centang Hijau) kategori UTILITY."
+                  : "Pesan konfirmasi instan & pengingat jadwal dikirim langsung via Bot Telegram."}
+              </p>
+            </div>
+
             {/* Customer Name */}
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="res-customer-name" className="text-xs">
@@ -226,77 +306,110 @@ export function AddReservationForm({
               />
             </div>
 
-            {/* Customer Phone */}
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="res-phone" className="text-xs">
-                <Phone className="size-3.5 text-foreground-muted" />
-                <span>{t("reservation.phone")}</span>
-                <span className="text-destructive">*</span>
-              </Label>
-              <div
-                className={cn(
-                  "flex h-9 w-full items-center rounded-xl border bg-surface transition-all focus-within:ring-2",
-                  isPhoneValid
-                    ? "border-emerald-500/70 focus-within:ring-emerald-500/30"
-                    : isPhoneTooLong
-                      ? "border-rose-500/70 focus-within:ring-rose-500/30"
-                      : "border-border focus-within:border-primary focus-within:ring-primary/20",
-                )}
-              >
-                <CountryCodeSelector
-                  selectedCountry={selectedCountry}
-                  onSelectCountry={(c) => {
-                    setSelectedCountry(c);
-                    if (phone) {
-                      setPhone(sanitizeSubscriberInput(phone, c.dialCode));
-                    }
-                  }}
-                  disabled={isSubmitting}
-                  variant="rounded"
-                  className="h-full rounded-l-xl rounded-r-none border-y-0 border-l-0 px-2.5"
-                />
+            {/* Dynamic Target Input: Telegram Chat ID or WhatsApp Phone */}
+            {channelType === "TELEGRAM" ? (
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="res-tele-chat-id" className="text-xs">
+                  <Bot className="size-3.5 text-blue-500" />
+                  <span>Telegram Chat ID / Username</span>
+                  <span className="text-destructive">*</span>
+                </Label>
                 <Input
-                  id="res-phone"
-                  type="tel"
-                  inputMode="tel"
-                  autoComplete="tel"
+                  id="res-tele-chat-id"
                   required
-                  value={phone}
-                  onChange={(e) => handlePhoneChange(e.target.value)}
-                  placeholder={
-                    t("reservation.phonePlaceholder") || "812 3456 7890"
-                  }
-                  className="h-full flex-1 rounded-r-xl rounded-l-none border-0 bg-transparent px-3 text-xs focus-visible:ring-0 focus-visible:ring-offset-0"
+                  placeholder="@username atau Chat ID numerik (contoh: 123456789)"
+                  value={targetChatId}
+                  onChange={(e) => setTargetChatId(e.target.value)}
+                  className="h-9 text-xs rounded-xl font-mono"
                   disabled={isSubmitting}
                 />
+                <span className="text-[10px] text-foreground-muted">
+                  Pesan konfirmasi & pengingat akan dikirimkan langsung ke akun Telegram pelanggan ini.
+                </span>
               </div>
-
-              {/* Live Preview & Helper Micro-Feedback */}
-              <div className="flex items-center justify-between px-1 text-[11px]">
-                {isPhoneValid ? (
-                  <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium animate-fadeIn">
-                    <span>✓</span>
-                    <span>
-                      {t("reservation.phoneReadyPreview", {
-                        formatted: formatDisplayPhone(fullPhone),
-                      })}
+            ) : (
+              <div className="flex flex-col gap-1.5">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="res-phone" className="text-xs flex items-center gap-1.5">
+                    {channelType === "WHATSAPP_OFFICIAL" ? (
+                      <ShieldCheck className="size-3.5 text-sky-500" />
+                    ) : (
+                      <Phone className="size-3.5 text-emerald-500" />
+                    )}
+                    <span>{t("reservation.phone")}</span>
+                    <span className="text-destructive">*</span>
+                  </Label>
+                  {channelType === "WHATSAPP_OFFICIAL" && (
+                    <span className="text-[10px] font-bold text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-950/40 px-2 py-0.5 rounded-full border border-sky-200 dark:border-sky-800">
+                      WABA Official
                     </span>
-                  </span>
-                ) : isPhoneTooLong ? (
-                  <span className="text-rose-600 dark:text-rose-400 font-medium">
-                    {t("reservation.phoneTooLong")}
-                  </span>
-                ) : phone.length > 0 ? (
-                  <span className="text-foreground-muted">
-                    +{selectedCountry.dialCode} {cleanDigits} (min. 8 digit)
-                  </span>
-                ) : (
-                  <span className="text-foreground-muted/70 text-[10px]">
-                    {t("reservation.phoneHelperHint")}
-                  </span>
-                )}
+                  )}
+                </div>
+                <div
+                  className={cn(
+                    "flex h-9 w-full items-center rounded-xl border bg-surface transition-all focus-within:ring-2",
+                    isPhoneValid
+                      ? "border-emerald-500/70 focus-within:ring-emerald-500/30"
+                      : isPhoneTooLong
+                        ? "border-rose-500/70 focus-within:ring-rose-500/30"
+                        : "border-border focus-within:border-primary focus-within:ring-primary/20",
+                  )}
+                >
+                  <CountryCodeSelector
+                    selectedCountry={selectedCountry}
+                    onSelectCountry={(c) => {
+                      setSelectedCountry(c);
+                      if (phone) {
+                        setPhone(sanitizeSubscriberInput(phone, c.dialCode));
+                      }
+                    }}
+                    disabled={isSubmitting}
+                    variant="rounded"
+                    className="h-full rounded-l-xl rounded-r-none border-y-0 border-l-0 px-2.5"
+                  />
+                  <Input
+                    id="res-phone"
+                    type="tel"
+                    inputMode="tel"
+                    autoComplete="tel"
+                    required
+                    value={phone}
+                    onChange={(e) => handlePhoneChange(e.target.value)}
+                    placeholder={
+                      t("reservation.phonePlaceholder") || "812 3456 7890"
+                    }
+                    className="h-full flex-1 rounded-r-xl rounded-l-none border-0 bg-transparent px-3 text-xs focus-visible:ring-0 focus-visible:ring-offset-0"
+                    disabled={isSubmitting}
+                  />
+                </div>
+
+                {/* Live Preview & Helper Micro-Feedback */}
+                <div className="flex items-center justify-between px-1 text-[11px]">
+                  {isPhoneValid ? (
+                    <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium animate-fadeIn">
+                      <span>✓</span>
+                      <span>
+                        {t("reservation.phoneReadyPreview", {
+                          formatted: formatDisplayPhone(fullPhone),
+                        })}
+                      </span>
+                    </span>
+                  ) : isPhoneTooLong ? (
+                    <span className="text-rose-600 dark:text-rose-400 font-medium">
+                      {t("reservation.phoneTooLong")}
+                    </span>
+                  ) : phone.length > 0 ? (
+                    <span className="text-foreground-muted">
+                      +{selectedCountry.dialCode} {cleanDigits} (min. 8 digit)
+                    </span>
+                  ) : (
+                    <span className="text-foreground-muted/70 text-[10px]">
+                      {t("reservation.phoneHelperHint")}
+                    </span>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Booking Date & Time Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

@@ -9,6 +9,8 @@ import {
   RefreshCw,
   Loader2,
   Phone,
+  ShieldCheck,
+  Bot,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +20,7 @@ import { DataTablePagination } from "@/components/ui/pagination";
 import { NativeSelect } from "@/components/ui/native-select";
 import { useI18n } from "@/lib/i18n/context";
 import { useMessageLogs } from "../../hooks/useMessageLogs";
+import { CampaignChannelType } from "../../types/campaign.types";
 
 const MessageDetailModal = dynamic(
   () => import("./MessageDetailModal").then((m) => m.MessageDetailModal),
@@ -40,6 +43,7 @@ export interface MessageLogItem {
   recipientPhone: string;
   recipientName?: string;
   messageSnippet: string;
+  channelType?: CampaignChannelType;
   status: "SENT" | "DELIVERED" | "READ" | "FAILED";
   sentAt: string;
   errorMessage?: string;
@@ -76,6 +80,9 @@ export function MessageLogsTable() {
         recipientPhone: cleanPhone,
         recipientName: cleanPhone,
         messageSnippet: m.message_body,
+        channelType:
+          m.channel_type ||
+          (cleanPhone.startsWith("@") ? "TELEGRAM_BOT" : "WHATSMEOW_UNOFFICIAL"),
         status: m.status,
         sentAt: m.sent_at || m.created_at,
         errorMessage: m.error_message,
@@ -218,8 +225,22 @@ export function MessageLogsTable() {
                 >
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex min-w-0 items-center gap-2">
-                      <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                        <Phone className="size-3.5" />
+                      <div
+                        className={`flex size-7 shrink-0 items-center justify-center rounded-full ${
+                          log.channelType === "META_WABA_OFFICIAL"
+                            ? "bg-sky-500/10 text-sky-600 dark:text-sky-400"
+                            : log.channelType === "TELEGRAM_BOT"
+                              ? "bg-blue-500/10 text-blue-600 dark:text-blue-400"
+                              : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                        }`}
+                      >
+                        {log.channelType === "META_WABA_OFFICIAL" ? (
+                          <ShieldCheck className="size-3.5" />
+                        ) : log.channelType === "TELEGRAM_BOT" ? (
+                          <Bot className="size-3.5" />
+                        ) : (
+                          <Phone className="size-3.5" />
+                        )}
                       </div>
                       <div className="min-w-0">
                         {log.recipientName &&
@@ -352,8 +373,22 @@ export function MessageLogsTable() {
                         {/* Recipient */}
                         <TableCell className="px-5 py-3.5 align-middle">
                           <div className="flex min-w-0 items-center gap-2.5">
-                            <div className="flex size-7.5 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                              <Phone className="size-3.5" />
+                            <div
+                              className={`flex size-7.5 shrink-0 items-center justify-center rounded-full ${
+                                log.channelType === "META_WABA_OFFICIAL"
+                                  ? "bg-sky-500/10 text-sky-600 dark:text-sky-400"
+                                  : log.channelType === "TELEGRAM_BOT"
+                                    ? "bg-blue-500/10 text-blue-600 dark:text-blue-400"
+                                    : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                              }`}
+                            >
+                              {log.channelType === "META_WABA_OFFICIAL" ? (
+                                <ShieldCheck className="size-3.5" />
+                              ) : log.channelType === "TELEGRAM_BOT" ? (
+                                <Bot className="size-3.5" />
+                              ) : (
+                                <Phone className="size-3.5" />
+                              )}
                             </div>
                             <div className="min-w-0">
                               {log.recipientName &&
