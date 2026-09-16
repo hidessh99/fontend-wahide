@@ -1,22 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
-import { MessageSquare, Send, Sparkles } from "lucide-react";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import Link from "next/link";
+import { SendHorizontal, ScrollText } from "lucide-react";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { OmnichannelChannelType } from "../types/omnichannel.types";
 import { useOmnichannelSenders } from "../hooks/useOmnichannelSenders";
-import { useOmnichannelLogs } from "../hooks/useOmnichannelLogs";
 import { OmnichannelComposer } from "../components/OmnichannelComposer";
 import { OmnichannelChatPreview } from "../components/OmnichannelChatPreview";
-import { OmnichannelStatsCards } from "../components/OmnichannelStatsCards";
-import { OmnichannelLogsTable } from "../components/OmnichannelLogsTable";
 
 export function OmnichannelMessagesView() {
-  const [activeViewTab, setActiveViewTab] = useState<"chats" | "compose">(
-    "chats",
-  );
-
   // Active Channel for composer & preview
   const [selectedChannel, setSelectedChannel] =
     useState<OmnichannelChannelType>("WHATSMEOW_UNOFFICIAL");
@@ -57,28 +50,8 @@ export function OmnichannelMessagesView() {
     refreshSenders,
   } = useOmnichannelSenders();
 
-  // Omnichannel Logs Hook
-  const {
-    logs,
-    total,
-    page,
-    setPage,
-    pageSize,
-    isLoading: isLoadingLogs,
-    searchQuery,
-    setSearchQuery,
-    statusFilter,
-    setStatusFilter,
-    channelFilter,
-    setChannelFilter,
-    refreshLogs,
-    stats,
-  } = useOmnichannelLogs(1, 20);
-
   const handleMessageSuccess = () => {
-    refreshLogs();
     refreshSenders();
-    setActiveViewTab("chats");
   };
 
   const handleSenderChange = (name: string, identifier?: string) => {
@@ -88,132 +61,86 @@ export function OmnichannelMessagesView() {
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 p-3 sm:space-y-8 sm:p-6 lg:p-8">
-      <Tabs
-        value={activeViewTab}
-        onValueChange={(val) => setActiveViewTab(val as "chats" | "compose")}
-        className="space-y-6"
-      >
-        {/* Top Header */}
-        <div className="border-border flex flex-col justify-between gap-4 border-b pb-5 sm:flex-row sm:items-center sm:pb-6">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2.5">
-              <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-8 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700 sm:size-9">
-                <MessageSquare className="size-4 sm:size-5" />
-              </div>
-              <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl lg:text-3xl flex items-center gap-2">
-                <span>Omnichannel Chats & Messages</span>
-                <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-bold py-0.5 px-2 rounded-full bg-wise-green/20 text-dark-green dark:text-wise-green">
-                  <Sparkles className="size-3" /> Multi-Engine
-                </span>
-              </h1>
+      {/* Top Header */}
+      <div className="border-border flex flex-col justify-between gap-4 border-b pb-5 sm:flex-row sm:items-center sm:pb-6">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2.5">
+            <div className="dark:bg-wise-green/15 dark:text-wise-green flex size-8 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700 sm:size-9">
+              <SendHorizontal className="size-4 sm:size-5" />
             </div>
-            <p className="text-foreground-secondary max-w-2xl text-xs font-semibold sm:text-sm">
-              Kirim pesan langsung 1-on-1 dan pantau riwayat delivery di WhatsApp Web (Unofficial), Meta WABA Official, dan Telegram Bot.
-            </p>
+            <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl lg:text-3xl flex items-center gap-2">
+              <span>Pesan Cepat</span>
+              <span className="inline-flex items-center gap-1 text-[11px] font-bold py-0.5 px-2 rounded-full bg-wise-green/20 text-dark-green dark:text-wise-green">
+                Quick Message
+              </span>
+            </h1>
           </div>
-
-          <TabsList className="bg-muted border-border h-auto w-full grid grid-cols-2 rounded-full border p-1 sm:w-auto sm:flex">
-            <TabsTrigger
-              value="chats"
-              className="data-active:bg-surface data-active:text-foreground cursor-pointer justify-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold transition data-active:shadow-sm sm:py-1.5 dark:data-active:bg-[#161715]"
-            >
-              <MessageSquare className="size-3.5" />
-              <span>Riwayat Pesan</span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="compose"
-              className="data-active:bg-surface data-active:text-foreground cursor-pointer justify-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold transition data-active:shadow-sm sm:py-1.5 dark:data-active:bg-[#161715]"
-            >
-              <Send className="size-3.5" />
-              <span>Kirim Pesan</span>
-            </TabsTrigger>
-          </TabsList>
+          <p className="text-foreground-secondary max-w-2xl text-xs font-semibold sm:text-sm">
+            Kirim pesan instan 1-on-1 langsung ke pelanggan via WhatsApp Web, Meta WABA Official, atau Telegram Bot dengan simulasi live.
+          </p>
         </div>
 
-        {/* TAB 1: Riwayat Pesan (Chats) */}
-        <TabsContent
-          value="chats"
-          className="space-y-6 focus-visible:outline-none"
-        >
-          <ErrorBoundary fallbackTitle="Gagal memuat statistik log pesan">
-            <OmnichannelStatsCards stats={stats} isLoading={isLoadingLogs} />
+        <div className="flex items-center gap-2">
+          <Link
+            href="/wa/logs"
+            className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-3.5 py-1.5 text-xs font-semibold text-foreground-secondary hover:bg-muted hover:text-foreground transition-colors dark:bg-[#161715]"
+          >
+            <ScrollText className="size-3.5 text-foreground-muted" />
+            <span>Log Pengiriman</span>
+          </Link>
+        </div>
+      </div>
 
-            <OmnichannelLogsTable
-              logs={logs}
-              total={total}
-              page={page}
-              pageSize={pageSize}
-              isLoading={isLoadingLogs}
-              channelFilter={channelFilter}
-              onChannelFilterChange={setChannelFilter}
+      {/* Main Workstation: Composer (7 cols) + Live Chat Preview (5 cols, sticky) */}
+      <ErrorBoundary fallbackTitle="Gagal memuat workstation pengirim pesan">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 items-start">
+          {/* Left Column: Dynamic Composer */}
+          <div className="lg:col-span-7">
+            <OmnichannelComposer
+              selectedChannel={selectedChannel}
+              onChannelChange={setSelectedChannel}
+              sendersByChannel={sendersByChannel}
               activeCounts={activeCounts}
-              statusFilter={statusFilter}
-              onStatusFilterChange={setStatusFilter}
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-              onPageChange={(p) => setPage(p)}
-              onNewMessage={() => setActiveViewTab("compose")}
-              onRefresh={refreshLogs}
+              isLoadingSenders={isLoadingSenders}
+              onMessageChange={setPreviewText}
+              onRecipientChange={setPreviewRecipient}
+              onSenderChange={handleSenderChange}
+              onMessageTypeChange={setPreviewMessageType}
+              onMediaUrlChange={setPreviewMediaUrl}
+              onFileNameChange={setPreviewFileName}
+              onLocationChange={setPreviewLocation}
+              onWabaModeChange={setWabaMode}
+              onTemplateNameChange={setTemplateName}
+              onTemplateParamsChange={setTemplateParams}
+              onTelegramParseModeChange={setTelegramParseMode}
+              onTelegramSilentChange={setTelegramSilent}
+              onSuccess={handleMessageSuccess}
             />
-          </ErrorBoundary>
-        </TabsContent>
+          </div>
 
-        {/* TAB 2: Kirim Pesan (Compose) */}
-        <TabsContent
-          value="compose"
-          className="space-y-6 focus-visible:outline-none"
-        >
-          <ErrorBoundary fallbackTitle="Gagal memuat form pengirim pesan">
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-              {/* Left Column: Dynamic Composer */}
-              <div className="lg:col-span-7">
-                <OmnichannelComposer
-                  selectedChannel={selectedChannel}
-                  onChannelChange={setSelectedChannel}
-                  sendersByChannel={sendersByChannel}
-                  activeCounts={activeCounts}
-                  isLoadingSenders={isLoadingSenders}
-                  onMessageChange={setPreviewText}
-                  onRecipientChange={setPreviewRecipient}
-                  onSenderChange={handleSenderChange}
-                  onMessageTypeChange={setPreviewMessageType}
-                  onMediaUrlChange={setPreviewMediaUrl}
-                  onFileNameChange={setPreviewFileName}
-                  onLocationChange={setPreviewLocation}
-                  onWabaModeChange={setWabaMode}
-                  onTemplateNameChange={setTemplateName}
-                  onTemplateParamsChange={setTemplateParams}
-                  onTelegramParseModeChange={setTelegramParseMode}
-                  onTelegramSilentChange={setTelegramSilent}
-                  onSuccess={handleMessageSuccess}
-                />
-              </div>
-
-              {/* Right Column: Adaptive Live Chat Preview */}
-              <div className="lg:col-span-5">
-                <div className="sticky top-6">
-                  <OmnichannelChatPreview
-                    channelType={selectedChannel}
-                    recipient={previewRecipient}
-                    senderName={previewSenderName}
-                    senderIdentifier={previewSenderId}
-                    messageText={previewText}
-                    messageType={previewMessageType}
-                    mediaUrl={previewMediaUrl}
-                    fileName={previewFileName}
-                    locationAddress={previewLocation}
-                    wabaMode={wabaMode}
-                    templateName={templateName}
-                    templateParams={templateParams}
-                    parseMode={telegramParseMode}
-                    disableNotification={telegramSilent}
-                  />
-                </div>
-              </div>
+          {/* Right Column: Adaptive Live Chat Preview */}
+          <div className="lg:col-span-5">
+            <div className="sticky top-6">
+              <OmnichannelChatPreview
+                channelType={selectedChannel}
+                recipient={previewRecipient}
+                senderName={previewSenderName}
+                senderIdentifier={previewSenderId}
+                messageText={previewText}
+                messageType={previewMessageType}
+                mediaUrl={previewMediaUrl}
+                fileName={previewFileName}
+                locationAddress={previewLocation}
+                wabaMode={wabaMode}
+                templateName={templateName}
+                templateParams={templateParams}
+                parseMode={telegramParseMode}
+                disableNotification={telegramSilent}
+              />
             </div>
-          </ErrorBoundary>
-        </TabsContent>
-      </Tabs>
+          </div>
+        </div>
+      </ErrorBoundary>
     </div>
   );
 }

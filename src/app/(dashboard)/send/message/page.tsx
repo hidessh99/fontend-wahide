@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { OmnichannelMessagesView } from "@/modules/omnichannel/views/OmnichannelMessagesView";
 
 export const metadata: Metadata = {
-  title: "Pesan Cepat Omnichannel | Wahide",
+  title: "Pesan Cepat (Quick Message) | Wahide",
   description:
-    "Pantau riwayat pesan multi-saluran, cek status delivery, dan kirim pesan instan via WhatsApp Web, Meta WABA Official, dan Telegram Bot dengan live preview.",
+    "Kirim pesan instan 1-on-1 langsung ke pelanggan via WhatsApp Web, Meta WABA Official, dan Telegram Bot dengan simulasi live.",
   alternates: {
     canonical: "/send/message",
   },

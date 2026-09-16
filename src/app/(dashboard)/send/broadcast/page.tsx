@@ -3,9 +3,9 @@ import { CampaignSellerBroadcastView } from "@/modules/campaign/views/seller/Cam
 import { SellerRouteGuard } from "@/components/layout/shared/SellerRouteGuard";
 
 export const metadata: Metadata = {
-  title: "Kampanye Broadcast & Spintax | Wahide",
+  title: "Broadcast Siaran (Mass Campaigns) | Wahide",
   description:
-    "Kirim pesan broadcast WhatsApp massal dengan simulasi human typing, Spintax dinamis, dan perlindungan anti-ban multi-perangkat.",
+    "Kelola dan pantau pengiriman pesan massal multi-kanal via WhatsApp Web, Meta WABA Official, dan Telegram Bot.",
   alternates: {
     canonical: "/send/broadcast",
   },

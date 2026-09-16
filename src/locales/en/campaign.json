@@ -1,6 +1,6 @@
 {
   "title": "Broadcast Campaigns",
-  "subtitle": "Dispatch mass broadcast messages with human typing simulation, dynamic Spintax, and 5-layer anti-ban protection.",
+  "subtitle": "Manage and monitor multi-channel mass broadcast campaigns via WhatsApp Web, Meta WABA Official, and Telegram Bot.",
   "createCampaign": "Create New Campaign",
   "createCampaignShort": "New Campaign",
   "templateLabel": "Message Template (Spintax Supported)",
@@ -22,8 +22,8 @@
   "cancelCampaign": "Cancel Campaign",
   "noCampaigns": "No broadcast campaigns yet",
   "noCampaignsDesc": "Launch your first campaign to reach thousands of customers personalized and anti-ban safe.",
-  "wizardTitle": "WhatsApp Broadcast Campaign Wizard",
-  "wizardSubtitle": "Configure message content, target audience, and anti-ban safeguards in 4 easy steps.",
+  "wizardTitle": "Create New Broadcast Campaign",
+  "wizardSubtitle": "Configure message content, target audience, and multi-channel transmission settings in 4 easy steps.",
   "step1Device": "Device",
   "step2Audience": "Audience",
   "step3Message": "Content",
