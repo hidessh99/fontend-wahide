@@ -3,23 +3,48 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   BarChart3,
-  Smartphone,
-  ShieldCheck,
-  RefreshCw,
-  TrendingUp,
+  Send,
   CheckCircle2,
+  AlertCircle,
+  RefreshCw,
+  Smartphone,
+  Layers,
+  Inbox,
 } from "lucide-react";
+import {
+  useWhatsAppStats,
+  WhatsAppStatsTimeRange,
+} from "@/modules/whatsapp/hooks/useWhatsAppStats";
+
+const TIME_RANGES: {
+  id: WhatsAppStatsTimeRange;
+  label: string;
+  badgeLabel: string;
+}[] = [
+  { id: "today", label: "Hari Ini", badgeLabel: "today" },
+  { id: "7d", label: "7 Hari", badgeLabel: "last 7 days" },
+  { id: "30d", label: "30 Hari", badgeLabel: "last 30 days" },
+];
 
 export function WhatsAppStatsView() {
-  const dailySent = 1420;
-  const dailyLimit = 5000;
-  const dailyPercent = Math.round((dailySent / dailyLimit) * 100);
+  const { timeRange, setTimeRange, stats, isLoading, refetch } =
+    useWhatsAppStats();
+
+  const activePeriodLabel =
+    TIME_RANGES.find((r) => r.id === timeRange)?.badgeLabel || "today";
+
+  // Calculate maximum total volume for normalized bar scaling in Daily Activity
+  const maxDayTotal = Math.max(
+    ...stats.dailyActivity.map((d) => d.total),
+    1,
+  );
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6 lg:p-8">
-      {/* Header */}
+      {/* Header with Title & Period Filter Switcher */}
       <div className="border-border flex flex-col justify-between gap-4 border-b pb-5 sm:flex-row sm:items-center">
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
@@ -27,140 +52,348 @@ export function WhatsAppStatsView() {
               <BarChart3 className="size-5" />
             </div>
             <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl">
-              Statistik WhatsApp Web (Unofficial)
+              Statistik WhatsApp Web
             </h1>
           </div>
           <p className="text-foreground-secondary text-xs font-medium sm:text-sm">
-            Pantau kesehatan slot fisik HP, rasio keberhasilan pengiriman socket whatsmeow, dan skor proteksi anti-ban.
+            Pantau performa pengiriman pesan, tingkat keberhasilan, dan volume per nomor WhatsApp.
           </p>
         </div>
 
-        <Button variant="outline" size="sm" className="text-xs font-semibold">
-          <RefreshCw className="mr-1.5 size-3.5" />
-          <span>Muat Ulang</span>
-        </Button>
+        {/* Action Bar: Time Range Selector & Refresh */}
+        <div className="flex items-center gap-2.5 self-start sm:self-auto">
+          <div className="bg-muted/60 border-border/80 flex items-center rounded-full border p-1">
+            {TIME_RANGES.map((range) => {
+              const isActive = timeRange === range.id;
+              return (
+                <button
+                  key={range.id}
+                  type="button"
+                  onClick={() => setTimeRange(range.id)}
+                  className={`rounded-full px-3 py-1 text-xs font-semibold transition-all ${
+                    isActive
+                      ? "bg-white text-dark-green shadow-xs dark:bg-wise-green dark:text-dark-green"
+                      : "text-foreground-secondary hover:text-foreground"
+                  }`}
+                >
+                  {range.label}
+                </button>
+              );
+            })}
+          </div>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => refetch()}
+            disabled={isLoading}
+            className="border-border/80 text-xs font-semibold rounded-full h-8 px-3"
+          >
+            <RefreshCw
+              className={`mr-1.5 size-3.5 ${isLoading ? "animate-spin" : ""}`}
+            />
+            <span>Muat Ulang</span>
+          </Button>
+        </div>
       </div>
 
-      {/* KPI Cards Grid */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Active Devices */}
+      {/* Top 3 KPI Cards Grid */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        {/* 1. Total Sends */}
         <div className="bg-surface border-border rounded-2xl border p-5 space-y-3 shadow-xs dark:bg-[#151614]">
           <div className="flex items-center justify-between">
-            <span className="text-foreground-secondary text-xs font-semibold">Perangkat Terkoneksi</span>
+            <span className="text-foreground-secondary text-xs font-semibold">
+              Total sends
+            </span>
+            <div className="flex size-8 items-center justify-center rounded-xl bg-muted/60 text-foreground-secondary">
+              <Send className="size-4" />
+            </div>
+          </div>
+          <div>
+            {isLoading ? (
+              <Skeleton className="h-8 w-24 rounded-lg" />
+            ) : (
+              <p className="font-mono text-3xl font-black text-foreground">
+                {stats.totalSends.toLocaleString()}
+              </p>
+            )}
+          </div>
+          <p className="text-foreground-muted text-[11px] lowercase">
+            {activePeriodLabel}
+          </p>
+        </div>
+
+        {/* 2. Delivered */}
+        <div className="bg-surface border-border rounded-2xl border p-5 space-y-3 shadow-xs dark:bg-[#151614]">
+          <div className="flex items-center justify-between">
+            <span className="text-foreground-secondary text-xs font-semibold">
+              Delivered
+            </span>
             <div className="flex size-8 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400">
-              <Smartphone className="size-4" />
-            </div>
-          </div>
-          <div>
-            <p className="font-mono text-2xl font-black text-foreground">
-              3 <span className="text-xs text-foreground-muted font-normal">/ 5 slot</span>
-            </p>
-          </div>
-          <p className="text-foreground-muted text-[11px]">HP aktif mengirim & menerima pesan</p>
-        </div>
-
-        {/* Daily Sent Messages */}
-        <div className="bg-surface border-border rounded-2xl border p-5 space-y-3 shadow-xs dark:bg-[#151614]">
-          <div className="flex items-center justify-between">
-            <span className="text-foreground-secondary text-xs font-semibold">Pesan Terkirim Hari Ini</span>
-            <div className="flex size-8 items-center justify-center rounded-xl bg-sky-500/10 text-sky-600 dark:bg-sky-500/20 dark:text-sky-400">
-              <TrendingUp className="size-4" />
-            </div>
-          </div>
-          <div>
-            <p className="font-mono text-2xl font-black text-foreground">
-              {dailySent.toLocaleString()}
-            </p>
-          </div>
-          <p className="text-foreground-muted text-[11px]">Akumulasi pesan broadcast & direct</p>
-        </div>
-
-        {/* Delivery Rate */}
-        <div className="bg-surface border-border rounded-2xl border p-5 space-y-3 shadow-xs dark:bg-[#151614]">
-          <div className="flex items-center justify-between">
-            <span className="text-foreground-secondary text-xs font-semibold">Delivery ACK Rate</span>
-            <div className="flex size-8 items-center justify-center rounded-xl bg-wise-green/15 text-dark-green dark:text-wise-green">
               <CheckCircle2 className="size-4" />
             </div>
           </div>
           <div>
-            <p className="font-mono text-2xl font-black text-foreground">
-              98.6%
-            </p>
+            {isLoading ? (
+              <Skeleton className="h-8 w-24 rounded-lg" />
+            ) : (
+              <p className="font-mono text-3xl font-black text-foreground">
+                {stats.deliveredCount.toLocaleString()}
+              </p>
+            )}
           </div>
-          <p className="text-foreground-muted text-[11px]">Pesan sampai di perangkat penerima</p>
+          <p className="text-emerald-600 dark:text-emerald-400 text-[11px] font-semibold">
+            {stats.deliveryRate}% delivery rate
+          </p>
         </div>
 
-        {/* Anti-Ban Health */}
+        {/* 3. Failed */}
         <div className="bg-surface border-border rounded-2xl border p-5 space-y-3 shadow-xs dark:bg-[#151614]">
           <div className="flex items-center justify-between">
-            <span className="text-foreground-secondary text-xs font-semibold">Tingkat Anti-Ban</span>
-            <div className="flex size-8 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400">
-              <ShieldCheck className="size-4" />
+            <span className="text-foreground-secondary text-xs font-semibold">
+              Failed
+            </span>
+            <div className="flex size-8 items-center justify-center rounded-xl bg-rose-500/10 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400">
+              <AlertCircle className="size-4" />
             </div>
           </div>
           <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400">
-              <span className="size-2 rounded-full bg-emerald-500" />
-              OPTIMAL (TIER 5)
-            </span>
+            {isLoading ? (
+              <Skeleton className="h-8 w-24 rounded-lg" />
+            ) : (
+              <p
+                className={`font-mono text-3xl font-black ${
+                  stats.failedCount > 0
+                    ? "text-rose-600 dark:text-rose-400"
+                    : "text-foreground"
+                }`}
+              >
+                {stats.failedCount.toLocaleString()}
+              </p>
+            )}
           </div>
-          <p className="text-foreground-muted text-[11px]">5 Lapis proteksi warmup aktif</p>
+          <p className="text-rose-600/90 dark:text-rose-400/90 text-[11px] font-semibold">
+            {stats.failureRate}% failure rate
+          </p>
         </div>
       </div>
 
-      {/* Detail Cards */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        {/* Daily Quota Card */}
-        <div className="bg-surface border-border rounded-2xl border p-6 space-y-4 shadow-xs dark:bg-[#151614]">
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <h3 className="text-foreground text-sm font-bold">Batas Rekomendasi Broadcast Harian</h3>
-              <p className="text-foreground-secondary text-xs">Untuk menjaga reputasi nomor WhatsApp Anda</p>
-            </div>
-            <span className="font-mono text-sm font-bold text-foreground">{dailyPercent}%</span>
+      {/* Row 2: Daily Activity Chart & Histogram */}
+      <div className="bg-surface border-border rounded-2xl border p-6 space-y-5 shadow-xs dark:bg-[#151614]">
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h3 className="text-foreground text-sm font-bold">Daily activity</h3>
+            <p className="text-foreground-secondary text-xs">
+              Delivered vs failed per day — {activePeriodLabel}
+            </p>
           </div>
 
-          <Progress value={dailyPercent} className="h-2.5" />
-
-          <div className="flex items-center justify-between text-xs text-foreground-muted font-mono">
-            <span>Terpakai: {dailySent.toLocaleString()} pesan</span>
-            <span>Batas aman: {dailyLimit.toLocaleString()} pesan/hari</span>
+          {/* Legend */}
+          <div className="flex items-center gap-4 text-xs font-medium text-foreground-secondary">
+            <div className="flex items-center gap-1.5">
+              <span className="size-2 rounded-full bg-emerald-500 dark:bg-wise-green" />
+              <span>Delivered</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="size-2 rounded-full bg-rose-500" />
+              <span>Failed</span>
+            </div>
           </div>
         </div>
 
-        {/* 5-Layer Anti-Ban Overview */}
-        <div className="bg-surface border-border rounded-2xl border p-6 space-y-3 shadow-xs dark:bg-[#151614]">
-          <div className="flex items-center gap-2.5">
-            <div className="flex size-8 items-center justify-center rounded-xl bg-wise-green/15 text-dark-green dark:text-wise-green">
-              <ShieldCheck className="size-4" />
+        {/* Activity Container / Empty State */}
+        {isLoading ? (
+          <div className="space-y-3 py-8">
+            <Skeleton className="h-40 w-full rounded-xl" />
+          </div>
+        ) : !stats.hasActivity ? (
+          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/80 py-14 text-center">
+            <div className="mb-2.5 flex size-10 items-center justify-center rounded-full bg-muted/50 text-foreground-muted">
+              <BarChart3 className="size-5" />
             </div>
-            <div>
-              <h3 className="text-foreground text-sm font-bold">5-Layer Anti-Ban Warmup Engine</h3>
-              <p className="text-foreground-secondary text-xs">Teknologi otomatis menjaga nomor HP tidak diblokir</p>
+            <p className="text-foreground-secondary text-xs font-medium">
+              No message activity in this period.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-4 pt-2">
+            {/* Visual Bars Container */}
+            <div className="flex items-end gap-2 sm:gap-4 overflow-x-auto pb-2 min-h-[160px] pt-4">
+              {stats.dailyActivity.map((day) => {
+                const deliveredPercent =
+                  day.total > 0
+                    ? Math.round((day.delivered / maxDayTotal) * 100)
+                    : 0;
+                const failedPercent =
+                  day.total > 0
+                    ? Math.round((day.failed / maxDayTotal) * 100)
+                    : 0;
+
+                return (
+                  <div
+                    key={day.dateKey}
+                    className="flex flex-1 min-w-[32px] flex-col items-center gap-2 group"
+                  >
+                    {/* Bar Visualizer */}
+                    <div className="relative flex h-32 w-full max-w-[42px] flex-col justify-end overflow-hidden rounded-md bg-muted/30">
+                      {/* Delivered Stack */}
+                      <div
+                        style={{ height: `${deliveredPercent}%` }}
+                        className="w-full bg-emerald-500 dark:bg-wise-green transition-all duration-300"
+                        title={`${day.label}: ${day.delivered} delivered`}
+                      />
+                      {/* Failed Stack */}
+                      <div
+                        style={{ height: `${failedPercent}%` }}
+                        className="w-full bg-rose-500 transition-all duration-300"
+                        title={`${day.label}: ${day.failed} failed`}
+                      />
+                    </div>
+
+                    {/* Date Label */}
+                    <span className="text-[10px] sm:text-[11px] font-medium text-foreground-muted group-hover:text-foreground transition-colors whitespace-nowrap">
+                      {day.label}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
+          </div>
+        )}
+      </div>
+
+      {/* Row 3: 2 Breakdown Cards Grid */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        {/* Card 1: Top Send Types */}
+        <div className="bg-surface border-border rounded-2xl border p-6 space-y-4 shadow-xs dark:bg-[#151614]">
+          <div className="space-y-0.5">
+            <h3 className="text-foreground text-sm font-bold">Top send types</h3>
+            <p className="text-foreground-secondary text-xs">
+              Direct sends vs named campaigns in this period.
+            </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 text-xs pt-1">
-            <div className="rounded-xl border border-border/60 bg-muted/40 p-2.5">
-              <p className="font-semibold text-foreground">1. Dynamic Jitter Delay</p>
-              <p className="text-[11px] text-foreground-muted">Jeda acak 3 - 8 detik per pesan</p>
+          {isLoading ? (
+            <div className="space-y-4 py-4">
+              <Skeleton className="h-10 w-full rounded-xl" />
+              <Skeleton className="h-10 w-full rounded-xl" />
             </div>
-            <div className="rounded-xl border border-border/60 bg-muted/40 p-2.5">
-              <p className="font-semibold text-foreground">2. Human Typing Simulation</p>
-              <p className="text-[11px] text-foreground-muted">Simulasi mengetik sebelum kirim</p>
+          ) : stats.topSendTypes.total === 0 ? (
+            <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/80 py-10 text-center">
+              <Inbox className="size-6 text-foreground-muted mb-2" />
+              <p className="text-foreground-secondary text-xs font-medium">
+                No sends in this period.
+              </p>
             </div>
-            <div className="rounded-xl border border-border/60 bg-muted/40 p-2.5">
-              <p className="font-semibold text-foreground">3. Multi-Device Rotation</p>
-              <p className="text-[11px] text-foreground-muted">Distribusi beban antar slot HP</p>
+          ) : (
+            <div className="space-y-4 pt-1">
+              {/* Direct Sends */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-semibold text-foreground flex items-center gap-1.5">
+                    <Send className="size-3.5 text-muted-foreground" />
+                    Direct sends (Pesan Cepat)
+                  </span>
+                  <span className="font-mono font-bold text-foreground">
+                    {stats.topSendTypes.directCount.toLocaleString()}{" "}
+                    <span className="text-foreground-muted font-normal">
+                      ({stats.topSendTypes.directPercent}%)
+                    </span>
+                  </span>
+                </div>
+                <Progress
+                  value={stats.topSendTypes.directPercent}
+                  className="h-2"
+                />
+              </div>
+
+              {/* Named Campaigns */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-semibold text-foreground flex items-center gap-1.5">
+                    <Layers className="size-3.5 text-muted-foreground" />
+                    Named campaigns (Broadcast Siaran)
+                  </span>
+                  <span className="font-mono font-bold text-foreground">
+                    {stats.topSendTypes.campaignCount.toLocaleString()}{" "}
+                    <span className="text-foreground-muted font-normal">
+                      ({stats.topSendTypes.campaignPercent}%)
+                    </span>
+                  </span>
+                </div>
+                <Progress
+                  value={stats.topSendTypes.campaignPercent}
+                  className="h-2"
+                />
+              </div>
             </div>
-            <div className="rounded-xl border border-border/60 bg-muted/40 p-2.5">
-              <p className="font-semibold text-foreground">4. Spintax Randomization</p>
-              <p className="text-[11px] text-foreground-muted">Variasi teks anti-duplikasi</p>
-            </div>
+          )}
+        </div>
+
+        {/* Card 2: By Number */}
+        <div className="bg-surface border-border rounded-2xl border p-6 space-y-4 shadow-xs dark:bg-[#151614]">
+          <div className="space-y-0.5">
+            <h3 className="text-foreground text-sm font-bold">By number</h3>
+            <p className="text-foreground-secondary text-xs">
+              Top numbers by outbound volume.
+            </p>
           </div>
+
+          {isLoading ? (
+            <div className="space-y-3 py-4">
+              <Skeleton className="h-10 w-full rounded-xl" />
+              <Skeleton className="h-10 w-full rounded-xl" />
+            </div>
+          ) : stats.byNumber.length === 0 || stats.totalSends === 0 ? (
+            <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/80 py-10 text-center">
+              <Smartphone className="size-6 text-foreground-muted mb-2" />
+              <p className="text-foreground-secondary text-xs font-medium">
+                No sends in this period.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-3 pt-1">
+              {stats.byNumber.map((device, idx) => (
+                <div
+                  key={device.id}
+                  className="rounded-xl border border-border/60 bg-muted/20 p-3 space-y-2"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-muted text-[10px] font-bold text-foreground-muted">
+                        {idx + 1}
+                      </span>
+                      <div>
+                        <p className="text-xs font-bold text-foreground leading-none">
+                          {device.pushName}
+                        </p>
+                        {device.phone && (
+                          <p className="text-[11px] font-mono text-foreground-muted mt-0.5">
+                            +{device.phone}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="text-right">
+                      <span className="font-mono text-xs font-bold text-foreground">
+                        {device.count.toLocaleString()} pesan
+                      </span>
+                      <span className="text-[10px] text-foreground-muted ml-1">
+                        ({device.percent}%)
+                      </span>
+                    </div>
+                  </div>
+
+                  <Progress value={device.percent} className="h-1.5" />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
+
+export default WhatsAppStatsView;
