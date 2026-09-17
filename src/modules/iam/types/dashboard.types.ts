@@ -31,6 +31,61 @@ export interface RecentActivityItem {
   created_at: string;
 }
 
+export interface GatewayTelemetry {
+  send_attempts: number;
+  delivered_count: number;
+  success_rate: number;
+  failed_count: number;
+  fail_rate: number;
+  total_devices: number;
+  connected_devices: number;
+}
+
+export interface ChannelBreakdown {
+  channel_type: "WHATSAPP" | "WABA" | "TELEGRAM" | "EMAIL" | string;
+  sent_count: number;
+  device_count: number;
+  connected_count: number;
+}
+
+export interface DailyActivityPoint {
+  date: string;
+  day_label: string;
+  whatsapp: number;
+  waba: number;
+  telegram: number;
+  email: number;
+  total: number;
+}
+
+export interface RecentOutboundMessage {
+  id: string;
+  recipient_jid: string;
+  message_body: string;
+  channel_type: string;
+  status: string;
+  created_at: string;
+}
+
+export interface ActiveCampaignSummary {
+  id: string;
+  name: string;
+  channel_type: string;
+  status: string;
+  total_recipients: number;
+  sent_count: number;
+  progress: number;
+}
+
+export interface ScheduledQueueSummary {
+  id: string;
+  name: string;
+  channel_type: string;
+  total_recipients: number;
+  scheduled_at?: string;
+  status: string;
+}
+
 export interface UserDashboardStats {
   balance: number;
   income: number;
@@ -47,6 +102,12 @@ export interface UserDashboardStats {
   open_tickets: number;
   recent_activities: RecentActivityItem[];
   recent_invoices: RecentTransactionItem[];
+  telemetry?: GatewayTelemetry;
+  channels?: ChannelBreakdown[];
+  daily_activities?: DailyActivityPoint[];
+  recent_outbound_messages?: RecentOutboundMessage[];
+  active_campaigns?: ActiveCampaignSummary[];
+  scheduled_queues?: ScheduledQueueSummary[];
 }
 
 export interface AdminDashboardStats {

@@ -7,6 +7,8 @@ export interface Device {
   tenantId?: string;
   jid?: string | null;
   name?: string;
+  channel_type?: string;
+  channelType?: string;
   push_name?: string | null;
   pushName?: string | null;
   phone: string | null;
