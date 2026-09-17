@@ -31,9 +31,11 @@ export function AdminHeader({ onOpenMobileNav }: AdminHeaderProps) {
       case "/admin/support":
         return { title: t("admin.supportTitle"), section: "Operations" };
       case "/admin/devices":
-        return { title: t("admin.devicesTitle"), section: "Operations" };
-      case "/admin/messages":
-        return { title: t("admin.messagesTitle"), section: "Operations" };
+        return { title: t("admin.devicesTitle"), section: "Channels" };
+      case "/admin/waba/devices":
+        return { title: t("admin.wabaDevicesTitle"), section: "Channels" };
+      case "/admin/tele/devices":
+        return { title: t("admin.teleDevicesTitle"), section: "Channels" };
       case "/admin/notifications":
         return { title: t("admin.notificationsTitle"), section: "Operations" };
       default:

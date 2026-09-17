@@ -10,7 +10,6 @@ import {
   Users,
   CreditCard,
   LifeBuoy,
-  MessageSquare,
   Smartphone,
   Radio,
   ArrowLeft,
@@ -20,6 +19,7 @@ import {
   Receipt,
   ChevronDown,
   LayoutDashboard,
+  Bot,
 } from "lucide-react";
 import { useI18n } from "@/lib/i18n/context";
 
@@ -104,29 +104,57 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
     ],
   },
   {
-    groupKey: "admin.adminMenu.groupOpsAndMonitoring",
-    defaultTitle: "Operasional & Monitoring",
+    groupKey: "admin.adminMenu.groupChannels",
+    defaultTitle: "Saluran Komunikasi & Gateway",
     items: [
       {
-        titleKey: "admin.adminMenu.whatsappGateway",
-        defaultTitle: "WhatsApp Gateway",
+        titleKey: "admin.adminMenu.waUnofficial",
+        defaultTitle: "WA Web (Unofficial)",
         href: "/admin/devices",
         icon: Smartphone,
         subItems: [
           {
             titleKey: "admin.adminMenu.whatsappDevices",
-            defaultTitle: "Perangkat WhatsApp",
+            defaultTitle: "Perangkat WA",
             href: "/admin/devices",
             icon: Smartphone,
           },
+        ],
+      },
+      {
+        titleKey: "admin.adminMenu.wabaOfficial",
+        defaultTitle: "WABA (Official Meta)",
+        href: "/admin/waba/devices",
+        icon: ShieldCheck,
+        subItems: [
           {
-            titleKey: "admin.adminMenu.whatsappMessageLogs",
-            defaultTitle: "Log Pesan WhatsApp",
-            href: "/admin/messages",
-            icon: MessageSquare,
+            titleKey: "admin.adminMenu.wabaDevices",
+            defaultTitle: "Perangkat & Akun",
+            href: "/admin/waba/devices",
+            icon: ShieldCheck,
           },
         ],
       },
+      {
+        titleKey: "admin.adminMenu.telegramChannel",
+        defaultTitle: "Telegram Bot",
+        href: "/admin/tele/devices",
+        icon: Bot,
+        subItems: [
+          {
+            titleKey: "admin.adminMenu.teleDevices",
+            defaultTitle: "Perangkat & Bot",
+            href: "/admin/tele/devices",
+            icon: Bot,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    groupKey: "admin.adminMenu.groupOpsAndMonitoring",
+    defaultTitle: "Operasional & Monitoring",
+    items: [
       {
         titleKey: "admin.adminMenu.broadcastAndNotifications",
         defaultTitle: "Siaran & Notifikasi",
