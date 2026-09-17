@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { OrderCartItem } from "../../types/subscription.types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,11 +14,14 @@ import {
   Smartphone,
   ShieldCheck,
   Bot,
+  Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 import { useI18n } from "@/lib/i18n/context";
+import { couponApi } from "@/modules/finance/api/coupon.api";
+import { Voucher } from "@/modules/finance/types/coupon.types";
 
 interface OrderSummarySidebarProps {
   cartItems: OrderCartItem[];
@@ -35,36 +38,83 @@ export function OrderSummarySidebar({
   onCheckout,
   isSubmitting,
 }: OrderSummarySidebarProps) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [couponCode, setCouponCode] = useState("");
-  const [appliedDiscountPercent, setAppliedDiscountPercent] = useState<number>(0);
-  const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
+  const [appliedVoucher, setAppliedVoucher] = useState<Voucher | null>(null);
+  const [serverDiscountAmount, setServerDiscountAmount] = useState<number>(0);
+  const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
 
   const subtotal = cartItems.reduce((acc, item) => acc + item.priceMonthly, 0);
-  const discountAmount = Math.round((subtotal * appliedDiscountPercent) / 100);
+
+  // Dynamically compute discount amount based on applied voucher and subtotal
+  const discountAmount = useMemo(() => {
+    if (!appliedVoucher || subtotal <= 0) return 0;
+    if (serverDiscountAmount > 0 && appliedVoucher.discountType === "FIXED") {
+      return Math.min(subtotal, serverDiscountAmount);
+    }
+    if (appliedVoucher.discountType === "PERCENTAGE") {
+      const calc = Math.round((subtotal * appliedVoucher.discountValue) / 100);
+      if (appliedVoucher.maxDiscountAmount > 0) {
+        return Math.min(calc, appliedVoucher.maxDiscountAmount);
+      }
+      return calc;
+    }
+    // FIXED discount
+    return Math.min(subtotal, appliedVoucher.discountValue);
+  }, [appliedVoucher, subtotal, serverDiscountAmount]);
+
   const total = Math.max(0, subtotal - discountAmount);
 
-  const handleApplyCoupon = (e: React.FormEvent) => {
+  const handleApplyCoupon = async (e: React.FormEvent) => {
     e.preventDefault();
     const code = couponCode.trim().toUpperCase();
     if (!code) return;
+    if (subtotal === 0) {
+      toast.warning(t("subscription.orderSummary.selectPlanFirst"));
+      return;
+    }
 
-    if (code === "SAVE20" || code === "PROMO20") {
-      setAppliedDiscountPercent(20);
-      setAppliedCoupon(code);
-      toast.success(t("subscription.toasts.couponApplied"));
-    } else if (code === "WAHIDE50") {
-      setAppliedDiscountPercent(50);
-      setAppliedCoupon(code);
-      toast.success(t("subscription.toasts.couponApplied"));
-    } else {
-      toast.error(t("subscription.toasts.couponInvalid"));
+    setIsValidatingCoupon(true);
+    try {
+      const res = await couponApi.validate({
+        code,
+        purchase_amount: subtotal,
+        applicable_product: "SUBSCRIPTION",
+      });
+
+      setAppliedVoucher(res.voucher);
+      setServerDiscountAmount(res.discount_amount);
+      toast.success(
+        t("subscription.toasts.couponAppliedDesc", {
+          code: res.voucher.code,
+          name: res.voucher.name,
+        }) || `Kupon "${res.voucher.name}" (${res.voucher.code}) berhasil diterapkan!`,
+      );
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "";
+      if (msg.includes("not found") || msg.includes("active voucher")) {
+        toast.error(t("subscription.toasts.couponNotFound") || "Kode kupon tidak ditemukan atau tidak aktif.");
+      } else if (msg.includes("expired")) {
+        toast.error(t("subscription.toasts.couponExpired") || "Masa berlaku kupon telah berakhir.");
+      } else if (msg.includes("limit reached")) {
+        toast.error(t("subscription.toasts.couponLimitReached") || "Kuota penggunaan kupon ini telah habis.");
+      } else if (msg.includes("minimum purchase") || msg.includes("min_amount")) {
+        toast.error(t("subscription.toasts.couponMinPurchaseNotMet") || "Total pembelian belum memenuhi syarat minimal kupon.");
+      } else if (msg.includes("already used")) {
+        toast.error(t("subscription.toasts.couponAlreadyUsed") || "Anda sudah pernah menggunakan kupon promo ini.");
+      } else if (msg.includes("not applicable")) {
+        toast.error(t("subscription.toasts.couponNotApplicable") || "Kupon tidak berlaku untuk paket langganan.");
+      } else {
+        toast.error(msg || t("subscription.toasts.couponInvalid"));
+      }
+    } finally {
+      setIsValidatingCoupon(false);
     }
   };
 
   const handleRemoveCoupon = () => {
-    setAppliedCoupon(null);
-    setAppliedDiscountPercent(0);
+    setAppliedVoucher(null);
+    setServerDiscountAmount(0);
     setCouponCode("");
     toast.info(t("subscription.toasts.couponRemoved"));
   };
@@ -191,10 +241,10 @@ export function OrderSummarySidebar({
             value={couponCode}
             onChange={(e) => setCouponCode(e.target.value)}
             placeholder={t("subscription.orderSummary.couponPlaceholder")}
-            disabled={Boolean(appliedCoupon)}
+            disabled={Boolean(appliedVoucher) || isValidatingCoupon}
             className="h-8 text-xs rounded-xl uppercase font-mono tracking-wider"
           />
-          {appliedCoupon ? (
+          {appliedVoucher ? (
             <Button
               type="button"
               variant="outline"
@@ -209,22 +259,35 @@ export function OrderSummarySidebar({
               type="submit"
               variant="outline"
               size="xs"
-              disabled={!couponCode.trim()}
-              className="h-8 text-[11px] rounded-xl px-3 cursor-pointer"
+              disabled={!couponCode.trim() || isValidatingCoupon}
+              className="h-8 text-[11px] rounded-xl px-3 cursor-pointer gap-1"
             >
-              {t("subscription.orderSummary.applyCoupon")}
+              {isValidatingCoupon ? (
+                <>
+                  <Loader2 className="size-3 animate-spin" />
+                  <span>{t("subscription.orderSummary.validatingCoupon") || "Memeriksa..."}</span>
+                </>
+              ) : (
+                <span>{t("subscription.orderSummary.applyCoupon")}</span>
+              )}
             </Button>
           )}
         </div>
-        {appliedCoupon && (
-          <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1 mt-1">
-            <CheckCircle2 className="size-3" />
-            <span>
-              {t("subscription.orderSummary.couponDiscountBadge", {
-                code: appliedCoupon,
-              })}
-            </span>
-          </p>
+        {appliedVoucher && (
+          <div className="rounded-lg bg-emerald-500/10 border border-emerald-500/20 p-2 text-[11px] text-emerald-800 dark:text-emerald-300 font-medium space-y-0.5 mt-1">
+            <div className="flex items-center justify-between font-bold">
+              <span className="flex items-center gap-1">
+                <CheckCircle2 className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+                <span>{appliedVoucher.code}</span>
+              </span>
+              <span className="text-[10px] bg-emerald-500/20 px-1.5 py-0.2 rounded-full">
+                {appliedVoucher.discountType === "PERCENTAGE"
+                  ? `${appliedVoucher.discountValue}% OFF`
+                  : `Rp ${appliedVoucher.discountValue.toLocaleString(locale === "id" ? "id-ID" : "en-US")} OFF`}
+              </span>
+            </div>
+            <p className="text-[10px] opacity-80 truncate">{appliedVoucher.name}</p>
+          </div>
         )}
       </form>
 

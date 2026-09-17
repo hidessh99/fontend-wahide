@@ -169,14 +169,22 @@
     "selectPlanFirst": "Pilih Paket Terlebih Dahulu",
     "topUpFirst": "Top Up Saldo Terlebih Dahulu",
     "payAndActivate": "Bayar & Aktifkan Paket ({amount})",
-    "instantPaymentNotice": "Pembayaran dipotong otomatis dari Saldo Dompet Anda secara instan dan aman."
+    "instantPaymentNotice": "Pembayaran dipotong otomatis dari Saldo Dompet Anda secara instan dan aman.",
+    "validatingCoupon": "Memeriksa kupon..."
   },
   "toasts": {
     "downgradeForbidden": "Tidak dapat memilih paket lebih rendah (downgrade) saat langganan aktif. Paket ini dapat dipilih setelah periode berjalan berakhir.",
     "planAddedToCart": "Paket {name} ditambahkan ke ringkasan pesanan (1 Bulan).",
     "planNotFound": "Paket tidak ditemukan",
-    "couponApplied": "Kupon diskon 20% berhasil diterapkan!",
-    "couponInvalid": "Kode kupon tidak valid. Gunakan kode SAVE20",
+    "couponApplied": "Kupon promo berhasil diterapkan!",
+    "couponAppliedDesc": "Kupon \"{name}\" ({code}) berhasil diterapkan!",
+    "couponInvalid": "Kode kupon tidak valid.",
+    "couponNotFound": "Kode kupon tidak ditemukan atau tidak aktif.",
+    "couponExpired": "Masa berlaku kupon telah berakhir.",
+    "couponLimitReached": "Kuota penggunaan kupon ini telah habis.",
+    "couponMinPurchaseNotMet": "Total pembelian belum memenuhi syarat minimal kupon.",
+    "couponAlreadyUsed": "Anda sudah pernah menggunakan kupon promo ini.",
+    "couponNotApplicable": "Kupon tidak berlaku untuk paket langganan.",
     "couponRemoved": "Kupon promosi dihapus."
   },
   "quotaDial": {

@@ -169,14 +169,22 @@
     "selectPlanFirst": "Please Select a Plan First",
     "topUpFirst": "Please Top Up Balance First",
     "payAndActivate": "Pay & Activate Plan ({amount})",
-    "instantPaymentNotice": "Payment is deducted automatically from your Wallet Balance instantly and securely."
+    "instantPaymentNotice": "Payment is deducted automatically from your Wallet Balance instantly and securely.",
+    "validatingCoupon": "Validating coupon..."
   },
   "toasts": {
     "downgradeForbidden": "Cannot downgrade while an active paid subscription is running. You can select this plan after your current period ends.",
     "planAddedToCart": "Plan {name} added to order summary (1 Month).",
     "planNotFound": "Plan not found",
-    "couponApplied": "20% discount coupon applied successfully!",
-    "couponInvalid": "Invalid coupon code. Use code SAVE20",
+    "couponApplied": "Promo coupon applied successfully!",
+    "couponAppliedDesc": "Coupon \"{name}\" ({code}) applied successfully!",
+    "couponInvalid": "Invalid coupon code.",
+    "couponNotFound": "Coupon code not found or inactive.",
+    "couponExpired": "This coupon code has expired.",
+    "couponLimitReached": "Coupon usage limit has been reached.",
+    "couponMinPurchaseNotMet": "Minimum order total required for this coupon is not met.",
+    "couponAlreadyUsed": "You have already used this promo coupon.",
+    "couponNotApplicable": "Coupon is not applicable to subscription plans.",
     "couponRemoved": "Promo coupon removed."
   },
   "quotaDial": {

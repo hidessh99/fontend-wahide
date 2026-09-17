@@ -20,6 +20,7 @@ import {
   ChevronDown,
   LayoutDashboard,
   Bot,
+  Ticket,
 } from "lucide-react";
 import { useI18n } from "@/lib/i18n/context";
 
@@ -98,6 +99,12 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
             defaultTitle: "Paket & Harga SaaS",
             href: "/admin/plans",
             icon: CreditCard,
+          },
+          {
+            titleKey: "admin.adminMenu.coupons",
+            defaultTitle: "Kupon Promo",
+            href: "/admin/coupons",
+            icon: Ticket,
           },
         ],
       },
