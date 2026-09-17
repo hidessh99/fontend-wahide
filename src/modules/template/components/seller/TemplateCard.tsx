@@ -135,7 +135,7 @@ export function TemplateCard({
                 className="gap-1 text-[10px] border-sky-500/30 text-sky-600 dark:text-sky-400 bg-sky-500/5 font-medium"
               >
                 <Bot className="size-3" />
-                <span>Telegram</span>
+                <span>{t("template.channels.telegram")}</span>
               </Badge>
             ) : template.channelType === "WHATSMEOW_UNOFFICIAL" ? (
               <Badge
@@ -143,7 +143,7 @@ export function TemplateCard({
                 className="gap-1 text-[10px] border-emerald-500/30 text-emerald-600 dark:text-emerald-400 bg-emerald-500/5 font-medium"
               >
                 <Smartphone className="size-3" />
-                <span>WA Web</span>
+                <span>{t("template.channels.whatsappShort")}</span>
               </Badge>
             ) : template.channelType === "META_WABA_OFFICIAL" ? (
               <Badge
@@ -151,7 +151,7 @@ export function TemplateCard({
                 className="gap-1 text-[10px] border-blue-500/30 text-blue-600 dark:text-blue-400 bg-blue-500/5 font-medium"
               >
                 <ShieldCheck className="size-3" />
-                <span>Meta WABA</span>
+                <span>{t("template.channels.waba")}</span>
               </Badge>
             ) : (
               <Badge
@@ -159,7 +159,7 @@ export function TemplateCard({
                 className="gap-1 text-[10px] border-purple-500/30 text-purple-600 dark:text-purple-400 bg-purple-500/5 font-medium"
               >
                 <Globe className="size-3" />
-                <span>Omni</span>
+                <span>{t("template.channels.allShort")}</span>
               </Badge>
             )}
 

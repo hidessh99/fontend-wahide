@@ -283,13 +283,13 @@ function TemplateEditorContent({
               {/* Target Channel Selector (Only visible if channel is not locked) */}
               {!lockChannel && (
                 <div className="space-y-1.5">
-                  <Label>Target Saluran Komunikasi</Label>
+                  <Label>{t("template.channels.targetChannelLabel")}</Label>
                   <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                     {[
-                      { id: "ALL", label: "Semua (Omni)", icon: Globe },
-                      { id: "WHATSMEOW_UNOFFICIAL", label: "WA Web", icon: Smartphone },
-                      { id: "META_WABA_OFFICIAL", label: "Meta WABA", icon: Check },
-                      { id: "TELEGRAM_BOT", label: "Telegram Bot", icon: Bot },
+                      { id: "ALL", label: t("template.channels.allShort"), icon: Globe },
+                      { id: "WHATSMEOW_UNOFFICIAL", label: t("template.channels.whatsappShort"), icon: Smartphone },
+                      { id: "META_WABA_OFFICIAL", label: t("template.channels.waba"), icon: Check },
+                      { id: "TELEGRAM_BOT", label: t("template.channels.telegram"), icon: Bot },
                     ].map((ch) => {
                       const Icon = ch.icon;
                       const isSelected = channelType === ch.id;
@@ -352,14 +352,14 @@ function TemplateEditorContent({
                 {mediaType !== "NONE" && (
                   <div className="space-y-1.5 animate-in fade-in">
                     <Label htmlFor="template-media-url" className="text-[11px]">
-                      URL Berkas Media (HTTPS URL langsung ke gambar/PDF):
+                      {t("template.mediaUrlLabel")}
                     </Label>
                     <Input
                       id="template-media-url"
                       type="url"
                       value={mediaUrl}
                       onChange={(e) => setMediaUrl(e.target.value)}
-                      placeholder="https://domain.com/assets/banner-promo.jpg"
+                      placeholder={t("template.mediaUrlPlaceholder")}
                       className="h-9 text-xs rounded-xl"
                     />
                   </div>
@@ -374,7 +374,7 @@ function TemplateEditorContent({
                     <span className="text-destructive">*</span>
                   </Label>
                   <span className="text-[11px] text-foreground-muted">
-                    {content.length} karakter
+                    {t("template.charCount", { count: content.length })}
                   </span>
                 </div>
 
@@ -503,10 +503,10 @@ function TemplateEditorContent({
                     </div>
                     <div>
                       <h4 className="text-foreground text-xs font-bold">
-                        Pengaturan Khusus Telegram Bot
+                        {t("template.telegram.settingsTitle")}
                       </h4>
                       <p className="text-foreground-secondary text-[11px]">
-                        Format parsing mode dan tombol inline interaktif Telegram.
+                        {t("template.telegram.settingsDesc")}
                       </p>
                     </div>
                   </div>
@@ -514,7 +514,7 @@ function TemplateEditorContent({
                   {/* Parse Mode Switcher */}
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <span className="text-foreground-secondary text-xs font-semibold">
-                      Parsing Mode:
+                      {t("template.telegram.parseMode")}
                     </span>
                     <div className="flex items-center gap-1 rounded-xl bg-muted p-0.5">
                       {(["HTML", "MarkdownV2", "PLAIN"] as TelegramParseMode[]).map(
@@ -538,10 +538,10 @@ function TemplateEditorContent({
                   <div className="flex items-center justify-between rounded-xl border border-border/60 bg-card p-2.5 text-xs">
                     <div>
                       <p className="font-semibold text-foreground">
-                        Matikan Preview Tautan (Web Page Preview)
+                        {t("template.telegram.disableWebPreviewTitle")}
                       </p>
                       <p className="text-[11px] text-foreground-muted">
-                        Mencegah Telegram merender thumbnail link URL di bawah pesan.
+                        {t("template.telegram.disableWebPreviewDesc")}
                       </p>
                     </div>
                     <input

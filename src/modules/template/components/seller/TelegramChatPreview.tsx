@@ -14,6 +14,7 @@ import {
   Image as ImageIcon,
   Check,
 } from "lucide-react";
+import { useI18n } from "@/lib/i18n/context";
 
 interface TelegramChatPreviewProps {
   name: string;
@@ -49,6 +50,8 @@ export function TelegramChatPreview({
   sampleData = DEFAULT_SAMPLE_DATA,
   className = "",
 }: TelegramChatPreviewProps) {
+  const { t } = useI18n();
+
   // 1. Substitute placeholders with sample data
   const renderedText = useMemo(() => {
     if (!content) return "";
@@ -99,7 +102,9 @@ export function TelegramChatPreview({
               bot
             </span>
           </div>
-          <p className="truncate text-[11px] text-white/50">bot resmi platform</p>
+          <p className="truncate text-[11px] text-white/50">
+            {t("template.telegram.preview.botSubtitle")}
+          </p>
         </div>
       </div>
 
@@ -108,7 +113,7 @@ export function TelegramChatPreview({
         {/* Date Divider */}
         <div className="flex justify-center">
           <span className="rounded-full bg-black/40 px-2.5 py-0.5 text-[10px] font-semibold text-white/60">
-            Hari ini
+            {t("template.telegram.preview.today")}
           </span>
         </div>
 
@@ -141,9 +146,13 @@ export function TelegramChatPreview({
                 <FileText className="size-6 shrink-0" />
                 <div className="min-w-0 flex-1 text-[11px]">
                   <p className="truncate font-semibold text-white">
-                    {mediaUrl ? mediaUrl.split("/").pop() : "dokumen_lampiran.pdf"}
+                    {mediaUrl
+                      ? mediaUrl.split("/").pop()
+                      : t("template.telegram.preview.defaultDocName")}
                   </p>
-                  <p className="text-[10px] text-white/50">Dokumen PDF</p>
+                  <p className="text-[10px] text-white/50">
+                    {t("template.telegram.preview.pdfDoc")}
+                  </p>
                 </div>
               </div>
             )}
@@ -151,7 +160,10 @@ export function TelegramChatPreview({
             {/* Content Text with HTML support */}
             <div
               className="prose prose-invert max-w-none text-xs leading-relaxed font-sans break-words [&>b]:font-black [&>code]:bg-black/30 [&>code]:px-1 [&>code]:py-0.5 [&>code]:rounded [&>code]:text-sky-300 [&>code]:text-[11px] [&>a]:text-sky-400 [&>a]:underline"
-              dangerouslySetInnerHTML={{ __html: formattedHtml || "(Pesan kosong)" }}
+              dangerouslySetInnerHTML={{
+                __html:
+                  formattedHtml || t("template.telegram.preview.emptyMessage"),
+              }}
             />
 
             {/* Timestamp & Status */}
@@ -171,7 +183,9 @@ export function TelegramChatPreview({
                       key={`prev-btn-${rIdx}-${bIdx}`}
                       className="flex-1 truncate rounded-xl bg-[#2b3a4a] px-3 py-2 text-center text-[11px] font-semibold text-sky-300 transition hover:bg-[#344558] active:scale-98 shadow-2xs"
                     >
-                      <span className="truncate">{btn.text || "Tombol"}</span>
+                      <span className="truncate">
+                        {btn.text || t("template.telegram.preview.defaultButton")}
+                      </span>
                       {btn.url && (
                         <ExternalLink className="ml-1 inline size-2.5 opacity-60" />
                       )}

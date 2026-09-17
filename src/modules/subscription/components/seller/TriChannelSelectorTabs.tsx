@@ -5,59 +5,63 @@ import { SubscriptionChannel } from "../../types/subscription.types";
 import { Smartphone, ShieldCheck, Bot } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+import { useI18n } from "@/lib/i18n/context";
+
 interface TriChannelSelectorTabsProps {
   activeChannel: SubscriptionChannel;
   onSelectChannel: (channel: SubscriptionChannel) => void;
 }
 
-const CHANNELS: Array<{
-  id: SubscriptionChannel;
-  label: string;
-  sublabel: string;
-  icon: React.ComponentType<{ className?: string }>;
-  accentColor: string;
-  activeBg: string;
-}> = [
-  {
-    id: "WHATSMEOW_UNOFFICIAL",
-    label: "WhatsApp Web",
-    sublabel: "Multi-Device QR",
-    icon: Smartphone,
-    accentColor: "text-emerald-700 dark:text-emerald-400",
-    activeBg: "bg-emerald-500/10 border-emerald-500/30 text-emerald-800 dark:text-emerald-300",
-  },
-  {
-    id: "META_WABA_OFFICIAL",
-    label: "Meta WABA",
-    sublabel: "Resmi Centang Hijau",
-    icon: ShieldCheck,
-    accentColor: "text-blue-700 dark:text-blue-400",
-    activeBg: "bg-blue-500/10 border-blue-500/30 text-blue-800 dark:text-blue-300",
-  },
-  {
-    id: "TELEGRAM_BOT",
-    label: "Telegram Bot",
-    sublabel: "BotFather Token",
-    icon: Bot,
-    accentColor: "text-sky-700 dark:text-sky-400",
-    activeBg: "bg-sky-500/10 border-sky-500/30 text-sky-800 dark:text-sky-300",
-  },
-];
-
 export function TriChannelSelectorTabs({
   activeChannel,
   onSelectChannel,
 }: TriChannelSelectorTabsProps) {
+  const { t } = useI18n();
+
+  const channels: Array<{
+    id: SubscriptionChannel;
+    label: string;
+    sublabel: string;
+    icon: React.ComponentType<{ className?: string }>;
+    accentColor: string;
+    activeBg: string;
+  }> = [
+    {
+      id: "WHATSMEOW_UNOFFICIAL",
+      label: t("subscription.channels.whatsmeow"),
+      sublabel: t("subscription.channels.whatsmeowSubtitle"),
+      icon: Smartphone,
+      accentColor: "text-emerald-700 dark:text-emerald-400",
+      activeBg: "bg-emerald-500/10 border-emerald-500/30 text-emerald-800 dark:text-emerald-300",
+    },
+    {
+      id: "META_WABA_OFFICIAL",
+      label: t("subscription.channels.waba"),
+      sublabel: t("subscription.channels.wabaSubtitle"),
+      icon: ShieldCheck,
+      accentColor: "text-blue-700 dark:text-blue-400",
+      activeBg: "bg-blue-500/10 border-blue-500/30 text-blue-800 dark:text-blue-300",
+    },
+    {
+      id: "TELEGRAM_BOT",
+      label: t("subscription.channels.telegram"),
+      sublabel: t("subscription.channels.telegramSubtitle"),
+      icon: Bot,
+      accentColor: "text-sky-700 dark:text-sky-400",
+      activeBg: "bg-sky-500/10 border-sky-500/30 text-sky-800 dark:text-sky-300",
+    },
+  ];
+
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center gap-2">
         <span className="text-xs font-bold uppercase tracking-wider text-foreground-muted">
-          Pilih Saluran Komunikasi
+          {t("subscription.channels.title")}
         </span>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
-        {CHANNELS.map((ch) => {
+        {channels.map((ch) => {
           const Icon = ch.icon;
           const isActive = activeChannel === ch.id;
 

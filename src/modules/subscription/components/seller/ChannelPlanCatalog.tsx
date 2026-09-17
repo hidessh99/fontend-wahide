@@ -10,6 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { Check, Sparkles, CheckCircle2, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+import { useI18n } from "@/lib/i18n/context";
+
 interface ChannelPlanCatalogProps {
   channelType: SubscriptionChannel;
   plans: SubscriptionPlan[];
@@ -30,14 +32,16 @@ export function ChannelPlanCatalog({
   isCurrentPaidActive = false,
   currentExpiresAt,
 }: ChannelPlanCatalogProps) {
+  const { t } = useI18n();
+
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="text-xs sm:text-sm font-bold text-foreground">
-          Katalog Paket Langganan
+          {t("subscription.catalog.title")}
         </h3>
         <span className="text-[11px] text-foreground-muted">
-          Pilih salah satu paket untuk ditambahkan ke pesanan
+          {t("subscription.catalog.subtitle")}
         </span>
       </div>
 
@@ -72,7 +76,7 @@ export function ChannelPlanCatalog({
                     className="border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-full shadow-2xs gap-1"
                   >
                     <Lock className="size-2.5" />
-                    <span>Downgrade Terkunci</span>
+                    <span>{t("subscription.catalog.downgradeLocked")}</span>
                   </Badge>
                 </div>
               ) : isCurrentActive ? (
@@ -82,14 +86,14 @@ export function ChannelPlanCatalog({
                     className="border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded-full shadow-2xs gap-1"
                   >
                     <CheckCircle2 className="size-2.5" />
-                    <span>Paket Saat Ini</span>
+                    <span>{t("subscription.catalog.currentPlan")}</span>
                   </Badge>
                 </div>
               ) : plan.isPopular ? (
                 <div className="absolute -top-2.5 right-4 z-10">
                   <Badge className="bg-primary text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded-full shadow-2xs gap-1">
                     <Sparkles className="size-2.5" />
-                    <span>Paling Populer</span>
+                    <span>{t("subscription.catalog.popular")}</span>
                   </Badge>
                 </div>
               ) : null}
@@ -100,19 +104,21 @@ export function ChannelPlanCatalog({
                     {plan.name}
                   </h4>
                   <p className="text-[11px] text-foreground-muted mt-0.5 font-medium">
-                    {plan.quotaMonthly.toLocaleString("id-ID")} pesan / bulan
+                    {t("subscription.catalog.messagesPerMonth", {
+                      count: plan.quotaMonthly.toLocaleString(),
+                    })}
                   </p>
                 </div>
 
                 <div className="my-3 flex items-baseline gap-1">
                   <span className="text-xl sm:text-2xl font-black text-foreground tracking-tight">
                     {plan.priceMonthly === 0
-                      ? "Gratis"
+                      ? t("subscription.catalog.free")
                       : `Rp ${plan.priceMonthly.toLocaleString("id-ID")}`}
                   </span>
                   {plan.priceMonthly > 0 && (
                     <span className="text-xs text-foreground-muted font-medium">
-                      / bulan
+                      {t("subscription.catalog.perMonth")}
                     </span>
                   )}
                 </div>
@@ -153,28 +159,31 @@ export function ChannelPlanCatalog({
                   )}
                 >
                   {isSelected
-                    ? "✓ Paket Terpilih"
+                    ? t("subscription.catalog.selectedPlan")
                     : isCurrentActive
-                      ? "Perpanjang Paket Ini (+30 Hari)"
+                      ? t("subscription.catalog.renewPlan")
                       : isDowngrade
-                        ? "Tier Lebih Rendah (Terkunci)"
+                        ? t("subscription.catalog.downgradeLockedBtn")
                         : isUpgrade
-                          ? `Upgrade ke ${plan.name}`
-                          : "Pilih Paket"}
+                          ? t("subscription.catalog.upgradeTo", {
+                              name: plan.name,
+                            })
+                          : t("subscription.catalog.choosePlan")}
                 </Button>
 
                 {isDowngrade && (
                   <p className="text-[10px] text-amber-600 dark:text-amber-400 text-center mt-1.5 font-medium flex items-center justify-center gap-1">
                     <Lock className="size-2.5 shrink-0" />
                     <span>
-                      Berlaku setelah periode aktif berakhir
-                      {currentExpiresAt
-                        ? ` (${new Date(currentExpiresAt).toLocaleDateString("id-ID", {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          })})`
-                        : ""}
+                      {t("subscription.catalog.downgradeNotice", {
+                        date: currentExpiresAt
+                          ? `(${new Date(currentExpiresAt).toLocaleDateString([], {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            })})`
+                          : "",
+                      })}
                     </span>
                   </p>
                 )}

@@ -31,7 +31,7 @@ export function PlanCardGrid({
   userBalance,
   onUpgradePlan,
 }: PlanCardGridProps) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [loadingPlanId, setLoadingPlanId] = useState<string | null>(null);
   const [selectedPlanForUpgrade, setSelectedPlanForUpgrade] =
     useState<SubscriptionPlan | null>(null);
@@ -88,27 +88,23 @@ export function PlanCardGrid({
               </div>
               <div>
                 <span>
-                  Paket <strong>{currentSubscription.planName}</strong> Anda
-                  aktif hingga{" "}
+                  {t("subscription.planCardGrid.activeUntil", {
+                    name: currentSubscription.planName,
+                    date: new Date(currentSubscription.expiresAt).toLocaleDateString(
+                      locale === "id" ? "id-ID" : "en-US",
+                      {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      },
+                    ),
+                  })}
                 </span>
-                <strong className="dark:text-wise-green text-emerald-700">
-                  {new Date(currentSubscription.expiresAt).toLocaleDateString(
-                    "id-ID",
-                    {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    },
-                  )}
-                </strong>
               </div>
             </div>
             <span className="inline-flex items-center gap-1.5 text-foreground-muted text-[11px] font-medium">
               <Info className="size-3.5 text-amber-500 shrink-0" />
-              <span>
-                Anda dapat melakukan upgrade ke paket yang lebih tinggi kapan
-                saja.
-              </span>
+              <span>{t("subscription.planCardGrid.canUpgradeAnytime")}</span>
             </span>
           </div>
         )}
@@ -151,7 +147,7 @@ export function PlanCardGrid({
               {isPopular && (
                 <div className="bg-wise-green text-dark-green absolute -top-3 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 rounded-full px-3 py-0.5 text-[10px] font-black tracking-wider uppercase shadow-sm">
                   <Sparkles className="size-3" />
-                  <span>Paling Populer</span>
+                  <span>{t("subscription.planCardGrid.mostPopular")}</span>
                 </div>
               )}
 
@@ -159,11 +155,11 @@ export function PlanCardGrid({
                 {/* Plan Title & Badge */}
                 <div className="flex items-center justify-between">
                   <h3 className="text-foreground text-lg font-extrabold sm:text-xl">
-                    {plan.name || "Paket Langganan"}
+                    {plan.name || t("subscription.planCardGrid.defaultPlanName")}
                   </h3>
                   {isCurrent && (
                     <span className="bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green border-wise-green/30 rounded-full border px-2.5 py-0.5 text-[10px] font-black tracking-wider uppercase">
-                      Aktif
+                      {t("subscription.planCardGrid.active")}
                     </span>
                   )}
                 </div>
@@ -171,7 +167,7 @@ export function PlanCardGrid({
                 {/* Price */}
                 <div className="flex items-baseline gap-1">
                   <span className="text-foreground text-2xl font-black tracking-tight sm:text-3xl">
-                    Rp {priceMonthly.toLocaleString("id-ID")}
+                    Rp {priceMonthly.toLocaleString(locale === "id" ? "id-ID" : "en-US")}
                   </span>
                   <span className="text-foreground-muted text-xs font-semibold">
                     {t("subscription.perMonth")}
@@ -212,10 +208,10 @@ export function PlanCardGrid({
                       className="border-border bg-muted/20 text-foreground-muted w-full cursor-not-allowed gap-1.5 rounded-full text-xs font-bold"
                     >
                       <Lock className="size-3" />
-                      <span>Tier di Bawah Paket Aktif</span>
+                      <span>{t("subscription.planCardGrid.lowerTier")}</span>
                     </Button>
                     <p className="text-foreground-muted text-center text-[10px] font-medium">
-                      Downgrade dapat dilakukan setelah masa aktif berakhir.
+                      {t("subscription.planCardGrid.downgradeNotice")}
                     </p>
                   </div>
                 ) : (
@@ -236,7 +232,7 @@ export function PlanCardGrid({
                         <span>
                           {plan.priceMonthly === 0
                             ? t("subscription.choosePlan")
-                            : "Upgrade ke Paket Ini"}
+                            : t("subscription.planCardGrid.upgradeToThisPlan")}
                         </span>
                         <ArrowUpRight className="size-3.5" />
                       </>

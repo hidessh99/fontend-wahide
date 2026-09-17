@@ -18,12 +18,14 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
+import { useI18n } from "@/lib/i18n/context";
+
 interface OrderSummarySidebarProps {
   cartItems: OrderCartItem[];
   onRemoveItem: (id: string) => void;
   userBalance?: number | null;
-  onCheckout: (planId: string) => Promise<unknown>;
-  isSubmitting?: boolean;
+  onCheckout: (planId: string) => Promise<void>;
+  isSubmitting: boolean;
 }
 
 export function OrderSummarySidebar({
@@ -33,6 +35,7 @@ export function OrderSummarySidebar({
   onCheckout,
   isSubmitting,
 }: OrderSummarySidebarProps) {
+  const { t } = useI18n();
   const [couponCode, setCouponCode] = useState("");
   const [appliedDiscountPercent, setAppliedDiscountPercent] = useState<number>(0);
   const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
@@ -49,13 +52,13 @@ export function OrderSummarySidebar({
     if (code === "SAVE20" || code === "PROMO20") {
       setAppliedDiscountPercent(20);
       setAppliedCoupon(code);
-      toast.success(`Kupon ${code} berhasil diterapkan! Diskon 20%`);
+      toast.success(t("subscription.toasts.couponApplied"));
     } else if (code === "WAHIDE50") {
       setAppliedDiscountPercent(50);
       setAppliedCoupon(code);
-      toast.success(`Kupon spesial ${code} diterapkan! Diskon 50%`);
+      toast.success(t("subscription.toasts.couponApplied"));
     } else {
-      toast.error("Kode kupon tidak valid atau sudah kedaluwarsa.");
+      toast.error(t("subscription.toasts.couponInvalid"));
     }
   };
 
@@ -63,6 +66,7 @@ export function OrderSummarySidebar({
     setAppliedCoupon(null);
     setAppliedDiscountPercent(0);
     setCouponCode("");
+    toast.info(t("subscription.toasts.couponRemoved"));
   };
 
   const handleOrderClick = async () => {
@@ -91,10 +95,10 @@ export function OrderSummarySidebar({
       {/* Header */}
       <div className="border-b border-border/60 pb-3.5">
         <h3 className="text-base font-bold text-foreground">
-          Ringkasan Pesanan
+          {t("subscription.orderSummary.title")}
         </h3>
         <p className="text-xs text-foreground-muted mt-0.5">
-          Periksa rincian pesanan dan paket langganan Anda
+          {t("subscription.orderSummary.subtitle")}
         </p>
       </div>
 
@@ -102,26 +106,28 @@ export function OrderSummarySidebar({
       <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 text-xs space-y-1">
         <div className="flex items-center gap-1.5 font-bold text-primary">
           <Calendar className="size-3.5" />
-          <span>Periode Tagihan: 1 Bulan (30 Hari)</span>
+          <span>{t("subscription.orderSummary.billingPeriodBadge")}</span>
         </div>
         <p className="text-[11px] text-foreground-muted leading-relaxed">
-          Siklus tagihan bulanan murni. Masa aktif akan otomatis diakumulasikan (+30 hari) jika Anda melakukan perpanjangan.
+          {t("subscription.orderSummary.billingPeriodDesc")}
         </p>
       </div>
 
       {/* Cart Items List */}
       <div className="space-y-2.5">
         <span className="text-xs font-bold text-foreground-secondary uppercase tracking-wider">
-          Paket Terpilih ({cartItems.length})
+          {t("subscription.orderSummary.selectedPlansTitle", {
+            count: cartItems.length,
+          })}
         </span>
 
         {cartItems.length === 0 ? (
           <div className="py-6 text-center px-3 rounded-xl border border-dashed border-border/70 bg-muted/20">
             <p className="text-xs text-foreground-muted">
-              Belum ada paket yang dipilih.
+              {t("subscription.orderSummary.emptyCartTitle")}
             </p>
             <p className="text-[11px] text-foreground-muted mt-0.5">
-              Pilih paket pada tab saluran untuk menambahkannya ke pesanan.
+              {t("subscription.orderSummary.emptyCartDesc")}
             </p>
           </div>
         ) : (
@@ -143,10 +149,10 @@ export function OrderSummarySidebar({
                       </p>
                       <p className="text-[10px] text-foreground-muted truncate">
                         {item.channelType === "WHATSMEOW_UNOFFICIAL"
-                          ? "WhatsApp Web"
+                          ? t("subscription.channels.whatsmeow")
                           : item.channelType === "META_WABA_OFFICIAL"
-                            ? "Meta WABA"
-                            : "Telegram Bot"}
+                            ? t("subscription.channels.waba")
+                            : t("subscription.channels.telegram")}
                       </p>
                     </div>
                   </div>
@@ -154,14 +160,14 @@ export function OrderSummarySidebar({
                   <div className="flex items-center gap-2 shrink-0">
                     <span className="font-mono font-bold text-foreground">
                       {item.priceMonthly === 0
-                        ? "Gratis"
+                        ? t("subscription.catalog.free")
                         : `Rp ${item.priceMonthly.toLocaleString("id-ID")}`}
                     </span>
                     <button
                       type="button"
                       onClick={() => onRemoveItem(item.id)}
                       className="text-foreground-muted hover:text-destructive cursor-pointer transition p-1"
-                      title="Hapus"
+                      title={t("subscription.orderSummary.removeCoupon")}
                     >
                       <Trash2 className="size-3.5" />
                     </button>
@@ -177,14 +183,14 @@ export function OrderSummarySidebar({
       <form onSubmit={handleApplyCoupon} className="space-y-1.5 pt-1">
         <label className="text-xs font-semibold text-foreground-secondary flex items-center gap-1.5">
           <Ticket className="size-3.5" />
-          <span>Punya Kode Kupon?</span>
+          <span>{t("subscription.orderSummary.couponPrompt")}</span>
         </label>
         <div className="flex gap-1.5">
           <Input
             type="text"
             value={couponCode}
             onChange={(e) => setCouponCode(e.target.value)}
-            placeholder="Contoh: SAVE20"
+            placeholder={t("subscription.orderSummary.couponPlaceholder")}
             disabled={Boolean(appliedCoupon)}
             className="h-8 text-xs rounded-xl uppercase font-mono tracking-wider"
           />
@@ -196,7 +202,7 @@ export function OrderSummarySidebar({
               onClick={handleRemoveCoupon}
               className="h-8 text-[11px] rounded-xl text-destructive hover:bg-destructive/10 cursor-pointer"
             >
-              Hapus
+              {t("subscription.orderSummary.removeCoupon")}
             </Button>
           ) : (
             <Button
@@ -206,14 +212,18 @@ export function OrderSummarySidebar({
               disabled={!couponCode.trim()}
               className="h-8 text-[11px] rounded-xl px-3 cursor-pointer"
             >
-              Terapkan
+              {t("subscription.orderSummary.applyCoupon")}
             </Button>
           )}
         </div>
         {appliedCoupon && (
           <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1 mt-1">
             <CheckCircle2 className="size-3" />
-            <span>Diskon {appliedDiscountPercent}% aktif ({appliedCoupon})</span>
+            <span>
+              {t("subscription.orderSummary.couponDiscountBadge", {
+                code: appliedCoupon,
+              })}
+            </span>
           </p>
         )}
       </form>
@@ -221,7 +231,7 @@ export function OrderSummarySidebar({
       {/* Calculations Breakdown */}
       <div className="border-t border-border/60 pt-3.5 space-y-2 text-xs">
         <div className="flex justify-between text-foreground-secondary">
-          <span>Subtotal (1 Bulan)</span>
+          <span>{t("subscription.orderSummary.subtotal")}</span>
           <span className="font-mono font-medium">
             Rp {subtotal.toLocaleString("id-ID")}
           </span>
@@ -229,7 +239,7 @@ export function OrderSummarySidebar({
 
         {discountAmount > 0 && (
           <div className="flex justify-between text-emerald-600 dark:text-emerald-400 font-medium">
-            <span>Diskon Kupon ({appliedDiscountPercent}%)</span>
+            <span>{t("subscription.orderSummary.discount")}</span>
             <span className="font-mono">
               -Rp {discountAmount.toLocaleString("id-ID")}
             </span>
@@ -237,7 +247,7 @@ export function OrderSummarySidebar({
         )}
 
         <div className="flex justify-between text-sm font-bold text-foreground border-t border-border/60 pt-2">
-          <span>Total Pembayaran</span>
+          <span>{t("subscription.orderSummary.totalPayment")}</span>
           <span className="font-mono text-base font-black text-primary">
             Rp {total.toLocaleString("id-ID")}
           </span>
@@ -256,7 +266,9 @@ export function OrderSummarySidebar({
         >
           <div className="flex items-center gap-1.5">
             <Wallet className="size-3.5" />
-            <span className="text-[11px]">Saldo Akun Anda:</span>
+            <span className="text-[11px]">
+              {t("subscription.orderSummary.walletBalance")}
+            </span>
           </div>
           <span className="font-mono font-bold">
             Rp {balance.toLocaleString("id-ID")}
@@ -276,12 +288,15 @@ export function OrderSummarySidebar({
         <Lock className="size-3.5" />
         <span>
           {isSubmitting
-            ? "Memproses Pesanan..."
+            ? t("subscription.orderSummary.processing")
             : cartItems.length === 0
-              ? "Pilih Paket Terlebih Dahulu"
-              : total === 0
-                ? "Aktivasi Paket Gratis"
-                : "Order & Bayar Sekarang"}
+              ? t("subscription.orderSummary.selectPlanFirst")
+              : t("subscription.orderSummary.payAndActivate", {
+                  amount:
+                    total === 0
+                      ? t("subscription.catalog.free")
+                      : `Rp ${total.toLocaleString("id-ID")}`,
+                })}
         </span>
       </Button>
     </div>

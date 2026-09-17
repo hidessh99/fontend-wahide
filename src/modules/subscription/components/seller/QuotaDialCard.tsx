@@ -18,7 +18,7 @@ interface QuotaDialCardProps {
 }
 
 export function QuotaDialCard({ subscription }: QuotaDialCardProps) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
 
   if (!subscription) {
     return <Skeleton className="h-64 w-full rounded-md" />;
@@ -40,11 +40,14 @@ export function QuotaDialCard({ subscription }: QuotaDialCardProps) {
     circumference - (percentRemaining / 100) * circumference;
 
   const expiresDateStr = subscription.expiresAt
-    ? new Date(subscription.expiresAt).toLocaleDateString([], {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      })
+    ? new Date(subscription.expiresAt).toLocaleDateString(
+        locale === "id" ? "id-ID" : "en-US",
+        {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        },
+      )
     : "-";
 
   const isFreeForever =
@@ -60,7 +63,11 @@ export function QuotaDialCard({ subscription }: QuotaDialCardProps) {
         <div>
           <div className="bg-light-mint dark:bg-wise-green/15 text-dark-green dark:text-wise-green border-wise-green/30 mb-1 inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold">
             <Zap className="size-3.5" />
-            <span>Paket Aktif: {subscription.planName || "Free"}</span>
+            <span>
+              {t("subscription.quotaDial.activePlan", {
+                plan: subscription.planName || "Free",
+              })}
+            </span>
           </div>
           <h2 className="text-foreground text-xl font-black tracking-tight sm:text-2xl">
             {t("subscription.quotaRemaining")}
@@ -72,11 +79,12 @@ export function QuotaDialCard({ subscription }: QuotaDialCardProps) {
             <div className="dark:text-wise-green flex items-center gap-1.5 text-emerald-700">
               <ShieldCheck className="size-4 shrink-0" />
               <span>
-                Masa Aktif: <strong>Selamanya (Free Forever)</strong>
+                {t("subscription.quotaDial.validityPeriod")}{" "}
+                <strong>{t("subscription.quotaDial.lifetime")}</strong>
               </span>
             </div>
             <span className="text-foreground-muted text-[11px] font-medium">
-              Kuota direset otomatis setiap tanggal 1
+              {t("subscription.quotaDial.resetMonthlyNote")}
             </span>
           </div>
         ) : (
@@ -126,18 +134,19 @@ export function QuotaDialCard({ subscription }: QuotaDialCardProps) {
                 {percentRemaining}%
               </span>
               <span className="text-foreground-muted text-[10px] font-bold tracking-wider uppercase">
-                Sisa Kuota
+                {t("subscription.quotaDial.remainingQuota")}
               </span>
             </div>
           </div>
 
           <div className="mt-3 space-y-0.5 text-center">
             <span className="text-foreground text-sm font-black">
-              {quotaRemaining.toLocaleString("id-ID")} Pesan
+              {quotaRemaining.toLocaleString(locale === "id" ? "id-ID" : "en-US")}{" "}
+              {t("subscription.quotaDial.messages")}
             </span>
             <p className="text-foreground-muted text-[11px] font-semibold">
               {t("subscription.quotaDesc", {
-                total: quotaTotal.toLocaleString("id-ID"),
+                total: quotaTotal.toLocaleString(locale === "id" ? "id-ID" : "en-US"),
               })}
             </p>
           </div>
@@ -155,7 +164,7 @@ export function QuotaDialCard({ subscription }: QuotaDialCardProps) {
                 </span>
               </div>
               <span className="text-foreground text-xs font-black">
-                {deviceSlotsUsed} / {deviceSlotsMax} Slot
+                {deviceSlotsUsed} / {deviceSlotsMax} {t("subscription.quotaDial.slot")}
               </span>
             </div>
             {/* Progress Bar */}
@@ -196,12 +205,12 @@ export function QuotaDialCard({ subscription }: QuotaDialCardProps) {
             {subscription.hasWatermark ? (
               <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/20 bg-amber-500/10 px-2.5 py-1 text-[11px] font-bold text-amber-800 dark:text-amber-400">
                 <AlertCircle className="size-3" />
-                <span>Aktif</span>
+                <span>{t("subscription.quotaDial.active")}</span>
               </span>
             ) : (
               <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-bold text-emerald-800 dark:text-emerald-400">
                 <CheckCircle2 className="size-3" />
-                <span>White-Label</span>
+                <span>{t("subscription.quotaDial.whiteLabel")}</span>
               </span>
             )}
           </div>

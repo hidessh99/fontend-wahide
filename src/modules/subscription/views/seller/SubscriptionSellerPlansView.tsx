@@ -51,9 +51,7 @@ export function SubscriptionSellerPlansView() {
       subscription?.planId !== plan.id &&
       currentPlanPrice > plan.priceMonthly
     ) {
-      toast.warning(
-        "Tidak dapat memilih paket lebih rendah (downgrade) saat langganan aktif. Paket ini dapat dipilih setelah periode berjalan berakhir.",
-      );
+      toast.warning(t("subscription.toasts.downgradeForbidden"));
       return;
     }
 
@@ -73,7 +71,7 @@ export function SubscriptionSellerPlansView() {
     });
 
     toast.success(
-      `Paket ${plan.name} ditambahkan ke ringkasan pesanan (1 Bulan).`,
+      t("subscription.toasts.planAddedToCart", { name: plan.name }),
     );
   };
 
@@ -91,7 +89,7 @@ export function SubscriptionSellerPlansView() {
     const foundPlan = allPlans.find((p) => p.id === planId);
 
     if (!foundPlan) {
-      toast.error("Paket tidak ditemukan");
+      toast.error(t("subscription.toasts.planNotFound"));
       return;
     }
 
@@ -143,7 +141,7 @@ export function SubscriptionSellerPlansView() {
             </h1>
           </div>
           <p className="text-foreground-secondary max-w-2xl text-xs font-semibold sm:text-sm">
-            Kelola paket langganan saluran komunikasi WhatsApp Web, Meta WABA, dan Telegram Bot sesuai kebutuhan bisnis Anda.
+            {t("subscription.subtitle")}
           </p>
         </div>
       </div>

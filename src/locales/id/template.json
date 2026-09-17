@@ -96,5 +96,52 @@
     "previewTypeMessage": "Ketik pesan",
     "saveChanges": "Simpan Perubahan",
     "createSubmit": "Buat Template"
+  },
+  "channels": {
+    "all": "Semua Saluran",
+    "allShort": "Semua (Omni)",
+    "whatsapp": "WhatsApp Web",
+    "whatsappShort": "WA Web",
+    "telegram": "Telegram Bot",
+    "waba": "Meta WABA",
+    "targetChannelLabel": "Target Saluran Komunikasi"
+  },
+  "telegram": {
+    "settingsTitle": "Pengaturan Khusus Telegram Bot",
+    "settingsDesc": "Format parsing mode dan tombol inline interaktif Telegram.",
+    "parseMode": "Parsing Mode:",
+    "disableWebPreviewTitle": "Matikan Preview Tautan (Web Page Preview)",
+    "disableWebPreviewDesc": "Mencegah Telegram merender thumbnail link URL di bawah pesan.",
+    "builderTitle": "Tombol Interaktif Inline (Telegram Keyboard)",
+    "builderDesc": "Susun baris dan kolom tombol yang menempel di bawah chat bot.",
+    "addRow": "Tambah Baris",
+    "emptyRows": "Belum ada tombol inline. Klik \"Tambah Baris\" untuk membuat tombol.",
+    "rowHeader": "Baris {row} ({count} Tombol)",
+    "addButton": "Tambah Tombol",
+    "deleteRow": "Hapus baris ini",
+    "btnLabel": "Tombol #{num}",
+    "deleteBtn": "Hapus tombol ini",
+    "btnTextPlaceholder": "Label Tombol...",
+    "btnTypeUrl": "Buka URL Web (https://)",
+    "btnTypeCallback": "Callback Data (Trigger Bot)",
+    "btnUrlPlaceholder": "https://websiteanda.com",
+    "btnCallbackPlaceholder": "ACTION_CONFIRM_123",
+    "rowLimitNotice": "Maksimal 8 baris tombol inline per pesan.",
+    "colLimitNotice": "Maksimal 3 tombol per baris untuk kenyamanan tampilan di HP.",
+    "preview": {
+      "botSubtitle": "bot resmi platform",
+      "today": "Hari ini",
+      "pdfDoc": "Dokumen PDF",
+      "emptyMessage": "(Pesan kosong)",
+      "defaultButton": "Tombol",
+      "defaultDocName": "dokumen_lampiran.pdf"
+    }
+  },
+  "mediaUrlLabel": "URL Berkas Media (HTTPS URL langsung ke gambar/PDF):",
+  "mediaUrlPlaceholder": "https://domain.com/assets/banner-promo.jpg",
+  "charCount": "{count} karakter",
+  "actions": {
+    "createNew": "Tambah Template Baru",
+    "refresh": "Segarkan"
   }
 }

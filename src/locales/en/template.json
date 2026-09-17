@@ -96,5 +96,52 @@
     "previewTypeMessage": "Type a message",
     "saveChanges": "Save Changes",
     "createSubmit": "Create Template"
+  },
+  "channels": {
+    "all": "All Channels",
+    "allShort": "All (Omni)",
+    "whatsapp": "WhatsApp Web",
+    "whatsappShort": "WA Web",
+    "telegram": "Telegram Bot",
+    "waba": "Meta WABA",
+    "targetChannelLabel": "Target Communication Channel"
+  },
+  "telegram": {
+    "settingsTitle": "Telegram Bot Specific Settings",
+    "settingsDesc": "Parsing format mode and Telegram interactive inline buttons.",
+    "parseMode": "Parsing Mode:",
+    "disableWebPreviewTitle": "Disable Web Page Preview",
+    "disableWebPreviewDesc": "Prevents Telegram from rendering link URL previews below messages.",
+    "builderTitle": "Interactive Inline Buttons (Telegram Keyboard)",
+    "builderDesc": "Arrange button rows and columns attached beneath the bot chat bubble.",
+    "addRow": "Add Row",
+    "emptyRows": "No inline buttons yet. Click \"Add Row\" to create buttons.",
+    "rowHeader": "Row {row} ({count} Buttons)",
+    "addButton": "Add Button",
+    "deleteRow": "Delete this row",
+    "btnLabel": "Button #{num}",
+    "deleteBtn": "Delete this button",
+    "btnTextPlaceholder": "Button Label...",
+    "btnTypeUrl": "Open Web URL (https://)",
+    "btnTypeCallback": "Callback Data (Bot Trigger)",
+    "btnUrlPlaceholder": "https://yourwebsite.com",
+    "btnCallbackPlaceholder": "ACTION_CONFIRM_123",
+    "rowLimitNotice": "Maximum 8 inline button rows per message.",
+    "colLimitNotice": "Maximum 3 buttons per row for optimal mobile display.",
+    "preview": {
+      "botSubtitle": "official platform bot",
+      "today": "Today",
+      "pdfDoc": "PDF Document",
+      "emptyMessage": "(Empty message)",
+      "defaultButton": "Button",
+      "defaultDocName": "attached_document.pdf"
+    }
+  },
+  "mediaUrlLabel": "Media Attachment URL (Direct HTTPS link to image/PDF):",
+  "mediaUrlPlaceholder": "https://domain.com/assets/banner-promo.jpg",
+  "charCount": "{count} characters",
+  "actions": {
+    "createNew": "Add New Template",
+    "refresh": "Refresh"
   }
 }

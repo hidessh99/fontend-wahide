@@ -4,6 +4,7 @@ import React from "react";
 import { Plus, Trash2, Link as LinkIcon, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useI18n } from "@/lib/i18n/context";
 import {
   TelegramInlineButton,
   TelegramInlineRow,
@@ -20,6 +21,7 @@ export function TelegramInlineKeyboardBuilder({
   onChange,
   disabled = false,
 }: TelegramInlineKeyboardBuilderProps) {
+  const { t } = useI18n();
   const rows = value || [];
 
   const handleAddRow = () => {
@@ -63,12 +65,12 @@ export function TelegramInlineKeyboardBuilder({
   ) => {
     const targetRow = rows[rowIndex];
     if (!targetRow || !targetRow[btnIndex]) return;
-    const updatedRows = [...rows];
     const updatedRow = [...targetRow];
     updatedRow[btnIndex] = {
       ...updatedRow[btnIndex],
       [field]: val,
     };
+    const updatedRows = [...rows];
     updatedRows[rowIndex] = updatedRow;
     onChange(updatedRows);
   };
@@ -78,10 +80,10 @@ export function TelegramInlineKeyboardBuilder({
       <div className="flex items-center justify-between">
         <div>
           <h4 className="text-foreground text-xs font-bold sm:text-sm">
-            Telegram Inline Keyboard Markup
+            {t("template.telegram.builderTitle")}
           </h4>
           <p className="text-foreground-secondary text-[11px]">
-            Tombol aksi interaktif di bawah balon pesan (Link URL / Callback Data).
+            {t("template.telegram.builderDesc")}
           </p>
         </div>
         <Button
@@ -93,14 +95,14 @@ export function TelegramInlineKeyboardBuilder({
           className="border-sky-500/30 text-sky-600 hover:bg-sky-500/10 hover:text-sky-700 h-7 px-2.5 text-xs font-bold dark:text-sky-400"
         >
           <Plus className="mr-1 size-3" />
-          <span>Tambah Baris</span>
+          <span>{t("template.telegram.addRow")}</span>
         </Button>
       </div>
 
       {rows.length === 0 ? (
         <div className="border-border rounded-lg border border-dashed p-4 text-center">
           <p className="text-foreground-muted text-xs">
-            Belum ada tombol inline. Klik &ldquo;Tambah Baris&rdquo; untuk membuat tombol.
+            {t("template.telegram.emptyRows")}
           </p>
         </div>
       ) : (
@@ -112,7 +114,10 @@ export function TelegramInlineKeyboardBuilder({
             >
               <div className="mb-2 flex items-center justify-between">
                 <span className="text-foreground-secondary text-[10px] font-bold uppercase tracking-wider">
-                  Baris {rIndex + 1} ({row.length} Tombol)
+                  {t("template.telegram.rowHeader", {
+                    row: rIndex + 1,
+                    count: row.length,
+                  })}
                 </span>
                 <div className="flex items-center gap-1.5">
                   <Button
@@ -124,7 +129,7 @@ export function TelegramInlineKeyboardBuilder({
                     className="h-6 px-2 text-[11px] font-semibold text-sky-600 hover:text-sky-700 dark:text-sky-400"
                   >
                     <Plus className="mr-1 size-3" />
-                    Tambah Tombol
+                    <span>{t("template.telegram.addButton")}</span>
                   </Button>
                   <Button
                     type="button"
@@ -133,7 +138,7 @@ export function TelegramInlineKeyboardBuilder({
                     onClick={() => handleRemoveRow(rIndex)}
                     disabled={disabled}
                     className="hover:bg-rose-500/10 hover:text-rose-600 h-6 w-6 p-0 text-muted-foreground"
-                    title="Hapus baris ini"
+                    title={t("template.telegram.deleteRow")}
                   >
                     <Trash2 className="size-3" />
                   </Button>
@@ -152,13 +157,13 @@ export function TelegramInlineKeyboardBuilder({
                     >
                       <div className="flex items-center justify-between">
                         <span className="text-foreground-secondary font-semibold">
-                          Tombol #{bIndex + 1}
+                          {t("template.telegram.btnLabel", { num: bIndex + 1 })}
                         </span>
                         <button
                           type="button"
                           onClick={() => handleRemoveButton(rIndex, bIndex)}
                           className="hover:text-rose-500 text-muted-foreground transition"
-                          title="Hapus tombol ini"
+                          title={t("template.telegram.deleteBtn")}
                         >
                           <Trash2 className="size-3" />
                         </button>
@@ -167,7 +172,7 @@ export function TelegramInlineKeyboardBuilder({
                       {/* Button Label */}
                       <div>
                         <Input
-                          placeholder="Label Tombol..."
+                          placeholder={t("template.telegram.btnTextPlaceholder")}
                           value={btn.text}
                           onChange={(e) =>
                             handleUpdateButton(
@@ -207,7 +212,7 @@ export function TelegramInlineKeyboardBuilder({
                           }`}
                         >
                           <LinkIcon className="mr-0.5 inline size-2.5" />
-                          Link URL
+                          {t("template.telegram.btnTypeUrl")}
                         </button>
                         <button
                           type="button"
@@ -227,7 +232,7 @@ export function TelegramInlineKeyboardBuilder({
                           }`}
                         >
                           <Activity className="mr-0.5 inline size-2.5" />
-                          Callback Data
+                          {t("template.telegram.btnTypeCallback")}
                         </button>
                       </div>
 

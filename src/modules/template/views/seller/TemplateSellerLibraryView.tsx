@@ -154,10 +154,10 @@ export function TemplateSellerLibraryView({
             onClick={() => reload()}
             disabled={isLoading}
             className="hidden sm:inline-flex h-9 gap-1.5 rounded-full border-border/70 text-xs cursor-pointer"
-            title="Refresh Data"
+            title={t("template.actions.refresh")}
           >
             <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin" : ""}`} />
-            <span>Refresh</span>
+            <span>{t("template.actions.refresh")}</span>
           </Button>
 
           {/* Primary Action Button */}
@@ -178,10 +178,10 @@ export function TemplateSellerLibraryView({
       {!lockChannel && (
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-border/70 scrollbar-none">
           {[
-            { id: "ALL", label: "Semua Saluran", icon: Globe },
-            { id: "WHATSMEOW_UNOFFICIAL", label: "WhatsApp Web", icon: Smartphone },
-            { id: "TELEGRAM_BOT", label: "Telegram Bot", icon: Bot },
-            { id: "META_WABA_OFFICIAL", label: "Meta WABA", icon: ShieldCheck },
+            { id: "ALL", label: t("template.channels.all"), icon: Globe },
+            { id: "WHATSMEOW_UNOFFICIAL", label: t("template.channels.whatsapp"), icon: Smartphone },
+            { id: "TELEGRAM_BOT", label: t("template.channels.telegram"), icon: Bot },
+            { id: "META_WABA_OFFICIAL", label: t("template.channels.waba"), icon: ShieldCheck },
           ].map((ch) => {
             const Icon = ch.icon;
             const isActive = channelType === ch.id;
