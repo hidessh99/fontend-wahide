@@ -3,6 +3,7 @@
 import React from "react";
 import { useTelegramLogs } from "../../hooks/useTelegramLogs";
 import { TelegramLogsTable } from "../../components/seller/TelegramLogsTable";
+import { TelegramLogStatsCards } from "../../components/seller/TelegramLogStatsCards";
 import { Button } from "@/components/ui/button";
 import { ScrollText, RefreshCw } from "lucide-react";
 
@@ -10,9 +11,11 @@ export function TelegramLogsView() {
   const {
     logs,
     total,
+    failedTotal,
     page,
     setPage,
     pageSize,
+    setPageSize,
     searchQuery,
     setSearchQuery,
     directionFilter,
@@ -21,7 +24,12 @@ export function TelegramLogsView() {
     setStatusFilter,
     isLoading,
     reload,
-  } = useTelegramLogs(1, 20);
+  } = useTelegramLogs(1, 10);
+
+  const handlePageSizeChange = (newSize: number) => {
+    setPageSize(newSize);
+    setPage(1);
+  };
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6 lg:p-8">
@@ -46,28 +54,38 @@ export function TelegramLogsView() {
           size="sm"
           onClick={() => reload()}
           disabled={isLoading}
-          className="text-xs font-semibold"
+          className="text-xs font-semibold cursor-pointer"
         >
           <RefreshCw className={`mr-1.5 size-3.5 ${isLoading ? "animate-spin" : ""}`} />
           <span>Muat Ulang</span>
         </Button>
       </div>
 
-      {/* Logs Table Component */}
-      <TelegramLogsTable
-        logs={logs}
+      {/* 4 Stats Cards */}
+      <TelegramLogStatsCards
         total={total}
-        page={page}
-        pageSize={pageSize}
+        failedCount={failedTotal}
         isLoading={isLoading}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        directionFilter={directionFilter}
-        onDirectionFilterChange={setDirectionFilter}
-        statusFilter={statusFilter}
-        onStatusFilterChange={setStatusFilter}
-        onPageChange={setPage}
       />
+
+      {/* Logs Table Component */}
+      <div className="pt-2">
+        <TelegramLogsTable
+          logs={logs}
+          total={total}
+          page={page}
+          pageSize={pageSize}
+          isLoading={isLoading}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          directionFilter={directionFilter}
+          onDirectionFilterChange={setDirectionFilter}
+          statusFilter={statusFilter}
+          onStatusFilterChange={setStatusFilter}
+          onPageChange={setPage}
+          onPageSizeChange={handlePageSizeChange}
+        />
+      </div>
     </div>
   );
 }

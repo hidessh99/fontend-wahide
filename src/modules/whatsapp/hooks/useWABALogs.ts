@@ -1,34 +1,25 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { telegramApi } from "../api/telegram.api";
-import {
-  TelegramMessage,
-  TelegramMessageDirection,
-  TelegramMessageStatus,
-} from "../types/telegram.types";
+import { MessageLogResponse } from "@/modules/campaign/types/campaign.types";
+import { campaignApi } from "@/modules/campaign/api/campaign.api";
 
-export function useTelegramLogs(initialPage = 1, initialPageSize = 10) {
-  const [logs, setLogs] = useState<TelegramMessage[]>([]);
+export function useWABALogs(initialPage = 1, initialPageSize = 10) {
+  const [logs, setLogs] = useState<MessageLogResponse[]>([]);
   const [total, setTotal] = useState(0);
   const [failedTotal, setFailedTotal] = useState(0);
   const [page, setPage] = useState(initialPage);
   const [pageSize, setPageSize] = useState(initialPageSize);
   const [searchQuery, setSearchQuery] = useState("");
-  const [botIdFilter, setBotIdFilter] = useState<string | undefined>(undefined);
-  const [directionFilter, setDirectionFilter] = useState<
-    "ALL" | TelegramMessageDirection
-  >("ALL");
-  const [statusFilter, setStatusFilter] = useState<
-    "ALL" | TelegramMessageStatus
-  >("ALL");
+  const [statusFilter, setStatusFilter] = useState("ALL");
+  const [categoryFilter, setCategoryFilter] = useState("ALL");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Reset page to 1 on filter or pagination size changes
+  // Reset page to 1 when search, filter, or pageSize changes
   useEffect(() => {
     setPage(1);
-  }, [searchQuery, botIdFilter, directionFilter, statusFilter, pageSize]);
+  }, [searchQuery, statusFilter, categoryFilter, pageSize]);
 
   const fetchLogs = useCallback(
     async (
@@ -36,9 +27,8 @@ export function useTelegramLogs(initialPage = 1, initialPageSize = 10) {
         page?: number;
         pageSize?: number;
         search?: string;
-        direction?: "ALL" | TelegramMessageDirection;
-        status?: "ALL" | TelegramMessageStatus;
-        botId?: string;
+        status?: string;
+        category?: string;
       },
       signal?: AbortSignal,
     ) => {
@@ -47,50 +37,56 @@ export function useTelegramLogs(initialPage = 1, initialPageSize = 10) {
       try {
         const targetPage = overrideParams?.page ?? page;
         const targetPageSize = overrideParams?.pageSize ?? pageSize;
-        const targetSearch =
-          overrideParams?.search !== undefined
-            ? overrideParams.search
-            : searchQuery;
-        const targetDirection =
-          overrideParams?.direction !== undefined
-            ? overrideParams.direction
-            : directionFilter;
         const targetStatus =
           overrideParams?.status !== undefined
             ? overrideParams.status
             : statusFilter;
-        const targetBotId =
-          overrideParams?.botId !== undefined
-            ? overrideParams.botId
-            : botIdFilter;
+        const targetSearch =
+          overrideParams?.search !== undefined
+            ? overrideParams.search
+            : searchQuery;
+        const targetCategory =
+          overrideParams?.category !== undefined
+            ? overrideParams.category
+            : categoryFilter;
 
         const [res, failedProbe] = await Promise.all([
-          telegramApi.getMessageLogs(
+          campaignApi.getMessageLogs(
             {
               page: targetPage,
-              page_size: targetPageSize,
+              pageSize: targetPageSize,
               search: targetSearch,
-              bot_id: targetBotId,
-              direction: targetDirection,
               status: targetStatus,
+              channelType: "META_WABA_OFFICIAL",
+              signal,
             },
+            targetPageSize,
             signal,
           ),
           targetStatus === "ALL" && !targetSearch
-            ? telegramApi
+            ? campaignApi
                 .getMessageLogs(
                   {
                     status: "FAILED",
-                    page_size: 1,
-                    bot_id: targetBotId,
+                    pageSize: 1,
+                    channelType: "META_WABA_OFFICIAL",
+                    signal,
                   },
+                  1,
                   signal,
                 )
                 .catch(() => null)
             : Promise.resolve(null),
         ]);
 
-        setLogs(res.logs);
+        let items = res.logs;
+        if (targetCategory !== "ALL") {
+          items = items.filter(
+            (l) => l.waba_info?.conversation_category === targetCategory,
+          );
+        }
+
+        setLogs(items);
         setTotal(res.total);
         if (targetStatus === "FAILED") {
           setFailedTotal(res.total);
@@ -100,15 +96,13 @@ export function useTelegramLogs(initialPage = 1, initialPageSize = 10) {
       } catch (err: unknown) {
         if (err instanceof Error && err.name === "AbortError") return;
         const msg =
-          err instanceof Error
-            ? err.message
-            : "Gagal memuat log pesan Telegram";
+          err instanceof Error ? err.message : "Gagal memuat log pesan Meta WABA";
         setError(msg);
       } finally {
         setIsLoading(false);
       }
     },
-    [page, pageSize, searchQuery, botIdFilter, directionFilter, statusFilter],
+    [page, pageSize, searchQuery, statusFilter, categoryFilter],
   );
 
   useEffect(() => {
@@ -127,12 +121,10 @@ export function useTelegramLogs(initialPage = 1, initialPageSize = 10) {
     setPageSize,
     searchQuery,
     setSearchQuery,
-    botIdFilter,
-    setBotIdFilter,
-    directionFilter,
-    setDirectionFilter,
     statusFilter,
     setStatusFilter,
+    categoryFilter,
+    setCategoryFilter,
     isLoading,
     error,
     reload: fetchLogs,

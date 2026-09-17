@@ -3,27 +3,23 @@
 import React, { useState } from "react";
 import {
   Download,
-  ArrowUpRight,
-  ArrowDownLeft,
+  Check,
   CheckCircle2,
-  AlertCircle,
   Clock,
-  Loader2,
+  XCircle,
   FileText,
-  MessageSquare,
+  Loader2,
+  ScrollText,
+  Eye,
 } from "lucide-react";
+import { MessageLogResponse } from "@/modules/campaign/types/campaign.types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SearchInput } from "@/components/ui/search-input";
 import { NativeSelect } from "@/components/ui/native-select";
 import { DataTablePagination } from "@/components/ui/pagination";
 import { EmptyState } from "@/components/ui/empty";
-import {
-  TelegramMessage,
-  TelegramMessageDirection,
-  TelegramMessageStatus,
-} from "../../types/telegram.types";
-import { TelegramMessageDetailDialog } from "./TelegramMessageDetailDialog";
+import { WABAMessageDetailDialog } from "./WABAMessageDetailDialog";
 
 const idDateFormatter = new Intl.DateTimeFormat("id-ID", {
   day: "2-digit",
@@ -39,23 +35,23 @@ const formatLogTime = (dateStr?: string) => {
   return isNaN(d.getTime()) ? "-" : idDateFormatter.format(d);
 };
 
-interface TelegramLogsTableProps {
-  logs: TelegramMessage[];
+interface WABALogsTableProps {
+  logs: MessageLogResponse[];
   total: number;
   page: number;
   pageSize: number;
   isLoading: boolean;
   searchQuery: string;
   onSearchChange: (q: string) => void;
-  directionFilter: "ALL" | TelegramMessageDirection;
-  onDirectionFilterChange: (dir: "ALL" | TelegramMessageDirection) => void;
-  statusFilter: "ALL" | TelegramMessageStatus;
-  onStatusFilterChange: (status: "ALL" | TelegramMessageStatus) => void;
+  categoryFilter: string;
+  onCategoryFilterChange: (cat: string) => void;
+  statusFilter: string;
+  onStatusFilterChange: (status: string) => void;
   onPageChange: (p: number) => void;
   onPageSizeChange?: (newSize: number) => void;
 }
 
-export function TelegramLogsTable({
+export function WABALogsTable({
   logs,
   total,
   page,
@@ -63,17 +59,18 @@ export function TelegramLogsTable({
   isLoading,
   searchQuery,
   onSearchChange,
-  directionFilter,
-  onDirectionFilterChange,
+  categoryFilter,
+  onCategoryFilterChange,
   statusFilter,
   onStatusFilterChange,
   onPageChange,
   onPageSizeChange,
-}: TelegramLogsTableProps) {
+}: WABALogsTableProps) {
   const [draftSearch, setDraftSearch] = useState(searchQuery ?? "");
-  const [selectedLog, setSelectedLog] = useState<TelegramMessage | null>(null);
+  const [selectedLog, setSelectedLog] = useState<MessageLogResponse | null>(
+    null,
+  );
 
-  // Synchronize draftSearch if external searchQuery changes
   React.useEffect(() => {
     if (searchQuery !== undefined) {
       setDraftSearch(searchQuery);
@@ -98,29 +95,21 @@ export function TelegramLogsTable({
 
     const headers = [
       "ID",
-      "Direction",
-      "Chat ID",
-      "Bot ID",
-      "Type",
+      "Recipient",
+      "WAMID",
+      "Category",
       "Message",
-      "Media URL",
       "Status",
-      "Error Reason",
-      "Sent At",
       "Created At",
     ];
 
     const rows = logs.map((l) => [
       escapeCell(l.id),
-      escapeCell(l.direction),
-      escapeCell(l.chat_id),
-      escapeCell(l.bot_id),
-      escapeCell(l.message_type),
-      escapeCell(l.text || ""),
-      escapeCell(l.media_url || ""),
+      escapeCell(l.recipient_jid),
+      escapeCell(l.waba_info?.meta_message_id || ""),
+      escapeCell(l.waba_info?.conversation_category || ""),
+      escapeCell(l.message_body),
       escapeCell(l.status),
-      escapeCell(l.error_reason || ""),
-      escapeCell(l.sent_at || ""),
       escapeCell(l.created_at),
     ]);
 
@@ -132,12 +121,11 @@ export function TelegramLogsTable({
     const objectUrl = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = objectUrl;
-    link.download = `telegram-messages-page-${page}-${Date.now()}.csv`;
+    link.download = `waba-messages-page-${page}-${Date.now()}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
 
-    // Free memory immediately
     setTimeout(() => {
       URL.revokeObjectURL(objectUrl);
     }, 1000);
@@ -146,26 +134,39 @@ export function TelegramLogsTable({
   const renderStatusBadge = (status?: string) => {
     const s = status?.toUpperCase();
     switch (s) {
+      case "READ":
+        return (
+          <Badge variant="info" className="gap-1">
+            <Eye className="size-3" />
+            <span>READ</span>
+          </Badge>
+        );
       case "DELIVERED":
-      case "SENT":
         return (
           <Badge variant="success" className="gap-1">
             <CheckCircle2 className="size-3" />
-            <span>TERKIRIM</span>
+            <span>DELIVERED</span>
+          </Badge>
+        );
+      case "SENT":
+        return (
+          <Badge variant="neutral" className="gap-1">
+            <Check className="size-3" />
+            <span>SENT</span>
           </Badge>
         );
       case "FAILED":
         return (
           <Badge variant="danger" className="gap-1">
-            <AlertCircle className="size-3" />
-            <span>GAGAL</span>
+            <XCircle className="size-3" />
+            <span>FAILED</span>
           </Badge>
         );
       default:
         return (
           <Badge variant="warning" className="gap-1">
             <Clock className="size-3" />
-            <span>{s || "ANTEAN"}</span>
+            <span>{s || "PENDING"}</span>
           </Badge>
         );
     }
@@ -181,44 +182,39 @@ export function TelegramLogsTable({
             onChange={setDraftSearch}
             onSearch={handleSearchSubmit}
             onClear={handleSearchClear}
-            placeholder="Cari Chat ID, isi pesan..."
+            placeholder="Cari nomor telepon atau WAMID..."
             buttonText="Cari"
             hideSubmitButton={false}
           />
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          {/* Direction Filter */}
+          {/* Category Filter */}
           <NativeSelect
-            value={directionFilter}
-            onChange={(e) =>
-              onDirectionFilterChange(
-                e.target.value as "ALL" | TelegramMessageDirection,
-              )
-            }
+            value={categoryFilter}
+            onChange={(e) => onCategoryFilterChange(e.target.value)}
             variant="pill"
             wrapperClassName="w-auto"
           >
-            <option value="ALL">Semua Arah</option>
-            <option value="OUTBOUND">Keluar (Bot)</option>
-            <option value="INBOUND">Masuk (User)</option>
+            <option value="ALL">Semua Kategori</option>
+            <option value="MARKETING">Marketing</option>
+            <option value="UTILITY">Utility</option>
+            <option value="AUTHENTICATION">Authentication</option>
+            <option value="SERVICE">Service</option>
           </NativeSelect>
 
           {/* Status Filter */}
           <NativeSelect
             value={statusFilter}
-            onChange={(e) =>
-              onStatusFilterChange(
-                e.target.value as "ALL" | TelegramMessageStatus,
-              )
-            }
+            onChange={(e) => onStatusFilterChange(e.target.value)}
             variant="pill"
             wrapperClassName="w-auto"
           >
             <option value="ALL">Semua Status</option>
-            <option value="DELIVERED">Terkirim</option>
+            <option value="READ">Dibaca (Read)</option>
+            <option value="DELIVERED">Diterima (Delivered)</option>
+            <option value="SENT">Terkirim (Sent)</option>
             <option value="FAILED">Gagal</option>
-            <option value="QUEUED">Antrean</option>
           </NativeSelect>
 
           {/* Export CSV */}
@@ -239,17 +235,17 @@ export function TelegramLogsTable({
       {/* Content State */}
       {isLoading ? (
         <div className="space-y-3 p-8 text-center sm:p-12">
-          <Loader2 className="text-sky-500 mx-auto size-8 animate-spin" />
+          <Loader2 className="text-emerald-600 dark:text-emerald-400 mx-auto size-8 animate-spin" />
           <p className="text-foreground-secondary text-xs font-semibold">
-            Memuat riwayat log pesan Telegram...
+            Memuat riwayat log pesan Meta WABA...
           </p>
         </div>
       ) : logs.length === 0 ? (
         <div className="py-12">
           <EmptyState
-            icon={<MessageSquare className="size-10" />}
-            title="Belum Ada Log Pesan Telegram"
-            description="Pesan yang dikirimkan atau diterima melalui bot Telegram Anda akan tercatat secara otomatis pada tabel ini."
+            icon={<ScrollText className="size-10" />}
+            title="Tidak Ada Log Pesan Meta WABA"
+            description="Pesan yang dikirimkan melalui saluran Meta WABA Official akan tercatat lengkap dengan WAMID dan status ACK."
           />
         </div>
       ) : (
@@ -257,8 +253,9 @@ export function TelegramLogsTable({
           {/* Mobile Card List (lg:hidden) */}
           <div className="divide-border/50 divide-y lg:hidden">
             {logs.map((log) => {
-              const isOutbound = log.direction === "OUTBOUND";
-              const timeFormatted = formatLogTime(log.sent_at || log.created_at);
+              const phone = log.recipient_jid?.split("@")[0] || "-";
+              const wamid = log.waba_info?.meta_message_id || "";
+              const timeFormatted = formatLogTime(log.created_at);
 
               return (
                 <div
@@ -272,19 +269,20 @@ export function TelegramLogsTable({
                       setSelectedLog(log);
                     }
                   }}
-                  className="bg-surface hover:bg-muted/40 cursor-pointer active:scale-[0.99] p-3.5 sm:p-4 space-y-2.5 transition-all outline-none focus-visible:ring-2 focus-visible:ring-sky-500"
+                  className="bg-surface hover:bg-muted/40 cursor-pointer active:scale-[0.99] p-3.5 sm:p-4 space-y-2.5 transition-all outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-1.5 font-mono text-xs font-bold text-foreground truncate">
-                      {isOutbound ? (
-                        <ArrowUpRight className="size-3.5 text-sky-500 shrink-0" />
-                      ) : (
-                        <ArrowDownLeft className="size-3.5 text-emerald-500 shrink-0" />
-                      )}
-                      <span>Chat ID: {log.chat_id}</span>
-                    </div>
+                    <span className="font-mono text-xs font-bold text-foreground truncate">
+                      +{phone.replace(/^\+/, "")}
+                    </span>
                     {renderStatusBadge(log.status)}
                   </div>
+
+                  {wamid && (
+                    <span className="text-[10px] text-foreground-muted font-mono truncate block max-w-xs">
+                      {wamid}
+                    </span>
+                  )}
 
                   <div className="text-xs text-foreground/90">
                     {log.media_url && (
@@ -293,19 +291,19 @@ export function TelegramLogsTable({
                       </span>
                     )}
                     <span className="line-clamp-2">
-                      {log.text || "(Lampiran berkas media)"}
+                      {log.message_body || "(Pesan template Meta HSM)"}
                     </span>
-                    {log.error_reason && (
+                    {log.error_message && (
                       <p className="text-[11px] text-rose-500 font-semibold truncate pt-1">
-                        Error: {log.error_reason}
+                        Error: {log.error_message}
                       </p>
                     )}
                   </div>
 
                   <div className="flex items-center justify-between text-[11px] text-foreground-secondary pt-0.5 font-medium">
-                    <span className="font-mono text-[10px] bg-muted/60 px-2 py-0.5 rounded border border-border/50">
-                      {log.message_type}
-                    </span>
+                    <Badge variant="outline" className="text-[10px] font-mono">
+                      {log.waba_info?.conversation_category || "UTILITY"}
+                    </Badge>
                     <span className="whitespace-nowrap">{timeFormatted}</span>
                   </div>
                 </div>
@@ -318,20 +316,18 @@ export function TelegramLogsTable({
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-border/80 bg-muted/30 text-[11px] font-bold text-foreground-secondary uppercase tracking-wider">
-                  <th className="py-3 px-4">Arah</th>
-                  <th className="py-3 px-4">Chat ID</th>
-                  <th className="py-3 px-4">Tipe</th>
-                  <th className="py-3 px-4">Konten Pesan</th>
+                  <th className="py-3 px-4">Penerima & WAMID</th>
+                  <th className="py-3 px-4">Konten Pesan / Template</th>
+                  <th className="py-3 px-4">Kategori Meta</th>
                   <th className="py-3 px-4">Waktu</th>
                   <th className="py-3 px-4 text-right">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/60 text-xs">
                 {logs.map((log) => {
-                  const isOutbound = log.direction === "OUTBOUND";
-                  const timeFormatted = formatLogTime(
-                    log.sent_at || log.created_at,
-                  );
+                  const phone = log.recipient_jid?.split("@")[0] || "-";
+                  const wamid = log.waba_info?.meta_message_id || "";
+                  const timeFormatted = formatLogTime(log.created_at);
 
                   return (
                     <tr
@@ -348,29 +344,18 @@ export function TelegramLogsTable({
                       className="hover:bg-muted/40 cursor-pointer transition-colors outline-none focus-visible:bg-muted/50"
                     >
                       <td className="py-3 px-4 whitespace-nowrap">
-                        <div className="flex items-center gap-1.5">
-                          {isOutbound ? (
-                            <ArrowUpRight className="size-3.5 text-sky-500" />
-                          ) : (
-                            <ArrowDownLeft className="size-3.5 text-emerald-500" />
-                          )}
-                          <span className="font-semibold text-[11px] text-foreground">
-                            {isOutbound ? "Keluar" : "Masuk"}
-                          </span>
+                        <div className="font-mono font-medium text-foreground">
+                          +{phone.replace(/^\+/, "")}
                         </div>
-                      </td>
-
-                      <td className="py-3 px-4 font-mono font-medium text-foreground whitespace-nowrap">
-                        {log.chat_id}
-                      </td>
-
-                      <td className="py-3 px-4 whitespace-nowrap">
-                        <Badge
-                          variant="outline"
-                          className="text-[10px] font-mono"
-                        >
-                          {log.message_type}
-                        </Badge>
+                        {wamid ? (
+                          <span className="text-[10px] text-foreground-muted font-mono truncate block max-w-xs">
+                            {wamid}
+                          </span>
+                        ) : (
+                          <span className="text-[10px] text-foreground-muted italic block">
+                            Meta Cloud API
+                          </span>
+                        )}
                       </td>
 
                       <td className="py-3 px-4 max-w-xs sm:max-w-md truncate text-foreground/90">
@@ -379,12 +364,21 @@ export function TelegramLogsTable({
                             <FileText className="size-2.5" /> Media
                           </span>
                         )}
-                        <span>{log.text || "-"}</span>
-                        {log.error_reason && (
+                        <span>{log.message_body || "(Template Meta HSM)"}</span>
+                        {log.error_message && (
                           <span className="text-[10px] text-rose-500 font-semibold block truncate">
-                            Error: {log.error_reason}
+                            Error: {log.error_message}
                           </span>
                         )}
+                      </td>
+
+                      <td className="py-3 px-4 whitespace-nowrap">
+                        <Badge
+                          variant="outline"
+                          className="text-[10px] font-mono"
+                        >
+                          {log.waba_info?.conversation_category || "UTILITY"}
+                        </Badge>
                       </td>
 
                       <td className="py-3 px-4 text-foreground-secondary whitespace-nowrap">
@@ -417,8 +411,8 @@ export function TelegramLogsTable({
         entityName="log pesan"
       />
 
-      {/* Message Detail Modal */}
-      <TelegramMessageDetailDialog
+      {/* WABA Message Detail Modal */}
+      <WABAMessageDetailDialog
         log={selectedLog}
         isOpen={Boolean(selectedLog)}
         onClose={() => setSelectedLog(null)}

@@ -140,6 +140,7 @@ export interface GetMessageLogsParams {
   deviceId?: string;
   direction?: string;
   campaignId?: string;
+  channelType?: string;
   signal?: AbortSignal;
 }
 
@@ -269,6 +270,7 @@ export const campaignApi = {
     let devId = "";
     let dir = "";
     let campId = "";
+    let chanType = "";
     let sig = signal;
 
     if (typeof paramsOrPage === "object" && paramsOrPage !== null) {
@@ -279,6 +281,7 @@ export const campaignApi = {
       devId = paramsOrPage.deviceId ?? "";
       dir = paramsOrPage.direction ?? "";
       campId = paramsOrPage.campaignId ?? "";
+      chanType = paramsOrPage.channelType ?? "";
       sig = paramsOrPage.signal || signal;
     } else {
       p = paramsOrPage;
@@ -295,6 +298,8 @@ export const campaignApi = {
       if (dir.trim() && dir !== "ALL")
         searchParams.set("direction", dir.trim());
       if (campId.trim()) searchParams.set("campaign_id", campId.trim());
+      if (chanType.trim() && chanType !== "ALL")
+        searchParams.set("channel_type", chanType.trim());
 
       const res = await httpClient.get<MessageLogResponse[]>(
         `${CAMPAIGN_BASE}/campaigns/logs?${searchParams.toString()}`,

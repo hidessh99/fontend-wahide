@@ -115,9 +115,6 @@ export const telegramApi = {
       if (query.bot_id?.trim()) searchParams.set("bot_id", query.bot_id.trim());
       if (query.direction && query.direction !== "ALL") searchParams.set("direction", query.direction);
       if (query.status && query.status !== "ALL") searchParams.set("status", query.status);
-      if (query.page_size) {
-        searchParams.set("limit", String(query.page_size));
-      }
 
       const qs = searchParams.toString();
       const url = `${BASE_URL}/telegram/messages${qs ? `?${qs}` : ""}`;
@@ -133,7 +130,6 @@ export const telegramApi = {
 
       if (Array.isArray(rawPayload)) {
         logs = rawPayload;
-        total = logs.length;
       } else if (rawPayload && typeof rawPayload === "object") {
         if (Array.isArray(rawPayload.items)) {
           logs = rawPayload.items;
@@ -143,15 +139,13 @@ export const telegramApi = {
         }
       }
 
-      if (total === 0) {
-        const info = res?.additional_info as { total?: number } | undefined;
-        if (typeof info?.total === "number") {
-          total = info.total;
-        } else if (typeof res?.pagination?.total_items === "number") {
-          total = res.pagination.total_items;
-        } else {
-          total = logs.length;
-        }
+      const info = res?.additional_info as { total?: number } | undefined;
+      if (typeof info?.total === "number") {
+        total = info.total;
+      } else if (typeof res?.pagination?.total_items === "number") {
+        total = res.pagination.total_items;
+      } else if (total === 0) {
+        total = logs.length;
       }
 
       return { logs, total };

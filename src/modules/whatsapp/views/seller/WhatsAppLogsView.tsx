@@ -46,7 +46,7 @@ export function WhatsAppLogsView() {
             </h1>
           </div>
           <p className="text-foreground-secondary text-xs font-medium sm:text-sm">
-            Pantau riwayat transmisi pesan socket whatsmeow, status ACK tanda centang, dan laporan kegagalan.
+            Pantau riwayat transmisi pesan socket web whatsapp, status ACK tanda centang, dan laporan kegagalan.
           </p>
         </div>
 

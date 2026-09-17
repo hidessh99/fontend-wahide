@@ -81,6 +81,13 @@ export interface CreateCampaignInput {
   scheduledAt?: string;
 }
 
+export interface MessageLogWABAMetaResponse {
+  meta_message_id?: string;
+  meta_conversation_id?: string;
+  conversation_category?: string;
+  conversation_fee?: number;
+}
+
 export interface MessageLogResponse {
   id: string;
   tenant_id: string;
@@ -95,4 +102,5 @@ export interface MessageLogResponse {
   error_message?: string;
   sent_at: string;
   created_at: string;
+  waba_info?: MessageLogWABAMetaResponse;
 }
