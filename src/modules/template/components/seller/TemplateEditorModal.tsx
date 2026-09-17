@@ -54,18 +54,21 @@ interface TemplateEditorModalProps {
     data: CreateTemplateInput | UpdateTemplateInput,
   ) => Promise<boolean>;
   initialData?: Template | null;
+  lockChannel?: TemplateChannelType;
 }
 
 function TemplateEditorContent({
   onClose,
   onSubmit,
   initialData,
+  lockChannel,
 }: {
   onClose: () => void;
   onSubmit: (
     data: CreateTemplateInput | UpdateTemplateInput,
   ) => Promise<boolean>;
   initialData?: Template | null;
+  lockChannel?: TemplateChannelType;
 }) {
   const { t } = useI18n();
   const [name, setName] = useState(initialData?.name || "");
@@ -80,8 +83,11 @@ function TemplateEditorContent({
     initialData?.mediaType || "NONE",
   );
   const [mediaUrl, setMediaUrl] = useState(initialData?.mediaUrl || "");
+  const [buttons, setButtons] = useState<TemplateButton[]>(
+    initialData?.buttons || [],
+  );
   const [channelType, setChannelType] = useState<TemplateChannelType>(
-    initialData?.channelType || "ALL",
+    lockChannel || initialData?.channelType || "ALL",
   );
   const [parseMode, setParseMode] = useState<TelegramParseMode>(
     initialData?.telegramDetail?.parseMode || "HTML",
@@ -93,7 +99,9 @@ function TemplateEditorContent({
     initialData?.telegramDetail?.disableWebPagePreview || false,
   );
   const [previewChannel, setPreviewChannel] = useState<"WHATSAPP" | "TELEGRAM">(
-    initialData?.channelType === "TELEGRAM_BOT" ? "TELEGRAM" : "WHATSAPP",
+    (lockChannel === "TELEGRAM_BOT" || (!lockChannel && initialData?.channelType === "TELEGRAM_BOT"))
+      ? "TELEGRAM"
+      : "WHATSAPP",
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mobileTab, setMobileTab] = useState<"form" | "preview">("form");
@@ -272,45 +280,47 @@ function TemplateEditorContent({
                 </div>
               </div>
 
-              {/* Target Channel Selector */}
-              <div className="space-y-1.5">
-                <Label>Target Saluran Komunikasi</Label>
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                  {[
-                    { id: "ALL", label: "Semua (Omni)", icon: Globe },
-                    { id: "WHATSMEOW_UNOFFICIAL", label: "WA Web", icon: Smartphone },
-                    { id: "META_WABA_OFFICIAL", label: "Meta WABA", icon: Check },
-                    { id: "TELEGRAM_BOT", label: "Telegram Bot", icon: Bot },
-                  ].map((ch) => {
-                    const Icon = ch.icon;
-                    const isSelected = channelType === ch.id;
-                    return (
-                      <button
-                        key={ch.id}
-                        type="button"
-                        onClick={() => {
-                          setChannelType(ch.id as TemplateChannelType);
-                          if (ch.id === "TELEGRAM_BOT") setPreviewChannel("TELEGRAM");
-                          else if (
-                            ch.id === "WHATSMEOW_UNOFFICIAL" ||
-                            ch.id === "META_WABA_OFFICIAL"
-                          )
-                            setPreviewChannel("WHATSAPP");
-                        }}
-                        className={cn(
-                          "flex items-center justify-center gap-1.5 rounded-xl border p-2 text-xs font-bold transition cursor-pointer",
-                          isSelected
-                            ? "border-primary bg-primary/10 text-primary"
-                            : "border-border/70 bg-card hover:bg-muted text-foreground-secondary",
-                        )}
-                      >
-                        <Icon className="size-3.5 shrink-0" />
-                        <span className="truncate">{ch.label}</span>
-                      </button>
-                    );
-                  })}
+              {/* Target Channel Selector (Only visible if channel is not locked) */}
+              {!lockChannel && (
+                <div className="space-y-1.5">
+                  <Label>Target Saluran Komunikasi</Label>
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                    {[
+                      { id: "ALL", label: "Semua (Omni)", icon: Globe },
+                      { id: "WHATSMEOW_UNOFFICIAL", label: "WA Web", icon: Smartphone },
+                      { id: "META_WABA_OFFICIAL", label: "Meta WABA", icon: Check },
+                      { id: "TELEGRAM_BOT", label: "Telegram Bot", icon: Bot },
+                    ].map((ch) => {
+                      const Icon = ch.icon;
+                      const isSelected = channelType === ch.id;
+                      return (
+                        <button
+                          key={ch.id}
+                          type="button"
+                          onClick={() => {
+                            setChannelType(ch.id as TemplateChannelType);
+                            if (ch.id === "TELEGRAM_BOT") setPreviewChannel("TELEGRAM");
+                            else if (
+                              ch.id === "WHATSMEOW_UNOFFICIAL" ||
+                              ch.id === "META_WABA_OFFICIAL"
+                            )
+                              setPreviewChannel("WHATSAPP");
+                          }}
+                          className={cn(
+                            "flex items-center justify-center gap-1.5 rounded-xl border p-2 text-xs font-bold transition cursor-pointer",
+                            isSelected
+                              ? "border-primary bg-primary/10 text-primary"
+                              : "border-border/70 bg-card hover:bg-muted text-foreground-secondary",
+                          )}
+                        >
+                          <Icon className="size-3.5 shrink-0" />
+                          <span className="truncate">{ch.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Media Header Section */}
               <div className="rounded-2xl border border-border/60 bg-muted/20 p-3.5 space-y-3">
@@ -562,35 +572,37 @@ function TemplateEditorContent({
               mobileTab === "preview" ? "flex" : "hidden lg:flex",
             )}
           >
-            {/* Channel Preview Switcher */}
-            <div className="mb-3 flex items-center gap-1 rounded-full border border-border/80 bg-background/80 p-1 shadow-xs">
-              <button
-                type="button"
-                onClick={() => setPreviewChannel("WHATSAPP")}
-                className={cn(
-                  "flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold transition cursor-pointer",
-                  previewChannel === "WHATSAPP"
-                    ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
-                    : "text-foreground-muted hover:text-foreground",
-                )}
-              >
-                <Smartphone className="size-3.5" />
-                <span>WhatsApp</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setPreviewChannel("TELEGRAM")}
-                className={cn(
-                  "flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold transition cursor-pointer",
-                  previewChannel === "TELEGRAM"
-                    ? "bg-sky-500/15 text-sky-600 dark:text-sky-400"
-                    : "text-foreground-muted hover:text-foreground",
-                )}
-              >
-                <Bot className="size-3.5" />
-                <span>Telegram Bot</span>
-              </button>
-            </div>
+            {/* Channel Preview Switcher (Only visible if channel is not locked) */}
+            {!lockChannel && (
+              <div className="mb-3 flex items-center gap-1 rounded-full border border-border/80 bg-background/80 p-1 shadow-xs">
+                <button
+                  type="button"
+                  onClick={() => setPreviewChannel("WHATSAPP")}
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold transition cursor-pointer",
+                    previewChannel === "WHATSAPP"
+                      ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+                      : "text-foreground-muted hover:text-foreground",
+                  )}
+                >
+                  <Smartphone className="size-3.5" />
+                  <span>WhatsApp</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPreviewChannel("TELEGRAM")}
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold transition cursor-pointer",
+                    previewChannel === "TELEGRAM"
+                      ? "bg-sky-500/15 text-sky-600 dark:text-sky-400"
+                      : "text-foreground-muted hover:text-foreground",
+                  )}
+                >
+                  <Bot className="size-3.5" />
+                  <span>Telegram Bot</span>
+                </button>
+              </div>
+            )}
 
             <div className="w-full max-w-85 my-auto">
               {previewChannel === "WHATSAPP" ? (
@@ -669,6 +681,7 @@ export function TemplateEditorModal({
   onClose,
   onSubmit,
   initialData,
+  lockChannel,
 }: TemplateEditorModalProps) {
   if (!isOpen) return null;
 
@@ -678,6 +691,7 @@ export function TemplateEditorModal({
       onClose={onClose}
       onSubmit={onSubmit}
       initialData={initialData}
+      lockChannel={lockChannel}
     />
   );
 }

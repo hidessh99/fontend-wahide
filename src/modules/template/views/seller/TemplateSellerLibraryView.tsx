@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import {
   Template,
+  TemplateChannelType,
   CreateTemplateInput,
   UpdateTemplateInput,
 } from "../../types/template.types";
@@ -14,11 +15,16 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useI18n } from "@/lib/i18n/context";
+import { cn } from "@/lib/utils";
 import {
   LayoutTemplate,
   Plus,
   RefreshCw,
   FolderOpen,
+  Globe,
+  Smartphone,
+  Bot,
+  ShieldCheck,
 } from "lucide-react";
 
 const TemplateEditorModal = dynamic(
@@ -37,13 +43,27 @@ const DeleteTemplateModal = dynamic(
   { ssr: false },
 );
 
-export function TemplateSellerLibraryView() {
+export interface TemplateSellerLibraryViewProps {
+  initialChannel?: TemplateChannelType | "ALL";
+  lockChannel?: TemplateChannelType;
+  title?: string;
+  description?: string;
+}
+
+export function TemplateSellerLibraryView({
+  initialChannel,
+  lockChannel,
+  title,
+  description,
+}: TemplateSellerLibraryViewProps = {}) {
   const { t } = useI18n();
+  const effectiveChannel = lockChannel || initialChannel || "ALL";
   const {
     templates,
     isLoading,
     category,
     search,
+    channelType,
     favoriteOnly,
     page,
     totalPages,
@@ -51,6 +71,7 @@ export function TemplateSellerLibraryView() {
     stats,
     handleCategoryChange,
     handleSearchChange,
+    handleChannelTypeChange,
     handleFavoriteOnlyToggle,
     goToPage,
     createTemplate,
@@ -59,7 +80,7 @@ export function TemplateSellerLibraryView() {
     deleteTemplate,
     toggleFavorite,
     reload,
-  } = useTemplates();
+  } = useTemplates(effectiveChannel);
 
   // Modal states
   const [isEditorOpen, setIsEditorOpen] = useState(false);
@@ -104,10 +125,10 @@ export function TemplateSellerLibraryView() {
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground flex items-center gap-2.5">
               <LayoutTemplate className="h-7 w-7 text-emerald-600 dark:text-emerald-500" />
-              {t("template.title")}
+              {title || t("template.title")}
             </h1>
             <p className="text-xs sm:text-sm text-foreground-muted mt-1">
-              {t("template.subtitle")}
+              {description || t("template.subtitle")}
             </p>
           </div>
 
@@ -152,6 +173,39 @@ export function TemplateSellerLibraryView() {
           </Button>
         </div>
       </div>
+
+      {/* Omnichannel Channel Filter Tabs (Only shown on Global Library /templates when channel is not locked) */}
+      {!lockChannel && (
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-border/70 scrollbar-none">
+          {[
+            { id: "ALL", label: "Semua Saluran", icon: Globe },
+            { id: "WHATSMEOW_UNOFFICIAL", label: "WhatsApp Web", icon: Smartphone },
+            { id: "TELEGRAM_BOT", label: "Telegram Bot", icon: Bot },
+            { id: "META_WABA_OFFICIAL", label: "Meta WABA", icon: ShieldCheck },
+          ].map((ch) => {
+            const Icon = ch.icon;
+            const isActive = channelType === ch.id;
+            return (
+              <button
+                key={ch.id}
+                type="button"
+                onClick={() =>
+                  handleChannelTypeChange(ch.id as TemplateChannelType | "ALL")
+                }
+                className={cn(
+                  "flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition cursor-pointer shrink-0 border",
+                  isActive
+                    ? "bg-primary text-primary-foreground border-primary shadow-xs"
+                    : "bg-muted/40 hover:bg-muted text-foreground-secondary border-border/60",
+                )}
+              >
+                <Icon className="size-3.5" />
+                <span>{ch.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {/* Filter & Search Bar */}
       <TemplateFilterBar
@@ -245,6 +299,7 @@ export function TemplateSellerLibraryView() {
       <TemplateEditorModal
         isOpen={isEditorOpen}
         initialData={editingTemplate}
+        lockChannel={lockChannel}
         onClose={() => setIsEditorOpen(false)}
         onSubmit={handleSaveModal}
       />

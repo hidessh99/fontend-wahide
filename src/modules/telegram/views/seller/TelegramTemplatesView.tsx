@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -8,12 +9,26 @@ import {
   Plus,
   Search,
   Code2,
+  RefreshCw,
 } from "lucide-react";
-import { toast } from "sonner";
 import {
   TelegramTemplateCard,
   TelegramTemplateItem,
 } from "../../components/seller/TelegramTemplateCard";
+import { useTemplates } from "@/modules/template/hooks/useTemplates";
+import {
+  Template,
+  CreateTemplateInput,
+  UpdateTemplateInput,
+} from "@/modules/template/types/template.types";
+
+const TemplateEditorModal = dynamic(
+  () =>
+    import("@/modules/template/components/seller/TemplateEditorModal").then(
+      (m) => m.TemplateEditorModal,
+    ),
+  { ssr: false },
+);
 
 const DEFAULT_TEMPLATES: TelegramTemplateItem[] = [
   {
@@ -55,14 +70,87 @@ const DEFAULT_TEMPLATES: TelegramTemplateItem[] = [
   },
 ];
 
-export function TelegramTemplatesView() {
-  const [search, setSearch] = useState("");
+function mapTemplateToTelegramItem(t: Template): TelegramTemplateItem {
+  let category: "NOTIFICATION" | "PROMOTION" | "ALERT" = "NOTIFICATION";
+  if (t.category === "MARKETING") category = "PROMOTION";
+  else if (t.category === "REMINDER" || t.category === "RESERVATION")
+    category = "ALERT";
 
-  const filteredTemplates = DEFAULT_TEMPLATES.filter(
+  const rawKeyboard = t.telegramDetail?.inlineKeyboard || [];
+  const flattenedButtons = Array.isArray(rawKeyboard)
+    ? rawKeyboard.flat().map((b) => ({
+        text: b.text,
+        url: b.url,
+        callback_data: b.callback_data,
+      }))
+    : [];
+
+  return {
+    id: t.id,
+    name: t.name,
+    category,
+    parseMode:
+      t.telegramDetail?.parseMode === "MarkdownV2" ? "MarkdownV2" : "HTML",
+    content: t.content,
+    buttons: flattenedButtons,
+  };
+}
+
+export function TelegramTemplatesView() {
+  const {
+    templates,
+    isLoading,
+    search,
+    handleSearchChange,
+    createTemplate,
+    updateTemplate,
+    reload,
+  } = useTemplates("TELEGRAM_BOT");
+
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [editingTemplate, setEditingTemplate] = useState<Template | null>(null);
+
+  // Combine live templates with fallback starter presets if database is empty
+  const displayItems: TelegramTemplateItem[] =
+    templates.length > 0
+      ? templates.map(mapTemplateToTelegramItem)
+      : DEFAULT_TEMPLATES;
+
+  const filteredTemplates = displayItems.filter(
     (tpl) =>
       tpl.name.toLowerCase().includes(search.toLowerCase()) ||
       tpl.content.toLowerCase().includes(search.toLowerCase()),
   );
+
+  const handleOpenCreate = () => {
+    setEditingTemplate({
+      id: "",
+      name: "",
+      category: "UTILITY",
+      channelType: "TELEGRAM_BOT",
+      content:
+        "<b>Halo {nama}!</b>\n\nBerikut adalah update mengenai pesanan Anda nomor <code>#{order_id}</code>.",
+      mediaType: "NONE",
+      variables: [],
+      isFavorite: false,
+      usageCount: 0,
+      telegramDetail: {
+        parseMode: "HTML",
+        inlineKeyboard: [
+          [
+            {
+              text: "📦 Lacak Pesanan",
+              url: "https://t.me/WahideBot?start={order_id}",
+            },
+          ],
+        ],
+        disableWebPagePreview: false,
+      },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+    setIsEditorOpen(true);
+  };
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6 lg:p-8">
@@ -82,16 +170,29 @@ export function TelegramTemplatesView() {
           </p>
         </div>
 
-        <Button
-          size="sm"
-          onClick={() =>
-            toast.info("Fitur pembuatan kustom template Telegram segera aktif!")
-          }
-          className="bg-wise-green text-dark-green hover:bg-wise-green/90 text-xs font-bold shadow-sm"
-        >
-          <Plus className="mr-1.5 size-3.5" />
-          <span>Buat Template Baru</span>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => reload()}
+            disabled={isLoading}
+            className="h-8 rounded-full border-border/80 px-3 text-xs font-semibold"
+          >
+            <RefreshCw
+              className={`mr-1.5 size-3.5 ${isLoading ? "animate-spin" : ""}`}
+            />
+            <span>Segarkan</span>
+          </Button>
+
+          <Button
+            size="sm"
+            onClick={handleOpenCreate}
+            className="bg-wise-green text-dark-green hover:bg-wise-green/90 h-8 rounded-full px-3.5 text-xs font-bold shadow-xs cursor-pointer"
+          >
+            <Plus className="mr-1.5 size-3.5" />
+            <span>Buat Template Baru</span>
+          </Button>
+        </div>
       </div>
 
       {/* Formatting Guide Info Card */}
@@ -122,7 +223,7 @@ export function TelegramTemplatesView() {
         <Input
           placeholder="Cari template bot..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => handleSearchChange(e.target.value)}
           className="pl-9 text-xs"
         />
       </div>
@@ -133,6 +234,28 @@ export function TelegramTemplatesView() {
           <TelegramTemplateCard key={tpl.id} template={tpl} />
         ))}
       </div>
+
+      {/* Template Editor Modal */}
+      {isEditorOpen && (
+        <TemplateEditorModal
+          isOpen={isEditorOpen}
+          lockChannel="TELEGRAM_BOT"
+          onClose={() => {
+            setIsEditorOpen(false);
+            setEditingTemplate(null);
+          }}
+          onSubmit={async (data) => {
+            if (editingTemplate && editingTemplate.id) {
+              return await updateTemplate(
+                editingTemplate.id,
+                data as UpdateTemplateInput,
+              );
+            }
+            return await createTemplate(data as CreateTemplateInput);
+          }}
+          initialData={editingTemplate}
+        />
+      )}
     </div>
   );
 }

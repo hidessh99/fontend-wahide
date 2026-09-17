@@ -1,8 +1,31 @@
 export type PlanTier = string;
 
+export type SubscriptionChannel =
+  | "WHATSMEOW_UNOFFICIAL"
+  | "META_WABA_OFFICIAL"
+  | "TELEGRAM_BOT";
+
+export interface OrderCartItem {
+  id: string;
+  planId: string;
+  planName: string;
+  channelType: SubscriptionChannel;
+  priceMonthly: number;
+}
+
+export interface OrderSummary {
+  items: OrderCartItem[];
+  billingPeriod: "MONTHLY"; // Fixed 1 bulan (30 hari)
+  subtotal: number;
+  discount: number;
+  couponCode?: string;
+  total: number;
+}
+
 export interface SubscriptionPlan {
   id: string;
   name: string;
+  channelType?: SubscriptionChannel;
   tier?: string;
   priceMonthly: number;
   quotaMonthly: number;

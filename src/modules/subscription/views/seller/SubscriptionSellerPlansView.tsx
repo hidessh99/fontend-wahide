@@ -1,20 +1,137 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useSubscription } from "@/modules/subscription/hooks/useSubscription";
-import { PlanCardGrid } from "@/modules/subscription/components/seller/PlanCardGrid";
+import {
+  SubscriptionChannel,
+  OrderCartItem,
+  SubscriptionPlan,
+} from "@/modules/subscription/types/subscription.types";
+import { CHANNEL_PLANS } from "@/modules/subscription/api/subscription.api";
 import { QuotaDialCard } from "@/modules/subscription/components/seller/QuotaDialCard";
+import { TriChannelSelectorTabs } from "@/modules/subscription/components/seller/TriChannelSelectorTabs";
+import { ChannelPlanCatalog } from "@/modules/subscription/components/seller/ChannelPlanCatalog";
+import { OrderSummarySidebar } from "@/modules/subscription/components/seller/OrderSummarySidebar";
+import { ConfirmUpgradeModal } from "@/modules/subscription/components/seller/ConfirmUpgradeModal";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { useI18n } from "@/lib/i18n/context";
 import { CreditCard } from "lucide-react";
+import { toast } from "sonner";
 
 export function SubscriptionSellerPlansView() {
   const { t } = useI18n();
-  const { subscription, plans, balance, upgradePlan } = useSubscription();
+  const { subscription, balance, upgradePlan } = useSubscription();
+
+  // Active channel tab: WhatsApp Web, Meta WABA, or Telegram Bot
+  const [activeChannel, setActiveChannel] =
+    useState<SubscriptionChannel>("WHATSMEOW_UNOFFICIAL");
+
+  // Cart state
+  const [cartItems, setCartItems] = useState<OrderCartItem[]>([]);
+  const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
+  const [pendingPlanForUpgrade, setPendingPlanForUpgrade] =
+    useState<SubscriptionPlan | null>(null);
+  const [isUpgrading, setIsUpgrading] = useState(false);
+
+  // Subscription status calculations for downgrade protection
+  const isCurrentPaidActive = Boolean(
+    subscription?.isActive &&
+      (subscription?.planPrice ?? 0) > 0 &&
+      subscription?.expiresAt &&
+      new Date(subscription.expiresAt) > new Date(),
+  );
+  const currentPlanPrice = subscription?.planPrice ?? 0;
+  const currentExpiresAt = subscription?.expiresAt;
+
+  // Handle plan selection (add/replace in cart for the channel)
+  const handleSelectPlan = (plan: SubscriptionPlan) => {
+    // Defensive guard: prevent downgrade while paid subscription is actively running
+    if (
+      isCurrentPaidActive &&
+      subscription?.planId !== plan.id &&
+      currentPlanPrice > plan.priceMonthly
+    ) {
+      toast.warning(
+        "Tidak dapat memilih paket lebih rendah (downgrade) saat langganan aktif. Paket ini dapat dipilih setelah periode berjalan berakhir.",
+      );
+      return;
+    }
+
+    setCartItems((prev) => {
+      // Filter out existing item for the same channel to avoid duplicates
+      const filtered = prev.filter((item) => item.channelType !== activeChannel);
+      return [
+        ...filtered,
+        {
+          id: `cart_${activeChannel}_${plan.id}`,
+          planId: plan.id,
+          planName: plan.name,
+          channelType: activeChannel,
+          priceMonthly: plan.priceMonthly,
+        },
+      ];
+    });
+
+    toast.success(
+      `Paket ${plan.name} ditambahkan ke ringkasan pesanan (1 Bulan).`,
+    );
+  };
+
+  const handleRemoveCartItem = (id: string) => {
+    setCartItems((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  // Checkout handling
+  const handleInitiateCheckout = async (planId: string) => {
+    const allPlans = [
+      ...CHANNEL_PLANS.WHATSMEOW_UNOFFICIAL,
+      ...CHANNEL_PLANS.META_WABA_OFFICIAL,
+      ...CHANNEL_PLANS.TELEGRAM_BOT,
+    ];
+    const foundPlan = allPlans.find((p) => p.id === planId);
+
+    if (!foundPlan) {
+      toast.error("Paket tidak ditemukan");
+      return;
+    }
+
+    if (foundPlan.priceMonthly === 0) {
+      // Free plan upgrade directly
+      setIsUpgrading(true);
+      try {
+        await upgradePlan(foundPlan.id);
+        setCartItems([]);
+      } finally {
+        setIsUpgrading(false);
+      }
+      return;
+    }
+
+    setPendingPlanForUpgrade(foundPlan);
+    setIsCheckoutModalOpen(true);
+  };
+
+  const handleConfirmModalUpgrade = async () => {
+    if (!pendingPlanForUpgrade) return;
+    setIsUpgrading(true);
+    try {
+      await upgradePlan(pendingPlanForUpgrade.id);
+      setIsCheckoutModalOpen(false);
+      setPendingPlanForUpgrade(null);
+      setCartItems([]);
+    } finally {
+      setIsUpgrading(false);
+    }
+  };
+
+  const currentChannelPlans = CHANNEL_PLANS[activeChannel] || [];
+  const selectedCartItemForChannel = cartItems.find(
+    (item) => item.channelType === activeChannel,
+  );
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 p-3 sm:space-y-8 sm:p-6 lg:p-8">
-      {/* Header Section */}
+      {/* Page Header */}
       <div className="border-border flex flex-col justify-between gap-4 border-b pb-5 sm:flex-row sm:items-center sm:pb-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
@@ -26,20 +143,64 @@ export function SubscriptionSellerPlansView() {
             </h1>
           </div>
           <p className="text-foreground-secondary max-w-2xl text-xs font-semibold sm:text-sm">
-            {t("subscription.subtitle")}
+            Kelola paket langganan saluran komunikasi WhatsApp Web, Meta WABA, dan Telegram Bot sesuai kebutuhan bisnis Anda.
           </p>
         </div>
       </div>
 
-      {/* Subscription Quota & Plans Grid with Error Boundary */}
       <ErrorBoundary>
+        {/* Active Subscription Quota Overview */}
         <QuotaDialCard subscription={subscription} />
-        <PlanCardGrid
-          plans={plans}
-          currentSubscription={subscription}
-          userBalance={balance}
-          onUpgradePlan={upgradePlan}
-        />
+
+        {/* 2-Column Order & Catalog Workspace */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start pt-2">
+          {/* Left Column: Channels & Target Selector & Catalog */}
+          <div className="lg:col-span-8 space-y-6">
+            {/* 1. Tri-Channel Selector Tabs */}
+            <TriChannelSelectorTabs
+              activeChannel={activeChannel}
+              onSelectChannel={(ch) => setActiveChannel(ch)}
+            />
+
+            {/* 2. Channel-Specific Plan Catalog */}
+            <ChannelPlanCatalog
+              channelType={activeChannel}
+              plans={currentChannelPlans}
+              selectedPlanId={selectedCartItemForChannel?.planId || null}
+              onSelectPlan={handleSelectPlan}
+              currentPlanId={subscription?.planId}
+              currentPlanPrice={currentPlanPrice}
+              isCurrentPaidActive={isCurrentPaidActive}
+              currentExpiresAt={currentExpiresAt}
+            />
+          </div>
+
+          {/* Right Column: Order Summary Cart Sidebar */}
+          <div className="lg:col-span-4">
+            <OrderSummarySidebar
+              cartItems={cartItems}
+              onRemoveItem={handleRemoveCartItem}
+              userBalance={balance}
+              onCheckout={handleInitiateCheckout}
+              isSubmitting={isUpgrading}
+            />
+          </div>
+        </div>
+
+        {/* Confirmation Modal for Checkout */}
+        {isCheckoutModalOpen && pendingPlanForUpgrade && (
+          <ConfirmUpgradeModal
+            isOpen={isCheckoutModalOpen}
+            onClose={() => {
+              setIsCheckoutModalOpen(false);
+              setPendingPlanForUpgrade(null);
+            }}
+            onConfirm={handleConfirmModalUpgrade}
+            plan={pendingPlanForUpgrade}
+            balance={balance}
+            isUpgrading={isUpgrading}
+          />
+        )}
       </ErrorBoundary>
     </div>
   );

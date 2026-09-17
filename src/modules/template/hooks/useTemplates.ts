@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   Template,
   TemplateCategory,
+  TemplateChannelType,
   CreateTemplateInput,
   UpdateTemplateInput,
 } from "../types/template.types";
@@ -11,7 +12,7 @@ import { templateApi } from "../api/template.api";
 import { toast } from "sonner";
 import { useI18n } from "@/lib/i18n/context";
 
-export function useTemplates() {
+export function useTemplates(initialChannelType?: TemplateChannelType | "ALL") {
   const { t } = useI18n();
   const [templates, setTemplates] = useState<Template[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -20,6 +21,9 @@ export function useTemplates() {
   // Filters & Pagination State
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<TemplateCategory | "ALL">("ALL");
+  const [channelType, setChannelType] = useState<TemplateChannelType | "ALL">(
+    initialChannelType || "ALL",
+  );
   const [favoriteOnly, setFavoriteOnly] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize] = useState(12);
@@ -32,6 +36,7 @@ export function useTemplates() {
       overrideParams?: {
         search?: string;
         category?: TemplateCategory | "ALL";
+        channelType?: TemplateChannelType | "ALL";
         favoriteOnly?: boolean;
         page?: number;
       },
@@ -46,6 +51,10 @@ export function useTemplates() {
           overrideParams?.category !== undefined
             ? overrideParams.category
             : category;
+        const queryChannelType =
+          overrideParams?.channelType !== undefined
+            ? overrideParams.channelType
+            : channelType;
         const queryFavoriteOnly =
           overrideParams?.favoriteOnly !== undefined
             ? overrideParams.favoriteOnly
@@ -58,6 +67,7 @@ export function useTemplates() {
           pageSize,
           search: querySearch.trim() || undefined,
           category: queryCategory,
+          channelType: queryChannelType,
           favoriteOnly: queryFavoriteOnly || undefined,
         });
 
@@ -75,7 +85,7 @@ export function useTemplates() {
         setIsLoading(false);
       }
     },
-    [search, category, favoriteOnly, page, pageSize, t],
+    [search, category, channelType, favoriteOnly, page, pageSize, t],
   );
 
   // Initial load effect
@@ -89,6 +99,7 @@ export function useTemplates() {
           {
             page: 1,
             pageSize,
+            channelType: initialChannelType || "ALL",
           },
           // @ts-expect-error signal support if api client accepts
           controller.signal,
@@ -118,7 +129,7 @@ export function useTemplates() {
       isMounted = false;
       controller.abort();
     };
-  }, [pageSize]);
+  }, [pageSize, initialChannelType]);
 
   // Filter setters that reset page to 1
   const handleSearchChange = (query: string) => {
@@ -273,6 +284,7 @@ export function useTemplates() {
     // Filters & Pagination
     search,
     category,
+    channelType,
     favoriteOnly,
     page,
     pageSize,
@@ -280,6 +292,10 @@ export function useTemplates() {
     totalPages,
     handleSearchChange,
     handleCategoryChange,
+    handleChannelTypeChange: (ct: TemplateChannelType | "ALL") => {
+      setChannelType(ct);
+      fetchTemplates({ channelType: ct, page: 1 });
+    },
     handleFavoriteOnlyToggle,
     goToPage,
     // CRUD Actions

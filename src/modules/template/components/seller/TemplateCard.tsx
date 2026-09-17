@@ -19,6 +19,10 @@ import {
   FileText,
   Send,
   MousePointerClick,
+  Bot,
+  Smartphone,
+  Globe,
+  ShieldCheck,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -123,6 +127,41 @@ export function TemplateCard({
               <CatIcon className="size-3" />
               {catMeta.label}
             </Badge>
+
+            {/* Channel Indicator Badge */}
+            {template.channelType === "TELEGRAM_BOT" ? (
+              <Badge
+                variant="outline"
+                className="gap-1 text-[10px] border-sky-500/30 text-sky-600 dark:text-sky-400 bg-sky-500/5 font-medium"
+              >
+                <Bot className="size-3" />
+                <span>Telegram</span>
+              </Badge>
+            ) : template.channelType === "WHATSMEOW_UNOFFICIAL" ? (
+              <Badge
+                variant="outline"
+                className="gap-1 text-[10px] border-emerald-500/30 text-emerald-600 dark:text-emerald-400 bg-emerald-500/5 font-medium"
+              >
+                <Smartphone className="size-3" />
+                <span>WA Web</span>
+              </Badge>
+            ) : template.channelType === "META_WABA_OFFICIAL" ? (
+              <Badge
+                variant="outline"
+                className="gap-1 text-[10px] border-blue-500/30 text-blue-600 dark:text-blue-400 bg-blue-500/5 font-medium"
+              >
+                <ShieldCheck className="size-3" />
+                <span>Meta WABA</span>
+              </Badge>
+            ) : (
+              <Badge
+                variant="outline"
+                className="gap-1 text-[10px] border-purple-500/30 text-purple-600 dark:text-purple-400 bg-purple-500/5 font-medium"
+              >
+                <Globe className="size-3" />
+                <span>Omni</span>
+              </Badge>
+            )}
 
             {template.mediaType !== "NONE" && (
               <Badge

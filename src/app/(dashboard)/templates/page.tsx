@@ -3,9 +3,9 @@ import { TemplateSellerLibraryView } from "@/modules/template/views/seller/Templ
 import { SellerRouteGuard } from "@/components/layout/shared/SellerRouteGuard";
 
 export const metadata: Metadata = {
-  title: "Template Pesan WhatsApp",
+  title: "Pustaka Template Pesan (Omnichannel) | Wahide",
   description:
-    "Kelola koleksi template pesan WhatsApp dengan variabel dinamis, format tombol interaktif, dan pratinjau live.",
+    "Kelola seluruh template pesan WhatsApp Web, Meta WABA resmi, dan Telegram Bot dalam satu pusat kendali terpadu.",
   alternates: {
     canonical: "/templates",
   },
@@ -18,7 +18,11 @@ export const metadata: Metadata = {
 export default function TemplatesPage() {
   return (
     <SellerRouteGuard>
-      <TemplateSellerLibraryView />
+      <TemplateSellerLibraryView
+        initialChannel="ALL"
+        title="Pustaka Template Pesan (Omnichannel)"
+        description="Kelola seluruh template pesan WhatsApp Web, Meta WABA resmi, dan Telegram Bot dalam satu pusat kendali terpadu."
+      />
     </SellerRouteGuard>
   );
 }
