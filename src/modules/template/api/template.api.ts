@@ -50,11 +50,44 @@ const mapBackendTemplate = (t: any): Template => {
     }
   }
 
+  let telegramDetail = t.telegram_detail || t.telegramDetail;
+  if (typeof telegramDetail === "string" && telegramDetail.trim() !== "") {
+    try {
+      telegramDetail = JSON.parse(telegramDetail);
+    } catch {
+      telegramDetail = undefined;
+    }
+  }
+
+  let inlineKeyboard =
+    telegramDetail?.inline_keyboard || telegramDetail?.inlineKeyboard;
+  if (typeof inlineKeyboard === "string" && inlineKeyboard.trim() !== "") {
+    try {
+      inlineKeyboard = JSON.parse(inlineKeyboard);
+    } catch {
+      inlineKeyboard = [];
+    }
+  }
+
+  const mappedTelegramDetail = telegramDetail
+    ? {
+        parseMode:
+          telegramDetail.parse_mode || telegramDetail.parseMode || "HTML",
+        inlineKeyboard: Array.isArray(inlineKeyboard) ? inlineKeyboard : [],
+        disableWebPagePreview: Boolean(
+          telegramDetail.disable_web_page_preview ??
+            telegramDetail.disableWebPagePreview ??
+            false,
+        ),
+      }
+    : undefined;
+
   return {
     id: t.id || "",
     tenantId: t.tenant_id || t.tenantId,
     name: t.name || "",
     category: t.category || "MARKETING",
+    channelType: t.channel_type || t.channelType || "ALL",
     content: t.content || "",
     mediaType: t.media_type || t.mediaType || "NONE",
     mediaUrl: t.media_url || t.mediaUrl || undefined,
@@ -62,6 +95,7 @@ const mapBackendTemplate = (t: any): Template => {
     variables: Array.isArray(variables) ? variables : [],
     isFavorite: Boolean(t.is_favorite ?? t.isFavorite ?? false),
     usageCount: Number(t.usage_count ?? t.usageCount ?? 0),
+    telegramDetail: mappedTelegramDetail,
     createdAt: t.created_at || t.createdAt || new Date().toISOString(),
     updatedAt: t.updated_at || t.updatedAt || new Date().toISOString(),
   };
@@ -84,6 +118,9 @@ export const templateApi = {
     if (params?.search) query.set("search", params.search);
     if (params?.category && params.category !== "ALL")
       query.set("category", params.category);
+    if (params?.channelType && params.channelType !== "ALL") {
+      query.set("channel_type", params.channelType);
+    }
     if (params?.favoriteOnly || params?.isFavorite) {
       query.set("is_favorite", "true");
     }
@@ -117,11 +154,22 @@ export const templateApi = {
     const payload: Record<string, unknown> = {
       name: input.name,
       category: input.category,
+      channel_type: input.channelType || "ALL",
       content: input.content,
       media_type: input.mediaType || "NONE",
       media_url: input.mediaUrl || null,
       is_favorite: Boolean(input.isFavorite),
     };
+
+    if (input.telegramDetail) {
+      payload.telegram_detail = {
+        parse_mode: input.telegramDetail.parseMode || "HTML",
+        inline_keyboard: input.telegramDetail.inlineKeyboard || [],
+        disable_web_page_preview: Boolean(
+          input.telegramDetail.disableWebPagePreview,
+        ),
+      };
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const res = await httpClient.post<any>(
@@ -138,10 +186,21 @@ export const templateApi = {
     const payload: Record<string, unknown> = {};
     if (input.name !== undefined) payload.name = input.name;
     if (input.category !== undefined) payload.category = input.category;
+    if (input.channelType !== undefined) payload.channel_type = input.channelType;
     if (input.content !== undefined) payload.content = input.content;
     if (input.mediaType !== undefined) payload.media_type = input.mediaType;
     if (input.mediaUrl !== undefined) payload.media_url = input.mediaUrl;
     if (input.isFavorite !== undefined) payload.is_favorite = input.isFavorite;
+
+    if (input.telegramDetail !== undefined) {
+      payload.telegram_detail = {
+        parse_mode: input.telegramDetail.parseMode || "HTML",
+        inline_keyboard: input.telegramDetail.inlineKeyboard || [],
+        disable_web_page_preview: Boolean(
+          input.telegramDetail.disableWebPagePreview,
+        ),
+      };
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const res = await httpClient.put<any>(

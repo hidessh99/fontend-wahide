@@ -8,6 +8,28 @@ export type TemplateCategory =
 
 export type TemplateMediaType = "NONE" | "IMAGE" | "DOCUMENT";
 
+export type TemplateChannelType =
+  | "ALL"
+  | "WHATSMEOW_UNOFFICIAL"
+  | "META_WABA_OFFICIAL"
+  | "TELEGRAM_BOT";
+
+export type TelegramParseMode = "HTML" | "MarkdownV2" | "PLAIN";
+
+export interface TelegramInlineButton {
+  text: string;
+  url?: string;
+  callback_data?: string;
+}
+
+export type TelegramInlineRow = TelegramInlineButton[];
+
+export interface TelegramTemplateDetail {
+  parseMode?: TelegramParseMode;
+  inlineKeyboard?: TelegramInlineRow[];
+  disableWebPagePreview?: boolean;
+}
+
 export type TemplateButtonType = "QUICK_REPLY" | "URL" | "CALL";
 
 export interface TemplateButton {
@@ -21,6 +43,7 @@ export interface Template {
   tenantId?: string;
   name: string;
   category: TemplateCategory;
+  channelType?: TemplateChannelType;
   content: string;
   mediaType: TemplateMediaType;
   mediaUrl?: string;
@@ -28,6 +51,7 @@ export interface Template {
   variables: string[];
   isFavorite: boolean;
   usageCount: number;
+  telegramDetail?: TelegramTemplateDetail;
   createdAt: string;
   updatedAt: string;
 }
@@ -35,21 +59,25 @@ export interface Template {
 export interface CreateTemplateInput {
   name: string;
   category: TemplateCategory;
+  channelType?: TemplateChannelType;
   content: string;
   mediaType?: TemplateMediaType;
   mediaUrl?: string;
   buttons?: TemplateButton[];
   isFavorite?: boolean;
+  telegramDetail?: TelegramTemplateDetail;
 }
 
 export interface UpdateTemplateInput {
   name?: string;
   category?: TemplateCategory;
+  channelType?: TemplateChannelType;
   content?: string;
   mediaType?: TemplateMediaType;
   mediaUrl?: string;
   buttons?: TemplateButton[];
   isFavorite?: boolean;
+  telegramDetail?: TelegramTemplateDetail;
 }
 
 export interface ListTemplatesQuery {
@@ -57,6 +85,7 @@ export interface ListTemplatesQuery {
   pageSize?: number;
   search?: string;
   category?: TemplateCategory | "ALL";
+  channelType?: TemplateChannelType | "ALL";
   favoriteOnly?: boolean;
   isFavorite?: boolean;
 }

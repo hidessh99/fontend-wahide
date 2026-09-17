@@ -6,11 +6,16 @@ import {
   TemplateCategory,
   TemplateMediaType,
   TemplateButton,
+  TemplateChannelType,
+  TelegramParseMode,
+  TelegramInlineRow,
   CreateTemplateInput,
   UpdateTemplateInput,
 } from "../../types/template.types";
 import { WhatsAppPhoneMockup } from "./WhatsAppPhoneMockup";
 import { VariableQuickInsert } from "./VariableQuickInsert";
+import { TelegramInlineKeyboardBuilder } from "./TelegramInlineKeyboardBuilder";
+import { TelegramChatPreview } from "./TelegramChatPreview";
 import {
   Plus,
   Trash2,
@@ -20,6 +25,8 @@ import {
   LayoutTemplate,
   ArrowRight,
   RefreshCw,
+  Bot,
+  Globe,
 } from "lucide-react";
 import {
   Dialog,
@@ -73,8 +80,20 @@ function TemplateEditorContent({
     initialData?.mediaType || "NONE",
   );
   const [mediaUrl, setMediaUrl] = useState(initialData?.mediaUrl || "");
-  const [buttons, setButtons] = useState<TemplateButton[]>(
-    initialData?.buttons ? [...initialData.buttons] : [],
+  const [channelType, setChannelType] = useState<TemplateChannelType>(
+    initialData?.channelType || "ALL",
+  );
+  const [parseMode, setParseMode] = useState<TelegramParseMode>(
+    initialData?.telegramDetail?.parseMode || "HTML",
+  );
+  const [inlineKeyboard, setInlineKeyboard] = useState<TelegramInlineRow[]>(
+    initialData?.telegramDetail?.inlineKeyboard || [],
+  );
+  const [disableWebPagePreview, setDisableWebPagePreview] = useState<boolean>(
+    initialData?.telegramDetail?.disableWebPagePreview || false,
+  );
+  const [previewChannel, setPreviewChannel] = useState<"WHATSAPP" | "TELEGRAM">(
+    initialData?.channelType === "TELEGRAM_BOT" ? "TELEGRAM" : "WHATSAPP",
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mobileTab, setMobileTab] = useState<"form" | "preview">("form");
@@ -110,14 +129,24 @@ function TemplateEditorContent({
     if (!name.trim() || !content.trim()) return;
 
     setIsSubmitting(true);
-    const payload = {
+    const payload: CreateTemplateInput | UpdateTemplateInput = {
       name: name.trim(),
       category,
+      channelType,
       content: content.trim(),
       mediaType,
       mediaUrl: mediaUrl.trim() || undefined,
       buttons: buttons.length > 0 ? buttons : undefined,
       isFavorite: initialData?.isFavorite || false,
+      telegramDetail:
+        channelType === "TELEGRAM_BOT" || channelType === "ALL"
+          ? {
+              parseMode,
+              inlineKeyboard:
+                inlineKeyboard.length > 0 ? inlineKeyboard : undefined,
+              disableWebPagePreview,
+            }
+          : undefined,
     };
 
     const success = await onSubmit(payload);
@@ -240,6 +269,46 @@ function TemplateEditorContent({
                       {t("template.categories.quickReply")}
                     </NativeSelectOption>
                   </NativeSelect>
+                </div>
+              </div>
+
+              {/* Target Channel Selector */}
+              <div className="space-y-1.5">
+                <Label>Target Saluran Komunikasi</Label>
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                  {[
+                    { id: "ALL", label: "Semua (Omni)", icon: Globe },
+                    { id: "WHATSMEOW_UNOFFICIAL", label: "WA Web", icon: Smartphone },
+                    { id: "META_WABA_OFFICIAL", label: "Meta WABA", icon: Check },
+                    { id: "TELEGRAM_BOT", label: "Telegram Bot", icon: Bot },
+                  ].map((ch) => {
+                    const Icon = ch.icon;
+                    const isSelected = channelType === ch.id;
+                    return (
+                      <button
+                        key={ch.id}
+                        type="button"
+                        onClick={() => {
+                          setChannelType(ch.id as TemplateChannelType);
+                          if (ch.id === "TELEGRAM_BOT") setPreviewChannel("TELEGRAM");
+                          else if (
+                            ch.id === "WHATSMEOW_UNOFFICIAL" ||
+                            ch.id === "META_WABA_OFFICIAL"
+                          )
+                            setPreviewChannel("WHATSAPP");
+                        }}
+                        className={cn(
+                          "flex items-center justify-center gap-1.5 rounded-xl border p-2 text-xs font-bold transition cursor-pointer",
+                          isSelected
+                            ? "border-primary bg-primary/10 text-primary"
+                            : "border-border/70 bg-card hover:bg-muted text-foreground-secondary",
+                        )}
+                      >
+                        <Icon className="size-3.5 shrink-0" />
+                        <span className="truncate">{ch.label}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -414,6 +483,75 @@ function TemplateEditorContent({
                   </div>
                 )}
               </div>
+
+              {/* Telegram Specific Configuration Block */}
+              {(channelType === "TELEGRAM_BOT" || channelType === "ALL") && (
+                <div className="space-y-3 rounded-2xl border border-sky-500/20 bg-sky-500/5 p-3.5 dark:bg-sky-950/10">
+                  <div className="flex items-center gap-2">
+                    <div className="flex size-6 items-center justify-center rounded-lg bg-sky-500/20 text-sky-600 dark:text-sky-400">
+                      <Bot className="size-3.5" />
+                    </div>
+                    <div>
+                      <h4 className="text-foreground text-xs font-bold">
+                        Pengaturan Khusus Telegram Bot
+                      </h4>
+                      <p className="text-foreground-secondary text-[11px]">
+                        Format parsing mode dan tombol inline interaktif Telegram.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Parse Mode Switcher */}
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <span className="text-foreground-secondary text-xs font-semibold">
+                      Parsing Mode:
+                    </span>
+                    <div className="flex items-center gap-1 rounded-xl bg-muted p-0.5">
+                      {(["HTML", "MarkdownV2", "PLAIN"] as TelegramParseMode[]).map(
+                        (mode) => (
+                          <Button
+                            key={mode}
+                            type="button"
+                            variant={parseMode === mode ? "default" : "ghost"}
+                            size="xs"
+                            onClick={() => setParseMode(mode)}
+                            className="rounded-lg text-[11px] cursor-pointer"
+                          >
+                            {mode}
+                          </Button>
+                        ),
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Disable Web Page Preview Toggle */}
+                  <div className="flex items-center justify-between rounded-xl border border-border/60 bg-card p-2.5 text-xs">
+                    <div>
+                      <p className="font-semibold text-foreground">
+                        Matikan Preview Tautan (Web Page Preview)
+                      </p>
+                      <p className="text-[11px] text-foreground-muted">
+                        Mencegah Telegram merender thumbnail link URL di bawah pesan.
+                      </p>
+                    </div>
+                    <input
+                      type="checkbox"
+                      checked={disableWebPagePreview}
+                      onChange={(e) =>
+                        setDisableWebPagePreview(e.target.checked)
+                      }
+                      className="size-4 accent-sky-500 cursor-pointer"
+                    />
+                  </div>
+
+                  {/* Inline Keyboard Builder */}
+                  <TelegramInlineKeyboardBuilder
+                    value={inlineKeyboard}
+                    onChange={setInlineKeyboard}
+                    disabled={isSubmitting}
+                  />
+                </div>
+              )}
             </form>
           </div>
 
@@ -424,21 +562,57 @@ function TemplateEditorContent({
               mobileTab === "preview" ? "flex" : "hidden lg:flex",
             )}
           >
+            {/* Channel Preview Switcher */}
+            <div className="mb-3 flex items-center gap-1 rounded-full border border-border/80 bg-background/80 p-1 shadow-xs">
+              <button
+                type="button"
+                onClick={() => setPreviewChannel("WHATSAPP")}
+                className={cn(
+                  "flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold transition cursor-pointer",
+                  previewChannel === "WHATSAPP"
+                    ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+                    : "text-foreground-muted hover:text-foreground",
+                )}
+              >
+                <Smartphone className="size-3.5" />
+                <span>WhatsApp</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPreviewChannel("TELEGRAM")}
+                className={cn(
+                  "flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold transition cursor-pointer",
+                  previewChannel === "TELEGRAM"
+                    ? "bg-sky-500/15 text-sky-600 dark:text-sky-400"
+                    : "text-foreground-muted hover:text-foreground",
+                )}
+              >
+                <Bot className="size-3.5" />
+                <span>Telegram Bot</span>
+              </button>
+            </div>
+
             <div className="w-full max-w-85 my-auto">
-              <div className="mb-2.5 text-center hidden lg:block">
-                <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-foreground-muted bg-background/80 border border-border/60 px-3 py-1 rounded-full shadow-xs">
-                  <Smartphone className="size-3 text-foreground-muted shrink-0" />
-                  <span>{t("template.editor.interactivePreview")}</span>
-                </span>
-              </div>
-              <WhatsAppPhoneMockup
-                name={name}
-                category={category}
-                content={content}
-                mediaType={mediaType}
-                mediaUrl={mediaUrl}
-                buttons={buttons}
-              />
+              {previewChannel === "WHATSAPP" ? (
+                <WhatsAppPhoneMockup
+                  name={name}
+                  category={category}
+                  content={content}
+                  mediaType={mediaType}
+                  mediaUrl={mediaUrl}
+                  buttons={buttons}
+                />
+              ) : (
+                <TelegramChatPreview
+                  name={name}
+                  category={category}
+                  content={content}
+                  parseMode={parseMode}
+                  mediaType={mediaType}
+                  mediaUrl={mediaUrl}
+                  inlineKeyboard={inlineKeyboard}
+                />
+              )}
             </div>
           </div>
         </div>
