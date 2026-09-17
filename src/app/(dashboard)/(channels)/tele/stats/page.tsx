@@ -5,7 +5,7 @@ import { SellerRouteGuard } from "@/components/layout/shared/SellerRouteGuard";
 export const metadata: Metadata = {
   title: "Statistik Telegram Bot | Wahide",
   description:
-    "Pantau performa transmisi bot Telegram, pemakaian kuota harian, dan kesehatan token-bucket rate limiter.",
+    "Pantau performa transmisi bot Telegram, pemakaian kuota harian, dan performa dispatch pesan.",
   alternates: {
     canonical: "/tele/stats",
   },

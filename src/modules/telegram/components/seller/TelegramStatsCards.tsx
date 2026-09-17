@@ -7,8 +7,6 @@ import {
   CheckCircle2,
   AlertCircle,
   Clock,
-  ShieldCheck,
-  Zap,
   Activity,
   Layers,
   Inbox,
@@ -444,44 +442,6 @@ export function TelegramStatsCards({
           <p className="text-foreground-muted text-[11px]">
             {stats.daily_sent_count.toLocaleString()} / {stats.daily_limit.toLocaleString()}
           </p>
-        </div>
-      </div>
-
-      {/* Token-Bucket Rate Limiter Guard */}
-      <div className="bg-surface border-border rounded-2xl border p-6 space-y-4 shadow-xs dark:bg-[#151614]">
-        <div className="flex items-center gap-2.5">
-          <div className="flex size-8 items-center justify-center rounded-xl bg-wise-green/15 text-dark-green dark:text-wise-green">
-            <ShieldCheck className="size-4" />
-          </div>
-          <div>
-            <h3 className="text-foreground text-sm font-bold">
-              Proteksi Token-Bucket Rate Limiter
-            </h3>
-            <p className="text-foreground-secondary text-xs">
-              Mencegah banned & error HTTP 429 dari Telegram
-            </p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-          <div className="rounded-xl border border-border/60 bg-muted/40 p-3 space-y-1">
-            <span className="text-foreground-secondary text-[11px] font-medium">
-              Batas Global per Bot
-            </span>
-            <p className="font-mono font-bold text-wise-green text-sm flex items-center gap-1">
-              <Zap className="size-3.5" />
-              30 pesan / detik
-            </p>
-          </div>
-          <div className="rounded-xl border border-border/60 bg-muted/40 p-3 space-y-1">
-            <span className="text-foreground-secondary text-[11px] font-medium">
-              Batas Chat Pribadi
-            </span>
-            <p className="font-mono font-bold text-wise-green text-sm flex items-center gap-1">
-              <Activity className="size-3.5" />
-              1 pesan / detik
-            </p>
-          </div>
         </div>
       </div>
     </div>
