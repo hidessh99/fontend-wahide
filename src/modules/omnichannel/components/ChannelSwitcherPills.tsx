@@ -47,7 +47,7 @@ export function ChannelSwitcherPills({
     id: "WHATSMEOW_UNOFFICIAL",
     label: CHANNEL_CONFIGS.WHATSMEOW_UNOFFICIAL.label,
     badgeText: CHANNEL_CONFIGS.WHATSMEOW_UNOFFICIAL.badge,
-    count: counts?.whatsmeow,
+    count: counts?.waWeb,
     icon: Smartphone,
   });
 

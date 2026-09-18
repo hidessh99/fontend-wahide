@@ -182,14 +182,14 @@ export function CampaignWizardModal({
 
   // Auto-default channel based on available senders
   useEffect(() => {
-    if (activeCounts.whatsmeow > 0) {
+    if (activeCounts.waWeb > 0) {
       setChannelType("WHATSMEOW_UNOFFICIAL");
     } else if (activeCounts.waba > 0) {
       setChannelType("META_WABA_OFFICIAL");
     } else if (activeCounts.telegram > 0) {
       setChannelType("TELEGRAM_BOT");
     }
-  }, [activeCounts.whatsmeow, activeCounts.waba, activeCounts.telegram]);
+  }, [activeCounts.waWeb, activeCounts.waba, activeCounts.telegram]);
 
   if (!isOpen) return null;
 

@@ -14,6 +14,7 @@ import {
   Smartphone,
   ShieldCheck,
   Bot,
+  Layers,
   Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -130,6 +131,8 @@ export function OrderSummarySidebar({
 
   const getChannelIcon = (type: string) => {
     switch (type) {
+      case "OMNICHANNEL":
+        return Layers;
       case "TELEGRAM_BOT":
         return Bot;
       case "META_WABA_OFFICIAL":
@@ -198,11 +201,13 @@ export function OrderSummarySidebar({
                         {item.planName}
                       </p>
                       <p className="text-[10px] text-foreground-muted truncate">
-                        {item.channelType === "WHATSMEOW_UNOFFICIAL"
-                          ? t("subscription.channels.whatsmeow")
-                          : item.channelType === "META_WABA_OFFICIAL"
-                            ? t("subscription.channels.waba")
-                            : t("subscription.channels.telegram")}
+                        {item.channelType === "OMNICHANNEL"
+                          ? t("subscription.channels.omnichannel")
+                          : item.channelType === "WHATSMEOW_UNOFFICIAL"
+                            ? t("subscription.channels.waWeb")
+                            : item.channelType === "META_WABA_OFFICIAL"
+                              ? t("subscription.channels.waba")
+                              : t("subscription.channels.telegram")}
                       </p>
                     </div>
                   </div>

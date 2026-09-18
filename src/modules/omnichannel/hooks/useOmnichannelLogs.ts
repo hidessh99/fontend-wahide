@@ -174,7 +174,7 @@ export function useOmnichannelLogs(initialPage = 1, initialPageSize = 20) {
       failedCount: failed,
       successRate: rate,
       byChannel: {
-        whatsmeow: {
+        waWeb: {
           total: logs.filter((l) => l.channelType === "WHATSMEOW_UNOFFICIAL")
             .length,
           sent: logs.filter(

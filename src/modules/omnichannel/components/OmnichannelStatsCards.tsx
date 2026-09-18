@@ -31,7 +31,7 @@ export function OmnichannelStatsCards({
             <div className="flex items-center gap-2 pt-1 text-[11px] text-muted-foreground">
               <span className="flex items-center gap-0.5" title="WhatsApp Web">
                 <Smartphone className="size-3 text-emerald-500" />
-                {byChannel.whatsmeow.total}
+                {byChannel.waWeb.total}
               </span>
               <span>•</span>
               <span className="flex items-center gap-0.5" title="Meta WABA">

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { SubscriptionChannel } from "../../types/subscription.types";
-import { Smartphone, ShieldCheck, Bot } from "lucide-react";
+import { Smartphone, ShieldCheck, Bot, Layers } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 import { useI18n } from "@/lib/i18n/context";
@@ -27,9 +27,17 @@ export function TriChannelSelectorTabs({
     activeBg: string;
   }> = [
     {
+      id: "OMNICHANNEL",
+      label: t("subscription.channels.omnichannel"),
+      sublabel: t("subscription.channels.omnichannelSubtitle"),
+      icon: Layers,
+      accentColor: "text-amber-700 dark:text-amber-400",
+      activeBg: "bg-amber-500/10 border-amber-500/30 text-amber-800 dark:text-amber-300",
+    },
+    {
       id: "WHATSMEOW_UNOFFICIAL",
-      label: t("subscription.channels.whatsmeow"),
-      sublabel: t("subscription.channels.whatsmeowSubtitle"),
+      label: t("subscription.channels.waWeb"),
+      sublabel: t("subscription.channels.waWebSubtitle"),
       icon: Smartphone,
       accentColor: "text-emerald-700 dark:text-emerald-400",
       activeBg: "bg-emerald-500/10 border-emerald-500/30 text-emerald-800 dark:text-emerald-300",
@@ -60,7 +68,7 @@ export function TriChannelSelectorTabs({
         </span>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
         {channels.map((ch) => {
           const Icon = ch.icon;
           const isActive = activeChannel === ch.id;

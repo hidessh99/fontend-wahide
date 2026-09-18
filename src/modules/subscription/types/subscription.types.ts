@@ -1,9 +1,19 @@
 export type PlanTier = string;
 
 export type SubscriptionChannel =
+  | "OMNICHANNEL"
   | "WHATSMEOW_UNOFFICIAL"
   | "META_WABA_OFFICIAL"
   | "TELEGRAM_BOT";
+
+export interface PlanChannelItem {
+  id?: string;
+  channelType: string;
+  isEnabled: boolean;
+  maxSenders: number;
+  monthlyQuota: number;
+  ratePerUnit: number;
+}
 
 export interface OrderCartItem {
   id: string;
@@ -37,6 +47,7 @@ export interface SubscriptionPlan {
   allowCampaign: boolean;
   allowAutoreply: boolean;
   allowSchedule: boolean;
+  channels?: PlanChannelItem[];
   features: string[];
   isPopular?: boolean;
 }
@@ -55,6 +66,7 @@ export interface TenantSubscription {
   isLifetime?: boolean;
   status: string;
   isActive: boolean;
+  channels?: PlanChannelItem[];
 }
 
 export interface WebhookConfig {

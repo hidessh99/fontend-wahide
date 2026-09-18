@@ -214,6 +214,35 @@ export function QuotaDialCard({ subscription }: QuotaDialCardProps) {
               </span>
             )}
           </div>
+
+          {/* Channel Allocation Breakdown Pill */}
+          {subscription.channels && subscription.channels.length > 0 && (
+            <div className="border-border bg-surface/50 flex flex-wrap items-center gap-2 rounded-md border p-2.5 dark:bg-[#151714]">
+              <span className="text-foreground-muted text-[11px] font-semibold">
+                Alokasi Kuota Kanal:
+              </span>
+              <div className="flex flex-wrap items-center gap-1.5">
+                {subscription.channels
+                  .filter((ch) => ch.isEnabled && ch.monthlyQuota > 0)
+                  .map((ch, idx) => (
+                    <span
+                      key={idx}
+                      className="inline-flex items-center gap-1 rounded-md bg-muted/80 px-2 py-0.5 text-[10px] font-medium text-foreground-secondary border border-border/50"
+                    >
+                      <span className="font-bold text-foreground">
+                        {ch.channelType === "WHATSMEOW"
+                          ? "WhatsApp"
+                          : ch.channelType === "TELEGRAM"
+                            ? "Telegram"
+                            : "Meta WABA"}
+                        :
+                      </span>
+                      {ch.monthlyQuota.toLocaleString(locale === "id" ? "id-ID" : "en-US")} pesan
+                    </span>
+                  ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

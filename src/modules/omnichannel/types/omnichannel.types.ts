@@ -20,7 +20,7 @@ export const CHANNEL_CONFIGS: Record<OmnichannelChannelType, ChannelMeta> = {
     id: "WHATSMEOW_UNOFFICIAL",
     label: "WhatsApp Web",
     badge: "Unofficial",
-    description: "Koneksi hardware Whatsmeow via scan QR / pairing phone",
+    description: "Koneksi multi-device WhatsApp Web via scan QR / pairing phone",
     iconName: "Smartphone",
     colorClass: "emerald",
   },
@@ -56,7 +56,7 @@ export interface UnifiedSender {
 }
 
 export interface OmnichannelActiveCounts {
-  whatsmeow: number;
+  waWeb: number;
   waba: number;
   telegram: number;
   total: number;
@@ -121,7 +121,7 @@ export interface OmnichannelStats {
   failedCount: number;
   successRate: number;
   byChannel: {
-    whatsmeow: { total: number; sent: number; failed: number };
+    waWeb: { total: number; sent: number; failed: number };
     waba: { total: number; sent: number; failed: number };
     telegram: { total: number; sent: number; failed: number };
   };

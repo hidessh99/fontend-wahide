@@ -59,7 +59,7 @@ export function useOmnichannelSenders() {
     };
   }, [fetchSenders]);
 
-  // Connected Whatsmeow WhatsApp devices
+  // Connected WhatsApp Web Multi-Device
   const activeDevices = useMemo(() => {
     return devices.filter(
       (d) =>
@@ -81,7 +81,7 @@ export function useOmnichannelSenders() {
 
   // Unified senders mapping per channel
   const sendersByChannel = useMemo<Record<OmnichannelChannelType, UnifiedSender[]>>(() => {
-    const whatsmeowSenders: UnifiedSender[] = activeDevices.map((d) => ({
+    const waWebSenders: UnifiedSender[] = activeDevices.map((d) => ({
       id: d.id,
       channelType: "WHATSMEOW_UNOFFICIAL",
       displayName: d.name || d.pushName || "WhatsApp Device",
@@ -115,21 +115,21 @@ export function useOmnichannelSenders() {
     }));
 
     return {
-      WHATSMEOW_UNOFFICIAL: whatsmeowSenders,
+      WHATSMEOW_UNOFFICIAL: waWebSenders,
       META_WABA_OFFICIAL: wabaSenders,
       TELEGRAM_BOT: telegramSenders,
     };
   }, [activeDevices, activeWabaAccounts, activeTelegramBots]);
 
   const activeCounts = useMemo<OmnichannelActiveCounts>(() => {
-    const whatsmeow = activeDevices.length;
+    const waWeb = activeDevices.length;
     const waba = activeWabaAccounts.length;
     const telegram = activeTelegramBots.length;
     return {
-      whatsmeow,
+      waWeb,
       waba,
       telegram,
-      total: whatsmeow + waba + telegram,
+      total: waWeb + waba + telegram,
     };
   }, [activeDevices, activeWabaAccounts, activeTelegramBots]);
 

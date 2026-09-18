@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useSubscription } from "@/modules/subscription/hooks/useSubscription";
 import {
   SubscriptionChannel,
@@ -20,11 +20,11 @@ import { toast } from "sonner";
 
 export function SubscriptionSellerPlansView() {
   const { t } = useI18n();
-  const { subscription, balance, upgradePlan } = useSubscription();
+  const { subscription, plans, balance, upgradePlan } = useSubscription();
 
-  // Active channel tab: WhatsApp Web, Meta WABA, or Telegram Bot
+  // Active channel tab: Omnichannel, WhatsApp Web, Meta WABA, or Telegram Bot
   const [activeChannel, setActiveChannel] =
-    useState<SubscriptionChannel>("WHATSMEOW_UNOFFICIAL");
+    useState<SubscriptionChannel>("OMNICHANNEL");
 
   // Cart state
   const [cartItems, setCartItems] = useState<OrderCartItem[]>([]);
@@ -32,6 +32,28 @@ export function SubscriptionSellerPlansView() {
   const [pendingPlanForUpgrade, setPendingPlanForUpgrade] =
     useState<SubscriptionPlan | null>(null);
   const [isUpgrading, setIsUpgrading] = useState(false);
+
+  // Dynamic available plans computed from backend API with offline fallback
+  const allAvailablePlans = useMemo(() => {
+    if (Array.isArray(plans) && plans.length > 0) {
+      return plans;
+    }
+    return [
+      ...CHANNEL_PLANS.OMNICHANNEL,
+      ...CHANNEL_PLANS.WHATSMEOW_UNOFFICIAL,
+      ...CHANNEL_PLANS.META_WABA_OFFICIAL,
+      ...CHANNEL_PLANS.TELEGRAM_BOT,
+    ];
+  }, [plans]);
+
+  // Current channel plans filtered dynamically
+  const currentChannelPlans = useMemo(() => {
+    if (Array.isArray(plans) && plans.length > 0) {
+      const filtered = plans.filter((p) => p.channelType === activeChannel);
+      if (filtered.length > 0) return filtered;
+    }
+    return CHANNEL_PLANS[activeChannel] || [];
+  }, [plans, activeChannel]);
 
   // Subscription status calculations for downgrade protection
   const isCurrentPaidActive = Boolean(
@@ -81,12 +103,7 @@ export function SubscriptionSellerPlansView() {
 
   // Checkout handling
   const handleInitiateCheckout = async (planId: string) => {
-    const allPlans = [
-      ...CHANNEL_PLANS.WHATSMEOW_UNOFFICIAL,
-      ...CHANNEL_PLANS.META_WABA_OFFICIAL,
-      ...CHANNEL_PLANS.TELEGRAM_BOT,
-    ];
-    const foundPlan = allPlans.find((p) => p.id === planId);
+    const foundPlan = allAvailablePlans.find((p) => p.id === planId);
 
     if (!foundPlan) {
       toast.error(t("subscription.toasts.planNotFound"));
@@ -122,7 +139,6 @@ export function SubscriptionSellerPlansView() {
     }
   };
 
-  const currentChannelPlans = CHANNEL_PLANS[activeChannel] || [];
   const selectedCartItemForChannel = cartItems.find(
     (item) => item.channelType === activeChannel,
   );

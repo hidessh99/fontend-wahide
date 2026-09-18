@@ -292,7 +292,7 @@ export function MessageLogDetailDialog({
               </div>
               <p className="font-mono text-[11px] leading-relaxed select-text">
                 {log.error_message ||
-                  "Pesan gagal dikirim oleh socket whatsmeow (Penerima tidak aktif atau sesi terputus)."}
+                  "Pesan gagal dikirim oleh gateway socket WhatsApp (Penerima tidak aktif atau sesi terputus)."}
               </p>
             </div>
           )}

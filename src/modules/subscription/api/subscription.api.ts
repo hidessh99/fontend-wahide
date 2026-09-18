@@ -5,6 +5,7 @@ import {
   SubscriptionChannel,
   SubscriptionPlan,
   TenantSubscription,
+  PlanChannelItem,
   WebhookConfig,
   WebhookLogItem,
   WebhookLogFilters,
@@ -16,36 +17,108 @@ export const CHANNEL_PLANS: Record<
   SubscriptionChannel,
   SubscriptionPlan[]
 > = {
-  WHATSMEOW_UNOFFICIAL: [
+  OMNICHANNEL: [
     {
       id: "01JPLAN0000000000000000001",
-      name: "WhatsApp Starter",
-      channelType: "WHATSMEOW_UNOFFICIAL",
+      name: "FREE Starter",
+      channelType: "OMNICHANNEL",
       priceMonthly: 0,
-      quotaMonthly: 1500,
-      maxDeviceSlots: 1,
-      maxAgents: 0,
+      quotaMonthly: 2500,
+      maxDeviceSlots: 2,
+      maxAgents: 1,
       hasWatermark: true,
       allowAttachment: false,
       allowCampaign: true,
       allowAutoreply: true,
       allowSchedule: false,
       features: [
-        "1.500 Pesan Broadcast / bulan",
-        "1 Slot WhatsApp Multi-Device (QR)",
-        "Proteksi Variasi Kata (Spintax)",
-        "Jeda Waktu Kirim Santai & Alami",
+        "2.500 Kuota Pesan / bulan (1.5k WA + 1k TG)",
+        "2 Slot Device Aktif (1 WA Web + 1 Telegram Bot)",
+        "1 Operator CS / Agent",
+        "Proteksi Anti-Ban Jitter & Spintax",
         "Watermark 'Powered by Wahide'",
+        "Gratis Selamanya (Free Forever)",
       ],
     },
     {
-      id: "01JPLAN_WA_STANDARD",
-      name: "WhatsApp Standard",
-      channelType: "WHATSMEOW_UNOFFICIAL",
+      id: "01JPLANHYBRID0000000000001",
+      name: "Omnichannel UMKM Combo",
+      channelType: "OMNICHANNEL",
       priceMonthly: 49000,
+      quotaMonthly: 35000,
+      maxDeviceSlots: 5,
+      maxAgents: 3,
+      hasWatermark: false,
+      allowAttachment: true,
+      allowCampaign: true,
+      allowAutoreply: true,
+      allowSchedule: true,
+      isPopular: true,
+      features: [
+        "35.000 Pesan Total / bulan (15k WA + 15k TG + 5k WABA)",
+        "5 Senders Terhubung (3 WA Web + 1 WABA + 1 TG)",
+        "3 Operator CS / Multi-Agent",
+        "Kirim Media Gambar, Dokumen & Audio",
+        "Bebas Watermark (100% White-Label)",
+        "Auto-Reply & AI Chatbot Response",
+        "Multi-Channel Smart Routing",
+      ],
+    },
+    {
+      id: "01JPLANHYBRID0000000000002",
+      name: "Omnichannel Juragan Super",
+      channelType: "OMNICHANNEL",
+      priceMonthly: 99000,
+      quotaMonthly: 100000,
+      maxDeviceSlots: 19,
+      maxAgents: 8,
+      hasWatermark: false,
+      allowAttachment: true,
+      allowCampaign: true,
+      allowAutoreply: true,
+      allowSchedule: true,
+      features: [
+        "100.000 Pesan Total / bulan (50k WA + 50k TG + Unlimited WABA)",
+        "19 Senders Terhubung (8 WA + 3 WABA + 8 TG)",
+        "8 Operator CS / Multi-Agent",
+        "Kirim Media Gambar, Dokumen & Audio",
+        "Prioritas Jalur Antrean Anti-Ban",
+        "Webhook Event Streaming Real-time",
+        "Dukungan Teknis Prioritas SLA",
+      ],
+    },
+  ],
+  WHATSMEOW_UNOFFICIAL: [
+    {
+      id: "01JPLAN0000000000000000002",
+      name: "WA Olshop Pemula",
+      channelType: "WHATSMEOW_UNOFFICIAL",
+      priceMonthly: 10000,
+      quotaMonthly: 5000,
+      maxDeviceSlots: 1,
+      maxAgents: 1,
+      hasWatermark: false,
+      allowAttachment: true,
+      allowCampaign: true,
+      allowAutoreply: true,
+      allowSchedule: false,
+      features: [
+        "5.000 Pesan Broadcast / bulan",
+        "1 Slot WhatsApp Multi-Device (QR)",
+        "1 Operator CS / Agent",
+        "Kirim Media Gambar, Dokumen & Audio",
+        "Bebas Watermark (100% White-Label)",
+        "Proteksi Spintax & Jeda Kirim Alami",
+      ],
+    },
+    {
+      id: "01JPLAN0000000000000000003",
+      name: "WA UMKM Berkembang",
+      channelType: "WHATSMEOW_UNOFFICIAL",
+      priceMonthly: 25000,
       quotaMonthly: 15000,
       maxDeviceSlots: 2,
-      maxAgents: 1,
+      maxAgents: 2,
       hasWatermark: false,
       allowAttachment: true,
       allowCampaign: true,
@@ -55,20 +128,20 @@ export const CHANNEL_PLANS: Record<
       features: [
         "15.000 Pesan Broadcast / bulan",
         "2 Slot WhatsApp Multi-Device",
-        "1 Operator CS / Agent",
-        "Kirim Media Gambar, Dokumen & Audio",
+        "2 Operator CS / Multi-Agent",
+        "Auto-Reply & Penjadwalan Pesan",
+        "Kirim Media Gambar & Dokumen",
         "Bebas Watermark (100% White-Label)",
-        "Penjadwalan & Auto-Reply Spintax",
       ],
     },
     {
-      id: "01JPLAN0000000000000000002",
-      name: "WhatsApp Pro Business",
+      id: "01JPLAN0000000000000000004",
+      name: "WA Juragan Grosir",
       channelType: "WHATSMEOW_UNOFFICIAL",
-      priceMonthly: 99000,
+      priceMonthly: 50000,
       quotaMonthly: 50000,
       maxDeviceSlots: 5,
-      maxAgents: 3,
+      maxAgents: 5,
       hasWatermark: false,
       allowAttachment: true,
       allowCampaign: true,
@@ -77,8 +150,8 @@ export const CHANNEL_PLANS: Record<
       features: [
         "50.000 Pesan Broadcast / bulan",
         "5 Slot WhatsApp Multi-Device",
-        "3 Operator CS / Multi-Agent",
-        "Real-time Webhook & Delivery Callback",
+        "5 Operator CS / Multi-Agent",
+        "Webhook & Real-time Delivery Event",
         "Prioritas Jalur Antrean Anti-Ban",
         "Dukungan Teknis Prioritas",
       ],
@@ -86,13 +159,13 @@ export const CHANNEL_PLANS: Record<
   ],
   META_WABA_OFFICIAL: [
     {
-      id: "01JPLAN_WABA_STARTER",
-      name: "Meta WABA Starter",
+      id: "01JPLANWABA000000000000001",
+      name: "WABA Starter",
       channelType: "META_WABA_OFFICIAL",
-      priceMonthly: 99000,
+      priceMonthly: 20000,
       quotaMonthly: 5000,
       maxDeviceSlots: 1,
-      maxAgents: 2,
+      maxAgents: 1,
       hasWatermark: false,
       allowAttachment: true,
       allowCampaign: true,
@@ -100,20 +173,20 @@ export const CHANNEL_PLANS: Record<
       allowSchedule: true,
       features: [
         "1 Nomor WhatsApp Resmi Meta (WABA)",
-        "5.000 Kuota Percakapan / bulan",
+        "5.000 Kuota Percakapan Gateway / bulan",
         "Kirim Template HSM Resmi Centang Hijau",
-        "Sinkronisasi Meta Graph API Otomatis",
-        "Anti-Banned 100% Resmi",
+        "Gateway Only (Biaya pesan bayar langsung ke Meta)",
+        "Anti-Banned 100% Resmi Meta",
       ],
     },
     {
-      id: "01JPLAN_WABA_ENTERPRISE",
-      name: "Meta WABA Enterprise",
+      id: "01JPLANWABA000000000000002",
+      name: "WABA Pro Bisnis",
       channelType: "META_WABA_OFFICIAL",
-      priceMonthly: 249000,
-      quotaMonthly: 25000,
-      maxDeviceSlots: 3,
-      maxAgents: 8,
+      priceMonthly: 45000,
+      quotaMonthly: 20000,
+      maxDeviceSlots: 2,
+      maxAgents: 3,
       hasWatermark: false,
       allowAttachment: true,
       allowCampaign: true,
@@ -121,65 +194,20 @@ export const CHANNEL_PLANS: Record<
       allowSchedule: true,
       isPopular: true,
       features: [
-        "3 Nomor WhatsApp Resmi Meta",
-        "25.000 Kuota Percakapan / bulan",
-        "Kirim Pesan Marketing & Utility HSM",
+        "2 Nomor WhatsApp Resmi Meta",
+        "20.000 Kuota Percakapan Gateway / bulan",
+        "3 Operator CS / Multi-Agent",
         "Integrasi Webhook Multi-Nomor",
-        "Dedicated Tier & Meta Escalation SLA",
-      ],
-    },
-  ],
-  TELEGRAM_BOT: [
-    {
-      id: "01JPLAN_TELE_STARTER",
-      name: "Telegram Bot Starter",
-      channelType: "TELEGRAM_BOT",
-      priceMonthly: 0,
-      quotaMonthly: 2000,
-      maxDeviceSlots: 1,
-      maxAgents: 0,
-      hasWatermark: false,
-      allowAttachment: true,
-      allowCampaign: true,
-      allowAutoreply: true,
-      allowSchedule: false,
-      features: [
-        "1 Bot Token Telegram (BotFather)",
-        "2.000 Pesan Bot / bulan",
-        "Format Pesan HTML & MarkdownV2",
-        "Auto-Reply & Command Trigger Dasar",
+        "Kirim Pesan Marketing & Utility HSM",
       ],
     },
     {
-      id: "01JPLAN_TELE_PRO",
-      name: "Telegram Bot Pro",
-      channelType: "TELEGRAM_BOT",
-      priceMonthly: 35000,
-      quotaMonthly: 25000,
-      maxDeviceSlots: 3,
-      maxAgents: 2,
-      hasWatermark: false,
-      allowAttachment: true,
-      allowCampaign: true,
-      allowAutoreply: true,
-      allowSchedule: true,
-      isPopular: true,
-      features: [
-        "3 Bot Token Telegram Aktif",
-        "25.000 Pesan Bot / bulan",
-        "Inline Keyboard Matrix (Callback / URL)",
-        "Broadcast Grup & Saluran Telegram",
-        "Webhook Event Streaming Real-time",
-        "Bebas Preview Link Toggle",
-      ],
-    },
-    {
-      id: "01JPLAN_TELE_UNLIMITED",
-      name: "Telegram High-Frequency",
-      channelType: "TELEGRAM_BOT",
-      priceMonthly: 79000,
-      quotaMonthly: 100000,
-      maxDeviceSlots: 10,
+      id: "01JPLANWABA000000000000003",
+      name: "WABA Juragan Scale",
+      channelType: "META_WABA_OFFICIAL",
+      priceMonthly: 85000,
+      quotaMonthly: 0,
+      maxDeviceSlots: 5,
       maxAgents: 5,
       hasWatermark: false,
       allowAttachment: true,
@@ -187,18 +215,66 @@ export const CHANNEL_PLANS: Record<
       allowAutoreply: true,
       allowSchedule: true,
       features: [
-        "10 Bot Token Telegram Aktif",
+        "5 Nomor WhatsApp Resmi Meta",
+        "Unlimited Kuota Percakapan Gateway",
+        "5 Operator CS / Multi-Agent",
+        "Dedicated Tier & Meta Escalation SLA",
+        "Throughput Kecepatan Tertinggi",
+      ],
+    },
+  ],
+  TELEGRAM_BOT: [
+    {
+      id: "01JPLANTG00000000000000001",
+      name: "Telegram UMKM Lite",
+      channelType: "TELEGRAM_BOT",
+      priceMonthly: 10000,
+      quotaMonthly: 10000,
+      maxDeviceSlots: 2,
+      maxAgents: 1,
+      hasWatermark: false,
+      allowAttachment: true,
+      allowCampaign: true,
+      allowAutoreply: true,
+      allowSchedule: true,
+      features: [
+        "2 Bot Token Telegram (BotFather)",
+        "10.000 Pesan Bot / bulan",
+        "Format Pesan HTML & MarkdownV2",
+        "Auto-Reply & Command Trigger",
+        "Biaya Pesan Rp 0 (Free Upstream)",
+      ],
+    },
+    {
+      id: "01JPLANTG00000000000000002",
+      name: "Telegram Juragan",
+      channelType: "TELEGRAM_BOT",
+      priceMonthly: 25000,
+      quotaMonthly: 100000,
+      maxDeviceSlots: 5,
+      maxAgents: 3,
+      hasWatermark: false,
+      allowAttachment: true,
+      allowCampaign: true,
+      allowAutoreply: true,
+      allowSchedule: true,
+      isPopular: true,
+      features: [
+        "5 Bot Token Telegram Aktif",
         "100.000 Pesan Bot / bulan",
-        "Kecepatan Tinggi (Up to 30 msg/sec)",
-        "Inline Keyboard Matrix Lengkap",
-        "Auto-Scalable Webhook Delivery",
+        "Inline Keyboard Matrix (Callback / URL)",
+        "Broadcast Saluran & Grup Telegram",
+        "Webhook Event Streaming Real-time",
       ],
     },
   ],
 };
 
 export const DEFAULT_PLANS: SubscriptionPlan[] = [
+  ...CHANNEL_PLANS.OMNICHANNEL,
   ...CHANNEL_PLANS.WHATSMEOW_UNOFFICIAL,
+  ...CHANNEL_PLANS.META_WABA_OFFICIAL,
+  ...CHANNEL_PLANS.TELEGRAM_BOT,
 ];
 
 function normalizeSubscription(
@@ -207,12 +283,12 @@ function normalizeSubscription(
   if (!raw) {
     return {
       planId: "01JPLAN0000000000000000001",
-      planName: "Starter",
+      planName: "FREE Starter",
       planPrice: 0,
       quotaUsed: 0,
-      quotaTotal: 1500,
+      quotaTotal: 2500,
       deviceSlotsUsed: 0,
-      deviceSlotsMax: 1,
+      deviceSlotsMax: 2,
       hasWatermark: true,
       expiresAt: "",
       status: "ACTIVE",
@@ -232,7 +308,7 @@ function normalizeSubscription(
       "01JPLAN0000000000000000001",
   );
   const planName = String(
-    rawPlan.name || raw.plan_name || raw.planName || raw.name || "Starter",
+    rawPlan.name || raw.plan_name || raw.planName || raw.name || "FREE Starter",
   );
   const planPrice = Number(rawPlan.price ?? raw.plan_price ?? 0);
 
@@ -251,7 +327,7 @@ function normalizeSubscription(
       raw.monthly_message_limit ??
       raw.quota_total ??
       raw.quotaTotal ??
-      1500,
+      (planId === "01JPLAN0000000000000000001" ? 2500 : 1500),
   );
 
   const deviceSlotsUsed = Number(
@@ -264,7 +340,7 @@ function normalizeSubscription(
       raw.max_devices ??
       raw.device_slots_max ??
       raw.deviceSlotsMax ??
-      1,
+      (planId === "01JPLAN0000000000000000001" ? 2 : 1),
   );
 
   const hasWatermark = Boolean(
@@ -286,9 +362,22 @@ function normalizeSubscription(
     raw.is_lifetime ||
     raw.isLifetime ||
     planPrice === 0 ||
-    planName.toUpperCase() === "FREE" ||
-    planName.toUpperCase() === "STARTER",
+    planName.toUpperCase().includes("FREE") ||
+    planName.toUpperCase().includes("STARTER"),
   );
+
+  let channels: PlanChannelItem[] | undefined = undefined;
+  const rawChannels = rawPlan.channels || raw.channels;
+  if (Array.isArray(rawChannels) && rawChannels.length > 0) {
+    channels = rawChannels.map((ch: Record<string, unknown>) => ({
+      id: String(ch.id || ""),
+      channelType: String(ch.channel_type || ch.channelType || ""),
+      isEnabled: Boolean(ch.is_enabled ?? ch.isEnabled ?? true),
+      maxSenders: Number(ch.max_senders ?? ch.maxSenders ?? 1),
+      monthlyQuota: Number(ch.monthly_quota ?? ch.monthlyQuota ?? 0),
+      ratePerUnit: Number(ch.rate_per_unit ?? ch.ratePerUnit ?? 0),
+    }));
+  }
 
   return {
     planId,
@@ -303,6 +392,7 @@ function normalizeSubscription(
     isLifetime,
     status,
     isActive,
+    channels,
   };
 }
 
@@ -319,14 +409,14 @@ function normalizePlan(raw: Record<string, unknown>): SubscriptionPlan {
       raw.monthlyMessageLimit ??
       raw.quota_monthly ??
       raw.quotaMonthly ??
-      1500,
+      (id === "01JPLAN0000000000000000001" ? 2500 : 1500),
   );
   const maxDeviceSlots = Number(
     raw.max_devices ??
       raw.maxDevices ??
       raw.max_device_slots ??
       raw.maxDeviceSlots ??
-      1,
+      (id === "01JPLAN0000000000000000001" ? 2 : 1),
   );
   const maxAgents = Number(raw.max_agents ?? raw.maxAgents ?? 0);
   const hasWatermark = Boolean(raw.has_watermark ?? raw.hasWatermark ?? false);
@@ -343,15 +433,81 @@ function normalizePlan(raw: Record<string, unknown>): SubscriptionPlan {
     raw.allow_schedule ?? raw.allowSchedule ?? false,
   );
 
-  // Dynamic feature generation based directly on database columns
+  // Map backend channel_type to frontend SubscriptionChannel enum
+  let channelType: SubscriptionChannel = "WHATSMEOW_UNOFFICIAL";
+  const rawCh = String(raw.channel_type || raw.channelType || "").toUpperCase();
+  if (
+    rawCh === "OMNICHANNEL" ||
+    rawCh.includes("OMNI") ||
+    rawCh.includes("HYBRID") ||
+    id === "01JPLAN0000000000000000001"
+  ) {
+    channelType = "OMNICHANNEL";
+  } else if (rawCh === "META_WABA" || rawCh.includes("WABA")) {
+    channelType = "META_WABA_OFFICIAL";
+  } else if (rawCh === "TELEGRAM" || rawCh.includes("TELE")) {
+    channelType = "TELEGRAM_BOT";
+  } else if (rawCh === "WHATSMEOW" || rawCh.includes("WA")) {
+    channelType = "WHATSMEOW_UNOFFICIAL";
+  }
+
+  // Parse multi-channel quotas if provided
+  let channels: PlanChannelItem[] | undefined = undefined;
+  if (Array.isArray(raw.channels) && raw.channels.length > 0) {
+    channels = raw.channels.map((ch: Record<string, unknown>) => ({
+      id: String(ch.id || ""),
+      channelType: String(ch.channel_type || ch.channelType || ""),
+      isEnabled: Boolean(ch.is_enabled ?? ch.isEnabled ?? true),
+      maxSenders: Number(ch.max_senders ?? ch.maxSenders ?? 1),
+      monthlyQuota: Number(ch.monthly_quota ?? ch.monthlyQuota ?? 0),
+      ratePerUnit: Number(ch.rate_per_unit ?? ch.ratePerUnit ?? 0),
+    }));
+  }
+
+  // Dynamic feature generation based on channel and database columns
   let features: string[] = [];
   if (Array.isArray(raw.features) && raw.features.length > 0) {
     features = raw.features.map(String);
+  } else if (channelType === "OMNICHANNEL") {
+    features.push(
+      `${quotaMonthly.toLocaleString("id-ID")} Pesan Total Multi-Channel / bulan`,
+    );
+    if (channels && channels.length > 0) {
+      channels.forEach((ch) => {
+        if (ch.isEnabled && ch.monthlyQuota > 0) {
+          const chName =
+            ch.channelType === "WHATSMEOW"
+              ? "WhatsApp Web"
+              : ch.channelType === "TELEGRAM"
+                ? "Telegram Bot"
+                : "Meta WABA";
+          features.push(
+            `• ${ch.monthlyQuota.toLocaleString("id-ID")} Pesan ${chName}`,
+          );
+        }
+      });
+    }
+    features.push(`${maxDeviceSlots} Senders / Devices Terhubung`);
+    if (maxAgents > 0) {
+      features.push(`${maxAgents} Operator CS / Multi-Agent`);
+    }
+    if (allowAttachment) {
+      features.push("Kirim Media Gambar, Dokumen & Audio");
+    }
+    if (allowAutoreply) {
+      features.push("Auto-Reply & AI Chatbot Response");
+    }
+    if (!hasWatermark) {
+      features.push("Bebas Watermark (100% White-Label)");
+    } else {
+      features.push("Watermark 'Powered by Wahide'");
+    }
+    features.push("Multi-Channel Smart Routing");
   } else {
     features.push(
       `${quotaMonthly.toLocaleString("id-ID")} Pesan Broadcast / bulan`,
     );
-    features.push(`${maxDeviceSlots} Slot WhatsApp Multi-Device`);
+    features.push(`${maxDeviceSlots} Slot Perangkat / Token`);
     if (maxAgents > 0) {
       features.push(`${maxAgents} Akun Operator CS / Multi-Agent`);
     }
@@ -383,6 +539,7 @@ function normalizePlan(raw: Record<string, unknown>): SubscriptionPlan {
   return {
     id,
     name,
+    channelType,
     priceMonthly,
     quotaMonthly,
     maxDeviceSlots,
@@ -392,6 +549,7 @@ function normalizePlan(raw: Record<string, unknown>): SubscriptionPlan {
     allowCampaign,
     allowAutoreply,
     allowSchedule,
+    channels,
     features,
     isPopular,
   };
