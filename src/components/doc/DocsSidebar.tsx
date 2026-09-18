@@ -12,6 +12,9 @@ import {
   Megaphone,
   ShieldCheck,
   Webhook,
+  Send,
+  Bot,
+  Globe,
   ChevronDown,
 } from "lucide-react";
 
@@ -28,6 +31,9 @@ const ICON_MAP: Record<string, React.ElementType> = {
   Megaphone,
   ShieldCheck,
   Webhook,
+  Send,
+  Bot,
+  Globe,
 };
 
 export function DocsSidebar({ sections, onItemClick }: DocsSidebarProps) {

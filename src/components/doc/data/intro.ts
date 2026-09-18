@@ -6,7 +6,7 @@ export const introDoc: GuideDoc = {
   slug: "intro",
   title: "Introduction",
   description:
-    "The Wahide REST API provides programmatic access to WhatsApp Multi-Device features, allowing you to send messages, manage device connections, handle incoming webhooks, and orchestrate campaigns.",
+    "The Wahide REST API provides enterprise-grade programmatic access to Omnichannel Messaging (WhatsApp Multi-Device, Meta WABA, Telegram, Email) and an Intelligent Autoreply & Visual Flow chatbot ecosystem.",
   category: "Getting Started",
   categorySlug: "getting-started",
   sections: [
@@ -14,13 +14,19 @@ export const introDoc: GuideDoc = {
       id: "api-overview",
       title: "API Architecture & Standards",
       content:
-        "The Wahide API is organized around RESTful principles. All requests are communicated over HTTPS using standard HTTP verbs (GET, POST, PUT, DELETE) and expect/return UTF-8 encoded JSON payloads.\n\nAll endpoints require authentication using a Bearer token or API key in the request headers.",
+        "The Wahide API is organized around RESTful principles. All requests are communicated over HTTPS using standard HTTP verbs (GET, POST, PUT, PATCH, DELETE) and expect/return UTF-8 encoded JSON payloads.\n\nAll endpoints require authentication using a Bearer token or API key in the request headers.",
       callout: {
         type: "info",
         title: "API Base URL",
         content:
-          "Active API Base URL:\n`https://api.wahide.com/api/v1`\n\nAll endpoint paths documented in this reference are relative to this root URL. In local development or staging, this dynamically adapts from `NEXT_PUBLIC_API_BASE_URL`.",
+          "Active API Base URL:\n`https://api.wahide.id/api/v1`\n\nAll endpoint paths documented in this reference are relative to this root URL. In local development or staging, this dynamically adapts from `NEXT_PUBLIC_API_BASE_URL`.",
       },
+    },
+    {
+      id: "omnichannel-channels",
+      title: "Supported Omnichannel Channels",
+      content:
+        "• **WhatsApp Multi-Device (whatsmeow)**: High-concurrency socket engine with 5-layer anti-ban protection, pairing via QR or 8-digit phone code, and session hibernation & wake.\n• **WhatsApp Cloud API (WABA)**: Official Meta Cloud API integration with high deliverability and embedded signup support.\n• **Telegram Bot API**: Multi-bot management, interactive buttons, webhook synchronization, and message dispatching.\n• **Transactional Email**: High-reputation transactional delivery powered by Resend / SMTP.\n• **Autoreply Ecosystem**: Single-turn keyword rules (Aho-Corasick O(M)), Interactive Visual DAG Flows, Form Submissions (LMAX Ring-Buffer Batch Flusher), and Live Google Spreadsheet lookup.",
     },
     {
       id: "phone-format",
@@ -42,7 +48,7 @@ export const introDoc: GuideDoc = {
       code: {
         language: "bash",
         title: "cURL Quickstart",
-        content: `curl -X POST "https://api.wahide.com/api/v1/wa/messages/send" \\
+        content: `curl -X POST "https://api.wahide.id/api/v1/wa/messages/send" \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -55,7 +61,7 @@ export const introDoc: GuideDoc = {
       id: "features",
       title: "Key Capabilities",
       content:
-        "• **Multi-Device Rotation**: Connect multiple WhatsApp phone numbers and distribute message loads automatically via round-robin pooling.\n• **Natural Delivery Dynamics**: Support for typing presence indicators and configurable jitter backoff.\n• **Dynamic Spintax**: Use syntax like {Hello|Hi|Greetings} to produce unique variations across bulk deliveries.\n• **Meta Cloud API Compatibility**: Drop-in endpoint compatibility (/api/v1/v18.0/{deviceId}/messages) for existing Meta integrations.\n• **Delivery Tracking**: Track real-time message states (PENDING, SENT, DELIVERED, READ, FAILED) through inbound webhook callbacks.",
+        "• **Multi-Device Rotation**: Connect multiple WhatsApp phone numbers and distribute message loads automatically via round-robin pooling.\n• **Aho-Corasick Multi-Pattern Automaton**: Instant O(M) keyword evaluation for 50,000+ autoreply rules without linear loop overhead.\n• **Hibernation Exemption Guard**: Automatically prevents device socket reaper disconnects for devices with active autoreply rules.\n• **Dual-Driver NATS & Redis Support**: Stateless Go runtime with sub-millisecond in-memory cache and stream pipelines.\n• **Interactive Visual DAG Flow Builder**: Multi-turn conversational flows with drag-and-drop canvas and real-time simulator.",
     },
   ],
 };

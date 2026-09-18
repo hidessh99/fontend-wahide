@@ -592,4 +592,166 @@ func main() {
       },
     ],
   },
+  {
+    type: "endpoint",
+    id: "campaigns-resume",
+    slug: "campaigns/resume",
+    title: "Resume Paused Campaign",
+    description:
+      "Resumes an actively paused broadcast campaign. Continues queued message dispatches from where it stopped.",
+    category: "Campaigns & Broadcasts",
+    categorySlug: "campaigns",
+    method: "POST",
+    path: "/api/v1/campaigns/:id/resume",
+    parameters: [
+      {
+        name: "id",
+        type: "string",
+        required: true,
+        description: "ULID of the campaign to resume.",
+        example: "01JPLAN0000000000000000077",
+      },
+    ],
+    snippets: {
+      curl: `curl -X POST "https://api.wahide.id/api/v1/campaigns/01JPLAN0000000000000000077/resume" \\
+  -H "Authorization: Bearer YOUR_API_KEY"`,
+      nodejs: `import axios from "axios";
+
+const res = await axios.post(
+  "https://api.wahide.id/api/v1/campaigns/01JPLAN0000000000000000077/resume",
+  {},
+  { headers: { Authorization: "Bearer YOUR_API_KEY" } }
+);
+console.log(res.data);`,
+      php: `<?php
+$curl = curl_init();
+curl_setopt_array($curl, [
+  CURLOPT_URL => "https://api.wahide.id/api/v1/campaigns/01JPLAN0000000000000000077/resume",
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_CUSTOMREQUEST => "POST",
+  CURLOPT_HTTPHEADER => ["Authorization: Bearer YOUR_API_KEY"],
+]);
+$response = curl_exec($curl);
+curl_close($curl);
+echo $response;`,
+      python: `import requests
+
+url = "https://api.wahide.id/api/v1/campaigns/01JPLAN0000000000000000077/resume"
+headers = {"Authorization": "Bearer YOUR_API_KEY"}
+response = requests.post(url, headers=headers)
+print(response.json())`,
+      go: `package main
+
+import (
+	"fmt"
+	"io"
+	"net/http"
+)
+
+func main() {
+	url := "https://api.wahide.id/api/v1/campaigns/01JPLAN0000000000000000077/resume"
+	req, _ := http.NewRequest("POST", url, nil)
+	req.Header.Set("Authorization", "Bearer YOUR_API_KEY")
+
+	client := &http.Client{}
+	resp, _ := client.Do(req)
+	defer resp.Body.Close()
+	body, _ := io.ReadAll(resp.Body)
+	fmt.Println(string(body))
+}`,
+    },
+    responses: [
+      {
+        status: 200,
+        statusText: "OK",
+        description: "Campaign resumed.",
+        json: `{
+  "success": true,
+  "message": "campaign resumed successfully",
+  "data": { "id": "01JPLAN0000000000000000077", "status": "RUNNING" }
+}`,
+      },
+    ],
+  },
+  {
+    type: "endpoint",
+    id: "campaigns-cancel",
+    slug: "campaigns/cancel",
+    title: "Cancel Broadcast Campaign",
+    description:
+      "Permanently halts campaign execution and drains unsent pending message queues.",
+    category: "Campaigns & Broadcasts",
+    categorySlug: "campaigns",
+    method: "POST",
+    path: "/api/v1/campaigns/:id/cancel",
+    parameters: [
+      {
+        name: "id",
+        type: "string",
+        required: true,
+        description: "ULID of the campaign to cancel.",
+        example: "01JPLAN0000000000000000077",
+      },
+    ],
+    snippets: {
+      curl: `curl -X POST "https://api.wahide.id/api/v1/campaigns/01JPLAN0000000000000000077/cancel" \\
+  -H "Authorization: Bearer YOUR_API_KEY"`,
+      nodejs: `import axios from "axios";
+
+const res = await axios.post(
+  "https://api.wahide.id/api/v1/campaigns/01JPLAN0000000000000000077/cancel",
+  {},
+  { headers: { Authorization: "Bearer YOUR_API_KEY" } }
+);
+console.log(res.data);`,
+      php: `<?php
+$curl = curl_init();
+curl_setopt_array($curl, [
+  CURLOPT_URL => "https://api.wahide.id/api/v1/campaigns/01JPLAN0000000000000000077/cancel",
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_CUSTOMREQUEST => "POST",
+  CURLOPT_HTTPHEADER => ["Authorization: Bearer YOUR_API_KEY"],
+]);
+$response = curl_exec($curl);
+curl_close($curl);
+echo $response;`,
+      python: `import requests
+
+url = "https://api.wahide.id/api/v1/campaigns/01JPLAN0000000000000000077/cancel"
+headers = {"Authorization": "Bearer YOUR_API_KEY"}
+response = requests.post(url, headers=headers)
+print(response.json())`,
+      go: `package main
+
+import (
+	"fmt"
+	"io"
+	"net/http"
+)
+
+func main() {
+	url := "https://api.wahide.id/api/v1/campaigns/01JPLAN0000000000000000077/cancel"
+	req, _ := http.NewRequest("POST", url, nil)
+	req.Header.Set("Authorization", "Bearer YOUR_API_KEY")
+
+	client := &http.Client{}
+	resp, _ := client.Do(req)
+	defer resp.Body.Close()
+	body, _ := io.ReadAll(resp.Body)
+	fmt.Println(string(body))
+}`,
+    },
+    responses: [
+      {
+        status: 200,
+        statusText: "OK",
+        description: "Campaign cancelled.",
+        json: `{
+  "success": true,
+  "message": "campaign cancelled successfully",
+  "data": { "id": "01JPLAN0000000000000000077", "status": "CANCELLED" }
+}`,
+      },
+    ],
+  },
 ];

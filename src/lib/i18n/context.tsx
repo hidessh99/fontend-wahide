@@ -25,6 +25,7 @@ import idReminder from "@/locales/id/reminder.json";
 import idReservation from "@/locales/id/reservation.json";
 import idForm from "@/locales/id/form.json";
 import idLandingPages from "@/locales/id/landing_pages.json";
+import idAutoreply from "@/locales/id/autoreply.json";
 
 import enCommon from "@/locales/en/common.json";
 import enAuth from "@/locales/en/auth.json";
@@ -46,6 +47,7 @@ import enReminder from "@/locales/en/reminder.json";
 import enReservation from "@/locales/en/reservation.json";
 import enForm from "@/locales/en/form.json";
 import enLandingPages from "@/locales/en/landing_pages.json";
+import enAutoreply from "@/locales/en/autoreply.json";
 
 const dictionaries: Record<Locale, Record<string, unknown>> = {
   id: {
@@ -69,6 +71,7 @@ const dictionaries: Record<Locale, Record<string, unknown>> = {
     reservation: idReservation,
     form: idForm,
     landingPages: idLandingPages,
+    autoreply: idAutoreply,
   },
   en: {
     common: enCommon,
@@ -91,6 +94,7 @@ const dictionaries: Record<Locale, Record<string, unknown>> = {
     reservation: enReservation,
     form: enForm,
     landingPages: enLandingPages,
+    autoreply: enAutoreply,
   },
 };
 

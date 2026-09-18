@@ -25,7 +25,7 @@ export const docNavigation: NavSection[] = [
   },
   {
     id: "devices",
-    title: "WhatsApp Devices",
+    title: "WhatsApp Multi-Device",
     icon: "Smartphone",
     items: [
       {
@@ -42,8 +42,27 @@ export const docNavigation: NavSection[] = [
       },
       {
         id: "devices-pair",
-        title: "Pair Device (QR)",
+        title: "Pair Device (QR Code)",
         path: "/docs/devices/pair",
+        method: "POST",
+      },
+      {
+        id: "devices-pair-phone",
+        title: "Pair via Phone Code",
+        path: "/docs/devices/pair-phone",
+        method: "POST",
+        badge: "Anti-Camera",
+      },
+      {
+        id: "devices-hibernate",
+        title: "Hibernate Session",
+        path: "/docs/devices/hibernate",
+        method: "POST",
+      },
+      {
+        id: "devices-wake",
+        title: "Wake Session",
+        path: "/docs/devices/wake",
         method: "POST",
       },
       {
@@ -61,8 +80,22 @@ export const docNavigation: NavSection[] = [
     ],
   },
   {
+    id: "waba",
+    title: "WhatsApp Cloud API (WABA)",
+    icon: "Globe",
+    items: [
+      {
+        id: "waba-accounts-list",
+        title: "List WABA Accounts",
+        path: "/docs/waba/accounts",
+        method: "GET",
+        badge: "Meta Official",
+      },
+    ],
+  },
+  {
     id: "messaging",
-    title: "Messaging",
+    title: "Messaging & Dispatch",
     icon: "MessageSquare",
     items: [
       {
@@ -95,6 +128,109 @@ export const docNavigation: NavSection[] = [
         id: "messaging-meta-cloud",
         title: "Meta Cloud API Compatible",
         path: "/docs/messaging/meta-cloud-api",
+        method: "POST",
+      },
+    ],
+  },
+  {
+    id: "telegram",
+    title: "Telegram Channel",
+    icon: "Send",
+    items: [
+      {
+        id: "telegram-bots-list",
+        title: "List Telegram Bots",
+        path: "/docs/telegram/bots",
+        method: "GET",
+      },
+      {
+        id: "telegram-bots-create",
+        title: "Connect Bot (@BotFather)",
+        path: "/docs/telegram/create-bot",
+        method: "POST",
+      },
+      {
+        id: "telegram-bots-sync",
+        title: "Synchronize Webhook",
+        path: "/docs/telegram/sync-webhook",
+        method: "POST",
+      },
+      {
+        id: "telegram-send-message",
+        title: "Send Telegram Message",
+        path: "/docs/telegram/send-message",
+        method: "POST",
+        badge: "Omnichannel",
+      },
+      {
+        id: "telegram-messages-list",
+        title: "Message History Logs",
+        path: "/docs/telegram/messages",
+        method: "GET",
+      },
+    ],
+  },
+  {
+    id: "autoreply",
+    title: "Autoreply & Visual Flows",
+    icon: "Bot",
+    items: [
+      {
+        id: "autoreply-rules-list",
+        title: "List Autoreply Rules",
+        path: "/docs/autoreply/rules",
+        method: "GET",
+      },
+      {
+        id: "autoreply-rules-create",
+        title: "Create Autoreply Rule",
+        path: "/docs/autoreply/create-rule",
+        method: "POST",
+        badge: "O(M) Fast",
+      },
+      {
+        id: "autoreply-rules-toggle",
+        title: "Toggle Rule State",
+        path: "/docs/autoreply/toggle-rule",
+        method: "PATCH",
+      },
+      {
+        id: "autoreply-flows-list",
+        title: "List Interactive Flows",
+        path: "/docs/autoreply/flows",
+        method: "GET",
+      },
+      {
+        id: "autoreply-flows-create",
+        title: "Create Visual DAG Flow",
+        path: "/docs/autoreply/create-flow",
+        method: "POST",
+        badge: "Visual Builder",
+      },
+      {
+        id: "autoreply-flows-simulate",
+        title: "Simulate Flow Step",
+        path: "/docs/autoreply/simulate-flow",
+        method: "POST",
+        badge: "Simulator",
+      },
+      {
+        id: "autoreply-submissions-list",
+        title: "List Form Submissions",
+        path: "/docs/autoreply/submissions",
+        method: "GET",
+        badge: "Ring Buffer",
+      },
+      {
+        id: "autoreply-spreadsheet-save",
+        title: "Configure Google Sheet",
+        path: "/docs/autoreply/spreadsheet",
+        method: "POST",
+      },
+      {
+        id: "autoreply-spreadsheet-preview",
+        title: "Preview Live Sheet CSV",
+        path: "/docs/autoreply/preview-sheet",
         method: "POST",
       },
     ],
@@ -150,6 +286,18 @@ export const docNavigation: NavSection[] = [
         method: "POST",
       },
       {
+        id: "contacts-export",
+        title: "Export Contacts (CSV)",
+        path: "/docs/contacts/export",
+        method: "GET",
+      },
+      {
+        id: "contacts-tags-create",
+        title: "Create Contact Tag",
+        path: "/docs/contacts/create-tag",
+        method: "POST",
+      },
+      {
         id: "contacts-tags",
         title: "Contact Tags",
         path: "/docs/contacts/tags",
@@ -184,6 +332,18 @@ export const docNavigation: NavSection[] = [
         id: "campaigns-pause",
         title: "Pause Campaign",
         path: "/docs/campaigns/pause",
+        method: "POST",
+      },
+      {
+        id: "campaigns-resume",
+        title: "Resume Campaign",
+        path: "/docs/campaigns/resume",
+        method: "POST",
+      },
+      {
+        id: "campaigns-cancel",
+        title: "Cancel Campaign",
+        path: "/docs/campaigns/cancel",
         method: "POST",
       },
       {

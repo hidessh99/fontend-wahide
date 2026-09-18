@@ -626,4 +626,179 @@ func main() {
       },
     ],
   },
+  {
+    type: "endpoint",
+    id: "contacts-export",
+    slug: "contacts/export",
+    title: "Export Contacts to CSV",
+    description:
+      "Exports your entire contact list or filtered contacts by tag directly as a downloadable CSV stream.",
+    category: "Contacts Management",
+    categorySlug: "contacts",
+    method: "GET",
+    path: "/api/v1/contacts/export",
+    parameters: [
+      {
+        name: "tag",
+        type: "string",
+        required: false,
+        description: "Optional tag name to filter exported contacts.",
+        example: "VIP",
+      },
+    ],
+    snippets: {
+      curl: `curl -X GET "https://api.wahide.id/api/v1/contacts/export?tag=VIP" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -o contacts.csv`,
+      nodejs: `import axios from "axios";
+import fs from "fs";
+
+const res = await axios.get("https://api.wahide.id/api/v1/contacts/export", {
+  headers: { Authorization: "Bearer YOUR_API_KEY" },
+  params: { tag: "VIP" },
+  responseType: "stream",
+});
+res.data.pipe(fs.createWriteStream("contacts.csv"));`,
+      php: `<?php
+$fp = fopen("contacts.csv", "w+");
+$curl = curl_init();
+curl_setopt_array($curl, [
+  CURLOPT_URL => "https://api.wahide.id/api/v1/contacts/export?tag=VIP",
+  CURLOPT_FILE => $fp,
+  CURLOPT_HTTPHEADER => ["Authorization: Bearer YOUR_API_KEY"],
+]);
+curl_exec($curl);
+curl_close($curl);
+fclose($fp);`,
+      python: `import requests
+
+url = "https://api.wahide.id/api/v1/contacts/export"
+headers = {"Authorization": "Bearer YOUR_API_KEY"}
+params = {"tag": "VIP"}
+
+res = requests.get(url, headers=headers, params=params)
+with open("contacts.csv", "wb") as f:
+    f.write(res.content)`,
+      go: `package main
+
+import (
+	"io"
+	"net/http"
+	"os"
+)
+
+func main() {
+	url := "https://api.wahide.id/api/v1/contacts/export?tag=VIP"
+	req, _ := http.NewRequest("GET", url, nil)
+	req.Header.Set("Authorization", "Bearer YOUR_API_KEY")
+
+	client := &http.Client{}
+	resp, _ := client.Do(req)
+	defer resp.Body.Close()
+
+	out, _ := os.Create("contacts.csv")
+	defer out.Close()
+	io.Copy(out, resp.Body)
+}`,
+    },
+    responses: [
+      {
+        status: 200,
+        statusText: "OK",
+        description: "CSV stream payload.",
+        json: `name,phone,tags\\n"Alex Johnson","628123456789","VIP"`,
+      },
+    ],
+  },
+  {
+    type: "endpoint",
+    id: "contacts-tags-create",
+    slug: "contacts/create-tag",
+    title: "Create Contact Tag",
+    description: "Creates a new contact segmentation tag.",
+    category: "Contacts Management",
+    categorySlug: "contacts",
+    method: "POST",
+    path: "/api/v1/contacts/tags",
+    parameters: [
+      {
+        name: "name",
+        type: "string",
+        required: true,
+        description: "Unique tag name.",
+        example: "Customer-Loyal",
+      },
+      {
+        name: "color",
+        type: "string",
+        required: false,
+        description: "Hex color code for UI badging.",
+        example: "#10B981",
+      },
+    ],
+    snippets: {
+      curl: `curl -X POST "https://api.wahide.id/api/v1/contacts/tags" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"name": "Customer-Loyal", "color": "#10B981"}'`,
+      nodejs: `import axios from "axios";
+
+const res = await axios.post(
+  "https://api.wahide.id/api/v1/contacts/tags",
+  { name: "Customer-Loyal", color: "#10B981" },
+  { headers: { Authorization: "Bearer YOUR_API_KEY" } }
+);
+console.log(res.data);`,
+      php: `<?php
+$curl = curl_init();
+curl_setopt_array($curl, [
+  CURLOPT_URL => "https://api.wahide.id/api/v1/contacts/tags",
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_CUSTOMREQUEST => "POST",
+  CURLOPT_POSTFIELDS => json_encode(["name" => "Customer-Loyal", "color" => "#10B981"]),
+  CURLOPT_HTTPHEADER => ["Authorization: Bearer YOUR_API_KEY", "Content-Type: application/json"],
+]);
+$response = curl_exec($curl);
+curl_close($curl);
+echo $response;`,
+      python: `import requests
+
+url = "https://api.wahide.id/api/v1/contacts/tags"
+headers = {"Authorization": "Bearer YOUR_API_KEY"}
+response = requests.post(url, headers=headers, json={"name": "Customer-Loyal", "color": "#10B981"})
+print(response.json())`,
+      go: `package main
+
+import (
+	"bytes"
+	"fmt"
+	"io"
+	"net/http"
+)
+
+func main() {
+	url := "https://api.wahide.id/api/v1/contacts/tags"
+	req, _ := http.NewRequest("POST", url, bytes.NewBuffer([]byte(\`{"name":"Customer-Loyal"}\`)))
+	req.Header.Set("Authorization", "Bearer YOUR_API_KEY")
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, _ := client.Do(req)
+	defer resp.Body.Close()
+	body, _ := io.ReadAll(resp.Body)
+	fmt.Println(string(body))
+}`,
+    },
+    responses: [
+      {
+        status: 201,
+        statusText: "Created",
+        description: "Tag created successfully.",
+        json: `{
+  "success": true,
+  "data": { "id": "01M1TAG99", "name": "Customer-Loyal", "color": "#10B981" }
+}`,
+      },
+    ],
+  },
 ];

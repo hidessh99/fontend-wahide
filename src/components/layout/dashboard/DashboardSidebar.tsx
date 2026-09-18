@@ -28,6 +28,9 @@ import {
   Radio,
   MessageSquare,
   SendHorizontal,
+  Workflow,
+  Inbox,
+  FileSpreadsheet,
 } from "lucide-react";
 import { useAuth } from "@/modules/iam/hooks/useAuth";
 import { useI18n } from "@/lib/i18n/context";
@@ -226,6 +229,65 @@ export const SEND_NAV_SECTION: SendNavSection = {
   ],
 };
 
+export interface AutoreplySubItem {
+  key: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  badge?: string;
+  roles?: UserRole[];
+  hideForCS?: boolean;
+}
+
+export interface AutoreplyNavSection {
+  id: "autoreply";
+  titleKey: string;
+  baseRoute: string;
+  icon: React.ComponentType<{ className?: string }>;
+  badge?: string;
+  items: AutoreplySubItem[];
+}
+
+export const AUTOREPLY_NAV_SECTION: AutoreplyNavSection = {
+  id: "autoreply",
+  titleKey: "dashboardMenu.groupAutoreply",
+  baseRoute: "/autoreply",
+  icon: Bot,
+  badge: "AI/Bot",
+  items: [
+    {
+      key: "dashboardMenu.autoreplyRules",
+      href: "/autoreply",
+      icon: MessageSquare,
+      roles: SELLER_ROLES,
+      hideForCS: true,
+    },
+    {
+      key: "dashboardMenu.autoreplyFlow",
+      href: "/autoreply/flow",
+      icon: Workflow,
+      badge: "DAG",
+      roles: SELLER_ROLES,
+      hideForCS: true,
+    },
+    {
+      key: "dashboardMenu.autoreplySubmission",
+      href: "/autoreply/submission",
+      icon: Inbox,
+      badge: "Leads",
+      roles: SELLER_ROLES,
+      hideForCS: true,
+    },
+    {
+      key: "dashboardMenu.autoreplySpreadsheet",
+      href: "/autoreply/spreadsheet",
+      icon: FileSpreadsheet,
+      badge: "CSV",
+      roles: SELLER_ROLES,
+      hideForCS: true,
+    },
+  ],
+};
+
 export const DASHBOARD_NAV_GROUPS: DashboardNavGroup[] = [
   {
     // Audiens & Pelanggan (Kontak)
@@ -313,6 +375,9 @@ export function DashboardSidebar({
   // Collapsible Send accordion state
   const [openSend, setOpenSend] = useState<boolean>(true);
 
+  // Collapsible Autoreply accordion state
+  const [openAutoreply, setOpenAutoreply] = useState<boolean>(true);
+
   // Collapsible channel accordions state
   const [openChannels, setOpenChannels] = useState<Record<string, boolean>>({
     wa: true,
@@ -320,7 +385,7 @@ export function DashboardSidebar({
     tele: false,
   });
 
-  // Auto-expand Send & channel accordions based on current route
+  // Auto-expand Send, Autoreply & channel accordions based on current route
   useEffect(() => {
     if (
       pathname.startsWith("/send") ||
@@ -336,6 +401,10 @@ export function DashboardSidebar({
       setOpenSend(true);
     }
 
+    if (pathname.startsWith("/autoreply")) {
+      setOpenAutoreply(true);
+    }
+
     if (pathname.startsWith("/wa") || pathname === "/devices" || pathname.startsWith("/devices/")) {
       setOpenChannels((prev) => ({ ...prev, wa: true }));
     } else if (pathname.startsWith("/waba")) {
@@ -347,6 +416,10 @@ export function DashboardSidebar({
 
   const toggleSend = () => {
     setOpenSend((prev) => !prev);
+  };
+
+  const toggleAutoreply = () => {
+    setOpenAutoreply((prev) => !prev);
   };
 
   const toggleChannel = (channelId: string) => {
@@ -400,6 +473,18 @@ export function DashboardSidebar({
         pathname.startsWith("/reservations/")
       );
     }
+    if (href === "/autoreply") {
+      return pathname === "/autoreply";
+    }
+    if (href === "/autoreply/flow") {
+      return pathname === "/autoreply/flow" || pathname.startsWith("/autoreply/flow/");
+    }
+    if (href === "/autoreply/submission") {
+      return pathname === "/autoreply/submission" || pathname.startsWith("/autoreply/submission/");
+    }
+    if (href === "/autoreply/spreadsheet") {
+      return pathname === "/autoreply/spreadsheet" || pathname.startsWith("/autoreply/spreadsheet/");
+    }
     return pathname === href || pathname.startsWith(href + "/");
   };
 
@@ -413,6 +498,8 @@ export function DashboardSidebar({
     pathname.startsWith("/reminders/") ||
     pathname === "/reservations" ||
     pathname.startsWith("/reservations/");
+
+  const isAutoreplyActive = pathname.startsWith("/autoreply");
 
   return (
     <aside
@@ -613,6 +700,94 @@ export function DashboardSidebar({
             {openSend && (
               <div className="border-border/60 ml-5 pl-2.5 my-1 space-y-0.5 border-l">
                 {SEND_NAV_SECTION.items.map((subItem) => {
+                  if (userIsCS && subItem.hideForCS) return null;
+                  if (subItem.roles && user?.role) {
+                    const userRoleLower = user.role.toLowerCase();
+                    const hasRole = subItem.roles.some((r) => r.toLowerCase() === userRoleLower);
+                    if (!hasRole) return null;
+                  }
+
+                  const isActive = isItemActive(subItem.href);
+                  const SubIcon = subItem.icon;
+
+                  return (
+                    <Link
+                      key={subItem.href}
+                      href={subItem.href}
+                      onClick={onItemClick}
+                      className={cn(
+                        "flex items-center justify-between rounded-full px-3 py-1.5 text-xs font-semibold transition-all duration-150",
+                        isActive
+                          ? "bg-wise-green text-dark-green font-bold shadow-sm"
+                          : "text-foreground-secondary hover:text-foreground hover:bg-muted",
+                      )}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <SubIcon
+                          className={cn(
+                            "size-3.5",
+                            isActive
+                              ? "text-dark-green"
+                              : "text-foreground-muted",
+                          )}
+                        />
+                        <span>{t(subItem.key)}</span>
+                      </div>
+                      {subItem.badge && !isActive && (
+                        <span className="rounded-full bg-[#eef2eb] px-1.5 py-0.2 text-[9px] font-bold text-foreground-muted dark:bg-[#212320]">
+                          {subItem.badge}
+                        </span>
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Autoreply & Automation Hub (Balas Otomatis & Alur Dropdown) */}
+        <div className="space-y-1">
+          <div className="rounded-xl transition-colors">
+            {/* Autoreply Header / Accordion Trigger */}
+            <button
+              type="button"
+              onClick={toggleAutoreply}
+              aria-expanded={openAutoreply}
+              className={cn(
+                "flex w-full items-center justify-between rounded-full px-3.5 py-2 text-xs font-bold transition-all duration-150 cursor-pointer",
+                isAutoreplyActive && !openAutoreply
+                  ? "bg-muted text-foreground"
+                  : "text-foreground-secondary hover:text-foreground hover:bg-muted",
+              )}
+            >
+              <div className="flex items-center gap-2.5">
+                <Bot
+                  className={cn(
+                    "size-4",
+                    isAutoreplyActive ? "text-wise-green" : "text-foreground-muted",
+                  )}
+                />
+                <span className="truncate">{t(AUTOREPLY_NAV_SECTION.titleKey)}</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                {AUTOREPLY_NAV_SECTION.badge && (
+                  <span className="rounded-full bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 px-1.5 py-0.5 text-[9px] font-bold">
+                    {AUTOREPLY_NAV_SECTION.badge}
+                  </span>
+                )}
+                {openAutoreply ? (
+                  <ChevronDown className="size-3.5 text-foreground-muted" />
+                ) : (
+                  <ChevronRight className="size-3.5 text-foreground-muted" />
+                )}
+              </div>
+            </button>
+
+            {/* Autoreply Submenu (Accordion Panel) */}
+            {openAutoreply && (
+              <div className="border-border/60 ml-5 pl-2.5 my-1 space-y-0.5 border-l">
+                {AUTOREPLY_NAV_SECTION.items.map((subItem) => {
                   if (userIsCS && subItem.hideForCS) return null;
                   if (subItem.roles && user?.role) {
                     const userRoleLower = user.role.toLowerCase();

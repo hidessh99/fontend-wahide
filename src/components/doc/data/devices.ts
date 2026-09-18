@@ -573,4 +573,340 @@ func main() {
       },
     ],
   },
+  {
+    type: "endpoint",
+    id: "devices-pair-phone",
+    slug: "devices/pair-phone",
+    title: "Pair WhatsApp via Phone Code",
+    description:
+      "Generates an 8-digit alphanumeric pairing code directly sent to the WhatsApp mobile app, allowing device linking without camera/QR scanning.",
+    category: "WhatsApp Devices",
+    categorySlug: "devices",
+    method: "POST",
+    path: "/api/v1/wa/devices/:id/pair-phone",
+    badge: "Anti-Camera",
+    parameters: [
+      {
+        name: "id",
+        type: "string",
+        required: true,
+        description: "Target Device Slot ULID.",
+        example: "01JPLAN0000000000000000001",
+      },
+      {
+        name: "phone",
+        type: "string",
+        required: true,
+        description: "Phone number with country code (E.164, without '+' or dashes).",
+        example: "628123456789",
+      },
+    ],
+    snippets: {
+      curl: `curl -X POST "https://api.wahide.id/api/v1/wa/devices/01JPLAN0000000000000000001/pair-phone" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"phone": "628123456789"}'`,
+      nodejs: `import axios from "axios";
+
+const res = await axios.post(
+  "https://api.wahide.id/api/v1/wa/devices/01JPLAN0000000000000000001/pair-phone",
+  { phone: "628123456789" },
+  { headers: { Authorization: "Bearer YOUR_API_KEY" } }
+);
+console.log(res.data);`,
+      php: `<?php
+$curl = curl_init();
+curl_setopt_array($curl, [
+  CURLOPT_URL => "https://api.wahide.id/api/v1/wa/devices/01JPLAN0000000000000000001/pair-phone",
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_CUSTOMREQUEST => "POST",
+  CURLOPT_POSTFIELDS => json_encode(["phone" => "628123456789"]),
+  CURLOPT_HTTPHEADER => ["Authorization: Bearer YOUR_API_KEY", "Content-Type: application/json"],
+]);
+$response = curl_exec($curl);
+curl_close($curl);
+echo $response;`,
+      python: `import requests
+
+url = "https://api.wahide.id/api/v1/wa/devices/01JPLAN0000000000000000001/pair-phone"
+headers = {"Authorization": "Bearer YOUR_API_KEY"}
+response = requests.post(url, headers=headers, json={"phone": "628123456789"})
+print(response.json())`,
+      go: `package main
+
+import (
+	"bytes"
+	"fmt"
+	"io"
+	"net/http"
+)
+
+func main() {
+	url := "https://api.wahide.id/api/v1/wa/devices/01JPLAN0000000000000000001/pair-phone"
+	req, _ := http.NewRequest("POST", url, bytes.NewBuffer([]byte(\`{"phone":"628123456789"}\`)))
+	req.Header.Set("Authorization", "Bearer YOUR_API_KEY")
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, _ := client.Do(req)
+	defer resp.Body.Close()
+	body, _ := io.ReadAll(resp.Body)
+	fmt.Println(string(body))
+}`,
+    },
+    responses: [
+      {
+        status: 200,
+        statusText: "OK",
+        description: "8-digit pairing code issued successfully.",
+        json: `{
+  "success": true,
+  "data": {
+    "pairing_code": "AB12-CD34",
+    "expires_in_seconds": 160
+  }
+}`,
+      },
+    ],
+  },
+  {
+    type: "endpoint",
+    id: "devices-hibernate",
+    slug: "devices/hibernate",
+    title: "Hibernate WhatsApp Session",
+    description:
+      "Disconnects the background WebSocket to conserve server memory while retaining device encryption credentials. Sessions with active autoreply rules are automatically exempted.",
+    category: "WhatsApp Devices",
+    categorySlug: "devices",
+    method: "POST",
+    path: "/api/v1/wa/devices/:id/hibernate",
+    parameters: [
+      {
+        name: "id",
+        type: "string",
+        required: true,
+        description: "ULID of the WhatsApp device slot.",
+        example: "01JPLAN0000000000000000001",
+      },
+    ],
+    snippets: {
+      curl: `curl -X POST "https://api.wahide.id/api/v1/wa/devices/01JPLAN0000000000000000001/hibernate" \\
+  -H "Authorization: Bearer YOUR_API_KEY"`,
+      nodejs: `import axios from "axios";
+
+const res = await axios.post(
+  "https://api.wahide.id/api/v1/wa/devices/01JPLAN0000000000000000001/hibernate",
+  {},
+  { headers: { Authorization: "Bearer YOUR_API_KEY" } }
+);
+console.log(res.data);`,
+      php: `<?php
+$curl = curl_init();
+curl_setopt_array($curl, [
+  CURLOPT_URL => "https://api.wahide.id/api/v1/wa/devices/01JPLAN0000000000000000001/hibernate",
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_CUSTOMREQUEST => "POST",
+  CURLOPT_HTTPHEADER => ["Authorization: Bearer YOUR_API_KEY"],
+]);
+$response = curl_exec($curl);
+curl_close($curl);
+echo $response;`,
+      python: `import requests
+
+url = "https://api.wahide.id/api/v1/wa/devices/01JPLAN0000000000000000001/hibernate"
+headers = {"Authorization": "Bearer YOUR_API_KEY"}
+response = requests.post(url, headers=headers)
+print(response.json())`,
+      go: `package main
+
+import (
+	"fmt"
+	"io"
+	"net/http"
+)
+
+func main() {
+	url := "https://api.wahide.id/api/v1/wa/devices/01JPLAN0000000000000000001/hibernate"
+	req, _ := http.NewRequest("POST", url, nil)
+	req.Header.Set("Authorization", "Bearer YOUR_API_KEY")
+
+	client := &http.Client{}
+	resp, _ := client.Do(req)
+	defer resp.Body.Close()
+	body, _ := io.ReadAll(resp.Body)
+	fmt.Println(string(body))
+}`,
+    },
+    responses: [
+      {
+        status: 200,
+        statusText: "OK",
+        description: "Device session hibernated.",
+        json: `{
+  "success": true,
+  "message": "device session hibernated successfully"
+}`,
+      },
+    ],
+  },
+  {
+    type: "endpoint",
+    id: "devices-wake",
+    slug: "devices/wake",
+    title: "Wake WhatsApp Session",
+    description:
+      "Wakes up a hibernated WhatsApp device session and re-establishes the encrypted WebSocket connection.",
+    category: "WhatsApp Devices",
+    categorySlug: "devices",
+    method: "POST",
+    path: "/api/v1/wa/devices/:id/wake",
+    parameters: [
+      {
+        name: "id",
+        type: "string",
+        required: true,
+        description: "ULID of the WhatsApp device slot.",
+        example: "01JPLAN0000000000000000001",
+      },
+    ],
+    snippets: {
+      curl: `curl -X POST "https://api.wahide.id/api/v1/wa/devices/01JPLAN0000000000000000001/wake" \\
+  -H "Authorization: Bearer YOUR_API_KEY"`,
+      nodejs: `import axios from "axios";
+
+const res = await axios.post(
+  "https://api.wahide.id/api/v1/wa/devices/01JPLAN0000000000000000001/wake",
+  {},
+  { headers: { Authorization: "Bearer YOUR_API_KEY" } }
+);
+console.log(res.data);`,
+      php: `<?php
+$curl = curl_init();
+curl_setopt_array($curl, [
+  CURLOPT_URL => "https://api.wahide.id/api/v1/wa/devices/01JPLAN0000000000000000001/wake",
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_CUSTOMREQUEST => "POST",
+  CURLOPT_HTTPHEADER => ["Authorization: Bearer YOUR_API_KEY"],
+]);
+$response = curl_exec($curl);
+curl_close($curl);
+echo $response;`,
+      python: `import requests
+
+url = "https://api.wahide.id/api/v1/wa/devices/01JPLAN0000000000000000001/wake"
+headers = {"Authorization": "Bearer YOUR_API_KEY"}
+response = requests.post(url, headers=headers)
+print(response.json())`,
+      go: `package main
+
+import (
+	"fmt"
+	"io"
+	"net/http"
+)
+
+func main() {
+	url := "https://api.wahide.id/api/v1/wa/devices/01JPLAN0000000000000000001/wake"
+	req, _ := http.NewRequest("POST", url, nil)
+	req.Header.Set("Authorization", "Bearer YOUR_API_KEY")
+
+	client := &http.Client{}
+	resp, _ := client.Do(req)
+	defer resp.Body.Close()
+	body, _ := io.ReadAll(resp.Body)
+	fmt.Println(string(body))
+}`,
+    },
+    responses: [
+      {
+        status: 200,
+        statusText: "OK",
+        description: "Device session awakened.",
+        json: `{
+  "success": true,
+  "message": "device session awakened successfully"
+}`,
+      },
+    ],
+  },
+  {
+    type: "endpoint",
+    id: "waba-accounts-list",
+    slug: "waba/accounts",
+    title: "List Meta WABA Accounts",
+    description:
+      "Retrieves official WhatsApp Business API (WABA) Cloud API accounts connected via Meta Business Manager.",
+    category: "WhatsApp Cloud API (WABA)",
+    categorySlug: "waba",
+    method: "GET",
+    path: "/api/v1/waba/accounts",
+    parameters: [],
+    snippets: {
+      curl: `curl -X GET "https://api.wahide.id/api/v1/waba/accounts" \\
+  -H "Authorization: Bearer YOUR_API_KEY"`,
+      nodejs: `import axios from "axios";
+
+const res = await axios.get("https://api.wahide.id/api/v1/waba/accounts", {
+  headers: { Authorization: "Bearer YOUR_API_KEY" },
+});
+console.log(res.data);`,
+      php: `<?php
+$curl = curl_init();
+curl_setopt_array($curl, [
+  CURLOPT_URL => "https://api.wahide.id/api/v1/waba/accounts",
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_CUSTOMREQUEST => "GET",
+  CURLOPT_HTTPHEADER => ["Authorization: Bearer YOUR_API_KEY"],
+]);
+$response = curl_exec($curl);
+curl_close($curl);
+echo $response;`,
+      python: `import requests
+
+url = "https://api.wahide.id/api/v1/waba/accounts"
+headers = {"Authorization": "Bearer YOUR_API_KEY"}
+response = requests.get(url, headers=headers)
+print(response.json())`,
+      go: `package main
+
+import (
+	"fmt"
+	"io"
+	"net/http"
+)
+
+func main() {
+	url := "https://api.wahide.id/api/v1/waba/accounts"
+	req, _ := http.NewRequest("GET", url, nil)
+	req.Header.Set("Authorization", "Bearer YOUR_API_KEY")
+
+	client := &http.Client{}
+	resp, _ := client.Do(req)
+	defer resp.Body.Close()
+	body, _ := io.ReadAll(resp.Body)
+	fmt.Println(string(body))
+}`,
+    },
+    responses: [
+      {
+        status: 200,
+        statusText: "OK",
+        description: "Official WABA accounts retrieved.",
+        json: `{
+  "success": true,
+  "data": [
+    {
+      "id": "01JPLAN0000000000000000088",
+      "waba_account_id": "109876543210987",
+      "phone_number_id": "101234567890123",
+      "display_phone_number": "+62 811-2345-6789",
+      "verified_name": "Wahide Enterprise",
+      "quality_rating": "GREEN",
+      "is_active": true
+    }
+  ]
+}`,
+      },
+    ],
+  },
 ];

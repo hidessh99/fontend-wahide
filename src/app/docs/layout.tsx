@@ -5,17 +5,19 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://wahide.id"),
   title: {
     template: "%s | Wahide API",
-    default: "Wahide WhatsApp API Documentation",
+    default: "Wahide Omnichannel & Autoreply API Documentation",
   },
   description:
-    "Official developer reference for Wahide WhatsApp Multi-Device REST API. Fast integration with cURL, Node.js, PHP, Python, and Go with high deliverability.",
+    "Official developer reference for Wahide Omnichannel Messaging Gateway (WhatsApp Multi-Device, Meta Cloud API, Telegram, Email) and Conversational Autoreply Flow Builder.",
   keywords: [
     "WhatsApp API",
-    "WhatsApp REST API",
     "WhatsApp Multi Device API",
-    "WhatsApp Gateway Indonesia",
-    "WhatsApp API Documentation",
-    "Send WhatsApp Message API",
+    "Telegram Bot API",
+    "WhatsApp Cloud API WABA",
+    "WhatsApp Autoreply API",
+    "Chatbot Flow Builder",
+    "Omnichannel Gateway Indonesia",
+    "Wahide API Documentation",
   ],
   authors: [{ name: "Wahide Engineering" }],
   creator: "Wahide",
@@ -35,15 +37,15 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     siteName: "Wahide API Docs",
-    title: "Wahide WhatsApp API Documentation",
+    title: "Wahide Omnichannel & Autoreply API Documentation",
     description:
-      "Official developer reference for Wahide WhatsApp Multi-Device REST API. Fast integration with cURL, Node.js, PHP, Python, and Go.",
+      "Official developer reference for Wahide Omnichannel Gateway (WhatsApp Multi-Device, Meta Cloud API, Telegram, Email) and Conversational Autoreply Flow Builder.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Wahide WhatsApp API Documentation",
+    title: "Wahide Omnichannel & Autoreply API Documentation",
     description:
-      "Official developer reference for Wahide WhatsApp Multi-Device REST API. Fast integration with cURL, Node.js, PHP, Python, and Go.",
+      "Official developer reference for Wahide Omnichannel Gateway (WhatsApp Multi-Device, Meta Cloud API, Telegram, Email) and Conversational Autoreply Flow Builder.",
   },
 };
 

@@ -319,6 +319,72 @@ const SEO_DIRECTORY: Record<string, DocSeoMetadata> = {
       "Custom WhatsApp QR Login",
     ],
   },
+  "telegram/bots": {
+    seoTitle: "Telegram Bots Management API",
+    seoDescription:
+      "Manage Telegram bot instances, view webhook synchronization states, and monitor daily transmission limits.",
+    keywords: ["Telegram Bot API", "Telegram Gateway", "Telegram Bot Management", "Wahide Telegram"],
+  },
+  "telegram/create-bot": {
+    seoTitle: "Connect Telegram Bot via @BotFather Token",
+    seoDescription:
+      "Register a Telegram Bot token, automatically configure webhooks, and start sending messages instantly.",
+    keywords: ["Telegram Bot Token", "Connect Telegram Bot", "Telegram Webhook Setup"],
+  },
+  "telegram/send-message": {
+    seoTitle: "Send Telegram Message API",
+    seoDescription:
+      "Dispatch markdown or HTML formatted messages to Telegram users and channels via high-speed REST API.",
+    keywords: ["Send Telegram Message", "Telegram REST API", "Telegram Omnichannel Gateway"],
+  },
+  "autoreply/rules": {
+    seoTitle: "Autoreply Rules & O(M) Keyword Matching",
+    seoDescription:
+      "Configure instant keyword-based auto-replies powered by the Aho-Corasick multi-pattern automaton with zero linear loop latency.",
+    keywords: ["WhatsApp Autoreply API", "Chatbot Keyword Matching", "Aho-Corasick Autoreply", "Auto Responder"],
+  },
+  "autoreply/flows": {
+    seoTitle: "Interactive Conversational Chatbot Flows API",
+    seoDescription:
+      "Build and automate visual DAG multi-step chatbot flows with message prompts, variables, conditional branches, and lead capture.",
+    keywords: ["Interactive Chatbot Flow", "WhatsApp Visual Flow Builder", "Conversational AI Gateway"],
+  },
+  "autoreply/simulate-flow": {
+    seoTitle: "Simulate Conversational Flow API",
+    seoDescription:
+      "Test and preview step-by-step chatbot responses in real time without requiring a physical connected device.",
+    keywords: ["Chatbot Flow Simulator", "Test WhatsApp Bot", "Conversational Flow Testing"],
+  },
+  "autoreply/submissions": {
+    seoTitle: "Captured Form Leads & Submissions API",
+    seoDescription:
+      "Access leads captured through interactive conversational forms. Ingested with high-throughput LMAX Ring-Buffer Batch Flusher.",
+    keywords: ["Form Submissions API", "WhatsApp Lead Generation", "Chatbot Data Capture"],
+  },
+  "autoreply/spreadsheet": {
+    seoTitle: "Google Sheets Live CSV Lookup Table API",
+    seoDescription:
+      "Connect published Google Sheets CSV URLs for dynamic automated Q&A lookups with background cron synchronization.",
+    keywords: ["Google Sheets WhatsApp Sync", "Spreadsheet Chatbot Lookup", "Auto Response from Sheet"],
+  },
+  "devices/pair-phone": {
+    seoTitle: "Pair WhatsApp via 8-Digit Phone Code",
+    seoDescription:
+      "Link WhatsApp devices using an 8-character phone pairing code directly in the WhatsApp mobile app without camera QR scanning.",
+    keywords: ["WhatsApp Phone Pairing Code", "Link Device Without QR", "WhatsApp Pairing API"],
+  },
+  "devices/hibernate": {
+    seoTitle: "WhatsApp Session Hibernation API",
+    seoDescription:
+      "Hibernate idle WhatsApp device sockets to save memory while keeping authentication tokens secure in stateless Go runtime.",
+    keywords: ["WhatsApp Session Hibernation", "Memory Efficient WhatsApp Gateway", "Socket Hibernation"],
+  },
+  "waba/accounts": {
+    seoTitle: "Official Meta WhatsApp Cloud API (WABA) Accounts",
+    seoDescription:
+      "Connect and manage official Meta WhatsApp Business API Cloud accounts with verified business name badging.",
+    keywords: ["WhatsApp Business Cloud API", "Meta WABA Accounts", "Official WhatsApp API Indonesia"],
+  },
 };
 
 /**

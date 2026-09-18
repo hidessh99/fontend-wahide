@@ -7,6 +7,8 @@ import { messagingEndpoints } from "./messaging";
 import { contactsEndpoints } from "./contacts";
 import { campaignsEndpoints } from "./campaigns";
 import { otpEndpoints } from "./otp";
+import { telegramEndpoints } from "./telegram";
+import { autoreplyEndpoints } from "./autoreply";
 import {
   webhooksGuideDoc,
   webhooksEventsDoc,
@@ -27,6 +29,8 @@ export { messagingEndpoints } from "./messaging";
 export { otpEndpoints } from "./otp";
 export { contactsEndpoints } from "./contacts";
 export { campaignsEndpoints } from "./campaigns";
+export { telegramEndpoints } from "./telegram";
+export { autoreplyEndpoints } from "./autoreply";
 export { n8nDoc } from "./n8n";
 export {
   webhooksGuideDoc,
@@ -51,6 +55,8 @@ export const allGuides: GuideDoc[] = [
 export const allEndpoints: EndpointDoc[] = [
   ...devicesEndpoints,
   ...messagingEndpoints,
+  ...telegramEndpoints,
+  ...autoreplyEndpoints,
   ...otpEndpoints,
   ...contactsEndpoints,
   ...campaignsEndpoints,
@@ -102,7 +108,8 @@ export function searchDocs(query: string): DocItem[] {
       ) {
         return true;
       }
-    } else {
+    }
+    if (doc.type === "guide") {
       if (
         doc.sections.some(
           (s) =>
