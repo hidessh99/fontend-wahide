@@ -675,7 +675,7 @@ func main() {
     slug: "devices/hibernate",
     title: "Hibernate WhatsApp Session",
     description:
-      "Disconnects the background WebSocket to conserve server memory while retaining device encryption credentials. Sessions with active autoreply rules are automatically exempted.",
+      "Disconnects the background WebSocket to conserve server memory while retaining device encryption credentials. Automatically wakes up when outgoing messages are dispatched.",
     category: "WhatsApp Devices",
     categorySlug: "devices",
     method: "POST",
@@ -905,6 +905,266 @@ func main() {
       "is_active": true
     }
   ]
+}`,
+      },
+    ],
+  },
+  {
+    type: "endpoint",
+    id: "waba-accounts-connect",
+    slug: "waba/connect",
+    title: "Connect Meta WABA Account",
+    description:
+      "Registers and attaches an official Meta WhatsApp Business Cloud API account with phone number ID and system user access token.",
+    category: "WhatsApp Cloud API (WABA)",
+    categorySlug: "waba",
+    method: "POST",
+    path: "/api/v1/waba/accounts",
+    badge: "Official",
+    parameters: [
+      {
+        name: "waba_account_id",
+        type: "string",
+        required: true,
+        description: "Official WhatsApp Business Account ID from Meta Business Manager.",
+        example: "109876543210987",
+      },
+      {
+        name: "phone_number_id",
+        type: "string",
+        required: true,
+        description: "Meta Phone Number ID associated with the approved WhatsApp number.",
+        example: "101234567890123",
+      },
+      {
+        name: "access_token",
+        type: "string",
+        required: true,
+        description: "Permanent System User Access Token generated in Meta Business Settings with whatsapp_business_messaging permissions.",
+        example: "EAAG...your_permanent_system_user_token",
+      },
+      {
+        name: "display_phone_number",
+        type: "string",
+        required: true,
+        description: "Phone number in international E.164 format with optional formatting.",
+        example: "+62 811-2345-6789",
+      },
+      {
+        name: "verified_name",
+        type: "string",
+        required: true,
+        description: "Official green tick verified business display name approved by Meta.",
+        example: "Wahide Enterprise",
+      },
+    ],
+    snippets: {
+      curl: `curl -X POST "https://api.wahide.id/api/v1/waba/accounts" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "waba_account_id": "109876543210987",
+    "phone_number_id": "101234567890123",
+    "access_token": "EAAG...your_permanent_system_user_token",
+    "display_phone_number": "+62 811-2345-6789",
+    "verified_name": "Wahide Enterprise"
+  }'`,
+      nodejs: `import axios from "axios";
+
+const res = await axios.post(
+  "https://api.wahide.id/api/v1/waba/accounts",
+  {
+    waba_account_id: "109876543210987",
+    phone_number_id: "101234567890123",
+    access_token: "EAAG...your_permanent_system_user_token",
+    display_phone_number: "+62 811-2345-6789",
+    verified_name: "Wahide Enterprise",
+  },
+  {
+    headers: {
+      Authorization: "Bearer YOUR_API_KEY",
+      "Content-Type": "application/json",
+    },
+  }
+);
+console.log(res.data);`,
+      php: `<?php
+$payload = [
+  "waba_account_id" => "109876543210987",
+  "phone_number_id" => "101234567890123",
+  "access_token" => "EAAG...your_permanent_system_user_token",
+  "display_phone_number" => "+62 811-2345-6789",
+  "verified_name" => "Wahide Enterprise",
+];
+
+$curl = curl_init();
+curl_setopt_array($curl, [
+  CURLOPT_URL => "https://api.wahide.id/api/v1/waba/accounts",
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_CUSTOMREQUEST => "POST",
+  CURLOPT_POSTFIELDS => json_encode($payload),
+  CURLOPT_HTTPHEADER => [
+    "Authorization: Bearer YOUR_API_KEY",
+    "Content-Type: application/json",
+  ],
+]);
+$response = curl_exec($curl);
+curl_close($curl);
+echo $response;`,
+      python: `import requests
+
+url = "https://api.wahide.id/api/v1/waba/accounts"
+headers = {
+    "Authorization": "Bearer YOUR_API_KEY",
+    "Content-Type": "application/json",
+}
+data = {
+    "waba_account_id": "109876543210987",
+    "phone_number_id": "101234567890123",
+    "access_token": "EAAG...your_permanent_system_user_token",
+    "display_phone_number": "+62 811-2345-6789",
+    "verified_name": "Wahide Enterprise",
+}
+
+response = requests.post(url, headers=headers, json=data)
+print(response.json())`,
+      go: `package main
+
+import (
+	"bytes"
+	"fmt"
+	"io"
+	"net/http"
+)
+
+func main() {
+	url := "https://api.wahide.id/api/v1/waba/accounts"
+	jsonStr := []byte(\`{
+		"waba_account_id": "109876543210987",
+		"phone_number_id": "101234567890123",
+		"access_token": "EAAG...your_permanent_system_user_token",
+		"display_phone_number": "+62 811-2345-6789",
+		"verified_name": "Wahide Enterprise"
+	}\`)
+
+	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+	req.Header.Set("Authorization", "Bearer YOUR_API_KEY")
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	body, _ := io.ReadAll(resp.Body)
+	fmt.Println(string(body))
+}`,
+    },
+    responses: [
+      {
+        status: 201,
+        statusText: "Created",
+        description: "WABA account connected successfully.",
+        json: `{
+  "success": true,
+  "message": "Meta WABA account linked successfully",
+  "data": {
+    "id": "01JPLAN0000000000000000088",
+    "waba_account_id": "109876543210987",
+    "phone_number_id": "101234567890123",
+    "display_phone_number": "+62 811-2345-6789",
+    "verified_name": "Wahide Enterprise",
+    "quality_rating": "GREEN",
+    "is_active": true,
+    "created_at": "2026-09-18T10:00:00Z"
+  }
+}`,
+      },
+    ],
+  },
+  {
+    type: "endpoint",
+    id: "waba-accounts-disconnect",
+    slug: "waba/disconnect",
+    title: "Disconnect WABA Account",
+    description:
+      "Disconnects and removes a Meta WhatsApp Business Cloud API account registration from your workspace.",
+    category: "WhatsApp Cloud API (WABA)",
+    categorySlug: "waba",
+    method: "DELETE",
+    path: "/api/v1/waba/accounts/:id",
+    parameters: [
+      {
+        name: "id",
+        type: "string",
+        required: true,
+        description: "ULID identifier of the connected WABA account to disconnect.",
+        example: "01JPLAN0000000000000000088",
+      },
+    ],
+    snippets: {
+      curl: `curl -X DELETE "https://api.wahide.id/api/v1/waba/accounts/01JPLAN0000000000000000088" \\
+  -H "Authorization: Bearer YOUR_API_KEY"`,
+      nodejs: `import axios from "axios";
+
+const res = await axios.delete(
+  "https://api.wahide.id/api/v1/waba/accounts/01JPLAN0000000000000000088",
+  {
+    headers: { Authorization: "Bearer YOUR_API_KEY" },
+  }
+);
+console.log(res.data);`,
+      php: `<?php
+$curl = curl_init();
+curl_setopt_array($curl, [
+  CURLOPT_URL => "https://api.wahide.id/api/v1/waba/accounts/01JPLAN0000000000000000088",
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_CUSTOMREQUEST => "DELETE",
+  CURLOPT_HTTPHEADER => ["Authorization: Bearer YOUR_API_KEY"],
+]);
+$response = curl_exec($curl);
+curl_close($curl);
+echo $response;`,
+      python: `import requests
+
+url = "https://api.wahide.id/api/v1/waba/accounts/01JPLAN0000000000000000088"
+headers = {"Authorization": "Bearer YOUR_API_KEY"}
+response = requests.delete(url, headers=headers)
+print(response.json())`,
+      go: `package main
+
+import (
+	"fmt"
+	"io"
+	"net/http"
+)
+
+func main() {
+	url := "https://api.wahide.id/api/v1/waba/accounts/01JPLAN0000000000000000088"
+	req, _ := http.NewRequest("DELETE", url, nil)
+	req.Header.Set("Authorization", "Bearer YOUR_API_KEY")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	body, _ := io.ReadAll(resp.Body)
+	fmt.Println(string(body))
+}`,
+    },
+    responses: [
+      {
+        status: 200,
+        statusText: "OK",
+        description: "WABA account disconnected.",
+        json: `{
+  "success": true,
+  "message": "WABA account disconnected successfully"
 }`,
       },
     ],

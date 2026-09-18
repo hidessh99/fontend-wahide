@@ -36,6 +36,28 @@ const ICON_MAP: Record<string, React.ElementType> = {
   Globe,
 };
 
+function getSectionTotalItems(section: NavSection): number {
+  let count = section.items?.length || 0;
+  if (section.groups) {
+    for (const g of section.groups) {
+      count += g.items.length;
+    }
+  }
+  return count;
+}
+
+function hasSectionActiveChild(section: NavSection, pathname: string): boolean {
+  if (section.items?.some((item) => item.path === pathname)) return true;
+  if (
+    section.groups?.some((g) =>
+      g.items.some((item) => item.path === pathname),
+    )
+  ) {
+    return true;
+  }
+  return false;
+}
+
 export function DocsSidebar({ sections, onItemClick }: DocsSidebarProps) {
   const pathname = usePathname();
 
@@ -44,10 +66,8 @@ export function DocsSidebar({ sections, onItemClick }: DocsSidebarProps) {
     () => {
       const initial: Record<string, boolean> = {};
       sections.forEach((section) => {
-        const hasActiveItem = section.items.some(
-          (item) => item.path === pathname,
-        );
-        initial[section.id] = hasActiveItem || section.id === "getting-started";
+        const hasActive = hasSectionActiveChild(section, pathname);
+        initial[section.id] = hasActive || section.id === "getting-started";
       });
       return initial;
     },
@@ -56,7 +76,7 @@ export function DocsSidebar({ sections, onItemClick }: DocsSidebarProps) {
   // Context-Aware Auto-Expansion: Keep active section open whenever pathname changes
   useEffect(() => {
     const activeSection = sections.find((section) =>
-      section.items.some((item) => item.path === pathname),
+      hasSectionActiveChild(section, pathname),
     );
     if (activeSection) {
       setOpenSections((prev) => ({
@@ -139,9 +159,8 @@ export function DocsSidebar({ sections, onItemClick }: DocsSidebarProps) {
         {sections.map((section) => {
           const IconComponent = section.icon ? ICON_MAP[section.icon] : null;
           const isOpen = !!openSections[section.id];
-          const hasActiveChild = section.items.some(
-            (item) => item.path === pathname,
-          );
+          const hasActiveChild = hasSectionActiveChild(section, pathname);
+          const totalItems = getSectionTotalItems(section);
 
           return (
             <div key={section.id} className="space-y-1">
@@ -170,9 +189,9 @@ export function DocsSidebar({ sections, onItemClick }: DocsSidebarProps) {
                 </div>
 
                 <div className="flex items-center gap-1.5 shrink-0">
-                  {!isOpen && (
+                  {!isOpen && totalItems > 0 && (
                     <span className="text-[10px] font-mono font-medium px-1.5 py-0.2 rounded-full bg-muted/80 text-muted-foreground border border-border/60">
-                      {section.items.length}
+                      {totalItems}
                     </span>
                   )}
                   <ChevronDown
@@ -192,36 +211,85 @@ export function DocsSidebar({ sections, onItemClick }: DocsSidebarProps) {
                 }`}
               >
                 <div className="overflow-hidden">
-                  <ul className="space-y-0.5 border-l border-border/60 ml-4 pl-2 py-0.5">
-                    {section.items.map((item) => {
-                      const isActive = pathname === item.path;
+                  {/* Case 1: Flat items list */}
+                  {section.items && section.items.length > 0 && (
+                    <ul className="space-y-0.5 border-l border-border/60 ml-4 pl-2 py-0.5">
+                      {section.items.map((item) => {
+                        const isActive = pathname === item.path;
 
-                      return (
-                        <li key={item.id}>
-                          <Link
-                            href={item.path}
-                            onClick={onItemClick}
-                            className={`group flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                              isActive
-                                ? "bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-950 dark:text-foreground font-semibold border-l-2 border-emerald-600 dark:border-wise-green -ml-2.25"
-                                : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
-                            }`}
-                          >
-                            <span className="truncate">{item.title}</span>
+                        return (
+                          <li key={item.id}>
+                            <Link
+                              href={item.path}
+                              onClick={onItemClick}
+                              className={`group flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                                isActive
+                                  ? "bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-950 dark:text-foreground font-semibold border-l-2 border-emerald-600 dark:border-wise-green -ml-2.25"
+                                  : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                              }`}
+                            >
+                              <span className="truncate">{item.title}</span>
 
-                            <div className="flex items-center gap-1.5 shrink-0">
-                              {getMethodBadge(item.method)}
-                              {item.badge && (
-                                <span className="text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-secondary text-secondary-foreground border border-border">
-                                  {item.badge}
-                                </span>
-                              )}
-                            </div>
-                          </Link>
-                        </li>
-                      );
-                    })}
-                  </ul>
+                              <div className="flex items-center gap-1.5 shrink-0">
+                                {getMethodBadge(item.method)}
+                                {item.badge && (
+                                  <span className="text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-secondary text-secondary-foreground border border-border">
+                                    {item.badge}
+                                  </span>
+                                )}
+                              </div>
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+
+                  {/* Case 2: Grouped sub-sections */}
+                  {section.groups && section.groups.length > 0 && (
+                    <div className="space-y-3 pt-1 pb-1">
+                      {section.groups.map((group) => (
+                        <div key={group.id} className="space-y-1">
+                          <div className="px-3 pt-1.5 pb-0.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60 flex items-center gap-1.5">
+                            <span className="size-1 rounded-full bg-emerald-500/60 dark:bg-wise-green/70" />
+                            <span className="truncate">{group.title}</span>
+                          </div>
+                          <ul className="space-y-0.5 border-l border-border/60 ml-4 pl-2 py-0.5">
+                            {group.items.map((item) => {
+                              const isActive = pathname === item.path;
+
+                              return (
+                                <li key={item.id}>
+                                  <Link
+                                    href={item.path}
+                                    onClick={onItemClick}
+                                    className={`group flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                                      isActive
+                                        ? "bg-emerald-500/10 dark:bg-wise-green/15 text-emerald-950 dark:text-foreground font-semibold border-l-2 border-emerald-600 dark:border-wise-green -ml-2.25"
+                                        : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                                    }`}
+                                  >
+                                    <span className="truncate">
+                                      {item.title}
+                                    </span>
+
+                                    <div className="flex items-center gap-1.5 shrink-0">
+                                      {getMethodBadge(item.method)}
+                                      {item.badge && (
+                                        <span className="text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-secondary text-secondary-foreground border border-border">
+                                          {item.badge}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </Link>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

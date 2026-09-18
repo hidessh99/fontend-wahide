@@ -5,17 +5,16 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://wahide.id"),
   title: {
     template: "%s | Wahide API",
-    default: "Wahide Omnichannel & Autoreply API Documentation",
+    default: "Wahide Omnichannel API Documentation",
   },
   description:
-    "Official developer reference for Wahide Omnichannel Messaging Gateway (WhatsApp Multi-Device, Meta Cloud API, Telegram, Email) and Conversational Autoreply Flow Builder.",
+    "Official developer reference for Wahide Omnichannel Messaging Gateway (WhatsApp Multi-Device, Meta Cloud API, Telegram, Email).",
   keywords: [
     "WhatsApp API",
     "WhatsApp Multi Device API",
     "Telegram Bot API",
     "WhatsApp Cloud API WABA",
-    "WhatsApp Autoreply API",
-    "Chatbot Flow Builder",
+    "Transactional Email API",
     "Omnichannel Gateway Indonesia",
     "Wahide API Documentation",
   ],
@@ -37,15 +36,15 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     siteName: "Wahide API Docs",
-    title: "Wahide Omnichannel & Autoreply API Documentation",
+    title: "Wahide Omnichannel API Documentation",
     description:
-      "Official developer reference for Wahide Omnichannel Gateway (WhatsApp Multi-Device, Meta Cloud API, Telegram, Email) and Conversational Autoreply Flow Builder.",
+      "Official developer reference for Wahide Omnichannel Gateway (WhatsApp Multi-Device, Meta Cloud API, Telegram, Email).",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Wahide Omnichannel & Autoreply API Documentation",
+    title: "Wahide Omnichannel API Documentation",
     description:
-      "Official developer reference for Wahide Omnichannel Gateway (WhatsApp Multi-Device, Meta Cloud API, Telegram, Email) and Conversational Autoreply Flow Builder.",
+      "Official developer reference for Wahide Omnichannel Gateway (WhatsApp Multi-Device, Meta Cloud API, Telegram, Email).",
   },
 };
 

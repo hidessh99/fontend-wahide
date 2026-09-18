@@ -40,6 +40,39 @@ export interface ErrorMatrixItem {
   solution: string;
 }
 
+export interface ChannelSubtypeDoc {
+  id: string; // "text" | "media"
+  label: string; // "Teks" | "Media + Caption"
+  method?: HttpMethod;
+  path?: string;
+  description?: string;
+  parameters?: ParameterDoc[];
+  snippets?: CodeSnippetDoc;
+  responses?: ResponseDoc[];
+}
+
+export interface ChannelVariantDoc {
+  id: string; // "whatsmeow" | "waba" | "telegram" | "messenger" | "instagram"
+  label: string; // "WhatsApp (Whatsmeow)" | "WABA (Official)" | "Telegram"
+  icon: string; // "Smartphone" | "Globe" | "Send" | "MessageSquare" | "Camera"
+  disabled?: boolean;
+  badge?: string; // "Unofficial Socket" | "Meta Official" | "Bot API" | "Coming Soon"
+  method: HttpMethod;
+  path: string;
+  description?: string;
+  headers?: {
+    key: string;
+    value: string;
+    required: boolean;
+    description: string;
+  }[];
+  parameters: ParameterDoc[];
+  snippets: CodeSnippetDoc;
+  responses: ResponseDoc[];
+  errorMatrix?: ErrorMatrixItem[];
+  subtypes?: ChannelSubtypeDoc[];
+}
+
 export interface EndpointDoc {
   type: "endpoint";
   id: string;
@@ -51,6 +84,7 @@ export interface EndpointDoc {
   method: HttpMethod;
   path: string;
   badge?: string;
+  channelVariants?: ChannelVariantDoc[];
   bannerNotice?: {
     type: "info" | "warning" | "success";
     title: string;
@@ -112,9 +146,16 @@ export interface NavItem {
   badge?: string;
 }
 
+export interface NavGroup {
+  id: string;
+  title: string;
+  items: NavItem[];
+}
+
 export interface NavSection {
   id: string;
   title: string;
   icon?: string;
-  items: NavItem[];
+  items?: NavItem[];
+  groups?: NavGroup[];
 }

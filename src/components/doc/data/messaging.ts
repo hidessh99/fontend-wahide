@@ -13,11 +13,1165 @@ export const messagingEndpoints: EndpointDoc[] = [
     method: "POST",
     path: "/api/v1/wa/messages/send",
     badge: "Popular",
+    channelVariants: [
+      {
+        id: "whatsmeow",
+        label: "WhatsApp (Whatsmeow)",
+        icon: "Smartphone",
+        badge: "Unofficial Socket",
+        method: "POST",
+        path: "/api/v1/wa/messages/send",
+        description:
+          "Dispatches WhatsApp messages via connected WhatsApp Multi-Device socket (whatsmeow) with Spintax, presence typing simulation, and anti-ban safeguards.",
+        headers: [
+          {
+            key: "Authorization",
+            value: "Bearer <your_api_key>",
+            required: true,
+            description: "Your secret Wahide API Key prefixed with Bearer.",
+          },
+          {
+            key: "Content-Type",
+            value: "application/json",
+            required: true,
+            description: "Must be set to application/json.",
+          },
+        ],
+        parameters: [
+          {
+            name: "phone",
+            type: "string",
+            required: true,
+            description:
+              "Target recipient phone number in international E.164 format without spaces or symbols (e.g. 628123456789).",
+            example: "628123456789",
+          },
+          {
+            name: "message",
+            type: "string",
+            required: true,
+            description:
+              "Text message body. Supports UTF-8 emojis, WhatsApp markdown (*bold*, _italic_), and Spintax variations {Halo|Hai|Pagi}.",
+            example: "{Halo|Hai} Alex, pesanan #INV-2026 Anda sedang diproses.",
+          },
+          {
+            name: "device_id",
+            type: "string",
+            required: false,
+            defaultValue: `"auto"`,
+            description:
+              "Specific WhatsApp Device ID slot. If 'auto' or omitted, uses round-robin across active devices.",
+            example: "01M1WW3FKR1JS7CW4KGY78Q5ND",
+          },
+          {
+            name: "simulate_typing",
+            type: "boolean",
+            required: false,
+            defaultValue: "false",
+            description:
+              "When true, broadcasts a natural typing presence event before dispatching.",
+            example: "true",
+          },
+          {
+            name: "typing_delay_ms",
+            type: "integer",
+            required: false,
+            defaultValue: "0",
+            description:
+              "Custom typing delay in milliseconds. If 0 with simulate_typing: true, calculated based on message length.",
+            example: "1500",
+          },
+          {
+            name: "parse_spintax",
+            type: "boolean",
+            required: false,
+            defaultValue: "true",
+            description:
+              "Automatically resolves Spintax variations for anti-ban rotation.",
+            example: "true",
+          },
+        ],
+        snippets: {
+          curl: `curl -X POST "https://api.wahide.id/api/v1/wa/messages/send" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "phone": "628123456789",
+    "message": "{Halo|Hai} Alex, pesanan #INV-2026 Anda sedang diproses.",
+    "device_id": "auto",
+    "simulate_typing": true,
+    "typing_delay_ms": 1500,
+    "parse_spintax": true
+  }'`,
+          nodejs: `import axios from "axios";
+
+const res = await axios.post(
+  "https://api.wahide.id/api/v1/wa/messages/send",
+  {
+    phone: "628123456789",
+    message: "{Halo|Hai} Alex, pesanan #INV-2026 Anda sedang diproses.",
+    device_id: "auto",
+    simulate_typing: true,
+    typing_delay_ms: 1500,
+    parse_spintax: true,
+  },
+  {
+    headers: {
+      Authorization: "Bearer YOUR_API_KEY",
+      "Content-Type": "application/json",
+    },
+  }
+);
+console.log(res.data);`,
+          php: `<?php
+$curl = curl_init();
+$payload = [
+    "phone" => "628123456789",
+    "message" => "{Halo|Hai} Alex, pesanan #INV-2026 Anda sedang diproses.",
+    "device_id" => "auto",
+    "simulate_typing" => true,
+    "typing_delay_ms" => 1500,
+    "parse_spintax" => true
+];
+curl_setopt_array($curl, [
+    CURLOPT_URL => "https://api.wahide.id/api/v1/wa/messages/send",
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_CUSTOMREQUEST => "POST",
+    CURLOPT_POSTFIELDS => json_encode($payload),
+    CURLOPT_HTTPHEADER => [
+        "Authorization: Bearer YOUR_API_KEY",
+        "Content-Type: application/json"
+    ],
+]);
+$response = curl_exec($curl);
+curl_close($curl);
+echo $response;`,
+          python: `import requests
+
+url = "https://api.wahide.id/api/v1/wa/messages/send"
+headers = {
+    "Authorization": "Bearer YOUR_API_KEY",
+    "Content-Type": "application/json"
+}
+payload = {
+    "phone": "628123456789",
+    "message": "{Halo|Hai} Alex, pesanan #INV-2026 Anda sedang diproses.",
+    "device_id": "auto",
+    "simulate_typing": True,
+    "typing_delay_ms": 1500,
+    "parse_spintax": True
+}
+response = requests.post(url, json=payload, headers=headers)
+print(response.json())`,
+          go: `package main
+
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
+)
+
+func main() {
+	url := "https://api.wahide.id/api/v1/wa/messages/send"
+	payload := map[string]interface{}{
+		"phone":           "628123456789",
+		"message":         "Halo Alex, pesanan #INV-2026 Anda sedang diproses.",
+		"device_id":       "auto",
+		"simulate_typing": true,
+		"typing_delay_ms": 1500,
+		"parse_spintax":   true,
+	}
+	jsonData, _ := json.Marshal(payload)
+	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+	req.Header.Set("Authorization", "Bearer YOUR_API_KEY")
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+	body, _ := io.ReadAll(resp.Body)
+	fmt.Println(string(body))
+}`,
+        },
+        responses: [
+          {
+            status: 200,
+            statusText: "OK",
+            description: "WhatsApp message dispatched successfully.",
+            json: `{
+  "success": true,
+  "message": "Pesan WhatsApp berhasil dikirim",
+  "data": {
+    "message_id": "3EB0A1B2C3D4E5F6",
+    "phone": "628123456789",
+    "device_id": "01M1WW3FKR1JS7CW4KGY78Q5ND",
+    "status": "SENT",
+    "sent_at": "2026-09-18T10:00:00Z"
+  }
+}`,
+          },
+        ],
+        subtypes: [
+          {
+            id: "text",
+            label: "Teks",
+            method: "POST",
+            path: "/api/v1/wa/messages/send",
+            description: "Dispatches an instant WhatsApp text message with Spintax and typing simulation.",
+            parameters: [
+              {
+                name: "phone",
+                type: "string",
+                required: true,
+                description: "Target recipient phone number in E.164 format.",
+                example: "628123456789",
+              },
+              {
+                name: "message",
+                type: "string",
+                required: true,
+                description: "Text message body with optional Spintax {Halo|Hai}.",
+                example: "{Halo|Hai} Alex, pesanan Anda dikonfirmasi!",
+              },
+              {
+                name: "device_id",
+                type: "string",
+                required: false,
+                defaultValue: `"auto"`,
+                description: "WhatsApp device slot ULID or 'auto'.",
+                example: "auto",
+              },
+              {
+                name: "simulate_typing",
+                type: "boolean",
+                required: false,
+                defaultValue: "false",
+                description: "Broadcast presence typing event before sending.",
+                example: "true",
+              },
+            ],
+            snippets: {
+              curl: `curl -X POST "https://api.wahide.id/api/v1/wa/messages/send" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "phone": "628123456789",
+    "message": "{Halo|Hai} Alex, pesanan #INV-2026 Anda sedang diproses.",
+    "device_id": "auto",
+    "simulate_typing": true
+  }'`,
+              nodejs: `import axios from "axios";
+
+const res = await axios.post(
+  "https://api.wahide.id/api/v1/wa/messages/send",
+  {
+    phone: "628123456789",
+    message: "{Halo|Hai} Alex, pesanan #INV-2026 Anda sedang diproses.",
+    device_id: "auto",
+    simulate_typing: true,
+  },
+  {
+    headers: { Authorization: "Bearer YOUR_API_KEY" },
+  }
+);
+console.log(res.data);`,
+              php: `<?php
+$curl = curl_init();
+curl_setopt_array($curl, [
+  CURLOPT_URL => "https://api.wahide.id/api/v1/wa/messages/send",
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_CUSTOMREQUEST => "POST",
+  CURLOPT_POSTFIELDS => json_encode([
+    "phone" => "628123456789",
+    "message" => "Halo Alex, pesanan #INV-2026 Anda sedang diproses.",
+    "device_id" => "auto",
+    "simulate_typing" => true,
+  ]),
+  CURLOPT_HTTPHEADER => [
+    "Authorization: Bearer YOUR_API_KEY",
+    "Content-Type: application/json",
+  ],
+]);
+$response = curl_exec($curl);
+curl_close($curl);
+echo $response;`,
+              python: `import requests
+
+res = requests.post(
+    "https://api.wahide.id/api/v1/wa/messages/send",
+    headers={"Authorization": "Bearer YOUR_API_KEY"},
+    json={
+        "phone": "628123456789",
+        "message": "Halo Alex, pesanan #INV-2026 Anda sedang diproses.",
+        "device_id": "auto",
+        "simulate_typing": True,
+    }
+)
+print(res.json())`,
+              go: `package main
+
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"net/http"
+)
+
+func main() {
+	payload, _ := json.Marshal(map[string]interface{}{
+		"phone":           "628123456789",
+		"message":         "Halo Alex, pesanan #INV-2026 Anda sedang diproses.",
+		"device_id":       "auto",
+		"simulate_typing": true,
+	})
+	req, _ := http.NewRequest("POST", "https://api.wahide.id/api/v1/wa/messages/send", bytes.NewBuffer(payload))
+	req.Header.Set("Authorization", "Bearer YOUR_API_KEY")
+	req.Header.Set("Content-Type", "application/json")
+	resp, _ := http.DefaultClient.Do(req)
+	defer resp.Body.Close()
+	fmt.Println("Status:", resp.Status)
+}`,
+            },
+            responses: [
+              {
+                status: 200,
+                statusText: "OK",
+                description: "Text message sent.",
+                json: `{
+  "success": true,
+  "data": {
+    "message_id": "3EB0A1B2C3D4E5F6",
+    "phone": "628123456789",
+    "status": "SENT"
+  }
+}`,
+              },
+            ],
+          },
+          {
+            id: "media",
+            label: "Media + Caption",
+            method: "POST",
+            path: "/api/v1/wa/messages/send",
+            description: "Send photo, document, PDF, audio, or video attachment with custom caption.",
+            parameters: [
+              {
+                name: "phone",
+                type: "string",
+                required: true,
+                description: "Target recipient phone number.",
+                example: "628123456789",
+              },
+              {
+                name: "media_url",
+                type: "string",
+                required: true,
+                description: "Public HTTPS URL of media asset.",
+                example: "https://storage.wahide.id/invoices/inv-2026.pdf",
+              },
+              {
+                name: "media_type",
+                type: "string",
+                required: true,
+                description: "`image`, `document`, `video`, or `audio`.",
+                example: "document",
+              },
+              {
+                name: "caption",
+                type: "string",
+                required: false,
+                description: "Text caption attached to the media file.",
+                example: "Berikut lampiran invoice #INV-2026 Anda.",
+              },
+            ],
+            snippets: {
+              curl: `curl -X POST "https://api.wahide.id/api/v1/wa/messages/send" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "phone": "628123456789",
+    "media_url": "https://storage.wahide.id/invoices/inv-2026.pdf",
+    "media_type": "document",
+    "caption": "Berikut lampiran invoice #INV-2026 Anda."
+  }'`,
+              nodejs: `import axios from "axios";
+
+const res = await axios.post(
+  "https://api.wahide.id/api/v1/wa/messages/send",
+  {
+    phone: "628123456789",
+    media_url: "https://storage.wahide.id/invoices/inv-2026.pdf",
+    media_type: "document",
+    caption: "Berikut lampiran invoice #INV-2026 Anda.",
+  },
+  {
+    headers: { Authorization: "Bearer YOUR_API_KEY" },
+  }
+);
+console.log(res.data);`,
+              php: `<?php
+$curl = curl_init();
+curl_setopt_array($curl, [
+  CURLOPT_URL => "https://api.wahide.id/api/v1/wa/messages/send",
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_CUSTOMREQUEST => "POST",
+  CURLOPT_POSTFIELDS => json_encode([
+    "phone" => "628123456789",
+    "media_url" => "https://storage.wahide.id/invoices/inv-2026.pdf",
+    "media_type" => "document",
+    "caption" => "Berikut lampiran invoice #INV-2026 Anda.",
+  ]),
+  CURLOPT_HTTPHEADER => [
+    "Authorization: Bearer YOUR_API_KEY",
+    "Content-Type: application/json",
+  ],
+]);
+$response = curl_exec($curl);
+curl_close($curl);
+echo $response;`,
+              python: `import requests
+
+res = requests.post(
+    "https://api.wahide.id/api/v1/wa/messages/send",
+    headers={"Authorization": "Bearer YOUR_API_KEY"},
+    json={
+        "phone": "628123456789",
+        "media_url": "https://storage.wahide.id/invoices/inv-2026.pdf",
+        "media_type": "document",
+        "caption": "Berikut lampiran invoice #INV-2026 Anda.",
+    }
+)
+print(res.json())`,
+              go: `package main
+
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"net/http"
+)
+
+func main() {
+	payload, _ := json.Marshal(map[string]interface{}{
+		"phone":      "628123456789",
+		"media_url":  "https://storage.wahide.id/invoices/inv-2026.pdf",
+		"media_type": "document",
+		"caption":    "Berikut lampiran invoice #INV-2026 Anda.",
+	})
+	req, _ := http.NewRequest("POST", "https://api.wahide.id/api/v1/wa/messages/send", bytes.NewBuffer(payload))
+	req.Header.Set("Authorization", "Bearer YOUR_API_KEY")
+	req.Header.Set("Content-Type", "application/json")
+	resp, _ := http.DefaultClient.Do(req)
+	defer resp.Body.Close()
+	fmt.Println("Status:", resp.Status)
+}`,
+            },
+            responses: [
+              {
+                status: 200,
+                statusText: "OK",
+                description: "Media message sent.",
+                json: `{
+  "success": true,
+  "data": {
+    "message_id": "3EB0D8E9A0B1C2D3",
+    "media_url": "https://storage.wahide.id/invoices/inv-2026.pdf",
+    "status": "SENT"
+  }
+}`,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: "waba",
+        label: "WABA (Official)",
+        icon: "Globe",
+        badge: "Meta Official",
+        method: "POST",
+        path: "/api/v1/v18.0/:device_id/messages",
+        description:
+          "Dispatches official WhatsApp Business messages via Meta WhatsApp Cloud API v18.0. Supports both standard Meta nested JSON and normalized flat format (`/api/v1/messages/send`).",
+        headers: [
+          {
+            key: "Authorization",
+            value: "Bearer <your_api_key>",
+            required: true,
+            description: "Your secret Wahide API Key prefixed with Bearer.",
+          },
+          {
+            key: "Content-Type",
+            value: "application/json",
+            required: true,
+            description: "Must be set to application/json.",
+          },
+        ],
+        parameters: [
+          {
+            name: "messaging_product",
+            type: "string",
+            required: true,
+            defaultValue: `"whatsapp"`,
+            description: "Always set to 'whatsapp'.",
+            example: "whatsapp",
+          },
+          {
+            name: "recipient_type",
+            type: "string",
+            required: false,
+            defaultValue: `"individual"`,
+            description: "Target recipient scope ('individual').",
+            example: "individual",
+          },
+          {
+            name: "to",
+            type: "string",
+            required: true,
+            description: "Recipient phone number in E.164 format without plus or symbols.",
+            example: "628123456789",
+          },
+          {
+            name: "type",
+            type: "string",
+            required: true,
+            description: "Message payload type ('text', 'image', 'document', 'template').",
+            example: "text",
+          },
+          {
+            name: "text.body",
+            type: "string",
+            required: true,
+            description: "The actual message content string inside text object.",
+            example: "Halo, ini pesan dari official WhatsApp Cloud API!",
+          },
+        ],
+        snippets: {
+          curl: `curl -X POST "https://api.wahide.id/api/v1/v18.0/101234567890123/messages" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "messaging_product": "whatsapp",
+    "recipient_type": "individual",
+    "to": "628123456789",
+    "type": "text",
+    "text": {
+      "body": "Halo, ini pesan resmi dari Meta WhatsApp Cloud API!"
+    }
+  }'`,
+          nodejs: `import axios from "axios";
+
+const res = await axios.post(
+  "https://api.wahide.id/api/v1/v18.0/101234567890123/messages",
+  {
+    messaging_product: "whatsapp",
+    recipient_type: "individual",
+    to: "628123456789",
+    type: "text",
+    text: {
+      body: "Halo, ini pesan resmi dari Meta WhatsApp Cloud API!",
+    },
+  },
+  {
+    headers: {
+      Authorization: "Bearer YOUR_API_KEY",
+      "Content-Type": "application/json",
+    },
+  }
+);
+console.log(res.data);`,
+          php: `<?php
+$curl = curl_init();
+$payload = [
+  "messaging_product" => "whatsapp",
+  "recipient_type" => "individual",
+  "to" => "628123456789",
+  "type" => "text",
+  "text" => [
+    "body" => "Halo, ini pesan resmi dari Meta WhatsApp Cloud API!"
+  ]
+];
+curl_setopt_array($curl, [
+  CURLOPT_URL => "https://api.wahide.id/api/v1/v18.0/101234567890123/messages",
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_CUSTOMREQUEST => "POST",
+  CURLOPT_POSTFIELDS => json_encode($payload),
+  CURLOPT_HTTPHEADER => [
+    "Authorization: Bearer YOUR_API_KEY",
+    "Content-Type: application/json",
+  ],
+]);
+$response = curl_exec($curl);
+curl_close($curl);
+echo $response;`,
+          python: `import requests
+
+res = requests.post(
+    "https://api.wahide.id/api/v1/v18.0/101234567890123/messages",
+    headers={"Authorization": "Bearer YOUR_API_KEY"},
+    json={
+        "messaging_product": "whatsapp",
+        "recipient_type": "individual",
+        "to": "628123456789",
+        "type": "text",
+        "text": {"body": "Halo, ini pesan resmi dari Meta WhatsApp Cloud API!"}
+    }
+)
+print(res.json())`,
+          go: `package main
+
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"net/http"
+)
+
+func main() {
+	payload, _ := json.Marshal(map[string]interface{}{
+		"messaging_product": "whatsapp",
+		"recipient_type":    "individual",
+		"to":                "628123456789",
+		"type":              "text",
+		"text":              map[string]string{"body": "Halo dari Meta WABA API!"},
+	})
+	req, _ := http.NewRequest("POST", "https://api.wahide.id/api/v1/v18.0/101234567890123/messages", bytes.NewBuffer(payload))
+	req.Header.Set("Authorization", "Bearer YOUR_API_KEY")
+	req.Header.Set("Content-Type", "application/json")
+	resp, _ := http.DefaultClient.Do(req)
+	defer resp.Body.Close()
+	fmt.Println("Status:", resp.Status)
+}`,
+        },
+        responses: [
+          {
+            status: 200,
+            statusText: "OK",
+            description: "Meta Cloud API standard response format.",
+            json: `{
+  "messaging_product": "whatsapp",
+  "contacts": [
+    {
+      "input": "628123456789",
+      "wa_id": "628123456789"
+    }
+  ],
+  "messages": [
+    {
+      "id": "wamid.HBgMNjI4MTIzNDU2Nzg5FQIAERgSQTFCMkMzRDRFNUY2RzdBOEY5AA=="
+    }
+  ]
+}`,
+          },
+        ],
+        subtypes: [
+          {
+            id: "text",
+            label: "Teks",
+            method: "POST",
+            path: "/api/v1/v18.0/:device_id/messages",
+            description: "Official Meta text message dispatch format.",
+            parameters: [
+              {
+                name: "messaging_product",
+                type: "string",
+                required: true,
+                defaultValue: `"whatsapp"`,
+                description: "Must be 'whatsapp'.",
+                example: "whatsapp",
+              },
+              {
+                name: "to",
+                type: "string",
+                required: true,
+                description: "Recipient phone number in E.164 format.",
+                example: "628123456789",
+              },
+              {
+                name: "type",
+                type: "string",
+                required: true,
+                description: "Type 'text'.",
+                example: "text",
+              },
+              {
+                name: "text.body",
+                type: "string",
+                required: true,
+                description: "Body text.",
+                example: "Halo dari Official WABA!",
+              },
+            ],
+            snippets: {
+              curl: `curl -X POST "https://api.wahide.id/api/v1/v18.0/101234567890123/messages" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "messaging_product": "whatsapp",
+    "to": "628123456789",
+    "type": "text",
+    "text": { "body": "Halo dari Official WABA!" }
+  }'`,
+              nodejs: `import axios from "axios";
+const res = await axios.post("https://api.wahide.id/api/v1/v18.0/101234567890123/messages", {
+  messaging_product: "whatsapp",
+  to: "628123456789",
+  type: "text",
+  text: { body: "Halo dari Official WABA!" }
+}, { headers: { Authorization: "Bearer YOUR_API_KEY" } });`,
+              php: `<?php /* cURL request to Meta Cloud API */`,
+              python: `import requests
+res = requests.post("https://api.wahide.id/api/v1/v18.0/101234567890123/messages", headers={"Authorization": "Bearer YOUR_API_KEY"}, json={"messaging_product": "whatsapp", "to": "628123456789", "type": "text", "text": {"body": "Halo!"}})`,
+              go: `// Meta Cloud API POST in Go`,
+            },
+            responses: [
+              {
+                status: 200,
+                statusText: "OK",
+                description: "Meta WABA text message delivered.",
+                json: `{
+  "messaging_product": "whatsapp",
+  "contacts": [{ "input": "628123456789", "wa_id": "628123456789" }],
+  "messages": [{ "id": "wamid.HBgMNjI4MTIzNDU2Nzg5..." }]
+}`,
+              },
+            ],
+          },
+          {
+            id: "media",
+            label: "Media + Caption",
+            method: "POST",
+            path: "/api/v1/v18.0/:device_id/messages",
+            description: "Official Meta image/document dispatch format.",
+            parameters: [
+              {
+                name: "messaging_product",
+                type: "string",
+                required: true,
+                defaultValue: `"whatsapp"`,
+                description: "Must be 'whatsapp'.",
+                example: "whatsapp",
+              },
+              {
+                name: "to",
+                type: "string",
+                required: true,
+                description: "Recipient phone number.",
+                example: "628123456789",
+              },
+              {
+                name: "type",
+                type: "string",
+                required: true,
+                description: "Type 'image'.",
+                example: "image",
+              },
+              {
+                name: "image.link",
+                type: "string",
+                required: true,
+                description: "Public HTTPS URL.",
+                example: "https://example.com/banner.jpg",
+              },
+              {
+                name: "image.caption",
+                type: "string",
+                required: false,
+                description: "Image caption text.",
+                example: "Promo Spesial Hari Ini!",
+              },
+            ],
+            snippets: {
+              curl: `curl -X POST "https://api.wahide.id/api/v1/v18.0/101234567890123/messages" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "messaging_product": "whatsapp",
+    "to": "628123456789",
+    "type": "image",
+    "image": {
+      "link": "https://example.com/banner.jpg",
+      "caption": "Promo Spesial Hari Ini!"
+    }
+  }'`,
+              nodejs: `import axios from "axios";
+const res = await axios.post("https://api.wahide.id/api/v1/v18.0/101234567890123/messages", {
+  messaging_product: "whatsapp",
+  to: "628123456789",
+  type: "image",
+  image: { link: "https://example.com/banner.jpg", caption: "Promo Spesial!" }
+}, { headers: { Authorization: "Bearer YOUR_API_KEY" } });`,
+              php: `<?php /* cURL Media request to Meta Cloud API */`,
+              python: `import requests
+res = requests.post("https://api.wahide.id/api/v1/v18.0/101234567890123/messages", headers={"Authorization": "Bearer YOUR_API_KEY"}, json={"messaging_product": "whatsapp", "to": "628123456789", "type": "image", "image": {"link": "https://example.com/banner.jpg", "caption": "Promo!"}})`,
+              go: `// Meta Cloud API Image POST in Go`,
+            },
+            responses: [
+              {
+                status: 200,
+                statusText: "OK",
+                description: "Meta WABA image delivered.",
+                json: `{
+  "messaging_product": "whatsapp",
+  "contacts": [{ "input": "628123456789", "wa_id": "628123456789" }],
+  "messages": [{ "id": "wamid.HBgMNjI4MTIzNDU2Nzg5..." }]
+}`,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: "telegram",
+        label: "Telegram",
+        icon: "Send",
+        badge: "Bot API",
+        method: "POST",
+        path: "/api/v1/telegram/messages/send",
+        description:
+          "Delivers direct messages or media attachments to Telegram Chat IDs or groups via your configured Telegram bot.",
+        headers: [
+          {
+            key: "Authorization",
+            value: "Bearer <your_api_key>",
+            required: true,
+            description: "Your secret Wahide API Key prefixed with Bearer.",
+          },
+          {
+            key: "Content-Type",
+            value: "application/json",
+            required: true,
+            description: "Must be set to application/json.",
+          },
+        ],
+        parameters: [
+          {
+            name: "bot_id",
+            type: "string",
+            required: true,
+            description: "ULID identifier of your connected Telegram Bot.",
+            example: "01JPLAN0000000000000000001",
+          },
+          {
+            name: "chat_id",
+            type: "integer",
+            required: true,
+            description: "Target Telegram Chat ID (numeric integer).",
+            example: "987654321",
+          },
+          {
+            name: "text",
+            type: "string",
+            required: true,
+            description: "Message content. Supports HTML or Markdown formatting tags.",
+            example: "<b>Order Dispatched!</b> Your tracking code is #TRX-998.",
+          },
+          {
+            name: "parse_mode",
+            type: "string",
+            required: false,
+            defaultValue: `"HTML"`,
+            description: "Formatting mode: `HTML`, `MarkdownV2`, or `Markdown`.",
+            example: "HTML",
+          },
+          {
+            name: "disable_web_page_preview",
+            type: "boolean",
+            required: false,
+            defaultValue: "false",
+            description: "Disables link previews in the Telegram chat bubble.",
+            example: "false",
+          },
+        ],
+        snippets: {
+          curl: `curl -X POST "https://api.wahide.id/api/v1/telegram/messages/send" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "bot_id": "01JPLAN0000000000000000001",
+    "chat_id": 987654321,
+    "text": "<b>Order Dispatched!</b> Your package is on the way.",
+    "parse_mode": "HTML"
+  }'`,
+          nodejs: `import axios from "axios";
+
+const res = await axios.post(
+  "https://api.wahide.id/api/v1/telegram/messages/send",
+  {
+    bot_id: "01JPLAN0000000000000000001",
+    chat_id: 987654321,
+    text: "<b>Order Dispatched!</b> Your package is on the way.",
+    parse_mode: "HTML",
+  },
+  {
+    headers: {
+      Authorization: "Bearer YOUR_API_KEY",
+      "Content-Type": "application/json",
+    },
+  }
+);
+console.log(res.data);`,
+          php: `<?php
+$curl = curl_init();
+$payload = [
+  "bot_id" => "01JPLAN0000000000000000001",
+  "chat_id" => 987654321,
+  "text" => "<b>Order Dispatched!</b> Your package is on the way.",
+  "parse_mode" => "HTML",
+];
+curl_setopt_array($curl, [
+  CURLOPT_URL => "https://api.wahide.id/api/v1/telegram/messages/send",
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_CUSTOMREQUEST => "POST",
+  CURLOPT_POSTFIELDS => json_encode($payload),
+  CURLOPT_HTTPHEADER => [
+    "Authorization: Bearer YOUR_API_KEY",
+    "Content-Type: application/json",
+  ],
+]);
+$response = curl_exec($curl);
+curl_close($curl);
+echo $response;`,
+          python: `import requests
+
+res = requests.post(
+    "https://api.wahide.id/api/v1/telegram/messages/send",
+    headers={"Authorization": "Bearer YOUR_API_KEY"},
+    json={
+        "bot_id": "01JPLAN0000000000000000001",
+        "chat_id": 987654321,
+        "text": "<b>Order Dispatched!</b> Your package is on the way.",
+        "parse_mode": "HTML"
+    }
+)
+print(res.json())`,
+          go: `package main
+
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"net/http"
+)
+
+func main() {
+	payload, _ := json.Marshal(map[string]interface{}{
+		"bot_id":     "01JPLAN0000000000000000001",
+		"chat_id":    987654321,
+		"text":       "<b>Order Dispatched!</b> Your package is on the way.",
+		"parse_mode": "HTML",
+	})
+	req, _ := http.NewRequest("POST", "https://api.wahide.id/api/v1/telegram/messages/send", bytes.NewBuffer(payload))
+	req.Header.Set("Authorization", "Bearer YOUR_API_KEY")
+	req.Header.Set("Content-Type", "application/json")
+	resp, _ := http.DefaultClient.Do(req)
+	defer resp.Body.Close()
+	fmt.Println("Status:", resp.Status)
+}`,
+        },
+        responses: [
+          {
+            status: 200,
+            statusText: "OK",
+            description: "Telegram message sent successfully.",
+            json: `{
+  "success": true,
+  "message": "Message dispatched successfully",
+  "data": {
+    "id": "01JPLAN0000000000000000099",
+    "bot_id": "01JPLAN0000000000000000001",
+    "chat_id": 987654321,
+    "message_id": 12345,
+    "status": "SENT",
+    "sent_at": "2026-09-18T10:00:00Z"
+  }
+}`,
+          },
+        ],
+        subtypes: [
+          {
+            id: "text",
+            label: "Teks",
+            method: "POST",
+            path: "/api/v1/telegram/messages/send",
+            description: "Sends HTML or Markdown formatted text to Telegram.",
+            parameters: [
+              {
+                name: "bot_id",
+                type: "string",
+                required: true,
+                description: "ULID of connected bot.",
+                example: "01JPLAN0000000000000000001",
+              },
+              {
+                name: "chat_id",
+                type: "integer",
+                required: true,
+                description: "Telegram numeric chat ID.",
+                example: "987654321",
+              },
+              {
+                name: "text",
+                type: "string",
+                required: true,
+                description: "Message content.",
+                example: "Halo dari Telegram Bot!",
+              },
+            ],
+            snippets: {
+              curl: `curl -X POST "https://api.wahide.id/api/v1/telegram/messages/send" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "bot_id": "01JPLAN0000000000000000001",
+    "chat_id": 987654321,
+    "text": "Halo dari Telegram Bot!"
+  }'`,
+              nodejs: `import axios from "axios";
+const res = await axios.post("https://api.wahide.id/api/v1/telegram/messages/send", {
+  bot_id: "01JPLAN0000000000000000001",
+  chat_id: 987654321,
+  text: "Halo dari Telegram Bot!"
+}, { headers: { Authorization: "Bearer YOUR_API_KEY" } });`,
+              php: `<?php /* Telegram Text POST */`,
+              python: `import requests
+res = requests.post("https://api.wahide.id/api/v1/telegram/messages/send", headers={"Authorization": "Bearer YOUR_API_KEY"}, json={"bot_id": "01JPLAN...", "chat_id": 987654321, "text": "Halo!"})`,
+              go: `// Telegram Text POST in Go`,
+            },
+            responses: [
+              {
+                status: 200,
+                statusText: "OK",
+                description: "Telegram message dispatched.",
+                json: `{ "success": true, "data": { "message_id": 12345 } }`,
+              },
+            ],
+          },
+          {
+            id: "media",
+            label: "Media + Caption",
+            method: "POST",
+            path: "/api/v1/telegram/messages/send",
+            description: "Sends photo or document attachment to Telegram.",
+            parameters: [
+              {
+                name: "bot_id",
+                type: "string",
+                required: true,
+                description: "ULID of connected bot.",
+                example: "01JPLAN0000000000000000001",
+              },
+              {
+                name: "chat_id",
+                type: "integer",
+                required: true,
+                description: "Telegram numeric chat ID.",
+                example: "987654321",
+              },
+              {
+                name: "media_url",
+                type: "string",
+                required: true,
+                description: "Public HTTPS URL of image or document.",
+                example: "https://example.com/receipt.pdf",
+              },
+              {
+                name: "media_type",
+                type: "string",
+                required: true,
+                description: "`PHOTO`, `DOCUMENT`, `VIDEO`, or `VOICE`.",
+                example: "DOCUMENT",
+              },
+              {
+                name: "caption",
+                type: "string",
+                required: false,
+                description: "Attachment caption.",
+                example: "Lampiran bukti transaksi.",
+              },
+            ],
+            snippets: {
+              curl: `curl -X POST "https://api.wahide.id/api/v1/telegram/messages/send" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "bot_id": "01JPLAN0000000000000000001",
+    "chat_id": 987654321,
+    "media_url": "https://example.com/receipt.pdf",
+    "media_type": "DOCUMENT",
+    "caption": "Lampiran bukti transaksi."
+  }'`,
+              nodejs: `import axios from "axios";
+const res = await axios.post("https://api.wahide.id/api/v1/telegram/messages/send", {
+  bot_id: "01JPLAN0000000000000000001",
+  chat_id: 987654321,
+  media_url: "https://example.com/receipt.pdf",
+  media_type: "DOCUMENT",
+  caption: "Lampiran bukti transaksi."
+}, { headers: { Authorization: "Bearer YOUR_API_KEY" } });`,
+              php: `<?php /* Telegram Media POST */`,
+              python: `import requests
+res = requests.post("https://api.wahide.id/api/v1/telegram/messages/send", headers={"Authorization": "Bearer YOUR_API_KEY"}, json={"bot_id": "01JPLAN...", "chat_id": 987654321, "media_url": "https://example.com/receipt.pdf", "media_type": "DOCUMENT"})`,
+              go: `// Telegram Media POST in Go`,
+            },
+            responses: [
+              {
+                status: 200,
+                statusText: "OK",
+                description: "Telegram media dispatched.",
+                json: `{ "success": true, "data": { "message_id": 12346 } }`,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: "messenger",
+        label: "Messenger",
+        icon: "MessageSquare",
+        badge: "Coming Soon",
+        disabled: true,
+        method: "POST",
+        path: "/api/v1/messenger/messages/send",
+        parameters: [],
+        snippets: {
+          curl: "# Messenger API integration coming soon in Q4 2026",
+          nodejs: "// Messenger API integration coming soon in Q4 2026",
+          php: "// Messenger API integration coming soon in Q4 2026",
+          python: "# Messenger API integration coming soon in Q4 2026",
+          go: "// Messenger API integration coming soon in Q4 2026",
+        },
+        responses: [],
+      },
+      {
+        id: "instagram",
+        label: "Instagram",
+        icon: "Instagram",
+        badge: "Coming Soon",
+        disabled: true,
+        method: "POST",
+        path: "/api/v1/instagram/messages/send",
+        parameters: [],
+        snippets: {
+          curl: "# Instagram Direct Message API coming soon in Q4 2026",
+          nodejs: "// Instagram Direct Message API coming soon in Q4 2026",
+          php: "// Instagram Direct Message API coming soon in Q4 2026",
+          python: "# Instagram Direct Message API coming soon in Q4 2026",
+          go: "// Instagram Direct Message API coming soon in Q4 2026",
+        },
+        responses: [],
+      },
+    ],
     bannerNotice: {
       type: "success",
-      title: "Automatic Device Rotation & Delivery Dynamics",
+      title: "Omnichannel Dual-Format: Whatsmeow & Meta Cloud API",
       content:
-        "Includes automated typing presence simulation, device warmup pacing, and automatic round-robin fallback across active devices.",
+        "Supports both Wahide native flat schema and official Meta WhatsApp Cloud API nested JSON. Dispatches through WhatsApp Multi-Device (whatsmeow) or Meta WABA accounts with typing simulation and Spintax randomizer.",
     },
     headers: [
       {
@@ -39,7 +1193,7 @@ export const messagingEndpoints: EndpointDoc[] = [
         type: "string",
         required: true,
         description:
-          "Target recipient phone number in international E.164 format without spaces, dashes, or leading plus. Example: 628123456789.",
+          "Target recipient phone number in international E.164 format without spaces, dashes, or leading plus. (Also accepts 'to' for Meta Cloud API format).",
         example: "628123456789",
       },
       {
@@ -47,9 +1201,9 @@ export const messagingEndpoints: EndpointDoc[] = [
         type: "string",
         required: true,
         description:
-          "Text message body to send. Supports full UTF-8 emojis, WhatsApp bold (*bold*), italic (_italic_), strikethrough (~strike~), monospace (```code```), and Spintax format `{Hello|Hi|Greetings}`.",
+          "Text message body to send. Supports full UTF-8 emojis, WhatsApp formatting (*bold*, _italic_, ~strike~, ```code```), and Spintax variations {Halo|Hai|Pagi}. (Also accepts 'text.body' for Meta Cloud API format).",
         example:
-          "Hello from Wahide WhatsApp API! Your verification code is 884920.",
+          "{Halo|Hai} Pelanggan, pesanan #INV-2026 Anda telah dikonfirmasi!",
       },
       {
         name: "device_id",
@@ -57,7 +1211,7 @@ export const messagingEndpoints: EndpointDoc[] = [
         required: false,
         defaultValue: `"auto"`,
         description:
-          "Specific WhatsApp Device ID slot to dispatch the message from. If omitted or set to 'auto', the engine uses intelligent round-robin across all connected healthy devices.",
+          "Specific WhatsApp Device ID slot or WABA Account ULID to dispatch from. If omitted or set to 'auto', the engine uses intelligent round-robin across connected healthy devices.",
         example: "01M1WW3FKR1JS7CW4KGY78Q5ND",
       },
       {
@@ -66,7 +1220,7 @@ export const messagingEndpoints: EndpointDoc[] = [
         required: false,
         defaultValue: "false",
         description:
-          "When true, broadcasts a natural 'typing...' presence event to WhatsApp for the recipient before dispatching the message, emulating authentic human behavior.",
+          "When true, broadcasts a natural 'typing...' presence event to WhatsApp before dispatching the message.",
         example: "true",
       },
       {
@@ -75,31 +1229,42 @@ export const messagingEndpoints: EndpointDoc[] = [
         required: false,
         defaultValue: "0",
         description:
-          "Custom typing indicator duration in milliseconds. If 0 or omitted with simulate_typing: true, duration is dynamically calculated based on message length (~40ms per character, clamped between 1,000ms and 5,000ms).",
-        example: "2500",
+          "Custom typing indicator duration in milliseconds. If 0 or omitted with simulate_typing: true, duration is dynamically calculated based on message length (~40ms/char, clamped between 1,000ms - 5,000ms).",
+        example: "1500",
+      },
+      {
+        name: "parse_spintax",
+        type: "boolean",
+        required: false,
+        defaultValue: "true",
+        description:
+          "When true, automatically parses and resolves Spintax patterns like {Halo|Hai|Pagi} into a randomized unique variation for Anti-Ban protection.",
+        example: "true",
       },
     ],
     snippets: {
-      curl: `curl -X POST "https://api.wahide.com/api/v1/wa/messages/send" \\
+      curl: `curl -X POST "https://api.wahide.id/api/v1/wa/messages/send" \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
     "phone": "628123456789",
-    "message": "Hello from Wahide WhatsApp API! Your order #INV-2026 is confirmed.",
+    "message": "{Halo|Hai} Alex, pesanan #INV-2026 Anda sedang diproses.",
     "device_id": "auto",
     "simulate_typing": true,
-    "typing_delay_ms": 1500
+    "typing_delay_ms": 1500,
+    "parse_spintax": true
   }'`,
       nodejs: `import axios from "axios";
 
 const response = await axios.post(
-  "https://api.wahide.com/api/v1/wa/messages/send",
+  "https://api.wahide.id/api/v1/wa/messages/send",
   {
     phone: "628123456789",
-    message: "Hello from Wahide WhatsApp API! Your order #INV-2026 is confirmed.",
+    message: "{Halo|Hai} Alex, pesanan #INV-2026 Anda sedang diproses.",
     device_id: "auto",
     simulate_typing: true,
     typing_delay_ms: 1500,
+    parse_spintax: true,
   },
   {
     headers: {
@@ -116,14 +1281,15 @@ $curl = curl_init();
 
 $payload = [
     "phone" => "628123456789",
-    "message" => "Hello from Wahide WhatsApp API! Your order #INV-2026 is confirmed.",
+    "message" => "{Halo|Hai} Alex, pesanan #INV-2026 Anda sedang diproses.",
     "device_id" => "auto",
     "simulate_typing" => true,
-    "typing_delay_ms" => 1500
+    "typing_delay_ms" => 1500,
+    "parse_spintax" => true
 ];
 
 curl_setopt_array($curl, [
-    CURLOPT_URL => "https://api.wahide.com/api/v1/wa/messages/send",
+    CURLOPT_URL => "https://api.wahide.id/api/v1/wa/messages/send",
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_CUSTOMREQUEST => "POST",
     CURLOPT_POSTFIELDS => json_encode($payload),
@@ -139,17 +1305,18 @@ curl_close($curl);
 echo $response;`,
       python: `import requests
 
-url = "https://api.wahide.com/api/v1/wa/messages/send"
+url = "https://api.wahide.id/api/v1/wa/messages/send"
 headers = {
     "Authorization": "Bearer YOUR_API_KEY",
     "Content-Type": "application/json"
 }
 payload = {
     "phone": "628123456789",
-    "message": "Hello from Wahide WhatsApp API! Your order #INV-2026 is confirmed.",
+    "message": "{Halo|Hai} Alex, pesanan #INV-2026 Anda sedang diproses.",
     "device_id": "auto",
     "simulate_typing": True,
-    "typing_delay_ms": 1500
+    "typing_delay_ms": 1500,
+    "parse_spintax": True
 }
 
 response = requests.post(url, json=payload, headers=headers)

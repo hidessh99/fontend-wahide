@@ -7,7 +7,50 @@ import { DocsParametersTable } from "./DocsParametersTable";
 import { DocsCodeTabs } from "./DocsCodeTabs";
 import { DocsResponseView } from "./DocsResponseView";
 import { getApiHost } from "./data";
-import { Lock, Copy, Check, Info } from "lucide-react";
+import {
+  Lock,
+  Copy,
+  Check,
+  Info,
+  Smartphone,
+  Globe,
+  Send,
+  MessageSquare,
+  Camera,
+} from "lucide-react";
+
+function InstagramIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="24"
+      height="24"
+      stroke="currentColor"
+      strokeWidth="2"
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </svg>
+  );
+}
+
+const CHANNEL_ICONS: Record<string, React.ElementType> = {
+  Smartphone,
+  Globe,
+  Send,
+  MessageSquare,
+  Instagram: InstagramIcon,
+  Camera,
+};
+
+function getChannelIcon(name: string): React.ElementType {
+  return CHANNEL_ICONS[name] || Globe;
+}
 
 interface DocsEndpointViewProps {
   doc: EndpointDoc;
@@ -17,7 +60,36 @@ export function DocsEndpointView({ doc }: DocsEndpointViewProps) {
   const [copiedUrl, setCopiedUrl] = useState(false);
   const apiHost = getApiHost();
 
-  const fullUrl = `${apiHost}${doc.path}`;
+  const [selectedChannelId, setSelectedChannelId] = useState<string>(
+    doc.channelVariants?.[0]?.id || "",
+  );
+  const [selectedSubtypeId, setSelectedSubtypeId] = useState<string>("text");
+
+  const activeVariant = doc.channelVariants?.find(
+    (v) => v.id === selectedChannelId,
+  );
+  const currentSubtypes = activeVariant?.subtypes;
+  const activeSubtype =
+    currentSubtypes?.find((s) => s.id === selectedSubtypeId) ||
+    currentSubtypes?.[0];
+
+  const effectiveMethod =
+    activeSubtype?.method || activeVariant?.method || doc.method;
+  const effectivePath =
+    activeSubtype?.path || activeVariant?.path || doc.path;
+  const effectiveDescription =
+    activeSubtype?.description || activeVariant?.description || doc.description;
+  const effectiveHeaders = activeVariant?.headers || doc.headers;
+  const effectiveParameters =
+    activeSubtype?.parameters || activeVariant?.parameters || doc.parameters;
+  const effectiveSnippets =
+    activeSubtype?.snippets || activeVariant?.snippets || doc.snippets;
+  const effectiveResponses =
+    activeSubtype?.responses || activeVariant?.responses || doc.responses;
+  const effectiveErrorMatrix = activeVariant?.errorMatrix || doc.errorMatrix;
+  const effectiveBadge = activeVariant?.badge || doc.badge;
+
+  const fullUrl = `${apiHost}${effectivePath}`;
 
   const handleCopyUrl = async () => {
     try {
@@ -59,27 +131,118 @@ export function DocsEndpointView({ doc }: DocsEndpointViewProps) {
         <div className="flex flex-wrap items-center gap-2.5">
           <span
             className={`font-mono text-xs font-black uppercase px-2.5 py-1 rounded-md tracking-wider ${getMethodBadge(
-              doc.method,
+              effectiveMethod,
             )}`}
           >
-            {doc.method}
+            {effectiveMethod}
           </span>
           <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
             {doc.title}
           </h1>
-          {doc.badge && (
+          {effectiveBadge && (
             <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-wise-green/15 text-dark-green dark:text-wise-green border border-wise-green/30">
-              {doc.badge}
+              {effectiveBadge}
             </span>
           )}
         </div>
 
         <p className="text-sm sm:text-base text-foreground-secondary leading-relaxed max-w-3xl">
-          {doc.description}
+          {effectiveDescription}
         </p>
       </div>
 
-      {/* 3. Information Notice (Clean, non-gimmick) */}
+      {/* 3. Omnichannel Channel Switcher Pills & Subtypes (WhatsApp, WABA, Telegram, Messenger, Instagram) */}
+      {doc.channelVariants && doc.channelVariants.length > 0 && (
+        <div className="space-y-3.5 p-4 rounded-2xl bg-card border border-border shadow-xs">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+              Select Channel / Provider
+            </span>
+            {activeVariant && (
+              <span className="text-xs font-mono font-medium text-muted-foreground">
+                Active: <span className="font-bold text-foreground">{activeVariant.label}</span>
+              </span>
+            )}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            {doc.channelVariants.map((variant) => {
+              const isSelected = (activeVariant?.id || doc.channelVariants?.[0]?.id) === variant.id;
+              const Icon = getChannelIcon(variant.icon);
+
+              return (
+                <button
+                  key={variant.id}
+                  type="button"
+                  disabled={variant.disabled}
+                  onClick={() => {
+                    if (!variant.disabled) {
+                      setSelectedChannelId(variant.id);
+                      if (variant.subtypes && variant.subtypes.length > 0) {
+                        if (!variant.subtypes.some((s) => s.id === selectedSubtypeId)) {
+                          setSelectedSubtypeId(variant.subtypes[0].id);
+                        }
+                      }
+                    }
+                  }}
+                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold transition-all duration-150 select-none ${
+                    variant.disabled
+                      ? "bg-muted/30 text-muted-foreground/40 border border-border/40 cursor-not-allowed"
+                      : isSelected
+                      ? "bg-sky-500 text-white shadow-md shadow-sky-500/25 font-bold scale-[1.02] cursor-pointer"
+                      : "bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground border border-border cursor-pointer"
+                  }`}
+                >
+                  <Icon className="size-4 shrink-0" />
+                  <span>{variant.label}</span>
+                  {variant.badge && (
+                    <span
+                      className={`text-[9px] font-mono font-bold px-1.5 py-0.2 rounded-full ${
+                        isSelected
+                          ? "bg-white/20 text-white"
+                          : "bg-secondary text-secondary-foreground border border-border"
+                      }`}
+                    >
+                      {variant.badge}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Subtype Selector (e.g. [ Teks ] [ Media + Caption ]) */}
+          {currentSubtypes && currentSubtypes.length > 1 && (
+            <div className="pt-2 border-t border-border/60 flex items-center gap-2">
+              <span className="text-[11px] font-medium text-muted-foreground mr-1">
+                Payload Type:
+              </span>
+              <div className="inline-flex items-center gap-1.5 p-1 rounded-xl bg-muted/60 border border-border/60">
+                {currentSubtypes.map((sub) => {
+                  const isSubSelected =
+                    (activeSubtype?.id || currentSubtypes[0].id) === sub.id;
+                  return (
+                    <button
+                      key={sub.id}
+                      type="button"
+                      onClick={() => setSelectedSubtypeId(sub.id)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 cursor-pointer ${
+                        isSubSelected
+                          ? "bg-sky-500 text-white shadow-xs font-bold"
+                          : "text-muted-foreground hover:text-foreground hover:bg-card/70"
+                      }`}
+                    >
+                      {sub.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 4. Information Notice */}
       {doc.bannerNotice && (
         <div className="rounded-xl border border-border bg-muted/30 p-4 shadow-xs">
           <div className="flex items-start gap-3">
@@ -96,7 +259,7 @@ export function DocsEndpointView({ doc }: DocsEndpointViewProps) {
         </div>
       )}
 
-      {/* 4. Endpoint Box */}
+      {/* 5. Endpoint Box */}
       <div className="space-y-3" id="endpoint">
         <h2 className="text-base font-bold text-foreground">HTTP Endpoint</h2>
 
@@ -104,23 +267,23 @@ export function DocsEndpointView({ doc }: DocsEndpointViewProps) {
           <div className="flex items-center gap-3 font-mono text-xs overflow-x-auto min-w-0">
             <span
               className={`font-bold px-2 py-0.5 rounded uppercase shrink-0 ${getMethodBadge(
-                doc.method,
+                effectiveMethod,
               )}`}
             >
-              {doc.method}
+              {effectiveMethod}
             </span>
             <span className="text-muted-foreground shrink-0 select-none">
               {apiHost}
             </span>
             <span className="font-semibold text-foreground truncate">
-              {doc.path}
+              {effectivePath}
             </span>
           </div>
 
           <button
             onClick={handleCopyUrl}
             type="button"
-            className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border border-border hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-colors shrink-0"
+            className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border border-border hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-colors shrink-0 cursor-pointer"
             title="Copy URL"
           >
             {copiedUrl ? (
@@ -163,8 +326,8 @@ export function DocsEndpointView({ doc }: DocsEndpointViewProps) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/60 font-mono">
-                {doc.headers && doc.headers.length > 0 ? (
-                  doc.headers.map((header) => (
+                {effectiveHeaders && effectiveHeaders.length > 0 ? (
+                  effectiveHeaders.map((header) => (
                     <tr key={header.key}>
                       <td className="py-2.5 px-3 font-semibold text-foreground">
                         {header.key}
@@ -217,21 +380,21 @@ export function DocsEndpointView({ doc }: DocsEndpointViewProps) {
 
       {/* 6. Parameters Table */}
       <div id="parameters">
-        <DocsParametersTable parameters={doc.parameters} />
+        <DocsParametersTable parameters={effectiveParameters} />
       </div>
 
       {/* 7. Code Examples */}
       <div id="code-examples">
-        <DocsCodeTabs snippets={doc.snippets} />
+        <DocsCodeTabs snippets={effectiveSnippets} />
       </div>
 
       {/* 8. Responses */}
       <div id="responses">
-        <DocsResponseView responses={doc.responses} />
+        <DocsResponseView responses={effectiveResponses} />
       </div>
 
       {/* 9. Error Handling Matrix */}
-      {doc.errorMatrix && doc.errorMatrix.length > 0 && (
+      {effectiveErrorMatrix && effectiveErrorMatrix.length > 0 && (
         <div className="space-y-3" id="errors">
           <h2 className="text-base font-bold text-foreground">
             Error Codes & Troubleshooting
@@ -248,7 +411,7 @@ export function DocsEndpointView({ doc }: DocsEndpointViewProps) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/60 text-xs">
-                {doc.errorMatrix.map((err) => (
+                {effectiveErrorMatrix.map((err) => (
                   <tr
                     key={err.error}
                     className="hover:bg-muted/20 transition-colors"

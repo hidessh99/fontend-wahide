@@ -6,7 +6,7 @@ export const introDoc: GuideDoc = {
   slug: "intro",
   title: "Introduction",
   description:
-    "The Wahide REST API provides enterprise-grade programmatic access to Omnichannel Messaging (WhatsApp Multi-Device, Meta WABA, Telegram, Email) and an Intelligent Autoreply & Visual Flow chatbot ecosystem.",
+    "The Wahide REST API provides enterprise-grade programmatic access to Omnichannel Messaging (WhatsApp Multi-Device, Meta WABA, Telegram, Email).",
   category: "Getting Started",
   categorySlug: "getting-started",
   sections: [
@@ -26,7 +26,7 @@ export const introDoc: GuideDoc = {
       id: "omnichannel-channels",
       title: "Supported Omnichannel Channels",
       content:
-        "• **WhatsApp Multi-Device (whatsmeow)**: High-concurrency socket engine with 5-layer anti-ban protection, pairing via QR or 8-digit phone code, and session hibernation & wake.\n• **WhatsApp Cloud API (WABA)**: Official Meta Cloud API integration with high deliverability and embedded signup support.\n• **Telegram Bot API**: Multi-bot management, interactive buttons, webhook synchronization, and message dispatching.\n• **Transactional Email**: High-reputation transactional delivery powered by Resend / SMTP.\n• **Autoreply Ecosystem**: Single-turn keyword rules (Aho-Corasick O(M)), Interactive Visual DAG Flows, Form Submissions (LMAX Ring-Buffer Batch Flusher), and Live Google Spreadsheet lookup.",
+        "• **WhatsApp Multi-Device (whatsmeow)**: High-concurrency socket engine with 5-layer anti-ban protection, pairing via QR or 8-digit phone code, and session hibernation & wake.\n• **WhatsApp Cloud API (WABA)**: Official Meta Cloud API integration with high deliverability and embedded signup support.\n• **Telegram Bot API**: Multi-bot management, interactive buttons, webhook synchronization, and message dispatching.\n• **Transactional Email**: High-reputation transactional delivery powered by Resend / SMTP.",
     },
     {
       id: "phone-format",
@@ -61,7 +61,7 @@ export const introDoc: GuideDoc = {
       id: "features",
       title: "Key Capabilities",
       content:
-        "• **Multi-Device Rotation**: Connect multiple WhatsApp phone numbers and distribute message loads automatically via round-robin pooling.\n• **Aho-Corasick Multi-Pattern Automaton**: Instant O(M) keyword evaluation for 50,000+ autoreply rules without linear loop overhead.\n• **Hibernation Exemption Guard**: Automatically prevents device socket reaper disconnects for devices with active autoreply rules.\n• **Dual-Driver NATS & Redis Support**: Stateless Go runtime with sub-millisecond in-memory cache and stream pipelines.\n• **Interactive Visual DAG Flow Builder**: Multi-turn conversational flows with drag-and-drop canvas and real-time simulator.",
+        "• **Multi-Device Rotation**: Connect multiple WhatsApp phone numbers and distribute message loads automatically via round-robin pooling.\n• **Session Hibernation Engine**: Disconnect idle sockets to conserve memory while retaining encryption credentials, waking up automatically on-demand.\n• **Dual-Driver NATS & Redis Support**: Stateless Go runtime with sub-millisecond in-memory cache and stream pipelines.\n• **Real-time Webhooks & n8n Sync**: Instant event notifications for incoming messages, delivery receipts, and connection state updates.",
     },
   ],
 };

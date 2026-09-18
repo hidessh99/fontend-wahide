@@ -13,6 +13,309 @@ export const otpEndpoints: EndpointDoc[] = [
     method: "POST",
     path: "/api/v1/otp/send",
     badge: "Instant VIP",
+    channelVariants: [
+      {
+        id: "whatsmeow",
+        label: "WhatsApp (Whatsmeow)",
+        icon: "Smartphone",
+        badge: "Unofficial Socket",
+        method: "POST",
+        path: "/api/v1/wa/otp/send",
+        description:
+          "Dispatches an instant OTP verification code via WhatsApp Multi-Device session (whatsmeow) with 5-minute Redis TTL and VIP priority express queue.",
+        headers: [
+          {
+            key: "Authorization",
+            value: "Bearer <your_api_key>",
+            required: true,
+            description: "Your secret Wahide API Key prefixed with Bearer.",
+          },
+          {
+            key: "Content-Type",
+            value: "application/json",
+            required: true,
+            description: "Must be set to application/json.",
+          },
+        ],
+        parameters: [
+          {
+            name: "phone",
+            type: "string",
+            required: true,
+            description: "Target recipient WhatsApp number in E.164 format (e.g. 628123456789).",
+            example: "628123456789",
+          },
+          {
+            name: "otp",
+            type: "string",
+            required: false,
+            defaultValue: "Auto 6-digit",
+            description: "Custom OTP code (4-8 digits). If omitted, automatically generated.",
+            example: "884920",
+          },
+          {
+            name: "template",
+            type: "string",
+            required: false,
+            defaultValue: `"Kode verifikasi akun Anda adalah *{{otp}}*. Berlaku 5 menit."`,
+            description: "Template message body containing {{otp}} placeholder.",
+            example: "Kode login Wahide Anda adalah *{{otp}}*.",
+          },
+          {
+            name: "expires_in",
+            type: "integer",
+            required: false,
+            defaultValue: "300",
+            description: "Validity lifetime in seconds (60 - 900 seconds).",
+            example: "300",
+          },
+        ],
+        snippets: {
+          curl: `curl -X POST "https://api.wahide.id/api/v1/wa/otp/send" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "phone": "628123456789",
+    "template": "Kode verifikasi Anda adalah *{{otp}}*. Jangan bagikan kode ini.",
+    "expires_in": 300
+  }'`,
+          nodejs: `import axios from "axios";
+
+const res = await axios.post(
+  "https://api.wahide.id/api/v1/wa/otp/send",
+  {
+    phone: "628123456789",
+    template: "Kode verifikasi Anda adalah *{{otp}}*.",
+    expires_in: 300,
+  },
+  {
+    headers: { Authorization: "Bearer YOUR_API_KEY" },
+  }
+);
+console.log(res.data);`,
+          php: `<?php
+$curl = curl_init();
+curl_setopt_array($curl, [
+  CURLOPT_URL => "https://api.wahide.id/api/v1/wa/otp/send",
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_CUSTOMREQUEST => "POST",
+  CURLOPT_POSTFIELDS => json_encode([
+    "phone" => "628123456789",
+    "template" => "Kode verifikasi Anda adalah *{{otp}}*.",
+    "expires_in" => 300,
+  ]),
+  CURLOPT_HTTPHEADER => ["Authorization: Bearer YOUR_API_KEY", "Content-Type: application/json"],
+]);
+$response = curl_exec($curl);
+curl_close($curl);
+echo $response;`,
+          python: `import requests
+res = requests.post(
+    "https://api.wahide.id/api/v1/wa/otp/send",
+    headers={"Authorization": "Bearer YOUR_API_KEY"},
+    json={"phone": "628123456789", "expires_in": 300}
+)
+print(res.json())`,
+          go: `package main
+
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"net/http"
+)
+
+func main() {
+	payload, _ := json.Marshal(map[string]interface{}{
+		"phone":      "628123456789",
+		"expires_in": 300,
+	})
+	req, _ := http.NewRequest("POST", "https://api.wahide.id/api/v1/wa/otp/send", bytes.NewBuffer(payload))
+	req.Header.Set("Authorization", "Bearer YOUR_API_KEY")
+	req.Header.Set("Content-Type", "application/json")
+	resp, _ := http.DefaultClient.Do(req)
+	defer resp.Body.Close()
+	fmt.Println("Status:", resp.Status)
+}`,
+        },
+        responses: [
+          {
+            status: 200,
+            statusText: "OK",
+            description: "OTP dispatched to WhatsApp.",
+            json: `{
+  "success": true,
+  "message": "Kode OTP berhasil dikirim",
+  "data": {
+    "message_id": "3EB0A1B2C3D4E5F6",
+    "phone": "628123456789",
+    "status": "SENT",
+    "expires_in": 300,
+    "sent_at": "2026-09-18T10:00:00Z"
+  }
+}`,
+          },
+        ],
+      },
+      {
+        id: "waba",
+        label: "WABA (Official)",
+        icon: "Globe",
+        badge: "Meta Official",
+        method: "POST",
+        path: "/api/v1/otp/send",
+        description:
+          "Dispatches an official Meta WhatsApp Business Authentication OTP using pre-approved authentication templates with one-tap copy button.",
+        headers: [
+          {
+            key: "Authorization",
+            value: "Bearer <your_api_key>",
+            required: true,
+            description: "Your secret Wahide API Key prefixed with Bearer.",
+          },
+          {
+            key: "Content-Type",
+            value: "application/json",
+            required: true,
+            description: "Must be set to application/json.",
+          },
+        ],
+        parameters: [
+          {
+            name: "phone",
+            type: "string",
+            required: true,
+            description: "Recipient phone number in E.164 format.",
+            example: "628123456789",
+          },
+          {
+            name: "otp",
+            type: "string",
+            required: false,
+            defaultValue: "Auto 6-digit",
+            description: "6-digit OTP code to inject into the Meta Authentication template.",
+            example: "123456",
+          },
+          {
+            name: "expires_in",
+            type: "integer",
+            required: false,
+            defaultValue: "300",
+            description: "Validity in seconds.",
+            example: "300",
+          },
+        ],
+        snippets: {
+          curl: `curl -X POST "https://api.wahide.id/api/v1/otp/send" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "phone": "628123456789",
+    "expires_in": 300
+  }'`,
+          nodejs: `import axios from "axios";
+
+const res = await axios.post(
+  "https://api.wahide.id/api/v1/otp/send",
+  { phone: "628123456789", expires_in: 300 },
+  { headers: { Authorization: "Bearer YOUR_API_KEY" } }
+);
+console.log(res.data);`,
+          php: `<?php
+/* Meta Official OTP Dispatch */`,
+          python: `import requests
+res = requests.post("https://api.wahide.id/api/v1/otp/send", headers={"Authorization": "Bearer YOUR_API_KEY"}, json={"phone": "628123456789"})`,
+          go: `// Meta Official OTP Dispatch in Go`,
+        },
+        responses: [
+          {
+            status: 200,
+            statusText: "OK",
+            description: "Meta Authentication OTP delivered.",
+            json: `{
+  "success": true,
+  "message": "Kode OTP Meta WABA berhasil dikirim",
+  "data": {
+    "message_id": "wamid.HBgMNjI4MTIzNDU2Nzg5...",
+    "phone": "628123456789",
+    "expires_in": 300
+  }
+}`,
+          },
+        ],
+      },
+      {
+        id: "telegram",
+        label: "Telegram",
+        icon: "Send",
+        badge: "Bot API",
+        method: "POST",
+        path: "/api/v1/telegram/messages/send",
+        description:
+          "Dispatches an OTP verification code directly to a Telegram user's Chat ID via your connected Telegram bot.",
+        headers: [
+          {
+            key: "Authorization",
+            value: "Bearer <your_api_key>",
+            required: true,
+            description: "Your secret Wahide API Key prefixed with Bearer.",
+          },
+        ],
+        parameters: [
+          {
+            name: "bot_id",
+            type: "string",
+            required: true,
+            description: "ULID of your connected Telegram Bot.",
+            example: "01JPLAN0000000000000000001",
+          },
+          {
+            name: "chat_id",
+            type: "integer",
+            required: true,
+            description: "Telegram user's Chat ID.",
+            example: "987654321",
+          },
+          {
+            name: "text",
+            type: "string",
+            required: true,
+            description: "HTML formatted OTP text with <code> tags for easy tap-to-copy.",
+            example: "Kode verifikasi Anda: <code>884920</code>. Berlaku 5 menit.",
+          },
+        ],
+        snippets: {
+          curl: `curl -X POST "https://api.wahide.id/api/v1/telegram/messages/send" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "bot_id": "01JPLAN0000000000000000001",
+    "chat_id": 987654321,
+    "text": "Kode verifikasi Anda: <code>884920</code>. Berlaku 5 menit.",
+    "parse_mode": "HTML"
+  }'`,
+          nodejs: `import axios from "axios";
+const res = await axios.post("https://api.wahide.id/api/v1/telegram/messages/send", {
+  bot_id: "01JPLAN0000000000000000001",
+  chat_id: 987654321,
+  text: "Kode verifikasi Anda: <code>884920</code>",
+  parse_mode: "HTML"
+}, { headers: { Authorization: "Bearer YOUR_API_KEY" } });`,
+          php: `<?php /* Telegram OTP */`,
+          python: `import requests
+res = requests.post("https://api.wahide.id/api/v1/telegram/messages/send", headers={"Authorization": "Bearer YOUR_API_KEY"}, json={"bot_id": "01JPLAN...", "chat_id": 987654321, "text": "Kode OTP: 884920"})`,
+          go: `// Telegram OTP in Go`,
+        },
+        responses: [
+          {
+            status: 200,
+            statusText: "OK",
+            description: "Telegram OTP delivered.",
+            json: `{ "success": true, "data": { "message_id": 12347, "status": "SENT" } }`,
+          },
+        ],
+      },
+    ],
     bannerNotice: {
       type: "success",
       title: "In-Memory Fast Path & Anti-Bombing Cooldown",
