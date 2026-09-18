@@ -20,6 +20,12 @@
   "deleteConfirmDesc": "Are you sure you want to delete template \"{name}\"? This template cannot be recovered or used again in broadcast messages.",
   "emptyTitle": "No Message Templates Yet",
   "emptyDesc": "Create your first message template to streamline broadcast campaigns and consistent WhatsApp communications.",
+  "empty": {
+    "title": "No Message Templates Yet",
+    "subtitle": "Create your first message template to streamline broadcast campaigns and consistent communications.",
+    "noMatchTitle": "No Matching Templates Found",
+    "noMatchDesc": "Try adjusting your search keywords or reset the category filter to find the template you're looking for."
+  },
   "noMatching": "No matching templates",
   "noMatchingDesc": "Try adjusting your search terms or clearing your category filters.",
   "createdSuccess": "Template created successfully",

@@ -20,6 +20,12 @@
   "deleteConfirmDesc": "Apakah Anda yakin ingin menghapus template \"{name}\"? Template ini tidak akan dapat dipulihkan atau digunakan lagi dalam siaran pesan.",
   "emptyTitle": "Belum Ada Template Pesan",
   "emptyDesc": "Buat template pesan pertama Anda untuk mempermudah siaran massal dan komunikasi WhatsApp yang konsisten.",
+  "empty": {
+    "title": "Belum Ada Template Pesan",
+    "subtitle": "Buat template pesan pertama Anda untuk mempermudah siaran massal dan komunikasi yang konsisten.",
+    "noMatchTitle": "Tidak Ada Template yang Cocok",
+    "noMatchDesc": "Coba sesuaikan kata kunci pencarian atau reset filter kategori untuk menemukan template yang Anda cari."
+  },
   "noMatching": "Tidak ada template yang cocok",
   "noMatchingDesc": "Coba ubah kata kunci pencarian atau bersihkan filter kategori Anda.",
   "createdSuccess": "Template berhasil dibuat",

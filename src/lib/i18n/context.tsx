@@ -26,6 +26,8 @@ import idReservation from "@/locales/id/reservation.json";
 import idForm from "@/locales/id/form.json";
 import idLandingPages from "@/locales/id/landing_pages.json";
 import idAutoreply from "@/locales/id/autoreply.json";
+import idTelegram from "@/locales/id/telegram.json";
+import idOmnichannel from "@/locales/id/omnichannel.json";
 
 import enCommon from "@/locales/en/common.json";
 import enAuth from "@/locales/en/auth.json";
@@ -48,6 +50,8 @@ import enReservation from "@/locales/en/reservation.json";
 import enForm from "@/locales/en/form.json";
 import enLandingPages from "@/locales/en/landing_pages.json";
 import enAutoreply from "@/locales/en/autoreply.json";
+import enTelegram from "@/locales/en/telegram.json";
+import enOmnichannel from "@/locales/en/omnichannel.json";
 
 const dictionaries: Record<Locale, Record<string, unknown>> = {
   id: {
@@ -72,6 +76,8 @@ const dictionaries: Record<Locale, Record<string, unknown>> = {
     form: idForm,
     landingPages: idLandingPages,
     autoreply: idAutoreply,
+    telegram: idTelegram,
+    omnichannel: idOmnichannel,
   },
   en: {
     common: enCommon,
@@ -95,6 +101,8 @@ const dictionaries: Record<Locale, Record<string, unknown>> = {
     form: enForm,
     landingPages: enLandingPages,
     autoreply: enAutoreply,
+    telegram: enTelegram,
+    omnichannel: enOmnichannel,
   },
 };
 
