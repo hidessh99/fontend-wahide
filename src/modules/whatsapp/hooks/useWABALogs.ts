@@ -3,6 +3,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { MessageLogResponse } from "@/modules/campaign/types/campaign.types";
 import { campaignApi } from "@/modules/campaign/api/campaign.api";
+import {
+  LogTimeRange,
+  resolveDateRangeISO,
+} from "@/components/ui/log-period-filter";
+import { DateRange } from "@/components/ui/date-range-picker";
 
 export function useWABALogs(initialPage = 1, initialPageSize = 10) {
   const [logs, setLogs] = useState<MessageLogResponse[]>([]);
@@ -14,13 +19,26 @@ export function useWABALogs(initialPage = 1, initialPageSize = 10) {
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [categoryFilter, setCategoryFilter] = useState("ALL");
   const [messageTypeFilter, setMessageTypeFilter] = useState("ALL");
+  const [timeRange, setTimeRange] = useState<LogTimeRange>("all");
+  const [customRange, setCustomRange] = useState<DateRange>({
+    from: null,
+    to: null,
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Reset page to 1 when search, filter, or pageSize changes
+  // Reset page to 1 when search, filter, period, or pageSize changes
   useEffect(() => {
     setPage(1);
-  }, [searchQuery, statusFilter, messageTypeFilter, categoryFilter, pageSize]);
+  }, [
+    searchQuery,
+    statusFilter,
+    messageTypeFilter,
+    categoryFilter,
+    timeRange,
+    customRange,
+    pageSize,
+  ]);
 
   const fetchLogs = useCallback(
     async (
@@ -31,6 +49,8 @@ export function useWABALogs(initialPage = 1, initialPageSize = 10) {
         status?: string;
         category?: string;
         messageType?: string;
+        timeRange?: LogTimeRange;
+        customRange?: DateRange;
       },
       signal?: AbortSignal,
     ) => {
@@ -55,6 +75,19 @@ export function useWABALogs(initialPage = 1, initialPageSize = 10) {
           overrideParams?.messageType !== undefined
             ? overrideParams.messageType
             : messageTypeFilter;
+        const targetTimeRange =
+          overrideParams?.timeRange !== undefined
+            ? overrideParams.timeRange
+            : timeRange;
+        const targetCustomRange =
+          overrideParams?.customRange !== undefined
+            ? overrideParams.customRange
+            : customRange;
+
+        const { startDate, endDate } = resolveDateRangeISO(
+          targetTimeRange,
+          targetCustomRange,
+        );
 
         const [res, failedProbe] = await Promise.all([
           campaignApi.getMessageLogs(
@@ -65,6 +98,8 @@ export function useWABALogs(initialPage = 1, initialPageSize = 10) {
               status: targetStatus,
               channelType: "META_WABA_OFFICIAL",
               messageType: targetMessageType !== "ALL" ? targetMessageType : undefined,
+              startDate,
+              endDate,
               signal,
             },
             targetPageSize,
@@ -77,6 +112,9 @@ export function useWABALogs(initialPage = 1, initialPageSize = 10) {
                     status: "FAILED",
                     pageSize: 1,
                     channelType: "META_WABA_OFFICIAL",
+                    messageType: targetMessageType !== "ALL" ? targetMessageType : undefined,
+                    startDate,
+                    endDate,
                     signal,
                   },
                   1,
@@ -109,7 +147,16 @@ export function useWABALogs(initialPage = 1, initialPageSize = 10) {
         setIsLoading(false);
       }
     },
-    [page, pageSize, searchQuery, statusFilter, categoryFilter, messageTypeFilter],
+    [
+      page,
+      pageSize,
+      searchQuery,
+      statusFilter,
+      categoryFilter,
+      messageTypeFilter,
+      timeRange,
+      customRange,
+    ],
   );
 
   useEffect(() => {
@@ -134,6 +181,10 @@ export function useWABALogs(initialPage = 1, initialPageSize = 10) {
     setCategoryFilter,
     messageTypeFilter,
     setMessageTypeFilter,
+    timeRange,
+    setTimeRange,
+    customRange,
+    setCustomRange,
     isLoading,
     error,
     reload: fetchLogs,

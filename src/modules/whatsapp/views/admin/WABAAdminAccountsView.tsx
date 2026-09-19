@@ -20,8 +20,10 @@ import {
   Check,
 } from "lucide-react";
 import { WABAAccount } from "../../types/waba.types";
+import { useI18n } from "@/lib/i18n/context";
 
 export function WABAAdminAccountsView() {
+  const { t } = useI18n();
   const {
     filteredAccounts,
     isLoading,
@@ -37,7 +39,7 @@ export function WABAAdminAccountsView() {
   const handleDisconnect = async (id: string, name: string) => {
     if (
       !confirm(
-        `[ADMIN ACTION] Apakah Anda yakin ingin memutuskan integrasi Meta WABA untuk "${name}"? Pengiriman pesan resmi akun ini akan dihentikan.`,
+        t("admin.wabaAccounts.confirmDisconnect", { name }),
       )
     ) {
       return;
@@ -126,11 +128,11 @@ export function WABAAdminAccountsView() {
               <ShieldCheck className="size-4 sm:size-5" />
             </div>
             <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl lg:text-3xl">
-              Manajemen WABA (Official Meta)
+              {t("admin.wabaAccounts.title")}
             </h1>
           </div>
           <p className="text-foreground-secondary max-w-2xl text-xs font-semibold sm:text-sm">
-            Audit akun resmi Meta WhatsApp Business Platform seluruh member, pantau Quality Rating, dan verifikasi kuota messaging tier platform.
+            {t("admin.wabaAccounts.subtitle")}
           </p>
         </div>
 
@@ -145,7 +147,7 @@ export function WABAAdminAccountsView() {
             <RefreshCw
               className={`mr-1.5 size-3.5 ${isLoading ? "animate-spin" : ""}`}
             />
-            <span>Muat Ulang</span>
+            <span>{t("admin.wabaAccounts.reload")}</span>
           </Button>
         </div>
       </div>
@@ -156,7 +158,7 @@ export function WABAAdminAccountsView() {
         <div className="bg-surface border-border rounded-xl border p-4 shadow-2xs dark:bg-[#151614]">
           <div className="flex items-center justify-between">
             <span className="text-foreground-secondary text-xs font-semibold">
-              Total Akun WABA
+              {t("admin.wabaAccounts.statTotalAccounts")}
             </span>
             <div className="flex size-7 items-center justify-center rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400">
               <ShieldCheck className="size-3.5" />
@@ -166,7 +168,7 @@ export function WABAAdminAccountsView() {
             {isLoading ? <Skeleton className="h-7 w-12" /> : totalAccounts}
           </div>
           <p className="text-foreground-muted mt-0.5 text-[11px]">
-            Semua tenant platform
+            {t("admin.wabaAccounts.statTotalAccountsDesc")}
           </p>
         </div>
 
@@ -174,7 +176,7 @@ export function WABAAdminAccountsView() {
         <div className="bg-surface border-border rounded-xl border p-4 shadow-2xs dark:bg-[#151614]">
           <div className="flex items-center justify-between">
             <span className="text-foreground-secondary text-xs font-semibold">
-              Quality Rating GREEN
+              {t("admin.wabaAccounts.statGreenQuality")}
             </span>
             <div className="flex size-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
               <CheckCircle2 className="size-3.5" />
@@ -184,7 +186,7 @@ export function WABAAdminAccountsView() {
             {isLoading ? <Skeleton className="h-7 w-12" /> : greenAccounts}
           </div>
           <p className="text-foreground-muted mt-0.5 text-[11px]">
-            Kualitas nomor prima
+            {t("admin.wabaAccounts.statGreenQualityDesc")}
           </p>
         </div>
 
@@ -192,7 +194,7 @@ export function WABAAdminAccountsView() {
         <div className="bg-surface border-border rounded-xl border p-4 shadow-2xs dark:bg-[#151614]">
           <div className="flex items-center justify-between">
             <span className="text-foreground-secondary text-xs font-semibold">
-              Tier Enterprise
+              {t("admin.wabaAccounts.statEnterpriseTiers")}
             </span>
             <div className="flex size-7 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">
               <Zap className="size-3.5" />
@@ -202,7 +204,7 @@ export function WABAAdminAccountsView() {
             {isLoading ? <Skeleton className="h-7 w-12" /> : enterpriseTierAccounts}
           </div>
           <p className="text-foreground-muted mt-0.5 text-[11px]">
-            Tier 10K / 100K / Unlimited
+            {t("admin.wabaAccounts.statEnterpriseTiersDesc")}
           </p>
         </div>
 
@@ -210,7 +212,7 @@ export function WABAAdminAccountsView() {
         <div className="bg-surface border-border rounded-xl border p-4 shadow-2xs dark:bg-[#151614]">
           <div className="flex items-center justify-between">
             <span className="text-foreground-secondary text-xs font-semibold">
-              Webhook Aktif
+              {t("admin.wabaAccounts.statLiveWebhooks")}
             </span>
             <div className="flex size-7 items-center justify-center rounded-lg bg-wise-green/15 text-dark-green dark:text-wise-green">
               <Globe className="size-3.5" />
@@ -220,7 +222,7 @@ export function WABAAdminAccountsView() {
             {isLoading ? <Skeleton className="h-7 w-12" /> : activeWebhooks}
           </div>
           <p className="text-foreground-muted mt-0.5 text-[11px]">
-            Menerima status delivery
+            {t("admin.wabaAccounts.statLiveWebhooksDesc")}
           </p>
         </div>
       </div>
@@ -230,7 +232,7 @@ export function WABAAdminAccountsView() {
         <div className="relative flex-1">
           <Search className="text-foreground-muted absolute top-1/2 left-3 size-4 -translate-y-1/2" />
           <Input
-            placeholder="Cari Verified Name, Nomor WhatsApp, WABA ID, atau Phone Number ID..."
+            placeholder={t("admin.wabaAccounts.searchPlaceholder")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="border-border/80 h-9 rounded-full pl-9 text-xs focus-visible:ring-rose-500"
@@ -249,7 +251,7 @@ export function WABAAdminAccountsView() {
                   : "bg-muted/60 text-foreground-secondary hover:text-foreground border border-border/80"
               }`}
             >
-              {status === "ALL" ? "Semua Rating" : status}
+              {status === "ALL" ? t("admin.wabaAccounts.filterAll") : status}
             </button>
           ))}
         </div>
@@ -260,10 +262,10 @@ export function WABAAdminAccountsView() {
         <div className="p-4 border-b border-border/80 flex items-center justify-between bg-muted/20">
           <div className="flex items-center gap-2 text-xs font-black text-foreground">
             <Layers className="size-4 text-rose-500" />
-            <span>Daftar Akun Meta WABA Terdaftar</span>
+            <span>{t("admin.wabaAccounts.listTitle")}</span>
           </div>
           <span className="text-[11px] font-mono text-foreground-muted">
-            Menampilkan {displayedAccounts.length} akun
+            {t("admin.wabaAccounts.showingAccounts", { count: displayedAccounts.length })}
           </span>
         </div>
 
@@ -279,12 +281,12 @@ export function WABAAdminAccountsView() {
               <ShieldCheck className="size-6" />
             </div>
             <p className="text-sm font-bold text-foreground">
-              Tidak ada akun WABA ditemukan
+              {t("admin.wabaAccounts.emptyTitle")}
             </p>
             <p className="text-xs text-foreground-secondary mt-1 max-w-sm">
               {searchQuery
-                ? "Tidak ada akun WABA yang cocok dengan kata kunci pencarian Anda."
-                : "Belum ada tenant yang menghubungkan akun WhatsApp Business Platform."}
+                ? t("admin.wabaAccounts.emptyDescMatch")
+                : t("admin.wabaAccounts.emptyDescDefault")}
             </p>
           </div>
         ) : (
@@ -292,12 +294,12 @@ export function WABAAdminAccountsView() {
             <table className="w-full text-left text-xs">
               <thead className="bg-muted/30 border-b border-border/80 text-foreground-muted font-bold text-[11px] uppercase tracking-wider">
                 <tr>
-                  <th className="py-3.5 px-4">Nama Akun & Nomor Meta</th>
-                  <th className="py-3.5 px-4">Quality Rating</th>
-                  <th className="py-3.5 px-4">Messaging Tier</th>
-                  <th className="py-3.5 px-4">WABA & Phone ID</th>
-                  <th className="py-3.5 px-4">Webhook Endpoint</th>
-                  <th className="py-3.5 px-4 text-right">Aksi Admin</th>
+                  <th className="py-3.5 px-4">{t("admin.wabaAccounts.colAccount")}</th>
+                  <th className="py-3.5 px-4">{t("admin.wabaAccounts.colQuality")}</th>
+                  <th className="py-3.5 px-4">{t("admin.wabaAccounts.colLimit")}</th>
+                  <th className="py-3.5 px-4">{t("admin.wabaAccounts.colIdentifiers")}</th>
+                  <th className="py-3.5 px-4">{t("admin.wabaAccounts.colEndpoint")}</th>
+                  <th className="py-3.5 px-4 text-right">{t("admin.wabaAccounts.colActions")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/60 font-medium text-foreground">
@@ -353,11 +355,11 @@ export function WABAAdminAccountsView() {
                       {account.is_active ? (
                         <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-semibold">
                           <Check className="size-3" />
-                          <span>Active Callback</span>
+                          <span>{t("admin.wabaAccounts.activeCallback")}</span>
                         </div>
                       ) : (
                         <span className="text-rose-600 dark:text-rose-400 font-semibold">
-                          Inactive
+                          {t("admin.wabaAccounts.inactiveCallback")}
                         </span>
                       )}
                     </td>
@@ -377,7 +379,7 @@ export function WABAAdminAccountsView() {
                         className="h-8 px-2.5 text-xs text-rose-600 hover:bg-rose-500/10 hover:text-rose-700 dark:text-rose-400 font-semibold"
                       >
                         <Trash2 className="mr-1 size-3.5" />
-                        <span>Disconnect</span>
+                        <span>{t("admin.wabaAccounts.disconnectBtn")}</span>
                       </Button>
                     </td>
                   </tr>

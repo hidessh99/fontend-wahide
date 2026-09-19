@@ -115,6 +115,8 @@ export const telegramApi = {
       if (query.bot_id?.trim()) searchParams.set("bot_id", query.bot_id.trim());
       if (query.direction && query.direction !== "ALL") searchParams.set("direction", query.direction);
       if (query.status && query.status !== "ALL") searchParams.set("status", query.status);
+      if (query.start_date?.trim()) searchParams.set("start_date", query.start_date.trim());
+      if (query.end_date?.trim()) searchParams.set("end_date", query.end_date.trim());
 
       const qs = searchParams.toString();
       const url = `${BASE_URL}/telegram/messages${qs ? `?${qs}` : ""}`;

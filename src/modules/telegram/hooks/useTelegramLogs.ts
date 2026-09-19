@@ -7,6 +7,11 @@ import {
   TelegramMessageDirection,
   TelegramMessageStatus,
 } from "../types/telegram.types";
+import {
+  LogTimeRange,
+  resolveDateRangeISO,
+} from "@/components/ui/log-period-filter";
+import { DateRange } from "@/components/ui/date-range-picker";
 
 export function useTelegramLogs(initialPage = 1, initialPageSize = 10) {
   const [logs, setLogs] = useState<TelegramMessage[]>([]);
@@ -25,13 +30,27 @@ export function useTelegramLogs(initialPage = 1, initialPageSize = 10) {
   const [messageCategory, setMessageCategory] = useState<
     "ALL" | "DIRECT" | "OTP" | "BROADCAST"
   >("ALL");
+  const [timeRange, setTimeRange] = useState<LogTimeRange>("all");
+  const [customRange, setCustomRange] = useState<DateRange>({
+    from: null,
+    to: null,
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Reset page to 1 on filter or pagination size changes
+  // Reset page to 1 on filter, period, or pagination size changes
   useEffect(() => {
     setPage(1);
-  }, [searchQuery, botIdFilter, directionFilter, statusFilter, messageCategory, pageSize]);
+  }, [
+    searchQuery,
+    botIdFilter,
+    directionFilter,
+    statusFilter,
+    messageCategory,
+    timeRange,
+    customRange,
+    pageSize,
+  ]);
 
   const fetchLogs = useCallback(
     async (
@@ -42,6 +61,8 @@ export function useTelegramLogs(initialPage = 1, initialPageSize = 10) {
         direction?: "ALL" | TelegramMessageDirection;
         status?: "ALL" | TelegramMessageStatus;
         botId?: string;
+        timeRange?: LogTimeRange;
+        customRange?: DateRange;
       },
       signal?: AbortSignal,
     ) => {
@@ -66,6 +87,14 @@ export function useTelegramLogs(initialPage = 1, initialPageSize = 10) {
           overrideParams?.botId !== undefined
             ? overrideParams.botId
             : botIdFilter;
+        const targetTimeRange =
+          overrideParams?.timeRange !== undefined
+            ? overrideParams.timeRange
+            : timeRange;
+        const targetCustomRange =
+          overrideParams?.customRange !== undefined
+            ? overrideParams.customRange
+            : customRange;
 
         if (messageCategory === "OTP" || messageCategory === "BROADCAST") {
           setLogs([]);
@@ -73,6 +102,11 @@ export function useTelegramLogs(initialPage = 1, initialPageSize = 10) {
           setFailedTotal(0);
           return;
         }
+
+        const { startDate, endDate } = resolveDateRangeISO(
+          targetTimeRange,
+          targetCustomRange,
+        );
 
         const [res, failedProbe] = await Promise.all([
           telegramApi.getMessageLogs(
@@ -83,6 +117,8 @@ export function useTelegramLogs(initialPage = 1, initialPageSize = 10) {
               bot_id: targetBotId,
               direction: targetDirection,
               status: targetStatus,
+              start_date: startDate,
+              end_date: endDate,
             },
             signal,
           ),
@@ -93,6 +129,8 @@ export function useTelegramLogs(initialPage = 1, initialPageSize = 10) {
                     status: "FAILED",
                     page_size: 1,
                     bot_id: targetBotId,
+                    start_date: startDate,
+                    end_date: endDate,
                   },
                   signal,
                 )
@@ -118,7 +156,17 @@ export function useTelegramLogs(initialPage = 1, initialPageSize = 10) {
         setIsLoading(false);
       }
     },
-    [page, pageSize, searchQuery, botIdFilter, directionFilter, statusFilter, messageCategory],
+    [
+      page,
+      pageSize,
+      searchQuery,
+      botIdFilter,
+      directionFilter,
+      statusFilter,
+      messageCategory,
+      timeRange,
+      customRange,
+    ],
   );
 
   useEffect(() => {
@@ -145,6 +193,10 @@ export function useTelegramLogs(initialPage = 1, initialPageSize = 10) {
     setStatusFilter,
     messageCategory,
     setMessageCategory,
+    timeRange,
+    setTimeRange,
+    customRange,
+    setCustomRange,
     isLoading,
     error,
     reload: fetchLogs,

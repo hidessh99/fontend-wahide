@@ -61,6 +61,8 @@ export interface TelegramMessageLogQuery {
   bot_id?: string;
   direction?: "ALL" | TelegramMessageDirection;
   status?: "ALL" | TelegramMessageStatus;
+  start_date?: string;
+  end_date?: string;
 }
 
 export interface TelegramStats {

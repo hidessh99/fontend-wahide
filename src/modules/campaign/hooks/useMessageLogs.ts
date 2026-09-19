@@ -3,6 +3,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { MessageLogResponse } from "../types/campaign.types";
 import { campaignApi } from "../api/campaign.api";
+import {
+  LogTimeRange,
+  resolveDateRangeISO,
+} from "@/components/ui/log-period-filter";
+import { DateRange } from "@/components/ui/date-range-picker";
 
 export function useMessageLogs(initialPage = 1, initialPageSize = 10) {
   const [logs, setLogs] = useState<MessageLogResponse[]>([]);
@@ -12,6 +17,11 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 10) {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [messageTypeFilter, setMessageTypeFilter] = useState<string>("ALL");
+  const [timeRange, setTimeRange] = useState<LogTimeRange>("all");
+  const [customRange, setCustomRange] = useState<DateRange>({
+    from: null,
+    to: null,
+  });
   const [deviceIdFilter, setDeviceIdFilter] = useState<string | undefined>(
     undefined,
   );
@@ -19,10 +29,18 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 10) {
   const [error, setError] = useState<string | null>(null);
   const [failedTotal, setFailedTotal] = useState(0);
 
-  // Reset page to 1 when search, filter, or pageSize changes
+  // Reset page to 1 when search, filter, period, or pageSize changes
   useEffect(() => {
     setPage(1);
-  }, [searchQuery, statusFilter, messageTypeFilter, deviceIdFilter, pageSize]);
+  }, [
+    searchQuery,
+    statusFilter,
+    messageTypeFilter,
+    timeRange,
+    customRange,
+    deviceIdFilter,
+    pageSize,
+  ]);
 
   const fetchLogs = useCallback(
     async (
@@ -33,6 +51,8 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 10) {
         status?: string;
         messageType?: string;
         deviceId?: string;
+        timeRange?: LogTimeRange;
+        customRange?: DateRange;
       },
       signal?: AbortSignal,
     ) => {
@@ -51,6 +71,19 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 10) {
           overrideParams?.messageType !== undefined
             ? overrideParams.messageType
             : messageTypeFilter;
+        const targetTimeRange =
+          overrideParams?.timeRange !== undefined
+            ? overrideParams.timeRange
+            : timeRange;
+        const targetCustomRange =
+          overrideParams?.customRange !== undefined
+            ? overrideParams.customRange
+            : customRange;
+
+        const { startDate, endDate } = resolveDateRangeISO(
+          targetTimeRange,
+          targetCustomRange,
+        );
 
         const [res, failedProbe] = await Promise.all([
           campaignApi.getMessageLogs({
@@ -63,6 +96,8 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 10) {
               overrideParams?.deviceId !== undefined
                 ? overrideParams.deviceId
                 : deviceIdFilter,
+            startDate,
+            endDate,
             signal,
           }),
           targetStatus === "ALL" && !targetSearch
@@ -70,6 +105,8 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 10) {
                 .getMessageLogs({
                   status: "FAILED",
                   messageType: targetMessageType !== "ALL" ? targetMessageType : undefined,
+                  startDate,
+                  endDate,
                   pageSize: 1,
                   signal,
                 })
@@ -93,7 +130,16 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 10) {
         setIsLoading(false);
       }
     },
-    [page, pageSize, searchQuery, statusFilter, messageTypeFilter, deviceIdFilter],
+    [
+      page,
+      pageSize,
+      searchQuery,
+      statusFilter,
+      messageTypeFilter,
+      timeRange,
+      customRange,
+      deviceIdFilter,
+    ],
   );
 
   useEffect(() => {
@@ -105,6 +151,11 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 10) {
         setIsLoading(true);
         setError(null);
 
+        const { startDate, endDate } = resolveDateRangeISO(
+          timeRange,
+          customRange,
+        );
+
         const [res, failedProbe] = await Promise.all([
           campaignApi.getMessageLogs({
             page,
@@ -113,6 +164,8 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 10) {
             status: statusFilter,
             messageType: messageTypeFilter !== "ALL" ? messageTypeFilter : undefined,
             deviceId: deviceIdFilter,
+            startDate,
+            endDate,
             signal: controller.signal,
           }),
           statusFilter === "ALL" && !searchQuery
@@ -120,6 +173,8 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 10) {
                 .getMessageLogs({
                   status: "FAILED",
                   messageType: messageTypeFilter !== "ALL" ? messageTypeFilter : undefined,
+                  startDate,
+                  endDate,
                   pageSize: 1,
                   signal: controller.signal,
                 })
@@ -155,7 +210,16 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 10) {
       isMounted = false;
       controller.abort();
     };
-  }, [page, pageSize, searchQuery, statusFilter, messageTypeFilter, deviceIdFilter]);
+  }, [
+    page,
+    pageSize,
+    searchQuery,
+    statusFilter,
+    messageTypeFilter,
+    timeRange,
+    customRange,
+    deviceIdFilter,
+  ]);
 
   return {
     logs,
@@ -171,6 +235,10 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 10) {
     setStatusFilter,
     messageTypeFilter,
     setMessageTypeFilter,
+    timeRange,
+    setTimeRange,
+    customRange,
+    setCustomRange,
     deviceIdFilter,
     setDeviceIdFilter,
     isLoading,

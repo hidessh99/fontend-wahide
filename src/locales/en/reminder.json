@@ -32,7 +32,9 @@
     "dispatchNow": "Send Now",
     "dispatchTooltip": "Trigger evaluation for all due reminders now",
     "refreshTooltip": "Reload Data",
-    "evaluating": "Evaluating..."
+    "evaluating": "Evaluating...",
+    "prev": "Previous",
+    "next": "Next"
   },
   "tabs": {
     "schedules": "Reminder Schedules",
@@ -47,6 +49,11 @@
     "senderDevice": "Sender WhatsApp Number",
     "selectDevice": "-- Select Device Slot --",
     "noDevices": "No WhatsApp devices connected yet.",
+    "noWaba": "No official Meta WABA accounts active yet.",
+    "noTelegram": "No active Telegram bots yet.",
+    "evalScheduleNote": "Schedules are automatically evaluated every day at this hour.",
+    "configurePhasesNote": "Configure message content and channels for each schedule phase.",
+    "variableAutoReplaceNote": "Variables are automatically replaced with customer appointment data.",
     "sendTime": "Daily Send Time (WIB)",
     "chatVisibility": "Show History in WhatsApp Chat",
     "chatVisibilityDesc": "When active, automated message delivery logs will be visible in the WhatsApp chat screen.",
@@ -57,7 +64,9 @@
     "enablePhase": "Enable This Phase",
     "phaseTemplate": "Message Template for This Phase",
     "characters": "characters",
-    "templatePlaceholder": "e.g.: Hello {{nama}}, reminding you of your schedule tomorrow {{tanggal}}..."
+    "templatePlaceholder": "e.g.: Hello {{nama}}, reminding you of your schedule tomorrow {{tanggal}}...",
+    "noWhatsapp": "No WhatsApp devices connected yet.",
+    "sameDay": "Event Day"
   },
   "quick": {
     "title": "Quick Schedule Reminder",
@@ -119,7 +128,9 @@
     "empty": "No delivery history yet",
     "emptyDesc": "Messages automatically executed by the scheduler will be recorded here permanently.",
     "statusFailed": "Failed",
-    "statusSuccess": "Success"
+    "statusSuccess": "Success",
+    "unknownError": "An unknown error occurred",
+    "pageInfo": "Showing {start}-{end} of {total} logs"
   },
   "variables": {
     "title": "Dynamic Reminder Variables:",
@@ -146,5 +157,9 @@
     "telegramActive": "{count} Active Bots",
     "telegramRecommended": "VIP clients, communities, consultations & tech users",
     "notReady": "Not ready"
+  },
+  "schedule": {
+    "telegramHelp": "Customer Telegram Chat ID or username.",
+    "telegramPlaceholder": "@username or 123456789"
   }
 }

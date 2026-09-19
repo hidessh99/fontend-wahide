@@ -20,8 +20,11 @@ import {
   Layers,
 } from "lucide-react";
 import { TelegramBot, TelegramBotStatus } from "../../types/telegram.types";
+import { useI18n } from "@/lib/i18n/context";
 
 export function TelegramAdminBotsView() {
+  const { t, locale } = useI18n();
+  const dateLocale = locale === "en" ? "en-US" : "id-ID";
   const {
     bots,
     isLoading,
@@ -48,7 +51,7 @@ export function TelegramAdminBotsView() {
   const handleRevoke = async (id: string, name: string) => {
     if (
       !confirm(
-        `[ADMIN ACTION] Apakah Anda yakin ingin memutus bot Telegram "${name}"? Webhook akan dinonaktifkan di Telegram Server.`,
+        t("admin.telegramBots.confirmRevoke", { name }),
       )
     ) {
       return;
@@ -126,11 +129,11 @@ export function TelegramAdminBotsView() {
               <Bot className="size-4 sm:size-5" />
             </div>
             <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl lg:text-3xl">
-              Manajemen Telegram Bot
+              {t("admin.telegramBots.title")}
             </h1>
           </div>
           <p className="text-foreground-secondary max-w-2xl text-xs font-semibold sm:text-sm">
-            Audit bot Telegram BotFather seluruh member, verifikasi konektivitas webhook callback, dan pantau volume dispatch platform.
+            {t("admin.telegramBots.subtitle")}
           </p>
         </div>
 
@@ -145,7 +148,7 @@ export function TelegramAdminBotsView() {
             <RefreshCw
               className={`mr-1.5 size-3.5 ${isLoading ? "animate-spin" : ""}`}
             />
-            <span>Muat Ulang</span>
+            <span>{t("admin.telegramBots.reload")}</span>
           </Button>
         </div>
       </div>
@@ -156,7 +159,7 @@ export function TelegramAdminBotsView() {
         <div className="bg-surface border-border rounded-xl border p-4 shadow-2xs dark:bg-[#151614]">
           <div className="flex items-center justify-between">
             <span className="text-foreground-secondary text-xs font-semibold">
-              Total Bot Terdaftar
+              {t("admin.telegramBots.statTotalBots")}
             </span>
             <div className="flex size-7 items-center justify-center rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400">
               <Bot className="size-3.5" />
@@ -166,7 +169,7 @@ export function TelegramAdminBotsView() {
             {isLoading ? <Skeleton className="h-7 w-12" /> : totalBots}
           </div>
           <p className="text-foreground-muted mt-0.5 text-[11px]">
-            Semua member platform
+            {t("admin.telegramBots.statTotalBotsDesc")}
           </p>
         </div>
 
@@ -174,7 +177,7 @@ export function TelegramAdminBotsView() {
         <div className="bg-surface border-border rounded-xl border p-4 shadow-2xs dark:bg-[#151614]">
           <div className="flex items-center justify-between">
             <span className="text-foreground-secondary text-xs font-semibold">
-              Bot Aktif
+              {t("admin.telegramBots.statActiveBots")}
             </span>
             <div className="flex size-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
               <CheckCircle2 className="size-3.5" />
@@ -184,7 +187,7 @@ export function TelegramAdminBotsView() {
             {isLoading ? <Skeleton className="h-7 w-12" /> : activeBots}
           </div>
           <p className="text-foreground-muted mt-0.5 text-[11px]">
-            Status ACTIVE operasional
+            {t("admin.telegramBots.statActiveBotsDesc")}
           </p>
         </div>
 
@@ -192,7 +195,7 @@ export function TelegramAdminBotsView() {
         <div className="bg-surface border-border rounded-xl border p-4 shadow-2xs dark:bg-[#151614]">
           <div className="flex items-center justify-between">
             <span className="text-foreground-secondary text-xs font-semibold">
-              Webhook Listening
+              {t("admin.telegramBots.statHealthyWebhooks")}
             </span>
             <div className="flex size-7 items-center justify-center rounded-lg bg-sky-500/10 text-sky-600 dark:text-sky-400">
               <Globe className="size-3.5" />
@@ -202,7 +205,7 @@ export function TelegramAdminBotsView() {
             {isLoading ? <Skeleton className="h-7 w-12" /> : webhookActiveBots}
           </div>
           <p className="text-foreground-muted mt-0.5 text-[11px]">
-            Callback terdaftar di Telegram
+            {t("admin.telegramBots.statHealthyWebhooksDesc")}
           </p>
         </div>
 
@@ -210,7 +213,7 @@ export function TelegramAdminBotsView() {
         <div className="bg-surface border-border rounded-xl border p-4 shadow-2xs dark:bg-[#151614]">
           <div className="flex items-center justify-between">
             <span className="text-foreground-secondary text-xs font-semibold">
-              Pesan Hari Ini
+              {t("admin.telegramBots.statMessagesToday")}
             </span>
             <div className="flex size-7 items-center justify-center rounded-lg bg-wise-green/15 text-dark-green dark:text-wise-green">
               <Send className="size-3.5" />
@@ -220,11 +223,11 @@ export function TelegramAdminBotsView() {
             {isLoading ? (
               <Skeleton className="h-7 w-12" />
             ) : (
-              totalDailySent.toLocaleString()
+              totalDailySent.toLocaleString(dateLocale)
             )}
           </div>
           <p className="text-foreground-muted mt-0.5 text-[11px]">
-            Total transmisi bot hari ini
+            {t("admin.telegramBots.statMessagesTodayDesc")}
           </p>
         </div>
       </div>
@@ -234,7 +237,7 @@ export function TelegramAdminBotsView() {
         <div className="relative flex-1">
           <Search className="text-foreground-muted absolute top-1/2 left-3 size-4 -translate-y-1/2" />
           <Input
-            placeholder="Cari Username @bot, Nama Bot, atau Bot ID Telegram..."
+            placeholder={t("admin.telegramBots.searchPlaceholder")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="border-border/80 h-9 rounded-full pl-9 text-xs focus-visible:ring-rose-500"
@@ -253,7 +256,7 @@ export function TelegramAdminBotsView() {
                   : "bg-muted/60 text-foreground-secondary hover:text-foreground border border-border/80"
               }`}
             >
-              {status === "ALL" ? "Semua Status" : status}
+              {status === "ALL" ? t("admin.telegramBots.filterAll") : status}
             </button>
           ))}
         </div>
@@ -264,10 +267,10 @@ export function TelegramAdminBotsView() {
         <div className="p-4 border-b border-border/80 flex items-center justify-between bg-muted/20">
           <div className="flex items-center gap-2 text-xs font-black text-foreground">
             <Layers className="size-4 text-rose-500" />
-            <span>Daftar Bot Telegram Terdaftar</span>
+            <span>{t("admin.telegramBots.listTitle")}</span>
           </div>
           <span className="text-[11px] font-mono text-foreground-muted">
-            Menampilkan {filteredBots.length} bot
+            {t("admin.telegramBots.showingBots", { count: filteredBots.length })}
           </span>
         </div>
 
@@ -283,12 +286,12 @@ export function TelegramAdminBotsView() {
               <Bot className="size-6" />
             </div>
             <p className="text-sm font-bold text-foreground">
-              Tidak ada bot Telegram ditemukan
+              {t("admin.telegramBots.emptyTitle")}
             </p>
             <p className="text-xs text-foreground-secondary mt-1 max-w-sm">
               {searchQuery
-                ? "Tidak ada bot yang cocok dengan kata kunci pencarian Anda."
-                : "Belum ada tenant yang mendaftarkan token bot Telegram."}
+                ? t("admin.telegramBots.emptyDescMatch")
+                : t("admin.telegramBots.emptyDescDefault")}
             </p>
           </div>
         ) : (
@@ -296,13 +299,13 @@ export function TelegramAdminBotsView() {
             <table className="w-full text-left text-xs">
               <thead className="bg-muted/30 border-b border-border/80 text-foreground-muted font-bold text-[11px] uppercase tracking-wider">
                 <tr>
-                  <th className="py-3.5 px-4">Nama Bot & Username</th>
-                  <th className="py-3.5 px-4">Bot ID</th>
-                  <th className="py-3.5 px-4">Status</th>
-                  <th className="py-3.5 px-4">Webhook Callback</th>
-                  <th className="py-3.5 px-4">Sent Hari Ini</th>
-                  <th className="py-3.5 px-4">Terakhir Disinkronkan</th>
-                  <th className="py-3.5 px-4 text-right">Aksi Admin</th>
+                  <th className="py-3.5 px-4">{t("admin.telegramBots.colBot")}</th>
+                  <th className="py-3.5 px-4">{t("admin.telegramBots.colBotId")}</th>
+                  <th className="py-3.5 px-4">{t("admin.telegramBots.colStatus")}</th>
+                  <th className="py-3.5 px-4">{t("admin.telegramBots.colWebhook")}</th>
+                  <th className="py-3.5 px-4">{t("admin.telegramBots.colSentToday")}</th>
+                  <th className="py-3.5 px-4">{t("admin.telegramBots.colLastSync")}</th>
+                  <th className="py-3.5 px-4 text-right">{t("admin.telegramBots.colActions")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/60 font-medium text-foreground">
@@ -336,24 +339,24 @@ export function TelegramAdminBotsView() {
                       {bot.webhook_active ? (
                         <span className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
                           <Radio className="size-3" />
-                          Listening (Active)
+                          {t("admin.telegramBots.webhookListening")}
                         </span>
                       ) : (
                         <span className="text-rose-600 dark:text-rose-400 font-semibold">
-                          Inactive
+                          {t("admin.telegramBots.webhookInactive")}
                         </span>
                       )}
                     </td>
 
                     {/* Sent Count */}
                     <td className="py-3.5 px-4 font-mono font-bold text-foreground">
-                      {(bot.daily_sent_count || 0).toLocaleString()}
+                      {(bot.daily_sent_count || 0).toLocaleString(dateLocale)}
                     </td>
 
                     {/* Last Sync */}
                     <td className="py-3.5 px-4 text-[11px] text-foreground-muted">
                       {bot.last_sync_at
-                        ? new Date(bot.last_sync_at).toLocaleDateString("id-ID", {
+                        ? new Date(bot.last_sync_at).toLocaleDateString(dateLocale, {
                             day: "numeric",
                             month: "short",
                             hour: "2-digit",
@@ -374,7 +377,7 @@ export function TelegramAdminBotsView() {
                         <RefreshCw
                           className={`mr-1 size-3 ${syncingId === bot.id ? "animate-spin" : ""}`}
                         />
-                        <span>Sync</span>
+                        <span>{t("admin.telegramBots.syncBtn")}</span>
                       </Button>
 
                       <Button
@@ -385,7 +388,7 @@ export function TelegramAdminBotsView() {
                         className="h-7 px-2 text-[11px] text-rose-600 hover:bg-rose-500/10 hover:text-rose-700 dark:text-rose-400 font-semibold"
                       >
                         <Trash2 className="mr-1 size-3" />
-                        <span>Revoke</span>
+                        <span>{t("admin.telegramBots.revokeBtn")}</span>
                       </Button>
                     </td>
                   </tr>

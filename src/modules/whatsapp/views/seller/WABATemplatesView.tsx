@@ -236,7 +236,7 @@ export function WABATemplatesView() {
             onClick={() => setShowRules(!showRules)}
             className="text-xs font-semibold text-foreground-muted hover:text-foreground cursor-pointer flex items-center gap-1 shrink-0"
           >
-            <span>{showRules ? "Sembunyikan" : "Pelajari Ketentuan"}</span>
+            <span>{showRules ? t("whatsapp.wabaTemplates.hideRules") : t("whatsapp.wabaTemplates.learnRules")}</span>
             <ChevronDown className={cn("size-3.5 transition-transform", showRules && "rotate-180")} />
           </button>
         </div>
@@ -403,17 +403,17 @@ export function WABATemplatesView() {
                     size="xs"
                     onClick={() => handleCopyText(tpl.id, tpl.bodyText)}
                     className="h-7 px-2.5 rounded-lg text-xs gap-1 cursor-pointer"
-                    title="Salin Pesan"
+                    title={t("whatsapp.wabaTemplates.copyTitle")}
                   >
                     {copiedId === tpl.id ? (
                       <>
                         <Check className="size-3 text-emerald-600 dark:text-emerald-400" />
-                        <span className="text-emerald-700 dark:text-emerald-400 font-sans">Tersalin</span>
+                        <span className="text-emerald-700 dark:text-emerald-400 font-sans">{t("whatsapp.wabaTemplates.copied")}</span>
                       </>
                     ) : (
                       <>
                         <Copy className="size-3" />
-                        <span className="font-sans">Salin</span>
+                        <span className="font-sans">{t("whatsapp.wabaTemplates.copy")}</span>
                       </>
                     )}
                   </Button>
@@ -423,7 +423,7 @@ export function WABATemplatesView() {
                     size="icon-xs"
                     onClick={() => handleDeleteTemplate(tpl.id, tpl.name)}
                     className="h-7 w-7 rounded-lg text-destructive hover:bg-destructive/10 hover:text-destructive cursor-pointer"
-                    title="Hapus Template"
+                    title={t("whatsapp.wabaTemplates.deleteTitle")}
                   >
                     <Trash2 className="size-3.5" />
                   </Button>

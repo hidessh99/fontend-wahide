@@ -11,6 +11,9 @@
     "title": "Aturan Balas Cepat (Single-Turn Rules)",
     "subtitle": "Pencocokan kata kunci secepat kilat O(M) tanpa latensi antrean.",
     "addRule": "Buat Aturan Baru",
+    "totalRules": "Total Aturan",
+    "activeRules": "Aturan Aktif",
+    "inactiveRules": "Aturan Nonaktif",
     "searchPlaceholder": "Cari nama aturan atau kata kunci...",
     "filterChannel": "Semua Saluran",
     "filterDevice": "Semua Perangkat",
@@ -75,13 +78,21 @@
     "updatedSuccess": "Aturan balas berhasil diperbarui",
     "updateFailed": "Gagal memperbarui aturan balas",
     "deletedSuccess": "Aturan balas berhasil dihapus",
-    "deleteFailed": "Gagal menghapus aturan balas"
+    "deleteFailed": "Gagal menghapus aturan balas",
+    "statTotal": "Total",
+    "statActive": "Aktif",
+    "statInactive": "Nonaktif",
+    "loading": "Memuat aturan balas otomatis..."
   },
   "flows": {
     "title": "Alur Percakapan Interaktif (Flow DAG Builder)",
     "subtitle": "Rancang alur bot percakapan multi-turn secara visual dengan percabangan kondisi dinamis.",
+    "flowSubtitle": "Rancang chatbot multi-turn interaktif dengan visual DAG canvas.",
     "createFlow": "Buat Flow Baru",
     "editFlow": "Buka Editor Flow",
+    "testFlow": "Uji Alur",
+    "loadingCanvas": "Memuat canvas alur percakapan...",
+    "loadingList": "Memuat alur flow percakapan...",
     "flowList": "Daftar Alur Percakapan",
     "searchPlaceholder": "Cari alur percakapan...",
     "nodesCount": "{count} Node",
@@ -151,7 +162,8 @@
     "updatedSuccess": "Alur percakapan berhasil diperbarui",
     "updateFailed": "Gagal memperbarui alur percakapan",
     "deletedSuccess": "Alur percakapan berhasil dihapus",
-    "deleteFailed": "Gagal menghapus alur percakapan"
+    "deleteFailed": "Gagal menghapus alur percakapan",
+    "namePlaceholder": "Nama Alur Flow..."
   },
   "submissions": {
     "title": "Hasil Formulir & Prospek (Leads)",

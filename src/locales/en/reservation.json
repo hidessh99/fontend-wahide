@@ -54,5 +54,8 @@
   "phonePlaceholder": "812 3456 7890",
   "phoneReadyPreview": "Ready to send: {formatted}",
   "phoneTooLong": "Phone number too long (max 15 digits)",
-  "phoneHelperHint": "Type number without leading 0 (e.g. 8123456789)"
+  "phoneHelperHint": "Type number without leading 0 (e.g. 8123456789)",
+  "errTelegramRequired": "Telegram Chat ID / Username is required.",
+  "telegramChannelDesc": "Instant confirmation and schedule reminders sent directly via Telegram Bot.",
+  "telegramHelpDesc": "Confirmation and reminder messages will be sent directly to this customer's Telegram account."
 }

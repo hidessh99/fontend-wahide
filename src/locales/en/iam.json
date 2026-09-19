@@ -1,0 +1,8 @@
+{
+  "settings": {
+    "securityTab": "Security & Password",
+    "updatePasswordDesc": "Update your account password periodically to maintain security.",
+    "currentPassword": "Current Password",
+    "noCountryFound": "No country found"
+  }
+}

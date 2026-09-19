@@ -166,5 +166,11 @@
       "feedback": "Feedback",
       "support": "Support"
     }
-  }
+  },
+  "writeFromScratch": "Write message from scratch",
+  "noMatchingPresets": "No matching presets",
+  "tryChangeFilters": "Try adjusting category filters or search keywords",
+  "blankTemplate": "Blank Template",
+  "spintaxActive": "Spintax Active",
+  "moreButtons": "more buttons"
 }

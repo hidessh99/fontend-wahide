@@ -339,13 +339,13 @@ export function QuickScheduleCard({
                 id="rem-tele-id"
                 value={telegramChatId}
                 onChange={(e) => setTelegramChatId(e.target.value)}
-                placeholder="@username atau 123456789"
+                placeholder={t("reminder.schedule.telegramPlaceholder")}
                 className="h-10 text-xs rounded-xl font-mono"
                 disabled={isSubmitting}
                 required
               />
               <span className="text-[10px] text-foreground-muted">
-                Chat ID atau username pelanggan di Telegram.
+                {t("reminder.schedule.telegramHelp")}
               </span>
             </div>
           ) : (

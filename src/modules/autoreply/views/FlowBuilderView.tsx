@@ -193,7 +193,7 @@ export function FlowBuilderView({ flowId }: FlowBuilderViewProps) {
       <div className="border-border bg-surface flex h-[80vh] items-center justify-center rounded-2xl border p-8">
         <div className="border-wise-green h-8 w-8 animate-spin rounded-full border-3 border-t-transparent" />
         <p className="text-foreground-muted ml-3 text-xs font-medium">
-          Memuat canvas alur percakapan...
+          {t("autoreply.flows.loadingCanvas")}
         </p>
       </div>
     );
@@ -230,7 +230,7 @@ export function FlowBuilderView({ flowId }: FlowBuilderViewProps) {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Nama Alur Flow..."
+              placeholder={t("autoreply.flows.namePlaceholder")}
               className="bg-transparent text-foreground text-sm font-bold focus:outline-none focus:border-b focus:border-wise-green"
             />
             <p className="text-foreground-muted text-[10px]">
@@ -275,7 +275,7 @@ export function FlowBuilderView({ flowId }: FlowBuilderViewProps) {
             className="border-border bg-surface hover:bg-muted text-foreground flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition-colors cursor-pointer"
           >
             <Play className="size-3.5 text-wise-green" />
-            <span className="hidden sm:inline">Uji Alur</span>
+            <span className="hidden sm:inline">{t("autoreply.flows.testFlow")}</span>
           </button>
 
           <button

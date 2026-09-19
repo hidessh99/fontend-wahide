@@ -42,7 +42,7 @@ export function SubmissionsView() {
       {/* Top Header & Navigation Tabs */}
       <div className="space-y-4">
         <div>
-          <h1 className="text-foreground text-2xl font-black tracking-tight">
+          <h1 className="text-foreground text-xl sm:text-2xl font-black tracking-tight">
             {t("autoreply.submissions.title")}
           </h1>
           <p className="text-foreground-muted text-xs sm:text-sm mt-1 max-w-2xl">
@@ -51,7 +51,7 @@ export function SubmissionsView() {
         </div>
 
         {/* Tab Navigation */}
-        <div className="border-border flex items-center gap-2 border-b pb-3 overflow-x-auto">
+        <div className="border-border flex items-center gap-1.5 sm:gap-2 border-b pb-3 overflow-x-auto scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-3 px-3 sm:mx-0 sm:px-0">
           <Link
             href="/autoreply"
             className="text-foreground-secondary hover:text-foreground hover:bg-muted flex items-center gap-2 rounded-xl border border-transparent px-3.5 py-1.5 text-xs font-bold transition-all whitespace-nowrap"

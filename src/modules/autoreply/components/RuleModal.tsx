@@ -108,7 +108,20 @@ export function RuleModal({
       setErrorMsg("Pilih perangkat pengirim");
       return;
     }
-    if (keywords.length === 0) {
+
+    const finalKeywords = [...keywords];
+    if (keywordInput.trim()) {
+      const parts = keywordInput.split(",").map((k) => k.trim().toLowerCase()).filter(Boolean);
+      for (const p of parts) {
+        if (!finalKeywords.includes(p)) {
+          finalKeywords.push(p);
+        }
+      }
+      setKeywords(finalKeywords);
+      setKeywordInput("");
+    }
+
+    if (finalKeywords.length === 0) {
       setErrorMsg("Minimal tambahkan 1 kata kunci pemicu (tekan Enter)");
       return;
     }
@@ -133,7 +146,7 @@ export function RuleModal({
       reply_text: replyType === "TEXT" ? replyText.trim() : undefined,
       media_url: replyType === "MEDIA" ? mediaUrl.trim() : undefined,
       flow_id: replyType === "FLOW_TRIGGER" ? flowId : undefined,
-      keywords,
+      keywords: finalKeywords,
       priority,
       is_active: isActive,
     };
@@ -146,21 +159,21 @@ export function RuleModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150">
-      <div className="bg-surface border-border flex max-h-[90vh] w-full max-w-2xl flex-col rounded-2xl border shadow-2xl dark:bg-[#151714]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150">
+      <div className="bg-surface border-border flex max-h-[92vh] sm:max-h-[90vh] w-full max-w-2xl flex-col rounded-2xl border shadow-2xl dark:bg-[#151714]">
         {/* Header */}
-        <div className="border-border flex items-center justify-between border-b px-6 py-4">
-          <div className="flex items-center gap-3">
+        <div className="border-border flex items-center justify-between border-b px-4 py-3 sm:px-6 sm:py-4">
+          <div className="flex items-center gap-2.5 sm:gap-3">
             <div className="rounded-full bg-emerald-500/10 p-2 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400">
               <Bot className="size-5" />
             </div>
             <div>
-              <h3 className="text-foreground text-base font-bold">
+              <h3 className="text-foreground text-sm sm:text-base font-bold">
                 {editingRule
                   ? t("autoreply.rules.modal.editTitle")
                   : t("autoreply.rules.modal.createTitle")}
               </h3>
-              <p className="text-foreground-muted text-xs">
+              <p className="text-foreground-muted text-[11px] sm:text-xs">
                 {t("autoreply.rules.subtitle")}
               </p>
             </div>
@@ -168,6 +181,7 @@ export function RuleModal({
           <button
             type="button"
             onClick={onClose}
+            aria-label="Close modal"
             className="text-foreground-muted hover:text-foreground rounded-lg p-1.5 transition-colors"
           >
             <X className="size-5" />
@@ -175,7 +189,7 @@ export function RuleModal({
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-6 py-5 space-y-5">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-5 space-y-4 sm:space-y-5">
           {errorMsg && (
             <div className="flex items-center gap-2 rounded-xl bg-destructive/10 border border-destructive/20 p-3 text-destructive text-xs font-semibold">
               <AlertCircle className="size-4 shrink-0" />
@@ -297,18 +311,37 @@ export function RuleModal({
                   </button>
                 </span>
               ))}
-              <input
-                type="text"
-                value={keywordInput}
-                onChange={(e) => setKeywordInput(e.target.value)}
-                onKeyDown={handleAddKeyword}
-                placeholder={
-                  keywords.length === 0
-                    ? t("autoreply.rules.modal.keywordsPlaceholder")
-                    : ""
-                }
-                className="bg-transparent text-foreground flex-1 px-1 text-xs font-medium focus:outline-none"
-              />
+              <div className="flex flex-1 items-center gap-1.5 min-w-[140px]">
+                <input
+                  type="text"
+                  value={keywordInput}
+                  onChange={(e) => setKeywordInput(e.target.value)}
+                  onKeyDown={handleAddKeyword}
+                  placeholder={
+                    keywords.length === 0
+                      ? t("autoreply.rules.modal.keywordsPlaceholder")
+                      : ""
+                  }
+                  className="bg-transparent text-foreground flex-1 px-1 text-xs font-medium focus:outline-none min-w-[80px]"
+                />
+                {keywordInput.trim() && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const parts = keywordInput.split(",").map((k) => k.trim().toLowerCase()).filter(Boolean);
+                      const updated = [...keywords];
+                      for (const p of parts) {
+                        if (!updated.includes(p)) updated.push(p);
+                      }
+                      setKeywords(updated);
+                      setKeywordInput("");
+                    }}
+                    className="bg-wise-green text-dark-green rounded-lg px-2.5 py-1 text-[11px] font-bold shrink-0 transition-opacity hover:opacity-90"
+                  >
+                    + Tambah
+                  </button>
+                )}
+              </div>
             </div>
           </div>
 
@@ -317,12 +350,12 @@ export function RuleModal({
             <label className="text-foreground text-xs font-bold">
               {t("autoreply.rules.modal.replyTypeLabel")}
             </label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
               <button
                 type="button"
                 onClick={() => setReplyType("TEXT")}
                 className={cn(
-                  "flex items-center justify-center gap-2 rounded-xl border py-2 text-xs font-bold transition-all",
+                  "flex items-center justify-center rounded-xl border px-1.5 py-2.5 sm:px-3 text-[11px] sm:text-xs font-bold text-center leading-tight transition-all",
                   replyType === "TEXT"
                     ? "border-wise-green bg-wise-green/10 text-dark-green dark:text-wise-green"
                     : "border-border text-foreground-secondary hover:bg-muted",
@@ -334,7 +367,7 @@ export function RuleModal({
                 type="button"
                 onClick={() => setReplyType("MEDIA")}
                 className={cn(
-                  "flex items-center justify-center gap-2 rounded-xl border py-2 text-xs font-bold transition-all",
+                  "flex items-center justify-center rounded-xl border px-1.5 py-2.5 sm:px-3 text-[11px] sm:text-xs font-bold text-center leading-tight transition-all",
                   replyType === "MEDIA"
                     ? "border-wise-green bg-wise-green/10 text-dark-green dark:text-wise-green"
                     : "border-border text-foreground-secondary hover:bg-muted",
@@ -346,7 +379,7 @@ export function RuleModal({
                 type="button"
                 onClick={() => setReplyType("FLOW_TRIGGER")}
                 className={cn(
-                  "flex items-center justify-center gap-2 rounded-xl border py-2 text-xs font-bold transition-all",
+                  "flex items-center justify-center rounded-xl border px-1.5 py-2.5 sm:px-3 text-[11px] sm:text-xs font-bold text-center leading-tight transition-all",
                   replyType === "FLOW_TRIGGER"
                     ? "border-wise-green bg-wise-green/10 text-dark-green dark:text-wise-green"
                     : "border-border text-foreground-secondary hover:bg-muted",
@@ -447,12 +480,12 @@ export function RuleModal({
         </form>
 
         {/* Footer */}
-        <div className="border-border flex items-center justify-end gap-2.5 border-t px-6 py-4">
+        <div className="border-border flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2 border-t px-4 py-3 sm:px-6 sm:py-4">
           <button
             type="button"
             onClick={onClose}
             disabled={isSubmitting}
-            className="border-border text-foreground-secondary hover:bg-muted rounded-xl border px-4 py-2 text-xs font-bold transition-colors"
+            className="border-border text-foreground-secondary hover:bg-muted flex h-10 sm:h-9 w-full sm:w-auto items-center justify-center rounded-xl border px-4 text-xs font-bold transition-colors"
           >
             {t("autoreply.rules.modal.cancel")}
           </button>
@@ -460,7 +493,7 @@ export function RuleModal({
             type="button"
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="bg-wise-green text-dark-green hover:brightness-105 rounded-xl px-5 py-2 text-xs font-bold transition-all shadow-sm disabled:opacity-50"
+            className="bg-wise-green text-dark-green hover:brightness-105 flex h-10 sm:h-9 w-full sm:w-auto items-center justify-center rounded-xl px-5 text-xs font-bold transition-all shadow-sm disabled:opacity-50"
           >
             {isSubmitting
               ? t("autoreply.rules.modal.saving")

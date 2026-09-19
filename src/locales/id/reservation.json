@@ -54,5 +54,8 @@
   "phonePlaceholder": "812 3456 7890",
   "phoneReadyPreview": "Format siap kirim: {formatted}",
   "phoneTooLong": "Nomor terlalu panjang (maksimal 15 digit)",
-  "phoneHelperHint": "Ketik nomor tanpa awalan 0 (contoh: 8123456789)"
+  "phoneHelperHint": "Ketik nomor tanpa awalan 0 (contoh: 8123456789)",
+  "errTelegramRequired": "Telegram Chat ID / Username wajib diisi.",
+  "telegramChannelDesc": "Pesan konfirmasi instan & pengingat jadwal dikirim langsung via Bot Telegram.",
+  "telegramHelpDesc": "Pesan konfirmasi & pengingat akan dikirimkan langsung ke akun Telegram pelanggan ini."
 }

@@ -69,7 +69,7 @@ export function ReminderLogsTable({
   onDispatchNow,
   onReload,
 }: ReminderLogsTableProps) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [channelFilter, setChannelFilter] =
     useState<"ALL" | ReminderChannelType>("ALL");
 
@@ -86,7 +86,7 @@ export function ReminderLogsTable({
     try {
       const d = new Date(dateStr);
       if (isNaN(d.getTime())) return dateStr;
-      return d.toLocaleString("id-ID", {
+      return d.toLocaleString(locale === "en" ? "en-US" : "id-ID", {
         day: "2-digit",
         month: "short",
         year: "numeric",
@@ -109,7 +109,7 @@ export function ReminderLogsTable({
     if (offset === 0) {
       return (
         <Badge variant="success" className="font-mono text-[10px]">
-          Hari H
+          {t("reminder.rules.sameDay")}
         </Badge>
       );
     }

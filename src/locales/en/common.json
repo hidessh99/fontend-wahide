@@ -7,7 +7,9 @@
   "close": "Close",
   "save": "Save",
   "saveChanges": "Save Changes",
-  "actions": "Actions",
+  "all": "All",
+  "allTime": "All time",
+  "customRange": "Custom range",
   "clearSearch": "Clear Search",
   "saving": "Saving...",
   "copy": "Copy",
@@ -393,6 +395,7 @@
     "disclaimerText": "Wahide is an independent software platform developed by Hide Digital Security (Hide Group) for business messaging integration and automation. Wahide is not affiliated, associated, authorized, endorsed by, or in any way officially connected with WhatsApp LLC or Meta Platforms, Inc. The name 'WhatsApp' as well as related names, marks, emblems, and images are registered trademarks of WhatsApp LLC and Meta Platforms, Inc."
   },
   "actions": {
+    "title": "Actions",
     "save": "Save Changes",
     "cancel": "Cancel",
     "delete": "Delete",
@@ -502,7 +505,11 @@
     "newPasswordMinLength": "New password must be at least 8 characters.",
     "confirmPasswordMismatch": "Password confirmation does not match.",
     "passwordChangedSuccess": "Password updated successfully.",
-    "passwordChangeError": "Failed to change password. Please ensure current password is correct."
+    "passwordChangeError": "Failed to change password. Please ensure current password is correct.",
+    "securityTab": "Security & Password",
+    "updatePasswordDesc": "Update your account password periodically to maintain security.",
+    "currentPassword": "Current Password",
+    "noCountryFound": "No country found"
   },
   "activities": {
     "title": "Account Activity Log",
@@ -566,7 +573,8 @@
     "loadingCities": "Loading cities...",
     "selectCityFirst": "Please select a city first",
     "loadingDistricts": "Loading districts...",
-    "cancelAndBackToBilling": "Cancel & Return to Billing"
+    "cancelAndBackToBilling": "Cancel & Return to Billing",
+    "noCountryFound": "No country found"
   },
   "billing": {
     "title": "Invoices & Payment Billings",
@@ -603,5 +611,9 @@
       "subtitle": "The application requires a full system refresh to recover.",
       "reload": "Refresh Application"
     }
-  }
+  },
+  "invoiceNumber": "Invoice No.",
+  "or": "or",
+  "reload": "Reload",
+  "filterPeriodAria": "Filter log time period"
 }

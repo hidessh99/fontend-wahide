@@ -1,0 +1,8 @@
+{
+  "settings": {
+    "securityTab": "Keamanan & Kata Sandi",
+    "updatePasswordDesc": "Perbarui kata sandi akun Anda secara berkala untuk menjaga keamanan.",
+    "currentPassword": "Kata Sandi Saat Ini",
+    "noCountryFound": "Tidak ada negara ditemukan"
+  }
+}

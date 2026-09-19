@@ -23,7 +23,7 @@ export function InvoiceReceiptModal({
   onClose,
   invoice,
 }: InvoiceReceiptModalProps) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
 
   if (!invoice) return null;
 
@@ -33,8 +33,10 @@ export function InvoiceReceiptModal({
     }
   };
 
+  const dateLocale = locale === "en" ? "en-US" : "id-ID";
+
   const formattedDate = new Date(invoice.createdAt).toLocaleDateString(
-    "id-ID",
+    dateLocale,
     {
       day: "numeric",
       month: "long",
@@ -47,7 +49,7 @@ export function InvoiceReceiptModal({
   const safeAmount = Number(invoice.amount ?? 0);
 
   const paidDate = invoice.paidAt
-    ? new Date(invoice.paidAt).toLocaleDateString("id-ID", {
+    ? new Date(invoice.paidAt).toLocaleDateString(dateLocale, {
         day: "numeric",
         month: "long",
         year: "numeric",
@@ -100,7 +102,7 @@ export function InvoiceReceiptModal({
           <div className="grid grid-cols-2 gap-4 text-xs sm:grid-cols-3">
             <div className="space-y-0.5">
               <span className="text-foreground-muted block text-[10px] font-bold tracking-wider uppercase">
-                No. Faktur
+                {t("common.invoiceNumber")}
               </span>
               <span className="text-foreground block font-mono font-bold">
                 {invoice.invoiceNumber}
@@ -109,7 +111,7 @@ export function InvoiceReceiptModal({
 
             <div className="space-y-0.5">
               <span className="text-foreground-muted block text-[10px] font-bold tracking-wider uppercase">
-                Tanggal Terbit
+                {t("billing.issueDate")}
               </span>
               <span className="text-foreground block font-semibold">
                 {formattedDate}
@@ -118,7 +120,7 @@ export function InvoiceReceiptModal({
 
             <div className="col-span-2 space-y-0.5 sm:col-span-1">
               <span className="text-foreground-muted block text-[10px] font-bold tracking-wider uppercase">
-                Metode Pembayaran
+                {t("billing.paymentMethod")}
               </span>
               <span className="text-foreground block font-semibold">
                 {invoice.paymentMethod || "QRIS Instan"}

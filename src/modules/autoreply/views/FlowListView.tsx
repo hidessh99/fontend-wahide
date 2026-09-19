@@ -50,7 +50,7 @@ export function FlowListView() {
       {/* Top Header & Navigation Tabs */}
       <div className="space-y-4">
         <div>
-          <h1 className="text-foreground text-2xl font-black tracking-tight">
+          <h1 className="text-foreground text-xl sm:text-2xl font-black tracking-tight">
             {t("autoreply.flows.title")}
           </h1>
           <p className="text-foreground-muted text-xs sm:text-sm mt-1 max-w-2xl">
@@ -59,7 +59,7 @@ export function FlowListView() {
         </div>
 
         {/* Tab Navigation */}
-        <div className="border-border flex items-center gap-2 border-b pb-3 overflow-x-auto">
+        <div className="border-border flex items-center gap-1.5 sm:gap-2 border-b pb-3 overflow-x-auto scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-3 px-3 sm:mx-0 sm:px-0">
           <Link
             href="/autoreply"
             className="text-foreground-secondary hover:text-foreground hover:bg-muted flex items-center gap-2 rounded-xl border border-transparent px-3.5 py-1.5 text-xs font-bold transition-all whitespace-nowrap"
@@ -128,7 +128,7 @@ export function FlowListView() {
         <div className="border-border bg-surface flex min-h-[300px] flex-col items-center justify-center rounded-2xl border p-8">
           <div className="border-wise-green h-8 w-8 animate-spin rounded-full border-3 border-t-transparent" />
           <p className="text-foreground-muted mt-3 text-xs font-medium">
-            Memuat alur flow percakapan...
+            {t("autoreply.flows.loadingList")}
           </p>
         </div>
       ) : flows.length === 0 ? (
@@ -140,7 +140,7 @@ export function FlowListView() {
             {t("autoreply.flows.empty")}
           </h4>
           <p className="text-foreground-muted mt-1 max-w-sm text-xs">
-            Rancang chatbot multi-turn interaktif dengan visual DAG canvas.
+            {t("autoreply.flows.flowSubtitle")}
           </p>
           <Link
             href="/autoreply/flow/new"
@@ -225,7 +225,7 @@ export function FlowListView() {
                     className="text-foreground-secondary hover:text-wise-green flex items-center gap-1 text-xs font-bold transition-colors cursor-pointer"
                   >
                     <Play className="size-3.5" />
-                    <span>Uji Alur</span>
+                    <span>{t("autoreply.flows.testFlow")}</span>
                   </button>
                   <div className="flex items-center gap-1">
                     <Link

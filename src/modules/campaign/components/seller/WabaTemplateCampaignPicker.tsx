@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
 import { ShieldCheck, Sparkles, ExternalLink } from "lucide-react";
 import { WABATemplateMock } from "@/modules/whatsapp/views/seller/WABATemplatesView";
+import { useI18n } from "@/lib/i18n/context";
 
 export const DEFAULT_CAMPAIGN_WABA_TEMPLATES: WABATemplateMock[] = [
   {
@@ -119,6 +120,8 @@ export function WabaTemplateCampaignPicker({
     return text;
   }, [activeTemplate.bodyText, extractedParams, paramValues]);
 
+  const { t } = useI18n();
+
   return (
     <div className={className}>
       <div className="space-y-4">
@@ -176,7 +179,7 @@ export function WabaTemplateCampaignPicker({
           <div className="flex items-center justify-between text-[11px] font-bold text-sky-700 dark:text-sky-300">
             <div className="flex items-center gap-1.5">
               <ShieldCheck className="size-3.5" />
-              <span>Pratinjau Pesan Template Meta WABA</span>
+              <span>{t("campaign.omnichannel.wabaPreviewTitle")}</span>
             </div>
             <span className="rounded-full bg-sky-500/10 px-2 py-0.5 text-[10px]">
               {activeTemplate.category}

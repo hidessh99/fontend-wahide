@@ -84,7 +84,7 @@ export function TelegramStatsView() {
                 setTimeRange("custom");
               }
             }}
-            placeholder="Rentang kustom"
+            placeholder={t("common.customRange")}
           />
 
           <Button

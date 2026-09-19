@@ -7,6 +7,7 @@ import { useMessageLogs } from "@/modules/campaign/hooks/useMessageLogs";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { Button } from "@/components/ui/button";
 import { MessageCategoryTabs, MessageCategory } from "@/components/ui/message-category-tabs";
+import { LogPeriodFilter } from "@/components/ui/log-period-filter";
 import { ScrollText, RefreshCw } from "lucide-react";
 import { useI18n } from "@/lib/i18n/context";
 
@@ -28,6 +29,10 @@ export function WhatsAppLogsView() {
     setStatusFilter,
     messageTypeFilter,
     setMessageTypeFilter,
+    timeRange,
+    setTimeRange,
+    customRange,
+    setCustomRange,
   } = useMessageLogs(1, 10);
 
   const handlePageSizeChange = (newSize: number) => {
@@ -45,11 +50,11 @@ export function WhatsAppLogsView() {
               <ScrollText className="size-5" />
             </div>
             <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl">
-              Log Pesan WhatsApp Web (Unofficial)
+              {t("whatsapp.logs.title")}
             </h1>
           </div>
           <p className="text-foreground-secondary text-xs font-medium sm:text-sm">
-            Pantau riwayat transmisi pesan socket web whatsapp, status ACK tanda centang, dan laporan kegagalan.
+            {t("whatsapp.logs.subtitle")}
           </p>
         </div>
 
@@ -61,7 +66,7 @@ export function WhatsAppLogsView() {
           className="text-xs font-semibold"
         >
           <RefreshCw className={`mr-1.5 size-3.5 ${isLoading ? "animate-spin" : ""}`} />
-          <span>Muat Ulang</span>
+          <span>{t("whatsapp.logs.reload")}</span>
         </Button>
       </div>
 
@@ -73,11 +78,18 @@ export function WhatsAppLogsView() {
         />
 
         <div className="space-y-3 pt-2">
-          {/* Segmented Category Filter Navigation: [ Semua ] [ Pesan ] [ OTP ] [ Broadcast ] */}
-          <div className="flex items-center justify-between gap-3">
+          {/* Segmented Category & Period Filters */}
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <MessageCategoryTabs
               activeCategory={messageTypeFilter as MessageCategory}
               onCategoryChange={(cat) => setMessageTypeFilter(cat)}
+            />
+
+            <LogPeriodFilter
+              timeRange={timeRange}
+              onTimeRangeChange={setTimeRange}
+              customRange={customRange}
+              onCustomRangeChange={setCustomRange}
             />
           </div>
 

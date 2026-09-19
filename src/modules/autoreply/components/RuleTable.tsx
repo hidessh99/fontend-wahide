@@ -42,10 +42,10 @@ export function RuleTable({
 
   if (isLoading) {
     return (
-      <div className="border-border bg-surface flex min-h-[300px] flex-col items-center justify-center rounded-2xl border p-8">
+      <div className="border-border bg-surface flex min-h-[260px] sm:min-h-[300px] flex-col items-center justify-center rounded-2xl border p-6 sm:p-8">
         <div className="border-wise-green h-8 w-8 animate-spin rounded-full border-3 border-t-transparent" />
         <p className="text-foreground-muted mt-3 text-xs font-medium">
-          Memuat aturan autoreply...
+          {t("autoreply.rules.loading")}
         </p>
       </div>
     );
@@ -53,20 +53,20 @@ export function RuleTable({
 
   if (rules.length === 0) {
     return (
-      <div className="border-border bg-surface flex min-h-[350px] flex-col items-center justify-center rounded-2xl border p-8 text-center">
+      <div className="border-border bg-surface flex min-h-[300px] sm:min-h-[350px] flex-col items-center justify-center rounded-2xl border p-6 sm:p-8 text-center">
         <div className="rounded-full bg-emerald-500/10 p-3.5 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400">
           <Bot className="size-8" />
         </div>
         <h4 className="text-foreground mt-4 text-sm font-bold">
           {t("autoreply.rules.empty")}
         </h4>
-        <p className="text-foreground-muted mt-1 max-w-sm text-xs">
-          Otomatisasi balasan pesan masuk dengan kata kunci instan Aho-Corasick.
+        <p className="text-foreground-muted mt-1 max-w-sm text-xs leading-relaxed">
+          {t("autoreply.subtitle")}
         </p>
         <button
           type="button"
           onClick={onCreateNew}
-          className="bg-wise-green text-dark-green hover:brightness-105 mt-5 rounded-xl px-4 py-2 text-xs font-bold transition-all shadow-sm cursor-pointer"
+          className="bg-wise-green text-dark-green hover:brightness-105 mt-5 rounded-xl px-4 py-2 text-xs font-bold transition-all shadow-xs cursor-pointer"
         >
           {t("autoreply.rules.addRule")}
         </button>
@@ -76,7 +76,8 @@ export function RuleTable({
 
   return (
     <>
-      <div className="border-border bg-surface overflow-hidden rounded-2xl border shadow-sm">
+      {/* 1. Desktop Mode: Classic High-Density Table (hidden on mobile, visible on md+) */}
+      <div className="hidden md:block border-border bg-surface overflow-hidden rounded-2xl border shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="border-border bg-muted/40 text-foreground-muted border-b uppercase text-[10px] font-bold tracking-wider">
@@ -172,6 +173,9 @@ export function RuleTable({
                     <td className="px-4 py-3.5 text-center whitespace-nowrap">
                       <button
                         type="button"
+                        role="switch"
+                        aria-checked={rule.is_active}
+                        aria-label={rule.is_active ? "Nonaktifkan aturan" : "Aktifkan aturan"}
                         onClick={() => onToggle(rule.id, rule.is_active)}
                         className={cn(
                           "relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
@@ -214,6 +218,133 @@ export function RuleTable({
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* 2. Mobile Mode: Adaptive Rule Cards Stack (visible on mobile, hidden on md+) */}
+      <div className="md:hidden space-y-3">
+        {rules.map((rule) => (
+          <div
+            key={rule.id}
+            className="border-border bg-surface rounded-2xl border p-3.5 sm:p-4 shadow-xs space-y-3"
+          >
+            {/* Card Header: Rule Name & Channel Badge */}
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0 flex-1">
+                <h4 className="font-bold text-sm text-foreground truncate">
+                  {rule.name}
+                </h4>
+                <span className="text-foreground-muted text-[10px] font-mono">
+                  ID: {rule.id.slice(0, 10)}...
+                </span>
+              </div>
+              <span
+                className={cn(
+                  "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase shrink-0",
+                  rule.channel_type === "whatsapp" &&
+                    "bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400",
+                  rule.channel_type === "telegram" &&
+                    "bg-sky-500/10 text-sky-600 dark:bg-sky-500/20 dark:text-sky-400",
+                  rule.channel_type === "waba" &&
+                    "bg-violet-500/10 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400",
+                )}
+              >
+                {rule.channel_type}
+              </span>
+            </div>
+
+            {/* Trigger Details: Keywords & Logic */}
+            <div className="space-y-1.5 pt-0.5">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="rounded-md bg-muted px-2 py-0.5 text-[10px] font-bold text-foreground-muted">
+                  {rule.match_logic}
+                </span>
+                <span className="text-foreground-muted text-[10px] font-mono">
+                  Prioritas: {rule.priority}
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {rule.keywords?.slice(0, 4).map((kw) => (
+                  <span
+                    key={kw}
+                    className="bg-muted text-foreground-secondary rounded-md px-2 py-0.5 text-[11px] font-medium"
+                  >
+                    {kw}
+                  </span>
+                ))}
+                {(rule.keywords?.length || 0) > 4 && (
+                  <span className="text-foreground-muted text-[10px] self-center">
+                    +{rule.keywords.length - 4}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Reply Preview Bubble */}
+            <div className="bg-muted/40 rounded-xl p-2.5 text-xs space-y-1">
+              <span className="text-[10px] font-bold text-wise-green block uppercase tracking-wider">
+                {rule.reply_type}
+              </span>
+              <p className="text-foreground-secondary line-clamp-2 text-xs leading-relaxed">
+                {rule.reply_type === "TEXT" && (rule.reply_text || "-")}
+                {rule.reply_type === "MEDIA" && (rule.media_url || "-")}
+                {rule.reply_type === "FLOW_TRIGGER" && `Flow: ${rule.flow_id}`}
+              </p>
+            </div>
+
+            {/* Footer: Accessible Toggle Switch & Action Buttons */}
+            <div className="flex items-center justify-between border-t border-border/80 pt-2.5">
+              {/* Status Toggle Switch with Label */}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={rule.is_active}
+                  onClick={() => onToggle(rule.id, rule.is_active)}
+                  className={cn(
+                    "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
+                    rule.is_active ? "bg-wise-green" : "bg-muted",
+                  )}
+                  aria-label={rule.is_active ? "Nonaktifkan aturan" : "Aktifkan aturan"}
+                >
+                  <span
+                    className={cn(
+                      "pointer-events-none inline-block size-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out",
+                      rule.is_active ? "translate-x-5" : "translate-x-0",
+                    )}
+                  />
+                </button>
+                <span className={cn(
+                  "text-xs font-bold",
+                  rule.is_active ? "text-emerald-600 dark:text-emerald-400" : "text-foreground-muted"
+                )}>
+                  {rule.is_active ? "Aktif" : "Nonaktif"}
+                </span>
+              </div>
+
+              {/* Action Buttons (Touch Friendly) */}
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => onEdit(rule)}
+                  className="flex size-9 items-center justify-center rounded-xl border border-border bg-surface text-foreground-secondary hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+                  title="Edit Aturan"
+                  aria-label="Edit Aturan"
+                >
+                  <Edit2 className="size-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDeleteId(rule.id)}
+                  className="flex size-9 items-center justify-center rounded-xl border border-border bg-surface text-foreground-secondary hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
+                  title="Hapus Aturan"
+                  aria-label="Hapus Aturan"
+                >
+                  <Trash2 className="size-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Delete Confirmation Modal */}

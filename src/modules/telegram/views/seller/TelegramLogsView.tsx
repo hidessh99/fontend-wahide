@@ -7,6 +7,7 @@ import { TelegramLogStatsCards } from "../../components/seller/TelegramLogStatsC
 import { useI18n } from "@/lib/i18n/context";
 import { Button } from "@/components/ui/button";
 import { MessageCategoryTabs, MessageCategory } from "@/components/ui/message-category-tabs";
+import { LogPeriodFilter } from "@/components/ui/log-period-filter";
 import { ScrollText, RefreshCw } from "lucide-react";
 
 export function TelegramLogsView() {
@@ -27,6 +28,10 @@ export function TelegramLogsView() {
     setStatusFilter,
     messageCategory,
     setMessageCategory,
+    timeRange,
+    setTimeRange,
+    customRange,
+    setCustomRange,
     isLoading,
     reload,
   } = useTelegramLogs(1, 10);
@@ -75,11 +80,18 @@ export function TelegramLogsView() {
 
       {/* Logs Table Component */}
       <div className="space-y-3 pt-2">
-        {/* Segmented Category Filter Navigation: [ Semua ] [ Pesan ] [ OTP ] [ Broadcast ] */}
-        <div className="flex items-center justify-between gap-3">
+        {/* Segmented Category & Period Filters */}
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <MessageCategoryTabs
             activeCategory={messageCategory as MessageCategory}
             onCategoryChange={(cat) => setMessageCategory(cat)}
+          />
+
+          <LogPeriodFilter
+            timeRange={timeRange}
+            onTimeRangeChange={setTimeRange}
+            customRange={customRange}
+            onCustomRangeChange={setCustomRange}
           />
         </div>
 

@@ -110,7 +110,7 @@ export function WhatsAppStatsView() {
                 setTimeRange("custom");
               }
             }}
-            placeholder="Rentang kustom"
+            placeholder={t("common.customRange")}
           />
 
           <Button

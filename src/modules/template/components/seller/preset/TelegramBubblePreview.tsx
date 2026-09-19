@@ -4,6 +4,7 @@ import React from "react";
 import { PresetTelegramContent } from "../../../data/templatePresets";
 import { Check, ExternalLink, Bot, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/lib/i18n/context";
 
 interface TelegramBubblePreviewProps {
   content: PresetTelegramContent;
@@ -59,14 +60,16 @@ function renderTelegramText(html: string) {
 }
 
 export function TelegramBubblePreview({ content, isBlank }: TelegramBubblePreviewProps) {
+  const { t } = useI18n();
+
   if (isBlank) {
     return (
       <div className="w-full h-full min-h-[170px] flex flex-col items-center justify-center p-4 text-center rounded-xl border border-dashed border-border/80 bg-surface/50 dark:bg-zinc-900/30">
         <div className="size-10 rounded-full bg-sky-500/10 dark:bg-sky-500/20 text-sky-600 dark:text-sky-400 flex items-center justify-center mb-2 shadow-xs">
           <Plus className="size-5" />
         </div>
-        <p className="text-xs font-semibold text-foreground">Template Kosong</p>
-        <p className="text-[11px] text-foreground-muted mt-0.5">Tulis pesan dari awal</p>
+        <p className="text-xs font-semibold text-foreground">{t("template.blankTemplate") || "Template Kosong"}</p>
+        <p className="text-[11px] text-foreground-muted mt-0.5">{t("template.writeFromScratch")}</p>
       </div>
     );
   }
@@ -103,7 +106,7 @@ export function TelegramBubblePreview({ content, isBlank }: TelegramBubblePrevie
           ))}
           {buttons.length > 2 && (
             <span className="text-[9.5px] text-center text-foreground-muted">
-              +{buttons.length - 2} tombol lainnya
+              +{buttons.length - 2} {t("template.moreButtons")}
             </span>
           )}
         </div>

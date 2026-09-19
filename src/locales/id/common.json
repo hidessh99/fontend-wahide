@@ -7,7 +7,9 @@
   "close": "Tutup",
   "save": "Simpan",
   "saveChanges": "Simpan Perubahan",
-  "actions": "Aksi",
+  "all": "Semua",
+  "allTime": "Semua waktu",
+  "customRange": "Rentang kustom",
   "clearSearch": "Bersihkan Pencarian",
   "saving": "Menyimpan...",
   "copy": "Salin",
@@ -393,6 +395,7 @@
     "disclaimerText": "Wahide adalah platform piranti lunak independen yang dikembangkan oleh Hide Digital Security (Hide Group) untuk kebutuhan integrasi dan otomatisasi perpesanan bisnis. Wahide tidak berafiliasi, tidak disponsori, tidak didukung, dan tidak terhubung secara resmi dalam bentuk apa pun dengan WhatsApp LLC atau Meta Platforms, Inc. Nama 'WhatsApp', logo terkait, serta merek dagang lainnya adalah hak milik eksklusif dan terdaftar dari WhatsApp LLC dan Meta Platforms, Inc."
   },
   "actions": {
+    "title": "Aksi",
     "save": "Simpan Perubahan",
     "cancel": "Batal",
     "delete": "Hapus",
@@ -502,7 +505,11 @@
     "newPasswordMinLength": "Kata sandi baru minimal 8 karakter.",
     "confirmPasswordMismatch": "Konfirmasi kata sandi baru tidak cocok.",
     "passwordChangedSuccess": "Kata sandi berhasil diperbarui.",
-    "passwordChangeError": "Gagal mengubah kata sandi. Pastikan kata sandi saat ini sesuai."
+    "passwordChangeError": "Gagal mengubah kata sandi. Pastikan kata sandi saat ini sesuai.",
+    "securityTab": "Keamanan & Kata Sandi",
+    "updatePasswordDesc": "Perbarui kata sandi akun Anda secara berkala untuk menjaga keamanan.",
+    "currentPassword": "Kata Sandi Saat Ini",
+    "noCountryFound": "Tidak ada negara ditemukan"
   },
   "activities": {
     "title": "Log Aktivitas Akun",
@@ -566,7 +573,8 @@
     "loadingCities": "Memuat kota...",
     "selectCityFirst": "Pilih kota terlebih dahulu",
     "loadingDistricts": "Memuat kecamatan...",
-    "cancelAndBackToBilling": "Batal & Kembali ke Tagihan"
+    "cancelAndBackToBilling": "Batal & Kembali ke Tagihan",
+    "noCountryFound": "Tidak ada negara ditemukan"
   },
   "billing": {
     "title": "Faktur & Tagihan Pembayaran",
@@ -603,5 +611,9 @@
       "subtitle": "Aplikasi memerlukan penyegaran ulang sistem secara menyeluruh.",
       "reload": "Segarkan Ulang Aplikasi"
     }
-  }
+  },
+  "invoiceNumber": "No. Faktur",
+  "or": "atau",
+  "reload": "Muat Ulang",
+  "filterPeriodAria": "Filter periode waktu log"
 }

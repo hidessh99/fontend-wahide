@@ -4,6 +4,7 @@ import React from "react";
 import { PresetWhatsAppContent } from "../../../data/templatePresets";
 import { CheckCheck, Plus, Sparkles, ExternalLink, CornerDownLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/lib/i18n/context";
 
 interface WhatsAppBubblePreviewProps {
   content: PresetWhatsAppContent;
@@ -65,14 +66,16 @@ function renderWhatsAppText(text: string) {
 }
 
 export function WhatsAppBubblePreview({ content, isBlank }: WhatsAppBubblePreviewProps) {
+  const { t } = useI18n();
+
   if (isBlank) {
     return (
       <div className="w-full h-full min-h-[170px] flex flex-col items-center justify-center p-4 text-center rounded-xl border border-dashed border-border/80 bg-surface/50 dark:bg-zinc-900/30">
         <div className="size-10 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-2 shadow-xs">
           <Plus className="size-5" />
         </div>
-        <p className="text-xs font-semibold text-foreground">Template Kosong</p>
-        <p className="text-[11px] text-foreground-muted mt-0.5">Tulis pesan dari awal</p>
+        <p className="text-xs font-semibold text-foreground">{t("template.blankTemplate") || "Template Kosong"}</p>
+        <p className="text-[11px] text-foreground-muted mt-0.5">{t("template.writeFromScratch")}</p>
       </div>
     );
   }
@@ -87,7 +90,7 @@ export function WhatsAppBubblePreview({ content, isBlank }: WhatsAppBubblePrevie
         {content.spintaxEnabled && (
           <div className="mb-1.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber-500/10 dark:bg-amber-400/15 text-amber-800 dark:text-amber-300 text-[9.5px] font-medium">
             <Sparkles className="size-2.5" />
-            <span>Spintax Aktif</span>
+            <span>{t("template.spintaxActive")}</span>
           </div>
         )}
 
@@ -121,7 +124,7 @@ export function WhatsAppBubblePreview({ content, isBlank }: WhatsAppBubblePrevie
           ))}
           {buttons.length > 2 && (
             <span className="text-[9.5px] text-center text-foreground-muted">
-              +{buttons.length - 2} tombol lainnya
+              +{buttons.length - 2} {t("template.moreButtons")}
             </span>
           )}
         </div>

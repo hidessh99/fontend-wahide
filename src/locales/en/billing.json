@@ -52,5 +52,6 @@
   "errorLoadInvoices": "Failed to Load Invoice History",
   "qrisInstantTitle": "Instant QRIS (Auto-Settlement)",
   "qrisInstantBadge": "0s Instant",
-  "qrisScanSupport": "Scan via BCA, Mandiri, BRI, BNI, GoPay, OVO, DANA, ShopeePay"
+  "qrisScanSupport": "Scan via BCA, Mandiri, BRI, BNI, GoPay, OVO, DANA, ShopeePay",
+  "issueDate": "Issue Date"
 }

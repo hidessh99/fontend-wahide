@@ -111,7 +111,7 @@ export function WABAStatsView() {
                 setTimeRange("custom");
               }
             }}
-            placeholder="Rentang kustom"
+            placeholder={t("common.customRange")}
           />
 
           <Button

@@ -278,17 +278,17 @@ export function DeliveryRulesCard({
 
               {channelType === "WHATSAPP_WEB" && activeDevices.length === 0 && !isLoadingSenders && (
                 <p className="text-[11px] text-amber-500 flex items-center gap-1">
-                  <AlertCircle className="size-3" /> Belum ada perangkat WhatsApp terhubung.
+                  <AlertCircle className="size-3" /> <span>{t("reminder.rules.noWhatsapp")}</span>
                 </p>
               )}
               {channelType === "WHATSAPP_OFFICIAL" && activeWabaAccounts.length === 0 && !isLoadingSenders && (
                 <p className="text-[11px] text-amber-500 flex items-center gap-1">
-                  <AlertCircle className="size-3" /> Belum ada akun Meta WABA resmi aktif.
+                  <AlertCircle className="size-3" /> <span>{t("reminder.rules.noWaba")}</span>
                 </p>
               )}
               {channelType === "TELEGRAM" && activeTelegramBots.length === 0 && !isLoadingSenders && (
                 <p className="text-[11px] text-amber-500 flex items-center gap-1">
-                  <AlertCircle className="size-3" /> Belum ada bot Telegram aktif.
+                  <AlertCircle className="size-3" /> <span>{t("reminder.rules.noTelegram")}</span>
                 </p>
               )}
             </div>
@@ -309,7 +309,7 @@ export function DeliveryRulesCard({
                 required
               />
               <span className="text-[10px] text-foreground-muted">
-                Jadwal otomatis dievaluasi setiap hari pada jam ini.
+                {t("reminder.rules.evalScheduleNote")}
               </span>
             </div>
 
@@ -344,7 +344,7 @@ export function DeliveryRulesCard({
                     {t("reminder.rules.dripPhases") || "Fase Pengingat Otomatis (Drip Phases)"}
                   </span>
                   <span className="text-[11px] text-foreground-muted">
-                    Atur konten pesan dan saluran untuk masing-masing fase waktu jadwal.
+                    {t("reminder.rules.configurePhasesNote")}
                   </span>
                 </div>
               </div>
@@ -548,7 +548,7 @@ export function DeliveryRulesCard({
                       <VariableInsertChips onInsert={handleInsertVariable} />
                       <span className="text-[11px] text-foreground-muted flex items-center gap-1">
                         <Sparkles className="size-3 text-amber-500" />
-                        Variabel otomatis diganti dengan data janji temu pelanggan.
+                        {t("reminder.rules.variableAutoReplaceNote")}
                       </span>
                     </div>
                   </div>

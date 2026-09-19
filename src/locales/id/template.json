@@ -166,5 +166,11 @@
       "feedback": "Feedback",
       "support": "Support"
     }
-  }
+  },
+  "writeFromScratch": "Tulis pesan dari awal",
+  "noMatchingPresets": "Tidak ada preset yang sesuai",
+  "tryChangeFilters": "Coba ubah filter kategori atau kata kunci pencarian Anda",
+  "blankTemplate": "Template Kosong",
+  "spintaxActive": "Spintax Aktif",
+  "moreButtons": "tombol lainnya"
 }

@@ -182,7 +182,7 @@ export function AddReservationForm({
 
     if (channelType === "TELEGRAM") {
       if (!targetChatId.trim()) {
-        toast.error("Telegram Chat ID / Username wajib diisi.");
+        toast.error(t("reservation.errTelegramRequired"));
         return;
       }
     } else {
@@ -317,14 +317,14 @@ export function AddReservationForm({
                 <Input
                   id="res-tele-chat-id"
                   required
-                  placeholder="@username atau Chat ID numerik (contoh: 123456789)"
+                  placeholder={t("reminder.schedule.telegramPlaceholder")}
                   value={targetChatId}
                   onChange={(e) => setTargetChatId(e.target.value)}
                   className="h-9 text-xs rounded-xl font-mono"
                   disabled={isSubmitting}
                 />
                 <span className="text-[10px] text-foreground-muted">
-                  Pesan konfirmasi & pengingat akan dikirimkan langsung ke akun Telegram pelanggan ini.
+                  {t("reservation.telegramHelpDesc")}
                 </span>
               </div>
             ) : (

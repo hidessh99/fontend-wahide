@@ -222,7 +222,7 @@ export function CountrySearchCombobox({
           >
             {filtered.length === 0 ? (
               <li className="text-foreground-muted px-4 py-3 text-center text-xs">
-                Negara tidak ditemukan
+                {t("iam.settings.noCountryFound")}
               </li>
             ) : (
               filtered.map((country, idx) => {

@@ -11,6 +11,9 @@
     "title": "Single-Turn Autoreply Rules",
     "subtitle": "Lightning-fast O(M) multi-keyword matching with zero queue latency.",
     "addRule": "Create New Rule",
+    "totalRules": "Total Rules",
+    "activeRules": "Active Rules",
+    "inactiveRules": "Inactive Rules",
     "searchPlaceholder": "Search by rule name or keywords...",
     "filterChannel": "All Channels",
     "filterDevice": "All Devices",
@@ -75,13 +78,21 @@
     "updatedSuccess": "Autoreply rule updated successfully",
     "updateFailed": "Failed to update autoreply rule",
     "deletedSuccess": "Autoreply rule deleted successfully",
-    "deleteFailed": "Failed to delete autoreply rule"
+    "deleteFailed": "Failed to delete autoreply rule",
+    "statTotal": "Total",
+    "statActive": "Active",
+    "statInactive": "Inactive",
+    "loading": "Loading autoreply rules..."
   },
   "flows": {
     "title": "Conversational Flows (DAG Builder)",
     "subtitle": "Visually design multi-turn conversational bots with dynamic conditional branches.",
+    "flowSubtitle": "Design interactive multi-turn chatbots with a visual DAG canvas.",
     "createFlow": "Create New Flow",
     "editFlow": "Open Flow Editor",
+    "testFlow": "Test Flow",
+    "loadingCanvas": "Loading conversation flow canvas...",
+    "loadingList": "Loading conversation flows...",
     "flowList": "Conversational Flows List",
     "searchPlaceholder": "Search conversational flows...",
     "nodesCount": "{count} Nodes",
@@ -151,7 +162,8 @@
     "updatedSuccess": "Conversational flow updated successfully",
     "updateFailed": "Failed to update conversational flow",
     "deletedSuccess": "Conversational flow deleted successfully",
-    "deleteFailed": "Failed to delete conversational flow"
+    "deleteFailed": "Failed to delete conversational flow",
+    "namePlaceholder": "Flow Name..."
   },
   "submissions": {
     "title": "Form Submissions & Leads",

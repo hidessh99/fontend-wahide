@@ -343,10 +343,10 @@ export function IamSellerSettingsView() {
                   </div>
                   <div>
                     <h3 className="text-foreground text-base font-black sm:text-lg">
-                      Keamanan &amp; Kata Sandi
+                      {t("settings.securityTab") || "Keamanan & Kata Sandi"}
                     </h3>
                     <p className="text-foreground-secondary text-xs font-semibold">
-                      Perbarui kata sandi untuk mengamankan akses dasbor.
+                      {t("iam.settings.updatePasswordDesc")}
                     </p>
                   </div>
                 </div>
@@ -354,7 +354,7 @@ export function IamSellerSettingsView() {
                 <form onSubmit={handleSavePassword} className="space-y-4">
                   <div>
                     <label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
-                      Kata Sandi Saat Ini
+                      {t("iam.settings.currentPassword")}
                     </label>
                     <div className="relative">
                       <Input
@@ -596,7 +596,7 @@ export function IamSellerSettingsView() {
                           Authorization: Bearer &lt;token&gt;
                         </code>
                         <span className="text-foreground-secondary text-xs">
-                          atau
+                          {t("common.or")}
                         </span>
                         <code className="dark:bg-wise-green/10 dark:text-wise-green dark:border-wise-green/20 rounded border border-emerald-500/25 bg-emerald-500/10 px-1.5 py-0.5 font-mono text-xs font-bold text-emerald-700">
                           X-API-Key

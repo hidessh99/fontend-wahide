@@ -203,7 +203,7 @@ export function CampaignDetailModal({
                   })}
                 </span>
                 <span className="text-[11px] font-medium opacity-90">
-                  Pesan siaran otomatis disiapkan untuk jadwal waktu ini.
+                  {t("campaign.omnichannel.autoPreparedNote")}
                 </span>
               </div>
             </div>

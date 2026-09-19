@@ -41,7 +41,7 @@ export function MessageLogDetailDialog({
   isOpen,
   onClose,
 }: MessageLogDetailDialogProps) {
-  const { locale } = useI18n();
+  const { t, locale } = useI18n();
   const { isCopied: copiedText, copy: copyText } = useClipboard();
   const { isCopied: copiedPhone, copy: copyPhone } = useClipboard();
   const { isCopied: copiedId, copy: copyId } = useClipboard();
@@ -56,7 +56,7 @@ export function MessageLogDetailDialog({
     if (!log.message_body) return;
     const ok = await copyText(log.message_body);
     if (ok) {
-      toast.success("Teks pesan berhasil disalin!", { id: "copy-log-body" });
+      toast.success(t("whatsapp.logs.copySuccess"), { id: "copy-log-body" });
     }
   };
 
@@ -64,7 +64,7 @@ export function MessageLogDetailDialog({
     if (!phone || phone === "-") return;
     const ok = await copyPhone(phone);
     if (ok) {
-      toast.success("Nomor penerima berhasil disalin!", { id: "copy-log-phone" });
+      toast.success(t("whatsapp.logs.copyPhoneSuccess"), { id: "copy-log-phone" });
     }
   };
 
@@ -72,7 +72,7 @@ export function MessageLogDetailDialog({
     if (!log.id) return;
     const ok = await copyId(log.id);
     if (ok) {
-      toast.success("ID Log berhasil disalin!", { id: "copy-log-id" });
+      toast.success(t("whatsapp.logs.copyId") + "!", { id: "copy-log-id" });
     }
   };
 
@@ -97,35 +97,35 @@ export function MessageLogDetailDialog({
         return (
           <Badge variant="info" className="gap-1 px-2.5 py-0.5 text-[11px] font-bold">
             <CheckCheck className="size-3.5" />
-            <span>READ (Dibaca)</span>
+            <span>{t("whatsapp.logs.statusRead")}</span>
           </Badge>
         );
       case "DELIVERED":
         return (
           <Badge variant="success" className="gap-1 px-2.5 py-0.5 text-[11px] font-bold">
             <CheckCheck className="size-3.5" />
-            <span>DELIVERED (Diterima)</span>
+            <span>{t("whatsapp.logs.statusDelivered")}</span>
           </Badge>
         );
       case "SENT":
         return (
           <Badge variant="neutral" className="gap-1 px-2.5 py-0.5 text-[11px] font-bold">
             <Check className="size-3.5" />
-            <span>SENT (Terkirim)</span>
+            <span>{t("whatsapp.logs.statusSent")}</span>
           </Badge>
         );
       case "FAILED":
         return (
           <Badge variant="danger" className="gap-1 px-2.5 py-0.5 text-[11px] font-bold">
             <XCircle className="size-3.5" />
-            <span>FAILED (Gagal)</span>
+            <span>{t("whatsapp.logs.statusFailed")}</span>
           </Badge>
         );
       default:
         return (
           <Badge variant="warning" className="gap-1 px-2.5 py-0.5 text-[11px] font-bold">
             <Clock className="size-3.5" />
-            <span>{s || "PENDING"}</span>
+            <span>{s || t("whatsapp.logs.statusPending")}</span>
           </Badge>
         );
     }
@@ -141,7 +141,7 @@ export function MessageLogDetailDialog({
           </div>
           <div className="min-w-0 flex-1">
             <DialogTitle className="text-foreground text-base font-black tracking-tight">
-              Detail Log Pesan WhatsApp
+              {t("whatsapp.logs.detailTitle")}
             </DialogTitle>
             <div className="mt-0.5 flex items-center gap-1.5">
               <span className="text-foreground-muted font-mono text-[11px] truncate max-w-[220px] sm:max-w-xs">
@@ -151,8 +151,8 @@ export function MessageLogDetailDialog({
                 type="button"
                 onClick={handleCopyId}
                 className="text-foreground-muted hover:text-foreground cursor-pointer p-0.5 transition"
-                title="Salin ID Log"
-                aria-label="Salin ID Log"
+                title={t("whatsapp.logs.copyId")}
+                aria-label={t("whatsapp.logs.copyId")}
               >
                 {copiedId ? (
                   <Check className="dark:text-wise-green size-3 text-emerald-600" />
@@ -170,21 +170,21 @@ export function MessageLogDetailDialog({
           <div className="grid grid-cols-2 gap-2.5">
             <div className="border-border bg-muted/20 rounded-xl border p-3">
               <span className="text-foreground-muted mb-1 block text-[10px] font-bold uppercase tracking-wider">
-                Status Pengiriman
+                {t("whatsapp.logs.deliveryStatus")}
               </span>
               <div className="pt-0.5">{renderStatusBadge(log.status)}</div>
             </div>
 
             <div className="border-border bg-muted/20 rounded-xl border p-3">
               <span className="text-foreground-muted mb-1 block text-[10px] font-bold uppercase tracking-wider">
-                Arah Transmisi
+                {t("whatsapp.logs.transmissionDirection")}
               </span>
               <div className="flex items-center gap-1.5 pt-0.5 font-bold text-foreground">
                 <Send className="dark:text-wise-green size-3.5 text-emerald-600" />
                 <span>
                   {log.direction?.toUpperCase() === "INBOUND"
-                    ? "Masuk (Inbound)"
-                    : "Keluar (Outbound)"}
+                    ? t("whatsapp.logs.inbound")
+                    : t("whatsapp.logs.outbound")}
                 </span>
               </div>
             </div>
@@ -195,7 +195,7 @@ export function MessageLogDetailDialog({
             <div className="flex items-center justify-between">
               <span className="text-foreground-secondary flex items-center gap-1.5 font-semibold">
                 <Smartphone className="text-foreground-muted size-3.5" />
-                <span>Nomor Penerima</span>
+                <span>{t("whatsapp.logs.recipientNumber")}</span>
               </span>
               <div className="flex items-center gap-1.5">
                 <span className="text-foreground font-mono font-bold text-xs">
@@ -205,8 +205,8 @@ export function MessageLogDetailDialog({
                   type="button"
                   onClick={handleCopyPhone}
                   className="text-foreground-muted hover:text-foreground cursor-pointer p-0.5 transition"
-                  title="Salin Nomor Penerima"
-                  aria-label="Salin Nomor Penerima"
+                  title={t("whatsapp.logs.copyRecipient")}
+                  aria-label={t("whatsapp.logs.copyRecipient")}
                 >
                   {copiedPhone ? (
                     <Check className="dark:text-wise-green size-3 text-emerald-600" />
@@ -221,10 +221,10 @@ export function MessageLogDetailDialog({
 
             <div className="flex items-center justify-between">
               <span className="text-foreground-secondary font-semibold">
-                ID Perangkat (Device)
+                {t("whatsapp.logs.deviceId")}
               </span>
               <span className="text-foreground-secondary font-mono text-[11px] truncate max-w-[200px] sm:max-w-xs">
-                {log.device_id || "Default Device"}
+                {log.device_id || t("whatsapp.logs.defaultDevice")}
               </span>
             </div>
           </div>
@@ -233,23 +233,23 @@ export function MessageLogDetailDialog({
           <div className="border-border bg-muted/20 space-y-2 rounded-xl border p-3.5">
             <div className="flex items-center justify-between">
               <span className="text-foreground-secondary text-[11px] font-bold uppercase tracking-wider">
-                Konten Pesan
+                {t("whatsapp.logs.messageContent")}
               </span>
               <button
                 type="button"
                 onClick={handleCopyBody}
                 className="text-foreground-muted hover:text-foreground flex cursor-pointer items-center gap-1 text-[11px] font-semibold transition"
-                title="Salin Teks Pesan"
+                title={t("whatsapp.logs.copyText")}
               >
                 {copiedText ? (
                   <>
                     <Check className="dark:text-wise-green size-3 text-emerald-600" />
-                    <span className="dark:text-wise-green text-emerald-600">Tersalin</span>
+                    <span className="dark:text-wise-green text-emerald-600">{t("whatsapp.logs.copied")}</span>
                   </>
                 ) : (
                   <>
                     <Copy className="size-3" />
-                    <span>Salin Teks</span>
+                    <span>{t("whatsapp.logs.copyText")}</span>
                   </>
                 )}
               </button>
@@ -258,7 +258,7 @@ export function MessageLogDetailDialog({
             <div className="border-border/60 bg-surface text-foreground max-h-48 overflow-y-auto rounded-lg border p-3 text-xs leading-relaxed whitespace-pre-wrap select-text dark:bg-[#10110e]">
               {log.message_body || (
                 <span className="text-foreground-muted italic">
-                  Tidak ada pesan teks (Hanya lampiran media)
+                  {t("whatsapp.logs.emptyBody")}
                 </span>
               )}
             </div>
@@ -269,7 +269,7 @@ export function MessageLogDetailDialog({
             <div className="border-border bg-muted/20 flex items-center justify-between rounded-xl border p-3 text-xs">
               <span className="text-foreground-secondary flex items-center gap-1.5 font-semibold">
                 <FileText className="size-3.5 text-blue-500" />
-                <span>Lampiran Media</span>
+                <span>{t("whatsapp.logs.mediaAttachment")}</span>
               </span>
               <a
                 href={log.media_url}
@@ -277,7 +277,7 @@ export function MessageLogDetailDialog({
                 rel="noopener noreferrer"
                 className="dark:text-wise-green inline-flex items-center gap-1 font-mono font-bold text-emerald-600 hover:underline"
               >
-                <span>Buka Media</span>
+                <span>{t("whatsapp.logs.openMedia")}</span>
                 <ExternalLink className="size-3" />
               </a>
             </div>
@@ -288,11 +288,11 @@ export function MessageLogDetailDialog({
             <div className="space-y-1.5 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3.5 text-xs text-rose-700 dark:text-rose-400">
               <div className="flex items-center gap-1.5 font-bold">
                 <AlertCircle className="size-4" />
-                <span>Penyebab Kegagalan Transmisi</span>
+                <span>{t("whatsapp.logs.failureReason")}</span>
               </div>
               <p className="font-mono text-[11px] leading-relaxed select-text">
                 {log.error_message ||
-                  "Pesan gagal dikirim oleh gateway socket WhatsApp (Penerima tidak aktif atau sesi terputus)."}
+                  t("whatsapp.logs.defaultFailureReason")}
               </p>
             </div>
           )}
@@ -302,7 +302,7 @@ export function MessageLogDetailDialog({
             <div className="flex items-center justify-between">
               <span className="text-foreground-secondary flex items-center gap-1 font-medium">
                 <Calendar className="size-3 text-foreground-muted" />
-                <span>Waktu Dibuat</span>
+                <span>{t("whatsapp.logs.createdAt")}</span>
               </span>
               <span className="text-foreground-secondary font-mono text-[11px]">
                 {formatDateTime(log.created_at)}
@@ -312,7 +312,7 @@ export function MessageLogDetailDialog({
             <div className="flex items-center justify-between">
               <span className="text-foreground-secondary flex items-center gap-1 font-medium">
                 <Clock className="size-3 text-foreground-muted" />
-                <span>Waktu Terkirim (Socket)</span>
+                <span>{t("whatsapp.logs.sentAt")}</span>
               </span>
               <span className="text-foreground-secondary font-mono text-[11px]">
                 {formatDateTime(log.sent_at || log.created_at)}
@@ -330,7 +330,7 @@ export function MessageLogDetailDialog({
             onClick={onClose}
             className="cursor-pointer rounded-full px-5 text-xs font-semibold"
           >
-            Tutup
+            {t("common.close")}
           </Button>
         </DialogFooter>
       </DialogContent>

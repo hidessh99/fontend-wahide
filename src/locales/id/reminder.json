@@ -32,7 +32,9 @@
     "dispatchNow": "Kirim Sekarang",
     "dispatchTooltip": "Kirim semua pengingat yang jatuh tempo sekarang",
     "refreshTooltip": "Muat Ulang Data",
-    "evaluating": "Mengevaluasi..."
+    "evaluating": "Mengevaluasi...",
+    "prev": "Sebelumnya",
+    "next": "Selanjutnya"
   },
   "tabs": {
     "schedules": "Jadwal Pengingat",
@@ -47,6 +49,11 @@
     "senderDevice": "Nomor WhatsApp Pengirim",
     "selectDevice": "-- Pilih Slot Device --",
     "noDevices": "Belum ada perangkat WhatsApp terhubung.",
+    "noWaba": "Belum ada akun Meta WABA resmi aktif.",
+    "noTelegram": "Belum ada bot Telegram aktif.",
+    "evalScheduleNote": "Jadwal otomatis dievaluasi setiap hari pada jam ini.",
+    "configurePhasesNote": "Atur konten pesan dan saluran untuk masing-masing fase waktu jadwal.",
+    "variableAutoReplaceNote": "Variabel otomatis diganti dengan data janji temu pelanggan.",
     "sendTime": "Jam Kirim Harian (WIB)",
     "chatVisibility": "Tampilkan Riwayat di Obrolan WhatsApp",
     "chatVisibilityDesc": "Jika aktif, riwayat pengiriman pesan otomatis akan terlihat di layar obrolan WhatsApp.",
@@ -57,7 +64,9 @@
     "enablePhase": "Aktifkan Fase Ini",
     "phaseTemplate": "Template Pesan Fase Ini",
     "characters": "karakter",
-    "templatePlaceholder": "Contoh: Halo Kak {{nama}}, mengingatkan jadwal Anda besok {{tanggal}}..."
+    "templatePlaceholder": "Contoh: Halo Kak {{nama}}, mengingatkan jadwal Anda besok {{tanggal}}...",
+    "noWhatsapp": "Belum ada perangkat WhatsApp terhubung.",
+    "sameDay": "Hari H"
   },
   "quick": {
     "title": "Jadwalkan Pengingat Cepat",
@@ -119,7 +128,9 @@
     "empty": "Belum ada riwayat pengiriman",
     "emptyDesc": "Pesan yang dieksekusi otomatis oleh scheduler akan tercatat di sini secara permanen.",
     "statusFailed": "Gagal",
-    "statusSuccess": "Sukses"
+    "statusSuccess": "Sukses",
+    "unknownError": "Terjadi kesalahan tidak dikenal",
+    "pageInfo": "Menampilkan {start}-{end} dari {total} log"
   },
   "variables": {
     "title": "Variabel Dinamis Pengingat:",
@@ -146,5 +157,9 @@
     "telegramActive": "{count} Bot Aktif",
     "telegramRecommended": "Klien VIP, komunitas, konsultasi & pengguna IT",
     "notReady": "Belum siap"
+  },
+  "schedule": {
+    "telegramHelp": "Chat ID atau username pelanggan di Telegram.",
+    "telegramPlaceholder": "@username atau 123456789"
   }
 }

@@ -28,6 +28,7 @@ import idLandingPages from "@/locales/id/landing_pages.json";
 import idAutoreply from "@/locales/id/autoreply.json";
 import idTelegram from "@/locales/id/telegram.json";
 import idOmnichannel from "@/locales/id/omnichannel.json";
+import idIam from "@/locales/id/iam.json";
 
 import enCommon from "@/locales/en/common.json";
 import enAuth from "@/locales/en/auth.json";
@@ -52,6 +53,7 @@ import enLandingPages from "@/locales/en/landing_pages.json";
 import enAutoreply from "@/locales/en/autoreply.json";
 import enTelegram from "@/locales/en/telegram.json";
 import enOmnichannel from "@/locales/en/omnichannel.json";
+import enIam from "@/locales/en/iam.json";
 
 const dictionaries: Record<Locale, Record<string, unknown>> = {
   id: {
@@ -78,6 +80,7 @@ const dictionaries: Record<Locale, Record<string, unknown>> = {
     autoreply: idAutoreply,
     telegram: idTelegram,
     omnichannel: idOmnichannel,
+    iam: idIam,
   },
   en: {
     common: enCommon,
@@ -103,6 +106,7 @@ const dictionaries: Record<Locale, Record<string, unknown>> = {
     autoreply: enAutoreply,
     telegram: enTelegram,
     omnichannel: enOmnichannel,
+    iam: enIam,
   },
 };
 
@@ -133,6 +137,18 @@ export const useI18nStore = create<I18nStoreState>()(
   ),
 );
 
+function extractString(val: unknown): string | undefined {
+  if (typeof val === "string") return val;
+  if (val && typeof val === "object") {
+    const obj = val as Record<string, unknown>;
+    if (typeof obj.title === "string") return obj.title;
+    if (typeof obj._ === "string") return obj._;
+    if (typeof obj.label === "string") return obj.label;
+    if (typeof obj.default === "string") return obj.default;
+  }
+  return undefined;
+}
+
 function resolvePath(
   dict: Record<string, unknown>,
   parts: string[],
@@ -146,7 +162,8 @@ function resolvePath(
       break;
     }
   }
-  if (typeof result === "string") return result;
+  const directStr = extractString(result);
+  if (directStr !== undefined) return directStr;
 
   // Check in 'common' namespace if not found at root
   if (dict.common && typeof dict.common === "object") {
@@ -163,7 +180,8 @@ function resolvePath(
         break;
       }
     }
-    if (typeof commonResult === "string") return commonResult;
+    const commonStr = extractString(commonResult);
+    if (commonStr !== undefined) return commonStr;
   }
 
   return undefined;
@@ -180,11 +198,11 @@ export function useI18n() {
       let text = resolvePath(currentDict, parts);
 
       // Fallback to Indonesian (id)
-      if (!text && locale !== "id") {
+      if (text === undefined && locale !== "id") {
         text = resolvePath(dictionaries.id, parts);
       }
 
-      if (!text) {
+      if (text === undefined) {
         return path;
       }
 

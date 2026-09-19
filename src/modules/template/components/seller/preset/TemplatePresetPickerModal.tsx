@@ -185,8 +185,8 @@ export function TemplatePresetPickerModal({
           {presets.length === 0 ? (
             <div className="py-16 text-center text-foreground-muted space-y-2">
               <Sparkles className="size-9 mx-auto text-foreground-muted/60" />
-              <p className="text-sm font-semibold text-foreground">Tidak ada preset yang sesuai</p>
-              <p className="text-xs">Coba ubah filter kategori atau kata kunci pencarian Anda</p>
+              <p className="text-sm font-semibold text-foreground">{t("template.noMatchingPresets")}</p>
+              <p className="text-xs">{t("template.tryChangeFilters")}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-4.5 lg:gap-5">

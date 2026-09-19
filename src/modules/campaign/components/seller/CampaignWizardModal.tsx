@@ -397,7 +397,7 @@ export function CampaignWizardModal({
       };
 
       await onSubmit(payload);
-      toast.success("Kampanye siaran omnichannel berhasil dibuat!");
+      toast.success(t("campaign.omnichannel.createOmnichannelTitle") + "!");
       onClose();
     } catch (err: unknown) {
       const msg =
@@ -429,20 +429,20 @@ export function CampaignWizardModal({
         <DialogHeader className="border-border/80 shrink-0 space-y-3 border-b p-4 pb-3 text-left sm:p-6">
           <div>
             <DialogTitle className="text-foreground text-xl font-black tracking-tight sm:text-2xl">
-              Buat Kampanye Siaran Omnichannel
+              {t("campaign.omnichannel.createOmnichannelTitle")}
             </DialogTitle>
             <DialogDescription className="text-foreground-secondary text-xs font-semibold">
-              Kirim pesan massal terpadu via WhatsApp Web, Meta WABA Official, atau Telegram Bot.
+              {t("campaign.omnichannel.createOmnichannelSubtitle")}
             </DialogDescription>
           </div>
 
           {/* Stepper Indicator */}
           <div className="grid grid-cols-4 gap-1.5 pt-1 text-xs font-bold sm:gap-2">
             {[
-              { num: 1, label: "Saluran & Pengirim", icon: Layers },
-              { num: 2, label: "Target Audiens", icon: Users },
-              { num: 3, label: "Konten Pesan", icon: MessageSquare },
-              { num: 4, label: "Safeguard & Jadwal", icon: ShieldCheck },
+              { num: 1, label: t("campaign.omnichannel.stepChannel"), icon: Layers },
+              { num: 2, label: t("campaign.omnichannel.stepAudience"), icon: Users },
+              { num: 3, label: t("campaign.omnichannel.stepMessage"), icon: MessageSquare },
+              { num: 4, label: t("campaign.omnichannel.stepSafeguard"), icon: ShieldCheck },
             ].map(({ num, label, icon: Icon }) => (
               <div
                 key={num}
@@ -503,7 +503,7 @@ export function CampaignWizardModal({
               {/* Channel Selector */}
               <div>
                 <Label className="text-foreground-secondary mb-2 block font-bold tracking-wider uppercase">
-                  Pilih Saluran Pengiriman Siaran
+                  {t("campaign.omnichannel.selectChannelLabel")}
                 </Label>
                 <CampaignChannelSelector
                   selectedChannel={channelType}
@@ -519,7 +519,7 @@ export function CampaignWizardModal({
                   <div className="space-y-2.5">
                     <div className="flex items-center justify-between">
                       <Label className="text-foreground-secondary font-bold tracking-wider uppercase">
-                        Pilih Perangkat WhatsApp Terhubung (Multi-Device Pooling)
+                        {t("campaign.omnichannel.selectWaDevicePool")}
                       </Label>
                       {activeDevices.length > 1 && (
                         <button
@@ -528,8 +528,8 @@ export function CampaignWizardModal({
                           className="text-emerald-700 dark:text-wise-green hover:underline cursor-pointer text-[11px] font-bold"
                         >
                           {selectedDeviceIds.length === activeDevices.length
-                            ? "Batalkan Semua"
-                            : "Pilih Semua Perangkat"}
+                            ? t("campaign.omnichannel.deselectAll")
+                            : t("campaign.omnichannel.selectAll")}
                         </button>
                       )}
                     </div>
@@ -537,10 +537,10 @@ export function CampaignWizardModal({
                     {activeDevices.length === 0 ? (
                       <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-center">
                         <p className="font-bold text-amber-700 dark:text-amber-400">
-                          Tidak ada slot perangkat WhatsApp Web terhubung
+                          {t("campaign.omnichannel.noWaDeviceConnected")}
                         </p>
                         <p className="text-foreground-secondary mt-1 text-[11px]">
-                          Silakan hubungkan perangkat WhatsApp via scan QR di menu Perangkat.
+                          {t("campaign.omnichannel.connectWaDevicePrompt")}
                         </p>
                         <Button
                           type="button"
@@ -553,7 +553,7 @@ export function CampaignWizardModal({
                           className="mt-3 gap-1.5 px-4 text-xs font-bold"
                         >
                           <Smartphone className="size-3.5" />
-                          <span>Buka Menu Perangkat WA</span>
+                          <span>{t("campaign.omnichannel.openWaDevices")}</span>
                         </Button>
                       </div>
                     ) : (
@@ -604,15 +604,15 @@ export function CampaignWizardModal({
                 {channelType === "META_WABA_OFFICIAL" && (
                   <div className="space-y-2.5">
                     <Label className="text-foreground-secondary font-bold tracking-wider uppercase">
-                      Pilih Akun Nomor Bisnis Resmi Meta
+                      {t("campaign.omnichannel.selectWabaAccount")}
                     </Label>
                     {activeWabaAccounts.length === 0 ? (
                       <div className="rounded-xl border border-sky-500/30 bg-sky-500/10 p-4 text-center">
                         <p className="font-bold text-sky-700 dark:text-sky-300">
-                          Belum ada akun Meta WABA terhubung
+                          {t("campaign.omnichannel.noWabaConnected")}
                         </p>
                         <p className="text-foreground-secondary mt-1 text-[11px]">
-                          Hubungkan akun WhatsApp Business Official Anda melalui Meta Cloud API.
+                          {t("campaign.omnichannel.connectWabaPrompt")}
                         </p>
                         <Button
                           type="button"
@@ -625,7 +625,7 @@ export function CampaignWizardModal({
                           className="mt-3 gap-1.5 px-4 text-xs font-bold bg-sky-600 hover:bg-sky-700 text-white"
                         >
                           <ShieldCheck className="size-3.5" />
-                          <span>Hubungkan Meta WABA</span>
+                          <span>{t("campaign.omnichannel.connectWabaBtn")}</span>
                         </Button>
                       </div>
                     ) : (
@@ -676,15 +676,15 @@ export function CampaignWizardModal({
                 {channelType === "TELEGRAM_BOT" && (
                   <div className="space-y-2.5">
                     <Label className="text-foreground-secondary font-bold tracking-wider uppercase">
-                      Pilih Bot Telegram Pengirim Siaran
+                      {t("campaign.omnichannel.selectTelegramBot")}
                     </Label>
                     {activeTelegramBots.length === 0 ? (
                       <div className="rounded-xl border border-blue-500/30 bg-blue-500/10 p-4 text-center">
                         <p className="font-bold text-blue-600 dark:text-blue-400">
-                          Belum ada Bot Telegram aktif
+                          {t("campaign.omnichannel.noTelegramConnected")}
                         </p>
                         <p className="text-foreground-secondary mt-1 text-[11px]">
-                          Hubungkan bot Telegram dari @BotFather di menu Bot Telegram.
+                          {t("campaign.omnichannel.connectTelegramPrompt")}
                         </p>
                         <Button
                           type="button"
@@ -697,7 +697,7 @@ export function CampaignWizardModal({
                           className="mt-3 gap-1.5 px-4 text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white"
                         >
                           <Bot className="size-3.5" />
-                          <span>Hubungkan Bot Telegram</span>
+                          <span>{t("campaign.omnichannel.connectTelegramBtn")}</span>
                         </Button>
                       </div>
                     ) : (
@@ -758,24 +758,24 @@ export function CampaignWizardModal({
                 {[
                   {
                     type: "ALL" as const,
-                    title: "Semua Kontak Pelanggan",
-                    desc: `Menjangkau seluruh ${total || contacts.length} kontak di buku alamat`,
+                    title: t("campaign.omnichannel.allContacts"),
+                    desc: t("campaign.omnichannel.allContactsDesc", { count: total || contacts.length }),
                   },
                   {
                     type: "TAGS" as const,
-                    title: "Berdasarkan Tag",
-                    desc: "Targetkan grup spesifik seperti VIP, Grosir, atau Leads",
+                    title: t("campaign.omnichannel.byTags"),
+                    desc: t("campaign.omnichannel.byTagsDesc"),
                   },
                   {
                     type: "CUSTOM" as const,
                     title:
                       channelType === "TELEGRAM_BOT"
-                        ? "Input Chat ID Manual"
-                        : "Input Nomor Manual",
+                        ? t("campaign.omnichannel.customTelegramTitle")
+                        : t("campaign.omnichannel.customWaTitle"),
                     desc:
                       channelType === "TELEGRAM_BOT"
-                        ? "Ketik atau paste daftar Telegram Chat ID / Username"
-                        : "Ketik atau paste daftar nomor WhatsApp langsung",
+                        ? t("campaign.omnichannel.customTelegramDesc")
+                        : t("campaign.omnichannel.customWaDesc"),
                   },
                 ].map((item) => (
                   <div
@@ -804,17 +804,17 @@ export function CampaignWizardModal({
                 <div className="space-y-2 pt-2">
                   <div className="flex items-center justify-between">
                     <span className="text-foreground-secondary block text-[11px] font-bold uppercase">
-                      Pilih Tag Audiens
+                      {t("campaign.omnichannel.selectAudienceTags")}
                     </span>
                     {selectedTagIds.length > 0 && (
                       <span className="text-foreground-muted text-[11px] font-mono">
-                        {selectedTagIds.length} tag dipilih
+                        {t("campaign.omnichannel.tagsSelected", { count: selectedTagIds.length })}
                       </span>
                     )}
                   </div>
                   {tags.length === 0 ? (
                     <p className="text-foreground-muted text-xs italic">
-                      Belum ada tag kontak yang tersedia.
+                      {t("campaign.omnichannel.noTagsAvailable")}
                     </p>
                   ) : (
                     <div className="flex flex-wrap gap-1.5">
@@ -845,8 +845,8 @@ export function CampaignWizardModal({
                 <div className="space-y-1.5 pt-2">
                   <Label className="text-foreground-secondary block text-[11px] font-bold uppercase">
                     {channelType === "TELEGRAM_BOT"
-                      ? "Daftar Chat ID / Username Telegram (Pisahkan tiap baris)"
-                      : "Daftar Nomor Telepon (Pisahkan tiap baris)"}
+                      ? t("campaign.omnichannel.telegramChatIdsListLabel")
+                      : t("campaign.omnichannel.phoneNumbersListLabel")}
                   </Label>
                   {channelType === "TELEGRAM_BOT" ? (
                     <Textarea
@@ -873,10 +873,10 @@ export function CampaignWizardModal({
               {/* Summary of Audience Count */}
               <div className="bg-emerald-500/5 border border-emerald-500/30 flex items-center justify-between rounded-xl p-3">
                 <span className="text-foreground font-semibold">
-                  Estimasi Total Penerima Siaran:
+                  {t("campaign.omnichannel.estimatedRecipients")}
                 </span>
                 <span className="text-emerald-700 dark:text-wise-green font-mono font-black text-sm">
-                  {calculateTargetCount()} Penerima
+                  {t("campaign.omnichannel.recipientsUnit", { count: calculateTargetCount() })}
                 </span>
               </div>
             </div>
@@ -891,14 +891,14 @@ export function CampaignWizardModal({
                   <div>
                     <div className="mb-1.5 flex items-center justify-between">
                       <Label className="text-foreground-secondary font-bold tracking-wider uppercase">
-                        Template Pesan Spintax WhatsApp
+                        {t("campaign.omnichannel.spintaxTemplateLabel")}
                       </Label>
                       <button
                         type="button"
                         onClick={insertSpintaxSample}
                         className="text-emerald-700 dark:text-wise-green cursor-pointer text-xs font-bold hover:underline"
                       >
-                        + Sisipkan Contoh Spintax
+                        {t("campaign.omnichannel.insertSpintaxSample")}
                       </button>
                     </div>
                     <Textarea
@@ -909,8 +909,8 @@ export function CampaignWizardModal({
                       variant="rounded"
                     />
                     <div className="text-foreground-muted mt-1 flex justify-between text-[11px]">
-                      <span>Gunakan {"{Opsi A|Opsi B}"} untuk variasi anti-ban</span>
-                      <span>Variabel: {"{nama}"}</span>
+                      <span>{t("campaign.omnichannel.spintaxHelpAntiBan")}</span>
+                      <span>{t("campaign.omnichannel.variablesHelp")}</span>
                     </div>
                   </div>
 
@@ -937,13 +937,13 @@ export function CampaignWizardModal({
                 <div className="space-y-3">
                   <div>
                     <Label className="text-foreground-secondary mb-1.5 block font-bold tracking-wider uppercase">
-                      Isi Pesan Broadcast Telegram
+                      {t("campaign.omnichannel.telegramMessageLabel")}
                     </Label>
                     <Textarea
                       rows={4}
                       value={telegramMessage}
                       onChange={(e) => setTelegramMessage(e.target.value)}
-                      placeholder="Ketik pesan siaran Telegram..."
+                      placeholder={t("campaign.omnichannel.telegramMessagePlaceholder")}
                       variant="rounded"
                       className="font-mono text-xs"
                     />
@@ -969,7 +969,7 @@ export function CampaignWizardModal({
                   <div className="flex items-center gap-2">
                     <ShieldCheck className="dark:text-wise-green size-4 text-emerald-600" />
                     <span className="text-foreground font-bold tracking-wider uppercase">
-                      Konfigurasi Anti-Ban WhatsApp Web
+                      {t("campaign.omnichannel.antiBanConfig")}
                     </span>
                   </div>
 
@@ -977,10 +977,10 @@ export function CampaignWizardModal({
                     <div>
                       <div className="flex items-center justify-between">
                         <Label className="text-foreground-secondary font-semibold">
-                          Jitter Delay Acak Antar Pesan:
+                          {t("campaign.omnichannel.jitterDelaySlider")}
                         </Label>
                         <span className="dark:text-wise-green font-mono font-black text-emerald-700">
-                          {jitterDelaySeconds} Detik
+                          {t("campaign.omnichannel.secondsUnit", { seconds: jitterDelaySeconds })}
                         </span>
                       </div>
                       <input
@@ -994,17 +994,17 @@ export function CampaignWizardModal({
                         className="accent-wise-green mt-1 w-full"
                       />
                       <span className="text-foreground-muted text-[11px]">
-                        Mencegah deteksi lonjakan blast robotik WhatsApp.
+                        {t("campaign.omnichannel.jitterDesc")}
                       </span>
                     </div>
 
                     <div className="border-border/50 flex items-center justify-between border-t pt-2.5">
                       <div>
                         <span className="text-foreground block font-bold">
-                          Simulasi Mengetik Manusia
+                          {t("campaign.omnichannel.humanTypingSimulation")}
                         </span>
                         <span className="text-foreground-muted text-[11px]">
-                          Menampilkan status &quot;sedang mengetik...&quot; sebelum mengirim.
+                          {t("campaign.omnichannel.humanTypingDesc")}
                         </span>
                       </div>
                       <Switch
@@ -1016,10 +1016,10 @@ export function CampaignWizardModal({
                     <div className="border-border/50 flex items-center justify-between border-t pt-2.5">
                       <div className="pr-4">
                         <span className="text-foreground block font-bold">
-                          Otomatis Lewati Nomor Mati / Tak Terdaftar
+                          {t("campaign.omnichannel.skipDeadNumbers")}
                         </span>
                         <span className="text-foreground-muted text-[11px]">
-                          Melindungi trust score nomor agar tidak drop saat kena nomor expired.
+                          {t("campaign.omnichannel.skipDeadNumbersDesc")}
                         </span>
                       </div>
                       <Switch
@@ -1037,11 +1037,11 @@ export function CampaignWizardModal({
                   <div className="flex items-center gap-2 text-sky-700 dark:text-sky-300">
                     <ShieldCheck className="size-4" />
                     <span className="font-bold tracking-wider uppercase">
-                      Meta Cloud API Official Pipeline
+                      {t("campaign.omnichannel.metaPipelineTitle")}
                     </span>
                   </div>
                   <p className="text-foreground-secondary text-[11px] leading-relaxed">
-                    Siaran WABA dikirim langsung melalui server resmi Meta dengan kapasitas throughput hingga 500 pesan/detik. Tidak memerlukan simulasi pengetikan atau delay jitter anti-ban.
+                    {t("campaign.omnichannel.metaPipelineDesc")}
                   </p>
                 </div>
               )}

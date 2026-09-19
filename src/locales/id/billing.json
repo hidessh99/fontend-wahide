@@ -52,5 +52,6 @@
   "errorLoadInvoices": "Gagal Memuat Riwayat Faktur",
   "qrisInstantTitle": "QRIS Instan (Auto-Settlement)",
   "qrisInstantBadge": "0 Detik",
-  "qrisScanSupport": "Scan via BCA, Mandiri, BRI, BNI, GoPay, OVO, DANA, ShopeePay"
+  "qrisScanSupport": "Scan via BCA, Mandiri, BRI, BNI, GoPay, OVO, DANA, ShopeePay",
+  "issueDate": "Tanggal Terbit"
 }
