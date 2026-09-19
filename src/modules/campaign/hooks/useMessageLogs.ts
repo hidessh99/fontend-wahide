@@ -11,6 +11,7 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 10) {
   const [pageSize, setPageSize] = useState(initialPageSize);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
+  const [messageTypeFilter, setMessageTypeFilter] = useState<string>("ALL");
   const [deviceIdFilter, setDeviceIdFilter] = useState<string | undefined>(
     undefined,
   );
@@ -21,7 +22,7 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 10) {
   // Reset page to 1 when search, filter, or pageSize changes
   useEffect(() => {
     setPage(1);
-  }, [searchQuery, statusFilter, deviceIdFilter, pageSize]);
+  }, [searchQuery, statusFilter, messageTypeFilter, deviceIdFilter, pageSize]);
 
   const fetchLogs = useCallback(
     async (
@@ -30,6 +31,7 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 10) {
         pageSize?: number;
         search?: string;
         status?: string;
+        messageType?: string;
         deviceId?: string;
       },
       signal?: AbortSignal,
@@ -45,6 +47,10 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 10) {
           overrideParams?.search !== undefined
             ? overrideParams.search
             : searchQuery;
+        const targetMessageType =
+          overrideParams?.messageType !== undefined
+            ? overrideParams.messageType
+            : messageTypeFilter;
 
         const [res, failedProbe] = await Promise.all([
           campaignApi.getMessageLogs({
@@ -52,6 +58,7 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 10) {
             pageSize: overrideParams?.pageSize ?? pageSize,
             search: targetSearch,
             status: targetStatus,
+            messageType: targetMessageType !== "ALL" ? targetMessageType : undefined,
             deviceId:
               overrideParams?.deviceId !== undefined
                 ? overrideParams.deviceId
@@ -62,6 +69,7 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 10) {
             ? campaignApi
                 .getMessageLogs({
                   status: "FAILED",
+                  messageType: targetMessageType !== "ALL" ? targetMessageType : undefined,
                   pageSize: 1,
                   signal,
                 })
@@ -85,7 +93,7 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 10) {
         setIsLoading(false);
       }
     },
-    [page, pageSize, searchQuery, statusFilter, deviceIdFilter],
+    [page, pageSize, searchQuery, statusFilter, messageTypeFilter, deviceIdFilter],
   );
 
   useEffect(() => {
@@ -103,6 +111,7 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 10) {
             pageSize,
             search: searchQuery,
             status: statusFilter,
+            messageType: messageTypeFilter !== "ALL" ? messageTypeFilter : undefined,
             deviceId: deviceIdFilter,
             signal: controller.signal,
           }),
@@ -110,6 +119,7 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 10) {
             ? campaignApi
                 .getMessageLogs({
                   status: "FAILED",
+                  messageType: messageTypeFilter !== "ALL" ? messageTypeFilter : undefined,
                   pageSize: 1,
                   signal: controller.signal,
                 })
@@ -145,7 +155,7 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 10) {
       isMounted = false;
       controller.abort();
     };
-  }, [page, pageSize, searchQuery, statusFilter, deviceIdFilter]);
+  }, [page, pageSize, searchQuery, statusFilter, messageTypeFilter, deviceIdFilter]);
 
   return {
     logs,
@@ -159,6 +169,8 @@ export function useMessageLogs(initialPage = 1, initialPageSize = 10) {
     setSearchQuery,
     statusFilter,
     setStatusFilter,
+    messageTypeFilter,
+    setMessageTypeFilter,
     deviceIdFilter,
     setDeviceIdFilter,
     isLoading,

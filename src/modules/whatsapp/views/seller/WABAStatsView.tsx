@@ -19,12 +19,24 @@ import { useI18n } from "@/lib/i18n/context";
 import {
   useWABAStats,
   WABAStatsTimeRange,
+  WABAStatsCategory,
 } from "@/modules/whatsapp/hooks/useWABAStats";
+import { DateRangePicker } from "@/components/ui/date-range-picker";
+import { MessageCategoryTabs, MessageCategory } from "@/components/ui/message-category-tabs";
 
 export function WABAStatsView() {
   const { t } = useI18n();
-  const { timeRange, setTimeRange, stats, isLoading, refetch } =
-    useWABAStats();
+  const {
+    timeRange,
+    setTimeRange,
+    categoryFilter,
+    setCategoryFilter,
+    customRange,
+    setCustomRange,
+    stats,
+    isLoading,
+    refetch,
+  } = useWABAStats();
 
   const timeRanges: {
     id: WABAStatsTimeRange;
@@ -37,7 +49,13 @@ export function WABAStatsView() {
   ];
 
   const activePeriodLabel =
-    timeRanges.find((r) => r.id === timeRange)?.badgeLabel || t("whatsapp.stats.badgeToday");
+    timeRange === "custom" && customRange.from
+      ? `${customRange.from.toLocaleDateString("id-ID", { day: "numeric", month: "short" })}${
+          customRange.to
+            ? ` - ${customRange.to.toLocaleDateString("id-ID", { day: "numeric", month: "short" })}`
+            : ""
+        }`
+      : timeRanges.find((r) => r.id === timeRange)?.badgeLabel || t("whatsapp.stats.badgeToday");
 
   // Calculate maximum total volume for normalized bar scaling in Daily Activity
   const maxDayTotal = Math.max(
@@ -63,8 +81,8 @@ export function WABAStatsView() {
           </p>
         </div>
 
-        {/* Action Bar: Time Range Selector & Refresh */}
-        <div className="flex items-center gap-2.5 self-start sm:self-auto">
+        {/* Action Bar: Time Range Selector, DateRangePicker & Refresh */}
+        <div className="flex flex-wrap items-center gap-2.5 self-start sm:self-auto">
           <div className="bg-muted/60 border-border/80 flex items-center rounded-full border p-1">
             {timeRanges.map((range) => {
               const isActive = timeRange === range.id;
@@ -85,12 +103,23 @@ export function WABAStatsView() {
             })}
           </div>
 
+          <DateRangePicker
+            range={customRange}
+            onRangeChange={(r) => {
+              setCustomRange(r);
+              if (r.from) {
+                setTimeRange("custom");
+              }
+            }}
+            placeholder="Rentang kustom"
+          />
+
           <Button
             variant="outline"
             size="sm"
             onClick={() => refetch()}
             disabled={isLoading}
-            className="border-border/80 text-xs font-semibold rounded-full h-8 px-3"
+            className="border-border/80 text-xs font-semibold rounded-full h-9 px-3"
           >
             <RefreshCw
               className={`mr-1.5 size-3.5 ${isLoading ? "animate-spin" : ""}`}
@@ -98,6 +127,14 @@ export function WABAStatsView() {
             <span>{t("whatsapp.stats.reload")}</span>
           </Button>
         </div>
+      </div>
+
+      {/* Row 2: Category Segmented Navigation: [ Semua ] [ Pesan ] [ OTP ] [ Broadcast ] */}
+      <div className="flex items-center justify-between gap-3">
+        <MessageCategoryTabs
+          activeCategory={categoryFilter as MessageCategory}
+          onCategoryChange={(cat) => setCategoryFilter(cat as WABAStatsCategory)}
+        />
       </div>
 
       {/* Top 3 KPI Cards Grid */}

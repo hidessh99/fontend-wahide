@@ -6,6 +6,7 @@ import { TelegramLogsTable } from "../../components/seller/TelegramLogsTable";
 import { TelegramLogStatsCards } from "../../components/seller/TelegramLogStatsCards";
 import { useI18n } from "@/lib/i18n/context";
 import { Button } from "@/components/ui/button";
+import { MessageCategoryTabs, MessageCategory } from "@/components/ui/message-category-tabs";
 import { ScrollText, RefreshCw } from "lucide-react";
 
 export function TelegramLogsView() {
@@ -24,6 +25,8 @@ export function TelegramLogsView() {
     setDirectionFilter,
     statusFilter,
     setStatusFilter,
+    messageCategory,
+    setMessageCategory,
     isLoading,
     reload,
   } = useTelegramLogs(1, 10);
@@ -71,7 +74,15 @@ export function TelegramLogsView() {
       />
 
       {/* Logs Table Component */}
-      <div className="pt-2">
+      <div className="space-y-3 pt-2">
+        {/* Segmented Category Filter Navigation: [ Semua ] [ Pesan ] [ OTP ] [ Broadcast ] */}
+        <div className="flex items-center justify-between gap-3">
+          <MessageCategoryTabs
+            activeCategory={messageCategory as MessageCategory}
+            onCategoryChange={(cat) => setMessageCategory(cat)}
+          />
+        </div>
+
         <TelegramLogsTable
           logs={logs}
           total={total}

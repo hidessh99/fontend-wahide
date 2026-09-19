@@ -149,5 +149,22 @@
   "actions": {
     "createNew": "Add New Template",
     "refresh": "Refresh"
+  },
+  "presets": {
+    "modalTitle": "Choose a template",
+    "modalSubtitle": "Select a starting point or Blank to write from scratch",
+    "searchPlaceholder": "Search template presets...",
+    "categories": {
+      "all": "All",
+      "blank": "Blank",
+      "welcome": "Welcome",
+      "otp": "OTP",
+      "order": "Order",
+      "reminder": "Reminder",
+      "notification": "Notification",
+      "promo": "Promo",
+      "feedback": "Feedback",
+      "support": "Support"
+    }
   }
 }

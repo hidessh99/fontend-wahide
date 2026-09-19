@@ -149,5 +149,22 @@
   "actions": {
     "createNew": "Tambah Template Baru",
     "refresh": "Segarkan"
+  },
+  "presets": {
+    "modalTitle": "Pilih template",
+    "modalSubtitle": "Pilih titik awal atau Blank untuk menulis dari awal",
+    "searchPlaceholder": "Cari preset template...",
+    "categories": {
+      "all": "Semua",
+      "blank": "Blank",
+      "welcome": "Welcome",
+      "otp": "OTP",
+      "order": "Order",
+      "reminder": "Reminder",
+      "notification": "Notification",
+      "promo": "Promo",
+      "feedback": "Feedback",
+      "support": "Support"
+    }
   }
 }

@@ -1,7 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
+
+const TemplatePresetPickerModal = dynamic(
+  () =>
+    import(
+      "@/modules/template/components/seller/preset/TemplatePresetPickerModal"
+    ).then((m) => m.TemplatePresetPickerModal),
+  { ssr: false },
+);
+import { TemplatePreset } from "@/modules/template/data/templatePresets";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty";
@@ -28,9 +38,14 @@ import {
   MessageSquare,
   Sparkles,
   Info,
+  ChevronDown,
+  Copy,
+  Check,
+  Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n } from "@/lib/i18n/context";
+import { cn } from "@/lib/utils";
 
 export interface WABATemplateMock {
   id: string;
@@ -52,73 +67,52 @@ export interface WABATemplateMock {
   exampleValues: Record<string, string>;
 }
 
-const DEFAULT_WABA_TEMPLATES: WABATemplateMock[] = [
-  {
-    id: "tpl_waba_01",
-    metaTemplateId: "9823471029384",
-    name: "konfirmasi_pesanan_pelanggan",
-    category: "UTILITY",
-    language: "id",
-    metaStatus: "APPROVED",
-    headerType: "TEXT",
-    headerText: "Konfirmasi Pesanan",
-    bodyText: "Halo {{1}}, pesanan Anda dengan nomor ID #{{2}} telah kami terima dan sedang diproses oleh tim kami. Estimasi pengiriman: {{3}}.",
-    footerText: "Terima kasih telah berbelanja di Wahide Official Store",
-    buttons: [
-      { type: "URL", text: "Lacak Pesanan", value: "https://wahide.com/track/{{2}}" },
-      { type: "QUICK_REPLY", text: "Bantuan CS" },
-    ],
-    exampleValues: {
-      "1": "Budi Santoso",
-      "2": "WH-9082",
-      "3": "1 - 2 Hari Kerja",
-    },
-  },
-  {
-    id: "tpl_waba_02",
-    metaTemplateId: "1238910238120",
-    name: "kode_verifikasi_otp_login",
-    category: "AUTHENTICATION",
-    language: "id",
-    metaStatus: "APPROVED",
-    headerType: "NONE",
-    bodyText: "Kode verifikasi Anda adalah {{1}}. Jangan berikan kode ini kepada siapapun demi keamanan akun Anda. Berlaku selama 5 menit.",
-    footerText: "Pesan otomatis sistem keamanan",
-    buttons: [
-      { type: "QUICK_REPLY", text: "Salin Kode" },
-    ],
-    exampleValues: {
-      "1": "892014",
-    },
-  },
-  {
-    id: "tpl_waba_03",
-    metaTemplateId: "5910283019231",
-    name: "promosi_spesial_akhir_bulan",
-    category: "MARKETING",
-    language: "id",
-    metaStatus: "PENDING",
-    headerType: "IMAGE",
-    headerText: "Banner Promo",
-    bodyText: "Hai {{1}}! Dapatkan diskon spesial hingga 40% untuk upgrade langganan paket {{2}} hanya di akhir pekan ini.",
-    footerText: "Syarat & Ketentuan berlaku",
-    buttons: [
-      { type: "URL", text: "Klaim Diskon", value: "https://wahide.com/promo" },
-    ],
-    exampleValues: {
-      "1": "Siti Nurhaliza",
-      "2": "Enterprise Pro",
-    },
-  },
-];
+const WABA_TEMPLATES_STORAGE_KEY = "wahide_waba_seller_templates";
 
 export function WABATemplatesView() {
   const { t } = useI18n();
-  const [templates, setTemplates] = useState<WABATemplateMock[]>(DEFAULT_WABA_TEMPLATES);
+  const [templates, setTemplates] = useState<WABATemplateMock[]>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const stored = localStorage.getItem(WABA_TEMPLATES_STORAGE_KEY);
+        if (stored) return JSON.parse(stored);
+      } catch {
+        // ignore
+      }
+    }
+    return [];
+  });
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("ALL");
   const [statusFilter, setStatusFilter] = useState("ALL");
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [showRules, setShowRules] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(WABA_TEMPLATES_STORAGE_KEY, JSON.stringify(templates));
+    } catch {
+      // ignore
+    }
+  }, [templates]);
+
+  const handleDeleteTemplate = (id: string, name: string) => {
+    setTemplates((prev) => prev.filter((t) => t.id !== id));
+    toast.success(`Template "${name}" berhasil dihapus`);
+  };
+
+  const handleCopyText = async (id: string, text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedId(id);
+      toast.success("Konten template berhasil disalin ke clipboard!");
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch {
+      toast.error("Gagal menyalin pesan");
+    }
+  };
 
   // Form State for Specialized WABA HSM Builder
   const [formName, setFormName] = useState("");
@@ -136,14 +130,30 @@ export function WABATemplatesView() {
   );
 
   const handleOpenEditor = () => {
-    setFormName("");
-    setFormCategory("UTILITY");
-    setFormLanguage("id");
-    setFormHeaderType("NONE");
-    setFormHeaderText("");
-    setFormBodyText("Halo {{1}}, pesanan Anda {{2}} telah dikonfirmasi.");
-    setFormFooterText("");
-    setExampleValues({ "1": "Nama Pembeli", "2": "Nomor Order" });
+    setIsPickerOpen(true);
+  };
+
+  const handleSelectPreset = (preset: TemplatePreset) => {
+    if (preset.isBlank) {
+      setFormName("");
+      setFormCategory("UTILITY");
+      setFormLanguage("id");
+      setFormHeaderType("NONE");
+      setFormHeaderText("");
+      setFormBodyText("");
+      setFormFooterText("");
+      setExampleValues({});
+    } else {
+      const w = preset.content.waba;
+      setFormName(preset.title.toLowerCase().replace(/[^a-z0-9_]/g, "_"));
+      setFormCategory(w.category);
+      setFormLanguage("id");
+      setFormHeaderType(w.headerType || "NONE");
+      setFormHeaderText(w.headerText || "");
+      setFormBodyText(w.bodyText);
+      setFormFooterText(w.footerText || "");
+      setExampleValues(w.exampleValues || {});
+    }
     setIsEditorOpen(true);
   };
 
@@ -214,15 +224,27 @@ export function WABATemplatesView() {
         </Button>
       </div>
 
-      {/* Info Card: Meta HSM Rules */}
-      <div className="border-border rounded-2xl border bg-muted/40 p-4 space-y-2">
-        <div className="flex items-center gap-2 text-xs font-bold text-foreground">
-          <Info className="size-4 text-wise-green" />
-          <span>{t("whatsapp.wabaTemplates.rulesTitle")}</span>
+      {/* Info Card: Meta HSM Rules (Collapsible) */}
+      <div className="border-border rounded-2xl border bg-muted/40 p-3.5 sm:p-4 space-y-2 transition-all">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 text-xs font-bold text-foreground">
+            <Info className="size-4 text-wise-green shrink-0" />
+            <span>{t("whatsapp.wabaTemplates.rulesTitle")}</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowRules(!showRules)}
+            className="text-xs font-semibold text-foreground-muted hover:text-foreground cursor-pointer flex items-center gap-1 shrink-0"
+          >
+            <span>{showRules ? "Sembunyikan" : "Pelajari Ketentuan"}</span>
+            <ChevronDown className={cn("size-3.5 transition-transform", showRules && "rotate-180")} />
+          </button>
         </div>
-        <p className="text-foreground-secondary text-xs">
-          {t("whatsapp.wabaTemplates.rulesDesc")}
-        </p>
+        {showRules && (
+          <p className="text-foreground-secondary text-xs pt-1.5 leading-relaxed border-t border-border/40">
+            {t("whatsapp.wabaTemplates.rulesDesc")}
+          </p>
+        )}
       </div>
 
       {/* Filters Bar */}
@@ -266,14 +288,22 @@ export function WABATemplatesView() {
       {/* Templates Grid */}
       {filteredTemplates.length === 0 ? (
         <EmptyState
-          icon={<ShieldCheck className="size-10" />}
-          title={t("whatsapp.wabaTemplates.emptyTitle")}
-          description={t("whatsapp.wabaTemplates.emptyDesc")}
+          icon={<ShieldCheck className="size-10 text-emerald-600 dark:text-emerald-400" />}
+          title={
+            templates.length === 0
+              ? t("whatsapp.wabaTemplates.emptyTitle")
+              : "Tidak Ada Template yang Cocok"
+          }
+          description={
+            templates.length === 0
+              ? t("whatsapp.wabaTemplates.emptyDesc")
+              : "Coba sesuaikan kata kunci pencarian atau reset filter kategori & status Meta Anda."
+          }
           action={
             <Button
               size="sm"
               onClick={handleOpenEditor}
-              className="bg-wise-green text-dark-green hover:bg-wise-green/90 font-bold text-xs"
+              className="bg-wise-green text-dark-green hover:bg-wise-green/90 font-bold text-xs rounded-full px-4 shadow-xs cursor-pointer"
             >
               <Plus className="mr-1.5 size-3.5" />
               <span>{t("whatsapp.wabaTemplates.createBtn")}</span>
@@ -363,10 +393,41 @@ export function WABATemplatesView() {
                 </div>
               </div>
 
-              {/* Card Footer */}
+              {/* Card Footer with Copy and Delete Actions */}
               <div className="border-border/60 flex items-center justify-between border-t pt-3 mt-4 text-[11px] text-foreground-muted font-mono">
                 <span>ID: {tpl.metaTemplateId.slice(0, 8)}...</span>
-                <span>{t("whatsapp.wabaTemplates.variablesCount", { count: Object.keys(tpl.exampleValues).length })}</span>
+                <div className="flex items-center gap-1.5">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="xs"
+                    onClick={() => handleCopyText(tpl.id, tpl.bodyText)}
+                    className="h-7 px-2.5 rounded-lg text-xs gap-1 cursor-pointer"
+                    title="Salin Pesan"
+                  >
+                    {copiedId === tpl.id ? (
+                      <>
+                        <Check className="size-3 text-emerald-600 dark:text-emerald-400" />
+                        <span className="text-emerald-700 dark:text-emerald-400 font-sans">Tersalin</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="size-3" />
+                        <span className="font-sans">Salin</span>
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-xs"
+                    onClick={() => handleDeleteTemplate(tpl.id, tpl.name)}
+                    className="h-7 w-7 rounded-lg text-destructive hover:bg-destructive/10 hover:text-destructive cursor-pointer"
+                    title="Hapus Template"
+                  >
+                    <Trash2 className="size-3.5" />
+                  </Button>
+                </div>
               </div>
             </div>
           ))}
@@ -494,6 +555,15 @@ export function WABATemplatesView() {
           </form>
         </DialogContent>
       </Dialog>
+      {/* Template Preset Picker Modal */}
+      {isPickerOpen && (
+        <TemplatePresetPickerModal
+          isOpen={isPickerOpen}
+          lockChannel="META_WABA_OFFICIAL"
+          onClose={() => setIsPickerOpen(false)}
+          onSelectPreset={handleSelectPreset}
+        />
+      )}
     </div>
   );
 }

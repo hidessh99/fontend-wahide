@@ -1,8 +1,14 @@
 "use client";
 
 import React from "react";
-import { useTelegramStats, TelegramStatsTimeRange } from "../../hooks/useTelegramStats";
+import {
+  useTelegramStats,
+  TelegramStatsTimeRange,
+  TelegramStatsCategory,
+} from "../../hooks/useTelegramStats";
 import { TelegramStatsCards } from "../../components/seller/TelegramStatsCards";
+import { DateRangePicker } from "@/components/ui/date-range-picker";
+import { MessageCategoryTabs, MessageCategory } from "@/components/ui/message-category-tabs";
 import { useI18n } from "@/lib/i18n/context";
 import { Button } from "@/components/ui/button";
 import { BarChart3, RefreshCw } from "lucide-react";
@@ -18,8 +24,17 @@ const TIME_RANGES: {
 
 export function TelegramStatsView() {
   const { t } = useI18n();
-  const { stats, isLoading, timeRange, setTimeRange, reload } =
-    useTelegramStats();
+  const {
+    stats,
+    isLoading,
+    timeRange,
+    setTimeRange,
+    categoryFilter,
+    setCategoryFilter,
+    customRange,
+    setCustomRange,
+    reload,
+  } = useTelegramStats();
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6 lg:p-8">
@@ -39,8 +54,8 @@ export function TelegramStatsView() {
           </p>
         </div>
 
-        {/* Action Bar: Time Range Selector & Refresh */}
-        <div className="flex items-center gap-2.5 self-start sm:self-auto">
+        {/* Action Bar: Time Range Selector, DateRangePicker & Refresh */}
+        <div className="flex flex-wrap items-center gap-2.5 self-start sm:self-auto">
           <div className="bg-muted/60 border-border/80 flex items-center rounded-full border p-1">
             {TIME_RANGES.map((range) => {
               const isActive = timeRange === range.id;
@@ -61,12 +76,23 @@ export function TelegramStatsView() {
             })}
           </div>
 
+          <DateRangePicker
+            range={customRange}
+            onRangeChange={(r) => {
+              setCustomRange(r);
+              if (r.from) {
+                setTimeRange("custom");
+              }
+            }}
+            placeholder="Rentang kustom"
+          />
+
           <Button
             variant="outline"
             size="sm"
             onClick={() => reload()}
             disabled={isLoading}
-            className="border-border/80 text-xs font-semibold rounded-full h-8 px-3"
+            className="border-border/80 text-xs font-semibold rounded-full h-9 px-3"
           >
             <RefreshCw
               className={`mr-1.5 size-3.5 ${isLoading ? "animate-spin" : ""}`}
@@ -74,6 +100,14 @@ export function TelegramStatsView() {
             <span>{t("telegram.stats.reload")}</span>
           </Button>
         </div>
+      </div>
+
+      {/* Row 2: Category Segmented Navigation: [ Semua ] [ Pesan ] [ OTP ] [ Broadcast ] */}
+      <div className="flex items-center justify-between gap-3">
+        <MessageCategoryTabs
+          activeCategory={categoryFilter as MessageCategory}
+          onCategoryChange={(cat) => setCategoryFilter(cat as TelegramStatsCategory)}
+        />
       </div>
 
       {/* KPI & Quota Cards Component */}

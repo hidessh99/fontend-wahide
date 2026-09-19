@@ -76,8 +76,9 @@ function TemplateEditorContent({
     initialData?.category || "MARKETING",
   );
   const [content, setContent] = useState(
-    initialData?.content ||
-      "Halo {{nama}}, terima kasih telah menghubungi kami! Berikut adalah konfirmasi pesanan Anda dengan nomor {{invoice}}.",
+    initialData !== undefined && initialData !== null
+      ? initialData.content
+      : "Halo {{nama}}, terima kasih telah menghubungi kami! Berikut adalah konfirmasi pesanan Anda dengan nomor {{invoice}}.",
   );
   const [mediaType, setMediaType] = useState<TemplateMediaType>(
     initialData?.mediaType || "NONE",
@@ -663,7 +664,7 @@ function TemplateEditorContent({
               ) : (
                 <span className="flex items-center gap-1.5">
                   <Check className="size-4" />
-                  {initialData
+                  {initialData?.id
                     ? t("template.editor.saveChanges")
                     : t("template.editor.createSubmit")}
                 </span>
@@ -687,7 +688,13 @@ export function TemplateEditorModal({
 
   return (
     <TemplateEditorContent
-      key={initialData?.id || "new"}
+      key={
+        initialData?.id
+          ? initialData.id
+          : initialData
+          ? `preset_${initialData.name}_${initialData.category}`
+          : "new"
+      }
       onClose={onClose}
       onSubmit={onSubmit}
       initialData={initialData}

@@ -6,6 +6,7 @@ import { MessageStatsCards } from "../../components/user/MessageStatsCards";
 import { useMessageLogs } from "@/modules/campaign/hooks/useMessageLogs";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { Button } from "@/components/ui/button";
+import { MessageCategoryTabs, MessageCategory } from "@/components/ui/message-category-tabs";
 import { ScrollText, RefreshCw } from "lucide-react";
 import { useI18n } from "@/lib/i18n/context";
 
@@ -25,6 +26,8 @@ export function WhatsAppLogsView() {
     setSearchQuery,
     statusFilter,
     setStatusFilter,
+    messageTypeFilter,
+    setMessageTypeFilter,
   } = useMessageLogs(1, 10);
 
   const handlePageSizeChange = (newSize: number) => {
@@ -69,7 +72,15 @@ export function WhatsAppLogsView() {
           isLoading={isLoading}
         />
 
-        <div className="pt-2">
+        <div className="space-y-3 pt-2">
+          {/* Segmented Category Filter Navigation: [ Semua ] [ Pesan ] [ OTP ] [ Broadcast ] */}
+          <div className="flex items-center justify-between gap-3">
+            <MessageCategoryTabs
+              activeCategory={messageTypeFilter as MessageCategory}
+              onCategoryChange={(cat) => setMessageTypeFilter(cat)}
+            />
+          </div>
+
           <MessageListTable
             logs={logs}
             total={total}

@@ -22,13 +22,16 @@ export function useTelegramLogs(initialPage = 1, initialPageSize = 10) {
   const [statusFilter, setStatusFilter] = useState<
     "ALL" | TelegramMessageStatus
   >("ALL");
+  const [messageCategory, setMessageCategory] = useState<
+    "ALL" | "DIRECT" | "OTP" | "BROADCAST"
+  >("ALL");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Reset page to 1 on filter or pagination size changes
   useEffect(() => {
     setPage(1);
-  }, [searchQuery, botIdFilter, directionFilter, statusFilter, pageSize]);
+  }, [searchQuery, botIdFilter, directionFilter, statusFilter, messageCategory, pageSize]);
 
   const fetchLogs = useCallback(
     async (
@@ -63,6 +66,13 @@ export function useTelegramLogs(initialPage = 1, initialPageSize = 10) {
           overrideParams?.botId !== undefined
             ? overrideParams.botId
             : botIdFilter;
+
+        if (messageCategory === "OTP" || messageCategory === "BROADCAST") {
+          setLogs([]);
+          setTotal(0);
+          setFailedTotal(0);
+          return;
+        }
 
         const [res, failedProbe] = await Promise.all([
           telegramApi.getMessageLogs(
@@ -108,7 +118,7 @@ export function useTelegramLogs(initialPage = 1, initialPageSize = 10) {
         setIsLoading(false);
       }
     },
-    [page, pageSize, searchQuery, botIdFilter, directionFilter, statusFilter],
+    [page, pageSize, searchQuery, botIdFilter, directionFilter, statusFilter, messageCategory],
   );
 
   useEffect(() => {
@@ -133,6 +143,8 @@ export function useTelegramLogs(initialPage = 1, initialPageSize = 10) {
     setDirectionFilter,
     statusFilter,
     setStatusFilter,
+    messageCategory,
+    setMessageCategory,
     isLoading,
     error,
     reload: fetchLogs,

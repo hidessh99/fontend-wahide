@@ -13,13 +13,14 @@ export function useWABALogs(initialPage = 1, initialPageSize = 10) {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [categoryFilter, setCategoryFilter] = useState("ALL");
+  const [messageTypeFilter, setMessageTypeFilter] = useState("ALL");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Reset page to 1 when search, filter, or pageSize changes
   useEffect(() => {
     setPage(1);
-  }, [searchQuery, statusFilter, categoryFilter, pageSize]);
+  }, [searchQuery, statusFilter, messageTypeFilter, categoryFilter, pageSize]);
 
   const fetchLogs = useCallback(
     async (
@@ -29,6 +30,7 @@ export function useWABALogs(initialPage = 1, initialPageSize = 10) {
         search?: string;
         status?: string;
         category?: string;
+        messageType?: string;
       },
       signal?: AbortSignal,
     ) => {
@@ -49,6 +51,10 @@ export function useWABALogs(initialPage = 1, initialPageSize = 10) {
           overrideParams?.category !== undefined
             ? overrideParams.category
             : categoryFilter;
+        const targetMessageType =
+          overrideParams?.messageType !== undefined
+            ? overrideParams.messageType
+            : messageTypeFilter;
 
         const [res, failedProbe] = await Promise.all([
           campaignApi.getMessageLogs(
@@ -58,6 +64,7 @@ export function useWABALogs(initialPage = 1, initialPageSize = 10) {
               search: targetSearch,
               status: targetStatus,
               channelType: "META_WABA_OFFICIAL",
+              messageType: targetMessageType !== "ALL" ? targetMessageType : undefined,
               signal,
             },
             targetPageSize,
@@ -102,7 +109,7 @@ export function useWABALogs(initialPage = 1, initialPageSize = 10) {
         setIsLoading(false);
       }
     },
-    [page, pageSize, searchQuery, statusFilter, categoryFilter],
+    [page, pageSize, searchQuery, statusFilter, categoryFilter, messageTypeFilter],
   );
 
   useEffect(() => {
@@ -125,6 +132,8 @@ export function useWABALogs(initialPage = 1, initialPageSize = 10) {
     setStatusFilter,
     categoryFilter,
     setCategoryFilter,
+    messageTypeFilter,
+    setMessageTypeFilter,
     isLoading,
     error,
     reload: fetchLogs,

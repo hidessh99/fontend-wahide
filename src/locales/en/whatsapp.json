@@ -470,5 +470,8 @@
     "metaStatusDraft": "Draft"
   },
   "templatesTitle": "WhatsApp Web Message Templates",
-  "templatesSubtitle": "Manage WhatsApp message template collection with dynamic variables, anti-ban spintax, and action button formats."
+  "templatesSubtitle": "Manage WhatsApp message template collection with dynamic variables, anti-ban spintax, and action button formats.",
+  "categoryDirect": "Messages",
+  "categoryOTP": "OTP",
+  "categoryBroadcast": "Broadcast"
 }

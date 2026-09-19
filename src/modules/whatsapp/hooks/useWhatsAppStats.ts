@@ -4,9 +4,14 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { whatsappApi } from "../api/whatsapp.api";
 import { campaignApi } from "@/modules/campaign/api/campaign.api";
 import { Device } from "../types/whatsapp.types";
-import { MessageLogResponse } from "@/modules/campaign/types/campaign.types";
+import {
+  MessageLogResponse,
+  ChannelStatsResponse,
+} from "@/modules/campaign/types/campaign.types";
+import { type DateRange } from "@/components/ui/date-range-picker";
 
-export type WhatsAppStatsTimeRange = "today" | "7d" | "30d";
+export type WhatsAppStatsTimeRange = "today" | "7d" | "30d" | "custom";
+export type WhatsAppStatsCategory = "ALL" | "DIRECT" | "OTP" | "BROADCAST";
 
 export interface DailyActivityPoint {
   dateKey: string;
@@ -61,8 +66,15 @@ const formatDateLabel = (date: Date): string => {
 export function useWhatsAppStats() {
   const [timeRange, setTimeRange] =
     useState<WhatsAppStatsTimeRange>("today");
+  const [categoryFilter, setCategoryFilter] =
+    useState<WhatsAppStatsCategory>("ALL");
+  const [customRange, setCustomRange] = useState<DateRange>({
+    from: null,
+    to: null,
+  });
   const [devices, setDevices] = useState<Device[]>([]);
   const [logs, setLogs] = useState<MessageLogResponse[]>([]);
+  const [serverStats, setServerStats] = useState<ChannelStatsResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -70,14 +82,71 @@ export function useWhatsAppStats() {
     setIsLoading(true);
     setError(null);
     try {
-      const [devicesRes, logsRes] = await Promise.all([
+      const now = new Date();
+      let startDate: string | undefined;
+      let endDate: string | undefined;
+
+      if (timeRange === "today") {
+        const start = new Date(now);
+        start.setHours(0, 0, 0, 0);
+        const end = new Date(now);
+        end.setHours(23, 59, 59, 999);
+        startDate = start.toISOString();
+        endDate = end.toISOString();
+      } else if (timeRange === "7d") {
+        const start = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        start.setHours(0, 0, 0, 0);
+        startDate = start.toISOString();
+        endDate = now.toISOString();
+      } else if (timeRange === "30d") {
+        const start = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        start.setHours(0, 0, 0, 0);
+        startDate = start.toISOString();
+        endDate = now.toISOString();
+      } else if (timeRange === "custom") {
+        if (customRange.from) {
+          const start = new Date(customRange.from);
+          start.setHours(0, 0, 0, 0);
+          startDate = start.toISOString();
+        }
+        if (customRange.to) {
+          const end = new Date(customRange.to);
+          end.setHours(23, 59, 59, 999);
+          endDate = end.toISOString();
+        }
+      }
+
+      const [devicesRes, statsRes, logsRes] = await Promise.all([
         whatsappApi.getDevices(signal).catch(() => []),
         campaignApi
-          .getMessageLogs({ pageSize: 200, signal })
+          .getChannelStats(
+            {
+              channelType: "WHATSMEOW_UNOFFICIAL",
+              messageType: categoryFilter !== "ALL" ? categoryFilter : undefined,
+              startDate,
+              endDate,
+            },
+            signal,
+          )
+          .catch(() => null),
+        campaignApi
+          .getMessageLogs(
+            {
+              pageSize: 200,
+              channelType: "WHATSMEOW_UNOFFICIAL",
+              messageType: categoryFilter !== "ALL" ? categoryFilter : undefined,
+              startDate,
+              endDate,
+              signal,
+            },
+            200,
+            signal,
+          )
           .catch(() => ({ logs: [], total: 0 })),
       ]);
 
       setDevices(devicesRes);
+      setServerStats(statsRes);
       setLogs(logsRes.logs || []);
     } catch (err: unknown) {
       if (err instanceof Error && err.name === "AbortError") return;
@@ -87,7 +156,7 @@ export function useWhatsAppStats() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [timeRange, categoryFilter, customRange]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -109,8 +178,85 @@ export function useWhatsAppStats() {
     } else if (timeRange === "30d") {
       cutoffTime = nowTime - 30 * 24 * 60 * 60 * 1000;
       daysCount = 30;
+    } else if (timeRange === "custom" && customRange.from) {
+      cutoffTime = customRange.from.getTime();
+      const endMillis = customRange.to ? customRange.to.getTime() : nowTime;
+      daysCount = Math.max(1, Math.ceil((endMillis - cutoffTime) / (24 * 60 * 60 * 1000)));
     }
 
+    // 1. Primary: Use Single-Pass Server Stats from Backend Aggregation if available
+    if (serverStats && serverStats.total_sends > 0) {
+      const totalSends = serverStats.total_sends;
+      const deliveredCount = serverStats.delivered_count + (serverStats.read_count || 0);
+      const failedCount = serverStats.failed_count;
+      const deliveryRate = serverStats.delivery_rate;
+      const failureRate = serverStats.failure_rate;
+
+      const dailyActivity: DailyActivityPoint[] = (serverStats.daily_activity || []).map((d) => ({
+        dateKey: d.date_key,
+        label: d.label || d.date_key,
+        delivered: d.delivered,
+        failed: d.failed,
+        total: d.total,
+      }));
+
+      const deviceMetaMap = new Map<string, Device>();
+      devices.forEach((d) => deviceMetaMap.set(d.id, d));
+
+      const byNumber: DeviceVolumeData[] = (serverStats.by_device || []).map((dv) => {
+        const meta = deviceMetaMap.get(dv.device_id);
+        return {
+          id: dv.device_id,
+          pushName: meta?.push_name || meta?.pushName || meta?.name || dv.name || "WhatsApp Slot",
+          phone: meta?.phone || dv.phone || null,
+          status: meta?.status || "CONNECTED",
+          count: dv.count,
+          percent: dv.percent || (totalSends > 0 ? Math.round((dv.count / totalSends) * 100) : 0),
+        };
+      });
+
+      let directCount = 0;
+      let campaignCount = 0;
+      if (categoryFilter === "DIRECT") {
+        directCount = totalSends;
+      } else if (categoryFilter === "BROADCAST") {
+        campaignCount = totalSends;
+      } else {
+        logs.forEach((log) => {
+          if (log.message_type === "BROADCAST" || (log.campaign_id && log.campaign_id.trim() !== "")) {
+            campaignCount += 1;
+          } else {
+            directCount += 1;
+          }
+        });
+        if (directCount === 0 && campaignCount === 0) {
+          directCount = totalSends;
+        }
+      }
+
+      const sendTypesTotal = directCount + campaignCount;
+      const topSendTypes: TopSendTypesData = {
+        directCount,
+        directPercent: sendTypesTotal > 0 ? Math.round((directCount / sendTypesTotal) * 100) : 0,
+        campaignCount,
+        campaignPercent: sendTypesTotal > 0 ? Math.round((campaignCount / sendTypesTotal) * 100) : 0,
+        total: sendTypesTotal,
+      };
+
+      return {
+        totalSends,
+        deliveredCount,
+        deliveryRate,
+        failedCount,
+        failureRate,
+        dailyActivity,
+        topSendTypes,
+        byNumber,
+        hasActivity: true,
+      };
+    }
+
+    // 2. Fallback: Client-Side Logs Compute
     const filteredLogs = logs.filter((log) => {
       if (log.direction && log.direction.toUpperCase() === "INBOUND") {
         return false;
@@ -201,7 +347,7 @@ export function useWhatsAppStats() {
     let campaignCount = 0;
 
     filteredLogs.forEach((log) => {
-      if (log.campaign_id && log.campaign_id.trim() !== "") {
+      if (log.message_type === "BROADCAST" || (log.campaign_id && log.campaign_id.trim() !== "")) {
         campaignCount += 1;
       } else {
         directCount += 1;
@@ -271,11 +417,15 @@ export function useWhatsAppStats() {
       byNumber,
       hasActivity,
     };
-  }, [devices, logs, timeRange]);
+  }, [devices, logs, serverStats, timeRange, categoryFilter, customRange]);
 
   return {
     timeRange,
     setTimeRange,
+    categoryFilter,
+    setCategoryFilter,
+    customRange,
+    setCustomRange,
     devices,
     logs,
     stats: statsData,

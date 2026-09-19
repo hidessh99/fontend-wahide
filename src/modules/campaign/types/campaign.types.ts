@@ -98,9 +98,39 @@ export interface MessageLogResponse {
   message_body: string;
   media_url?: string;
   channel_type?: CampaignChannelType;
+  message_type?: "DIRECT" | "OTP" | "BROADCAST" | string;
   status: "SENT" | "DELIVERED" | "READ" | "FAILED";
   error_message?: string;
   sent_at: string;
   created_at: string;
   waba_info?: MessageLogWABAMetaResponse;
+}
+
+export interface ChannelDailyActivity {
+  date_key: string;
+  label: string;
+  delivered: number;
+  failed: number;
+  total: number;
+}
+
+export interface ChannelDeviceVolume {
+  device_id: string;
+  name: string;
+  phone?: string;
+  count: number;
+  percent: number;
+}
+
+export interface ChannelStatsResponse {
+  total_sends: number;
+  delivered_count: number;
+  delivery_rate: number;
+  failed_count: number;
+  failure_rate: number;
+  read_count: number;
+  read_rate: number;
+  daily_activity: ChannelDailyActivity[];
+  by_device?: ChannelDeviceVolume[];
+  category_counts?: Record<string, number>;
 }

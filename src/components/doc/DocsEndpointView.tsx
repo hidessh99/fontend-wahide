@@ -17,6 +17,7 @@ import {
   Send,
   MessageSquare,
   Camera,
+  Zap,
 } from "lucide-react";
 
 function InstagramIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -46,6 +47,7 @@ const CHANNEL_ICONS: Record<string, React.ElementType> = {
   MessageSquare,
   Instagram: InstagramIcon,
   Camera,
+  Zap,
 };
 
 function getChannelIcon(name: string): React.ElementType {

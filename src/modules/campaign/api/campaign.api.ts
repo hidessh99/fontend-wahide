@@ -3,6 +3,7 @@ import { env } from "@/lib/config/env";
 import {
   Campaign,
   CampaignChannelType,
+  ChannelStatsResponse,
   CreateCampaignInput,
   MessageLogResponse,
 } from "../types/campaign.types";
@@ -141,6 +142,9 @@ export interface GetMessageLogsParams {
   direction?: string;
   campaignId?: string;
   channelType?: string;
+  messageType?: string;
+  startDate?: string;
+  endDate?: string;
   signal?: AbortSignal;
 }
 
@@ -271,6 +275,9 @@ export const campaignApi = {
     let dir = "";
     let campId = "";
     let chanType = "";
+    let msgType = "";
+    let startDate = "";
+    let endDate = "";
     let sig = signal;
 
     if (typeof paramsOrPage === "object" && paramsOrPage !== null) {
@@ -282,6 +289,9 @@ export const campaignApi = {
       dir = paramsOrPage.direction ?? "";
       campId = paramsOrPage.campaignId ?? "";
       chanType = paramsOrPage.channelType ?? "";
+      msgType = paramsOrPage.messageType ?? "";
+      startDate = paramsOrPage.startDate ?? "";
+      endDate = paramsOrPage.endDate ?? "";
       sig = paramsOrPage.signal || signal;
     } else {
       p = paramsOrPage;
@@ -300,6 +310,10 @@ export const campaignApi = {
       if (campId.trim()) searchParams.set("campaign_id", campId.trim());
       if (chanType.trim() && chanType !== "ALL")
         searchParams.set("channel_type", chanType.trim());
+      if (msgType.trim() && msgType !== "ALL")
+        searchParams.set("message_type", msgType.trim());
+      if (startDate.trim()) searchParams.set("start_date", startDate.trim());
+      if (endDate.trim()) searchParams.set("end_date", endDate.trim());
 
       const res = await httpClient.get<MessageLogResponse[]>(
         `${CAMPAIGN_BASE}/campaigns/logs?${searchParams.toString()}`,
@@ -317,6 +331,59 @@ export const campaignApi = {
     } catch (err: unknown) {
       if (err instanceof Error && err.name === "AbortError") throw err;
       return { logs: [], total: 0 };
+    }
+  },
+
+  getChannelStats: async (
+    params: {
+      channelType?: string;
+      messageType?: string;
+      startDate?: string;
+      endDate?: string;
+      deviceId?: string;
+    },
+    signal?: AbortSignal,
+  ): Promise<ChannelStatsResponse> => {
+    try {
+      const searchParams = new URLSearchParams();
+      if (params.channelType && params.channelType !== "ALL") {
+        searchParams.set("channel_type", params.channelType);
+      }
+      if (params.messageType && params.messageType !== "ALL") {
+        searchParams.set("message_type", params.messageType);
+      }
+      if (params.startDate) searchParams.set("start_date", params.startDate);
+      if (params.endDate) searchParams.set("end_date", params.endDate);
+      if (params.deviceId) searchParams.set("device_id", params.deviceId);
+
+      const res = await httpClient.get<ChannelStatsResponse>(
+        `${CAMPAIGN_BASE}/campaigns/stats?${searchParams.toString()}`,
+        { signal },
+      );
+      return (
+        res.payload || {
+          total_sends: 0,
+          delivered_count: 0,
+          delivery_rate: 0,
+          failed_count: 0,
+          failure_rate: 0,
+          read_count: 0,
+          read_rate: 0,
+          daily_activity: [],
+        }
+      );
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") throw err;
+      return {
+        total_sends: 0,
+        delivered_count: 0,
+        delivery_rate: 0,
+        failed_count: 0,
+        failure_rate: 0,
+        read_count: 0,
+        read_rate: 0,
+        daily_activity: [],
+      };
     }
   },
 };

@@ -9,7 +9,13 @@ import {
 } from "../types/telegram.types";
 import { MessageLogResponse } from "@/modules/campaign/types/campaign.types";
 
-export type TelegramStatsTimeRange = "today" | "7d" | "30d";
+export type TelegramStatsTimeRange = "today" | "7d" | "30d" | "custom";
+export type TelegramStatsCategory = "ALL" | "DIRECT" | "OTP" | "BROADCAST";
+
+export interface CustomDateRange {
+  from: Date | null;
+  to: Date | null;
+}
 
 export interface TelegramDailyActivityPoint {
   dateKey: string;
@@ -70,6 +76,12 @@ const formatDateLabel = (date: Date): string => {
 
 export function useTelegramStats() {
   const [timeRange, setTimeRange] = useState<TelegramStatsTimeRange>("today");
+  const [categoryFilter, setCategoryFilter] =
+    useState<TelegramStatsCategory>("ALL");
+  const [customRange, setCustomRange] = useState<CustomDateRange>({
+    from: null,
+    to: null,
+  });
   const [bots, setBots] = useState<TelegramBot[]>([]);
   const [logs, setLogs] = useState<TelegramMessage[]>([]);
   const [campaignLogs, setCampaignLogs] = useState<MessageLogResponse[]>([]);
@@ -123,6 +135,40 @@ export function useTelegramStats() {
     } else if (timeRange === "30d") {
       cutoffTime = nowTime - 30 * 24 * 60 * 60 * 1000;
       daysCount = 30;
+    } else if (timeRange === "custom" && customRange.from) {
+      cutoffTime = customRange.from.getTime();
+      const endMillis = customRange.to ? customRange.to.getTime() : nowTime;
+      daysCount = Math.max(1, Math.ceil((endMillis - cutoffTime) / (24 * 60 * 60 * 1000)));
+    }
+
+    const activeBots = bots.filter(
+      (b) => b.status === "ACTIVE" && b.webhook_active,
+    ).length;
+
+    if (categoryFilter === "OTP" || categoryFilter === "BROADCAST") {
+      return {
+        total_bots: bots.length,
+        active_bots: activeBots,
+        daily_sent_count: 0,
+        daily_limit: 100000,
+        webhook_success_rate: activeBots > 0 ? 99.8 : 0,
+        avg_latency_ms: 12,
+        totalSends: 0,
+        successCount: 0,
+        successRate: 0,
+        failedCount: 0,
+        failureRate: 0,
+        dailyActivity: [],
+        topSendTypes: {
+          directCount: 0,
+          directPercent: 0,
+          campaignCount: 0,
+          campaignPercent: 0,
+          total: 0,
+        },
+        byBot: [],
+        hasActivity: false,
+      };
     }
 
     const botIdSet = new Set(bots.map((b) => b.id));
@@ -300,10 +346,6 @@ export function useTelegramStats() {
       })
       .sort((a, b) => b.count - a.count);
 
-    const activeBots = bots.filter(
-      (b) => b.status === "ACTIVE" && b.webhook_active,
-    ).length;
-
     const hasActivity = totalSends > 0 || filteredLogs.length > 0;
 
     return {
@@ -323,11 +365,15 @@ export function useTelegramStats() {
       byBot,
       hasActivity,
     };
-  }, [bots, logs, campaignLogs, timeRange]);
+  }, [bots, logs, campaignLogs, timeRange, categoryFilter, customRange]);
 
   return {
     timeRange,
     setTimeRange,
+    categoryFilter,
+    setCategoryFilter,
+    customRange,
+    setCustomRange,
     bots,
     stats: statsData,
     isLoading,

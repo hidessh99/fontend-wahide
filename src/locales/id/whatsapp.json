@@ -470,5 +470,8 @@
     "metaStatusDraft": "Draf"
   },
   "templatesTitle": "Template Pesan WhatsApp Web",
-  "templatesSubtitle": "Kelola koleksi template pesan WhatsApp dengan variabel dinamis, spintax anti-ban, dan format tombol aksi."
+  "templatesSubtitle": "Kelola koleksi template pesan WhatsApp dengan variabel dinamis, spintax anti-ban, dan format tombol aksi.",
+  "categoryDirect": "Pesan",
+  "categoryOTP": "OTP",
+  "categoryBroadcast": "Broadcast"
 }

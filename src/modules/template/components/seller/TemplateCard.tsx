@@ -275,16 +275,28 @@ export function TemplateCard({
           })}
         </div>
 
-        {/* Interactive Buttons Preview (if any) */}
-        {template.buttons && template.buttons.length > 0 && (
+        {/* Interactive Buttons Preview (WhatsApp or Telegram) */}
+        {((template.buttons && template.buttons.length > 0) ||
+          (template.telegramDetail?.inlineKeyboard &&
+            template.telegramDetail.inlineKeyboard.flat().length > 0)) && (
           <div className="mt-2 flex flex-wrap gap-1">
-            {template.buttons.map((btn, bIdx) => (
+            {template.buttons?.map((btn, bIdx) => (
               <Badge
-                key={bIdx}
+                key={`btn-${bIdx}`}
                 variant="neutral"
                 className="inline-flex items-center gap-1 rounded-md text-[10px] font-medium"
               >
                 <MousePointerClick className="size-2.5 shrink-0 text-foreground-muted" />
+                <span>{btn.text}</span>
+              </Badge>
+            ))}
+            {template.telegramDetail?.inlineKeyboard?.flat().map((btn, bIdx) => (
+              <Badge
+                key={`tele-btn-${bIdx}`}
+                variant="neutral"
+                className="inline-flex items-center gap-1 rounded-md text-[10px] font-medium bg-sky-500/10 text-sky-700 dark:text-sky-300 border-sky-500/20"
+              >
+                <Bot className="size-2.5 shrink-0" />
                 <span>{btn.text}</span>
               </Badge>
             ))}

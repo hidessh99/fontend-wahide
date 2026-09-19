@@ -4,9 +4,14 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { wabaApi } from "../api/waba.api";
 import { campaignApi } from "@/modules/campaign/api/campaign.api";
 import { WABAAccount } from "../types/waba.types";
-import { MessageLogResponse } from "@/modules/campaign/types/campaign.types";
+import {
+  MessageLogResponse,
+  ChannelStatsResponse,
+} from "@/modules/campaign/types/campaign.types";
+import { type DateRange } from "@/components/ui/date-range-picker";
 
-export type WABAStatsTimeRange = "today" | "7d" | "30d";
+export type WABAStatsTimeRange = "today" | "7d" | "30d" | "custom";
+export type WABAStatsCategory = "ALL" | "DIRECT" | "OTP" | "BROADCAST";
 
 export interface WABADailyActivityPoint {
   dateKey: string;
@@ -62,8 +67,15 @@ const formatDateLabel = (date: Date): string => {
 
 export function useWABAStats() {
   const [timeRange, setTimeRange] = useState<WABAStatsTimeRange>("today");
+  const [categoryFilter, setCategoryFilter] =
+    useState<WABAStatsCategory>("ALL");
+  const [customRange, setCustomRange] = useState<DateRange>({
+    from: null,
+    to: null,
+  });
   const [accounts, setAccounts] = useState<WABAAccount[]>([]);
   const [logs, setLogs] = useState<MessageLogResponse[]>([]);
+  const [serverStats, setServerStats] = useState<ChannelStatsResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -71,14 +83,71 @@ export function useWABAStats() {
     setIsLoading(true);
     setError(null);
     try {
-      const [accountsRes, logsRes] = await Promise.all([
+      const now = new Date();
+      let startDate: string | undefined;
+      let endDate: string | undefined;
+
+      if (timeRange === "today") {
+        const start = new Date(now);
+        start.setHours(0, 0, 0, 0);
+        const end = new Date(now);
+        end.setHours(23, 59, 59, 999);
+        startDate = start.toISOString();
+        endDate = end.toISOString();
+      } else if (timeRange === "7d") {
+        const start = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        start.setHours(0, 0, 0, 0);
+        startDate = start.toISOString();
+        endDate = now.toISOString();
+      } else if (timeRange === "30d") {
+        const start = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        start.setHours(0, 0, 0, 0);
+        startDate = start.toISOString();
+        endDate = now.toISOString();
+      } else if (timeRange === "custom") {
+        if (customRange.from) {
+          const start = new Date(customRange.from);
+          start.setHours(0, 0, 0, 0);
+          startDate = start.toISOString();
+        }
+        if (customRange.to) {
+          const end = new Date(customRange.to);
+          end.setHours(23, 59, 59, 999);
+          endDate = end.toISOString();
+        }
+      }
+
+      const [accountsRes, statsRes, logsRes] = await Promise.all([
         wabaApi.getAccounts(signal).catch(() => []),
         campaignApi
-          .getMessageLogs({ pageSize: 200, signal })
+          .getChannelStats(
+            {
+              channelType: "META_WABA_OFFICIAL",
+              messageType: categoryFilter !== "ALL" ? categoryFilter : undefined,
+              startDate,
+              endDate,
+            },
+            signal,
+          )
+          .catch(() => null),
+        campaignApi
+          .getMessageLogs(
+            {
+              pageSize: 200,
+              channelType: "META_WABA_OFFICIAL",
+              messageType: categoryFilter !== "ALL" ? categoryFilter : undefined,
+              startDate,
+              endDate,
+              signal,
+            },
+            200,
+            signal,
+          )
           .catch(() => ({ logs: [], total: 0 })),
       ]);
 
       setAccounts(accountsRes);
+      setServerStats(statsRes);
       setLogs(logsRes.logs || []);
     } catch (err: unknown) {
       if (err instanceof Error && err.name === "AbortError") return;
@@ -88,7 +157,7 @@ export function useWABAStats() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [timeRange, categoryFilter, customRange]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -110,8 +179,90 @@ export function useWABAStats() {
     } else if (timeRange === "30d") {
       cutoffTime = nowTime - 30 * 24 * 60 * 60 * 1000;
       daysCount = 30;
+    } else if (timeRange === "custom" && customRange.from) {
+      cutoffTime = customRange.from.getTime();
+      const endMillis = customRange.to ? customRange.to.getTime() : nowTime;
+      daysCount = Math.max(1, Math.ceil((endMillis - cutoffTime) / (24 * 60 * 60 * 1000)));
     }
 
+    // 1. Primary: Use Single-Pass Server Stats from Backend Aggregation if available
+    if (serverStats && serverStats.total_sends > 0) {
+      const totalSends = serverStats.total_sends;
+      const deliveredCount = serverStats.delivered_count + (serverStats.read_count || 0);
+      const failedCount = serverStats.failed_count;
+      const deliveryRate = serverStats.delivery_rate;
+      const failureRate = serverStats.failure_rate;
+
+      const dailyActivity: WABADailyActivityPoint[] = (serverStats.daily_activity || []).map((d) => ({
+        dateKey: d.date_key,
+        label: d.label || d.date_key,
+        delivered: d.delivered,
+        failed: d.failed,
+        total: d.total,
+      }));
+
+      const accountMetaMap = new Map<string, WABAAccount>();
+      accounts.forEach((a) => {
+        accountMetaMap.set(a.id, a);
+        if (a.phone_number_id) accountMetaMap.set(a.phone_number_id, a);
+      });
+
+      const byNumber: WABANumberVolumeData[] = (serverStats.by_device || []).map((dv) => {
+        const meta = accountMetaMap.get(dv.device_id);
+        return {
+          id: dv.device_id,
+          name: meta?.verified_name || meta?.name || dv.name || "Meta WABA Account",
+          phone: meta?.phone_number || dv.phone || null,
+          phoneNumberId: meta?.phone_number_id || dv.device_id,
+          qualityRating: meta?.meta_quality_rating || "UNKNOWN",
+          messagingTier: meta?.meta_messaging_tier || "TIER_250",
+          count: dv.count,
+          percent: dv.percent || (totalSends > 0 ? Math.round((dv.count / totalSends) * 100) : 0),
+        };
+      });
+
+      let directCount = 0;
+      let campaignCount = 0;
+      if (categoryFilter === "DIRECT") {
+        directCount = totalSends;
+      } else if (categoryFilter === "BROADCAST") {
+        campaignCount = totalSends;
+      } else {
+        logs.forEach((log) => {
+          if (log.message_type === "BROADCAST" || (log.campaign_id && log.campaign_id.trim() !== "")) {
+            campaignCount += 1;
+          } else {
+            directCount += 1;
+          }
+        });
+        if (directCount === 0 && campaignCount === 0) {
+          directCount = totalSends;
+        }
+      }
+
+      const sendTypesTotal = directCount + campaignCount;
+      const topSendTypes: WABATopSendTypesData = {
+        directCount,
+        directPercent: sendTypesTotal > 0 ? Math.round((directCount / sendTypesTotal) * 100) : 0,
+        campaignCount,
+        campaignPercent: sendTypesTotal > 0 ? Math.round((campaignCount / sendTypesTotal) * 100) : 0,
+        total: sendTypesTotal,
+      };
+
+      return {
+        totalSends,
+        deliveredCount,
+        deliveryRate,
+        failedCount,
+        failureRate,
+        dailyActivity,
+        topSendTypes,
+        byNumber,
+        hasActivity: true,
+      };
+    }
+
+    // 2. Fallback: Client-Side Logs Compute
     const accountPhoneIds = new Set(accounts.map((a) => a.phone_number_id));
     const accountIds = new Set(accounts.map((a) => a.id));
 
@@ -201,7 +352,7 @@ export function useWABAStats() {
     let campaignCount = 0;
 
     filteredLogs.forEach((log) => {
-      if (log.campaign_id && log.campaign_id.trim() !== "") {
+      if (log.message_type === "BROADCAST" || (log.campaign_id && log.campaign_id.trim() !== "")) {
         campaignCount += 1;
       } else {
         directCount += 1;
@@ -263,11 +414,15 @@ export function useWABAStats() {
       byNumber,
       hasActivity,
     };
-  }, [accounts, logs, timeRange]);
+  }, [accounts, logs, serverStats, timeRange, categoryFilter, customRange]);
 
   return {
     timeRange,
     setTimeRange,
+    categoryFilter,
+    setCategoryFilter,
+    customRange,
+    setCustomRange,
     accounts,
     logs,
     stats: statsData,

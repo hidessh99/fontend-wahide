@@ -98,15 +98,17 @@ const SEO_DIRECTORY: Record<string, DocSeoMetadata> = {
     ],
   },
   "otp/send": {
-    seoTitle: "Send WhatsApp OTP API | Wahide",
+    seoTitle: "Send Omnichannel OTP API (WhatsApp, WABA, Telegram) | Wahide",
     seoDescription:
-      "Instant WhatsApp OTP code delivery with automatic 6-digit cryptographic generation, Redis 5-minute TTL, 60s cooldown, and VIP stream priority.",
+      "Enterprise Omnichannel OTP API supporting Meta WABA Official, WhatsApp Web, and Telegram Bot with Smart Cascading Failover & Explicit Mode, 60s cooldown, and 5-minute Redis TTL.",
     keywords: [
-      "Send WhatsApp OTP API",
+      "Send Omnichannel OTP API",
       "WhatsApp OTP REST API",
-      "Send WhatsApp OTP API",
+      "Meta WABA OTP Official",
+      "Telegram OTP Bot API",
+      "Smart Cascading Failover OTP",
       "WhatsApp Verification Code API",
-      "WhatsApp OTP Gateway Indonesia",
+      "Omnichannel OTP Gateway Indonesia",
     ],
   },
   "otp/verify": {

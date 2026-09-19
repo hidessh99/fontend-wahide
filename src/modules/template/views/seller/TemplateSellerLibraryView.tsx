@@ -35,6 +35,19 @@ const TemplateEditorModal = dynamic(
   { ssr: false },
 );
 
+const TemplatePresetPickerModal = dynamic(
+  () =>
+    import("../../components/seller/preset/TemplatePresetPickerModal").then(
+      (m) => m.TemplatePresetPickerModal,
+    ),
+  { ssr: false },
+);
+
+import {
+  TemplatePreset,
+  convertPresetToTemplate,
+} from "../../data/templatePresets";
+
 const DeleteTemplateModal = dynamic(
   () =>
     import("../../components/seller/DeleteTemplateModal").then(
@@ -83,6 +96,7 @@ export function TemplateSellerLibraryView({
   } = useTemplates(effectiveChannel);
 
   // Modal states
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [editingTemplate, setEditingTemplate] = useState<Template | null>(null);
 
@@ -91,7 +105,13 @@ export function TemplateSellerLibraryView({
   );
 
   const handleOpenNew = () => {
-    setEditingTemplate(null);
+    setIsPickerOpen(true);
+  };
+
+  const handleSelectPreset = (preset: TemplatePreset) => {
+    const targetChannel = lockChannel || (channelType === "ALL" ? "WHATSMEOW_UNOFFICIAL" : channelType);
+    const tpl = convertPresetToTemplate(preset, targetChannel);
+    setEditingTemplate(tpl);
     setIsEditorOpen(true);
   };
 
@@ -124,7 +144,13 @@ export function TemplateSellerLibraryView({
         <div className="flex items-start justify-between gap-3 sm:block">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground flex items-center gap-2.5">
-              <LayoutTemplate className="h-7 w-7 text-emerald-600 dark:text-emerald-500" />
+              {lockChannel === "TELEGRAM_BOT" ? (
+                <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-sky-500/10 text-sky-600 dark:bg-sky-500/20 dark:text-sky-400">
+                  <Bot className="size-5" />
+                </div>
+              ) : (
+                <LayoutTemplate className="h-7 w-7 text-emerald-600 dark:text-emerald-500" />
+              )}
               {title || t("template.title")}
             </h1>
             <p className="text-xs sm:text-sm text-foreground-muted mt-1">
@@ -295,14 +321,30 @@ export function TemplateSellerLibraryView({
         </div>
       )}
 
+      {/* Template Preset Picker Modal */}
+      {isPickerOpen && (
+        <TemplatePresetPickerModal
+          isOpen={isPickerOpen}
+          lockChannel={lockChannel}
+          initialChannel={channelType}
+          onClose={() => setIsPickerOpen(false)}
+          onSelectPreset={handleSelectPreset}
+        />
+      )}
+
       {/* Editor Modal */}
-      <TemplateEditorModal
-        isOpen={isEditorOpen}
-        initialData={editingTemplate}
-        lockChannel={lockChannel}
-        onClose={() => setIsEditorOpen(false)}
-        onSubmit={handleSaveModal}
-      />
+      {isEditorOpen && (
+        <TemplateEditorModal
+          isOpen={isEditorOpen}
+          initialData={editingTemplate}
+          lockChannel={lockChannel}
+          onClose={() => {
+            setIsEditorOpen(false);
+            setEditingTemplate(null);
+          }}
+          onSubmit={handleSaveModal}
+        />
+      )}
 
       {/* Delete Confirmation Modal */}
       <DeleteTemplateModal

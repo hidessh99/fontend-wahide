@@ -6,6 +6,7 @@ import { WABAStatsCards } from "../../components/seller/WABAStatsCards";
 import { WABALogsTable } from "../../components/seller/WABALogsTable";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { Button } from "@/components/ui/button";
+import { MessageCategoryTabs, MessageCategory } from "@/components/ui/message-category-tabs";
 import { ScrollText, RefreshCw } from "lucide-react";
 import { useI18n } from "@/lib/i18n/context";
 
@@ -25,6 +26,8 @@ export function WABALogsView() {
     setSearchQuery,
     categoryFilter,
     setCategoryFilter,
+    messageTypeFilter,
+    setMessageTypeFilter,
     statusFilter,
     setStatusFilter,
   } = useWABALogs(1, 10);
@@ -73,7 +76,15 @@ export function WABALogsView() {
         />
 
         {/* Logs Table Component */}
-        <div className="pt-2">
+        <div className="space-y-3 pt-2">
+          {/* Segmented Category Filter Navigation: [ Semua ] [ Pesan ] [ OTP ] [ Broadcast ] */}
+          <div className="flex items-center justify-between gap-3">
+            <MessageCategoryTabs
+              activeCategory={messageTypeFilter as MessageCategory}
+              onCategoryChange={(cat) => setMessageTypeFilter(cat)}
+            />
+          </div>
+
           <WABALogsTable
             logs={logs}
             total={total}
