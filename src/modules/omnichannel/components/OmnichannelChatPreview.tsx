@@ -16,6 +16,7 @@ import {
   BellOff,
 } from "lucide-react";
 import { formatDisplayPhone } from "@/lib/phone";
+import { useI18n } from "@/lib/i18n/context";
 import { OmnichannelChannelType } from "../types/omnichannel.types";
 import { Badge } from "@/components/ui/badge";
 
@@ -54,6 +55,7 @@ export function OmnichannelChatPreview({
   parseMode = "HTML",
   disableNotification = false,
 }: OmnichannelChatPreviewProps) {
+  const { t } = useI18n();
   const now = new Date();
   const timeStr = now.toLocaleTimeString([], {
     hour: "2-digit",
@@ -79,9 +81,9 @@ export function OmnichannelChatPreview({
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h3 className="text-sm sm:text-base font-bold text-foreground flex items-center gap-2">
-            <span>Live Chat Preview</span>
+            <span>{t("omnichannel.preview.title")}</span>
             <Badge variant="outline" className="text-[10px] font-bold border-emerald-500/30 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10">
-              WhatsApp Web
+              {t("omnichannel.channels.waWeb")}
             </Badge>
           </h3>
           <span className="text-[11px] text-foreground-muted">
@@ -101,7 +103,7 @@ export function OmnichannelChatPreview({
                   {displayRecipient}
                 </p>
                 <p className="text-[11px] text-emerald-100 dark:text-emerald-300">
-                  Online
+                  {t("omnichannel.preview.online")}
                 </p>
               </div>
             </div>
@@ -169,7 +171,7 @@ export function OmnichannelChatPreview({
                 <p className="whitespace-pre-wrap text-xs sm:text-sm leading-relaxed break-words">
                   {messageText || (
                     <span className="italic text-foreground-muted opacity-70">
-                      Ketik pesan pada form di sebelah kiri...
+                      {t("omnichannel.preview.empty")}
                     </span>
                   )}
                 </p>
@@ -195,9 +197,9 @@ export function OmnichannelChatPreview({
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h3 className="text-sm sm:text-base font-bold text-foreground flex items-center gap-2">
-            <span>Live Chat Preview</span>
+            <span>{t("omnichannel.preview.title")}</span>
             <Badge variant="outline" className="text-[10px] font-bold border-blue-500/30 text-blue-600 dark:text-blue-400 bg-blue-500/10">
-              Meta WABA Official
+              {t("omnichannel.channels.waba")}
             </Badge>
           </h3>
           <span className="text-[11px] text-foreground-muted flex items-center gap-1">
@@ -335,9 +337,9 @@ export function OmnichannelChatPreview({
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="text-sm sm:text-base font-bold text-foreground flex items-center gap-2">
-          <span>Live Chat Preview</span>
+          <span>{t("omnichannel.preview.title")}</span>
           <Badge variant="outline" className="text-[10px] font-bold border-sky-500/30 text-sky-600 dark:text-sky-400 bg-sky-500/10">
-            Telegram Bot
+            {t("omnichannel.channels.telegram")}
           </Badge>
         </h3>
         <span className="text-[11px] text-foreground-muted flex items-center gap-1">
@@ -386,7 +388,7 @@ export function OmnichannelChatPreview({
         >
           {/* Target Recipient Info Bar */}
           <div className="mx-auto mb-4 rounded-full bg-black/40 px-3 py-1 text-[10px] text-zinc-300 font-medium backdrop-blur-xs">
-            Tujuan: {displayRecipient}
+            {t("omnichannel.composer.recipient")}: {displayRecipient}
           </div>
 
           <div className="self-end max-w-[85%] sm:max-w-[78%]">
@@ -416,7 +418,7 @@ export function OmnichannelChatPreview({
                   )
                 ) : (
                   <span className="italic text-zinc-300 opacity-70">
-                    Ketik pesan untuk bot Telegram...
+                    {t("omnichannel.preview.empty")}
                   </span>
                 )}
               </div>

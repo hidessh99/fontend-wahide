@@ -29,6 +29,7 @@ import { SearchInput } from "@/components/ui/search-input";
 import { NativeSelect } from "@/components/ui/native-select";
 import { DataTablePagination } from "@/components/ui/pagination";
 import { EmptyState } from "@/components/ui/empty";
+import { useI18n } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 import { formatDisplayPhone } from "@/lib/phone";
 
@@ -67,6 +68,7 @@ export function OmnichannelLogsTable({
   onNewMessage,
   onRefresh,
 }: OmnichannelLogsTableProps) {
+  const { t } = useI18n();
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   const handleExportCSV = () => {
@@ -115,10 +117,10 @@ export function OmnichannelLogsTable({
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h3 className="text-base sm:text-lg font-bold text-foreground tracking-tight">
-              Daftar Pesan & Log Pengiriman
+              {t("whatsapp.messagesListTitle")}
             </h3>
             <p className="text-xs sm:text-sm text-foreground-secondary font-medium">
-              Pantau status pengiriman pesan, waktu transmisi, dan status ACK per saluran.
+              {t("omnichannel.messages.subtitle")}
             </p>
           </div>
 
@@ -132,7 +134,7 @@ export function OmnichannelLogsTable({
                 className="h-9 px-3 text-xs font-bold rounded-full cursor-pointer gap-1.5"
               >
                 <RefreshCw className={cn("size-3.5", isLoading && "animate-spin")} />
-                <span className="hidden sm:inline">Refresh</span>
+                <span className="hidden sm:inline">{t("common.refresh")}</span>
               </Button>
             )}
 
@@ -144,7 +146,7 @@ export function OmnichannelLogsTable({
               className="h-9 px-3 text-xs font-bold rounded-full cursor-pointer gap-1.5"
             >
               <Download className="size-3.5" />
-              <span>Ekspor CSV</span>
+              <span>{t("whatsapp.messagesExport")} CSV</span>
             </Button>
 
             <Button
@@ -154,7 +156,7 @@ export function OmnichannelLogsTable({
               className="h-9 px-4 text-xs font-bold shadow-xs cursor-pointer gap-1.5"
             >
               <Send className="size-3.5" />
-              <span>Pesan Baru</span>
+              <span>{t("whatsapp.messagesNewMessage")}</span>
             </Button>
           </div>
         </div>
@@ -178,7 +180,7 @@ export function OmnichannelLogsTable({
               onChange={(val) => onSearchChange(val)}
               onSearch={(val) => onSearchChange(val)}
               onClear={() => onSearchChange("")}
-              placeholder="Cari penerima atau isi pesan..."
+              placeholder={t("whatsapp.messagesSearchPlaceholder")}
               className="h-10 text-xs sm:text-sm rounded-full"
             />
           </div>
@@ -190,7 +192,7 @@ export function OmnichannelLogsTable({
               variant="rounded"
               className="h-10 text-xs font-semibold"
             >
-              <option value="ALL">Semua Status</option>
+              <option value="ALL">{t("whatsapp.messagesFilterAllStatus")}</option>
               <option value="SENT">Terkirim (Sent)</option>
               <option value="DELIVERED">Diterima (Delivered)</option>
               <option value="READ">Dibaca (Read)</option>
@@ -206,12 +208,12 @@ export function OmnichannelLogsTable({
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="border-b border-border/70 bg-muted/40 text-[10px] sm:text-xs font-black uppercase tracking-wider text-foreground-secondary">
-              <th className="py-3 px-4 sm:px-6">Saluran</th>
-              <th className="py-3 px-4 sm:px-6">Penerima</th>
-              <th className="py-3 px-4 sm:px-6">Pengirim</th>
-              <th className="py-3 px-4 sm:px-6 min-w-[200px]">Pesan</th>
-              <th className="py-3 px-4 sm:px-6">Waktu</th>
-              <th className="py-3 px-4 sm:px-6 text-right">Status</th>
+              <th className="py-3 px-4 sm:px-6">{t("whatsapp.messagesColDevice")}</th>
+              <th className="py-3 px-4 sm:px-6">{t("whatsapp.messagesColRecipient")}</th>
+              <th className="py-3 px-4 sm:px-6">{t("omnichannel.composer.selectSender")}</th>
+              <th className="py-3 px-4 sm:px-6 min-w-[200px]">{t("whatsapp.messagesColMessage")}</th>
+              <th className="py-3 px-4 sm:px-6">{t("whatsapp.messagesColTime")}</th>
+              <th className="py-3 px-4 sm:px-6 text-right">{t("whatsapp.messagesColStatus")}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border/60 text-xs sm:text-sm font-medium">

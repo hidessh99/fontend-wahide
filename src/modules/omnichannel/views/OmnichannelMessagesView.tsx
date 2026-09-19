@@ -4,12 +4,14 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { SendHorizontal, ScrollText } from "lucide-react";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
+import { useI18n } from "@/lib/i18n/context";
 import { OmnichannelChannelType } from "../types/omnichannel.types";
 import { useOmnichannelSenders } from "../hooks/useOmnichannelSenders";
 import { OmnichannelComposer } from "../components/OmnichannelComposer";
 import { OmnichannelChatPreview } from "../components/OmnichannelChatPreview";
 
 export function OmnichannelMessagesView() {
+  const { t } = useI18n();
   // Active Channel for composer & preview
   const [selectedChannel, setSelectedChannel] =
     useState<OmnichannelChannelType>("WHATSMEOW_UNOFFICIAL");
@@ -69,14 +71,14 @@ export function OmnichannelMessagesView() {
               <SendHorizontal className="size-4 sm:size-5" />
             </div>
             <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl lg:text-3xl flex items-center gap-2">
-              <span>Pesan Cepat</span>
+              <span>{t("omnichannel.messages.title")}</span>
               <span className="inline-flex items-center gap-1 text-[11px] font-bold py-0.5 px-2 rounded-full bg-wise-green/20 text-dark-green dark:text-wise-green">
-                Quick Message
+                {t("omnichannel.messages.badge")}
               </span>
             </h1>
           </div>
           <p className="text-foreground-secondary max-w-2xl text-xs font-semibold sm:text-sm">
-            Kirim pesan instan 1-on-1 langsung ke pelanggan via WhatsApp Web, Meta WABA Official, atau Telegram Bot dengan simulasi live.
+            {t("omnichannel.messages.subtitle")}
           </p>
         </div>
 
@@ -86,13 +88,13 @@ export function OmnichannelMessagesView() {
             className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-3.5 py-1.5 text-xs font-semibold text-foreground-secondary hover:bg-muted hover:text-foreground transition-colors dark:bg-[#161715]"
           >
             <ScrollText className="size-3.5 text-foreground-muted" />
-            <span>Log Pengiriman</span>
+            <span>{t("omnichannel.messages.logLink")}</span>
           </Link>
         </div>
       </div>
 
       {/* Main Workstation: Composer (7 cols) + Live Chat Preview (5 cols, sticky) */}
-      <ErrorBoundary fallbackTitle="Gagal memuat workstation pengirim pesan">
+      <ErrorBoundary fallbackTitle={t("omnichannel.messages.composerError")}>
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 items-start">
           {/* Left Column: Dynamic Composer */}
           <div className="lg:col-span-7">

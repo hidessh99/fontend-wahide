@@ -31,6 +31,7 @@ import {
   detectCountryFromPhone,
 } from "@/lib/countryCodes";
 import { isValidE164 } from "@/lib/phone";
+import { useI18n } from "@/lib/i18n/context";
 import { whatsappApi } from "@/modules/whatsapp/api/whatsapp.api";
 import { wabaApi } from "@/modules/whatsapp/api/waba.api";
 import { telegramApi } from "@/modules/telegram/api/telegram.api";
@@ -84,6 +85,7 @@ export function OmnichannelComposer({
   onTelegramSilentChange,
   onSuccess,
 }: OmnichannelComposerProps) {
+  const { t } = useI18n();
   // Selected Sender ID for current channel
   const [selectedSenderId, setSelectedSenderId] = useState<string>("");
 
@@ -227,23 +229,23 @@ export function OmnichannelComposer({
     try {
       if (selectedChannel === "WHATSMEOW_UNOFFICIAL") {
         if (!recipientNumber.trim()) {
-          throw new Error("Nomor WhatsApp tujuan wajib diisi.");
+          throw new Error(t("omnichannel.composer.errRecipientRequired"));
         }
         const fullPhone = `${selectedCountry.dialCode}${recipientNumber.trim()}`;
         if (!isValidE164(fullPhone)) {
           throw new Error(
-            "Format nomor tujuan tidak valid (harus standar E.164).",
+            t("whatsapp.messagesErrInvalidPhone") || "Format nomor tujuan tidak valid.",
           );
         }
 
         if (messageType === "chat" && !messageText.trim()) {
-          throw new Error("Pesan teks tidak boleh kosong.");
+          throw new Error(t("omnichannel.composer.errMessageRequired"));
         }
         if (messageType === "image" && !mediaUrl.trim()) {
-          throw new Error("URL gambar wajib diisi.");
+          throw new Error(t("whatsapp.messagesErrImageUrlRequired") || "URL gambar wajib diisi.");
         }
         if (messageType === "file" && !mediaUrl.trim()) {
-          throw new Error("URL dokumen berkas wajib diisi.");
+          throw new Error(t("whatsapp.messagesErrFileUrlRequired") || "URL berkas wajib diisi.");
         }
 
         const payload = {
@@ -266,18 +268,18 @@ export function OmnichannelComposer({
         };
 
         await whatsappApi.sendMessage(payload);
-        toast.success("Pesan WhatsApp Web berhasil dikirim!");
+        toast.success(t("omnichannel.composer.toastSuccess", { channel: "WhatsApp Web" }));
       } else if (selectedChannel === "META_WABA_OFFICIAL") {
         if (!recipientNumber.trim()) {
-          throw new Error("Nomor tujuan WhatsApp resmi wajib diisi.");
+          throw new Error(t("omnichannel.composer.errRecipientRequired"));
         }
         const fullPhone = `${selectedCountry.dialCode}${recipientNumber.trim()}`;
         if (!isValidE164(fullPhone)) {
-          throw new Error("Format nomor telepon tujuan tidak valid.");
+          throw new Error(t("whatsapp.messagesErrInvalidPhone") || "Format nomor tujuan tidak valid.");
         }
 
         if (wabaMode === "session_text" && !messageText.trim()) {
-          throw new Error("Pesan sesi teks tidak boleh kosong.");
+          throw new Error(t("omnichannel.composer.errMessageRequired"));
         }
 
         await wabaApi.sendMessage({
@@ -296,10 +298,10 @@ export function OmnichannelComposer({
               : undefined,
         });
 
-        toast.success("Pesan resmi Meta WABA berhasil dikirim!");
+        toast.success(t("omnichannel.composer.toastSuccess", { channel: "Meta WABA" }));
       } else if (selectedChannel === "TELEGRAM_BOT") {
         if (!telegramChatId.trim()) {
-          throw new Error("Chat ID Telegram penerima wajib diisi.");
+          throw new Error(t("omnichannel.composer.errRecipientRequired"));
         }
         const numericChatId = parseInt(telegramChatId.trim(), 10);
         if (isNaN(numericChatId)) {
@@ -309,7 +311,7 @@ export function OmnichannelComposer({
         }
 
         if (messageType === "chat" && !messageText.trim()) {
-          throw new Error("Pesan teks bot Telegram tidak boleh kosong.");
+          throw new Error(t("omnichannel.composer.errMessageRequired"));
         }
 
         await telegramApi.sendMessage({
@@ -329,7 +331,7 @@ export function OmnichannelComposer({
           disable_web_page_preview: telegramDisablePreview,
         });
 
-        toast.success("Pesan Telegram Bot berhasil dikirim!");
+        toast.success(t("omnichannel.composer.toastSuccess", { channel: "Telegram Bot" }));
       }
 
       // Reset fields upon success
@@ -345,7 +347,7 @@ export function OmnichannelComposer({
       onSuccess?.();
     } catch (err: unknown) {
       const msg =
-        err instanceof Error ? err.message : "Gagal mengirimkan pesan.";
+        err instanceof Error ? err.message : t("common.genericError");
       setErrorMessage(msg);
       toast.error(msg);
     } finally {
@@ -464,12 +466,7 @@ export function OmnichannelComposer({
         {/* SENDER SELECTOR */}
         <div className="space-y-1.5">
           <Label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
-            {selectedChannel === "WHATSMEOW_UNOFFICIAL" &&
-              "Pilih Perangkat Pengirim (WhatsApp Web)"}
-            {selectedChannel === "META_WABA_OFFICIAL" &&
-              "Pilih Nomor Pengirim Resmi (Meta WABA)"}
-            {selectedChannel === "TELEGRAM_BOT" &&
-              "Pilih Bot Pengirim (Telegram)"}
+            {t("omnichannel.composer.selectSender")}
           </Label>
 
           <div className="relative">
@@ -484,13 +481,17 @@ export function OmnichannelComposer({
               {currentSenders.length === 0 ? (
                 <option value="" disabled>
                   {isLoadingSenders
-                    ? "Memuat data pengirim..."
-                    : "Tidak ada pengirim aktif pada saluran ini"}
+                    ? t("omnichannel.composer.loadingSenders")
+                    : selectedChannel === "WHATSMEOW_UNOFFICIAL"
+                      ? t("omnichannel.composer.noSendersWa")
+                      : selectedChannel === "META_WABA_OFFICIAL"
+                        ? t("omnichannel.composer.noSendersWaba")
+                        : t("omnichannel.composer.noSendersTele")}
                 </option>
               ) : (
                 <>
                   <option value="" disabled>
-                    -- Pilih Pengirim --
+                    -- {t("omnichannel.composer.selectSender")} --
                   </option>
                   {currentSenders.map((s) => (
                     <option key={s.id} value={s.id}>
@@ -520,7 +521,7 @@ export function OmnichannelComposer({
             <div className="flex items-center gap-2 pt-1 text-[11px] text-foreground-secondary font-medium">
               <span className="inline-block size-2 rounded-full bg-emerald-500 animate-pulse" />
               <span>
-                Aktif: <strong>{selectedSender.displayName}</strong>
+                {t("common.active")}: <strong>{selectedSender.displayName}</strong>
               </span>
               <span className="text-muted-foreground">•</span>
               <span>{selectedSender.identifier}</span>
@@ -540,8 +541,8 @@ export function OmnichannelComposer({
         <div className="space-y-1.5">
           <Label className="text-foreground-secondary mb-1.5 block text-xs font-semibold tracking-wider uppercase">
             {selectedChannel === "TELEGRAM_BOT"
-              ? "Telegram Chat ID Penerima"
-              : "Nomor Telepon Tujuan"}
+              ? "Telegram Chat ID"
+              : t("omnichannel.composer.recipient")}
           </Label>
 
           {selectedChannel === "TELEGRAM_BOT" ? (
@@ -549,7 +550,7 @@ export function OmnichannelComposer({
               <div className="relative">
                 <Input
                   type="text"
-                  placeholder="Contoh: 123456789 atau -100123456789"
+                  placeholder={t("omnichannel.composer.recipientTelePlaceholder")}
                   value={telegramChatId}
                   onChange={(e) => handleTelegramChatIdChange(e.target.value)}
                   disabled={isSending}
@@ -559,8 +560,7 @@ export function OmnichannelComposer({
               </div>
               <p className="text-[11px] text-muted-foreground flex items-center gap-1">
                 <HelpCircle className="size-3 text-sky-500" />
-                Pengguna dapat menemukan Chat ID melalui bot @userinfobot di
-                Telegram.
+                Pengguna dapat menemukan Chat ID melalui bot @userinfobot di Telegram.
               </p>
             </div>
           ) : (
@@ -573,7 +573,7 @@ export function OmnichannelComposer({
                 />
                 <Input
                   type="tel"
-                  placeholder="81234567890"
+                  placeholder={t("omnichannel.composer.recipientWaPlaceholder")}
                   value={recipientNumber}
                   onChange={(e) => handlePhoneInput(e.target.value)}
                   disabled={isSending}
@@ -581,7 +581,7 @@ export function OmnichannelComposer({
                 />
               </div>
               <p className="text-[11px] text-muted-foreground">
-                Format standar internasional (+E.164) otomatis diterapkan.
+                {t("omnichannel.composer.recipientHint")}
               </p>
             </div>
           )}
@@ -766,7 +766,7 @@ export function OmnichannelComposer({
                 }`}
               >
                 <MessageSquare className="size-3.5" />
-                <span>Teks</span>
+                <span>{t("omnichannel.composer.typeText")}</span>
               </button>
               <button
                 type="button"
@@ -778,7 +778,7 @@ export function OmnichannelComposer({
                 }`}
               >
                 <ImageIcon className="size-3.5" />
-                <span>Gambar</span>
+                <span>{t("omnichannel.composer.typeImage")}</span>
               </button>
               <button
                 type="button"
@@ -790,7 +790,7 @@ export function OmnichannelComposer({
                 }`}
               >
                 <Paperclip className="size-3.5" />
-                <span>Berkas</span>
+                <span>{t("omnichannel.composer.typeFile")}</span>
               </button>
               <button
                 type="button"
@@ -803,7 +803,7 @@ export function OmnichannelComposer({
                 }`}
               >
                 <MapPin className="size-3.5" />
-                <span>Lokasi</span>
+                <span>{t("omnichannel.composer.typeLocation")}</span>
               </button>
             </div>
 
@@ -814,11 +814,11 @@ export function OmnichannelComposer({
               messageType === "document") && (
               <div className="space-y-1.5 pt-1">
                 <Label className="text-xs font-semibold text-foreground-secondary">
-                  URL Media Lampiran (HTTPS)
+                  {t("omnichannel.composer.imageUrl")}
                 </Label>
                 <Input
                   type="url"
-                  placeholder="https://example.com/image.jpg atau file.pdf"
+                  placeholder={t("omnichannel.composer.imageUrlPlaceholder")}
                   value={mediaUrl}
                   onChange={(e) => {
                     setMediaUrl(e.target.value);
@@ -833,11 +833,11 @@ export function OmnichannelComposer({
             {(messageType === "file" || messageType === "document") && (
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold text-foreground-secondary">
-                  Nama Berkas
+                  {t("omnichannel.composer.fileName")}
                 </Label>
                 <Input
                   type="text"
-                  placeholder="invoice-2026.pdf"
+                  placeholder={t("omnichannel.composer.fileNamePlaceholder")}
                   value={fileName}
                   onChange={(e) => {
                     setFileName(e.target.value);
@@ -852,11 +852,11 @@ export function OmnichannelComposer({
             {messageType === "location" && (
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold text-foreground-secondary">
-                  Alamat / Koordinat Lokasi
+                  {t("omnichannel.composer.location")}
                 </Label>
                 <Input
                   type="text"
-                  placeholder="Jl. Sudirman No. 1, Jakarta"
+                  placeholder={t("omnichannel.composer.locationPlaceholder")}
                   value={locationAddress}
                   onChange={(e) => {
                     setLocationAddress(e.target.value);
@@ -874,13 +874,13 @@ export function OmnichannelComposer({
           <div className="flex items-center justify-between">
             <Label className="text-foreground-secondary block text-xs font-semibold tracking-wider uppercase">
               {wabaMode === "template_hsm"
-                ? "Preview Teks Template"
-                : "Isi Pesan"}
+                ? t("omnichannel.composer.templateName")
+                : t("omnichannel.composer.messageText")}
             </Label>
             {selectedChannel === "WHATSMEOW_UNOFFICIAL" && (
               <div className="flex items-center gap-1.5 text-[11px] text-foreground-muted">
                 <Sparkles className="size-3 text-wise-green" />
-                <span>Spintax:</span>
+                <span>{t("omnichannel.composer.spintaxHelper")}:</span>
                 <button
                   type="button"
                   onClick={() => insertSpintax("{Halo|Hai|Pagi}")}
@@ -900,7 +900,7 @@ export function OmnichannelComposer({
                 : selectedChannel === "META_WABA_OFFICIAL" &&
                     wabaMode === "template_hsm"
                   ? "Pesan template mengikuti definisi Meta Cloud API..."
-                  : "Ketik pesan Anda di sini..."
+                  : t("omnichannel.composer.messagePlaceholder")
             }
             value={messageText}
             onChange={(e) => handleTextChange(e.target.value)}
@@ -943,18 +943,20 @@ export function OmnichannelComposer({
           {isSending ? (
             <>
               <Loader2 className="size-4 animate-spin" />
-              <span>Sedang Mengirim Pesan...</span>
+              <span>{t("omnichannel.composer.sending")}</span>
             </>
           ) : (
             <>
               <Send className="size-4" />
               <span>
-                {selectedChannel === "WHATSMEOW_UNOFFICIAL" &&
-                  "Kirim Pesan WhatsApp Web"}
-                {selectedChannel === "META_WABA_OFFICIAL" &&
-                  "Kirim Pesan Resmi Meta WABA"}
-                {selectedChannel === "TELEGRAM_BOT" &&
-                  "Kirim Pesan Bot Telegram"}
+                {t("omnichannel.composer.sendBtn")}{" "}
+                (
+                {selectedChannel === "WHATSMEOW_UNOFFICIAL"
+                  ? t("omnichannel.channels.waWeb")
+                  : selectedChannel === "META_WABA_OFFICIAL"
+                    ? t("omnichannel.channels.waba")
+                    : t("omnichannel.channels.telegram")}
+                )
               </span>
             </>
           )}

@@ -32,7 +32,7 @@ export function DashboardUserNav() {
     <DropdownMenu>
       <DropdownMenuTrigger
         className="hover:bg-surface hover:border-border flex cursor-pointer items-center gap-2 rounded-full border border-transparent p-1.5 transition outline-none dark:hover:bg-[#161715]"
-        aria-label="Menu Pengguna"
+        aria-label={t("nav.userMenu")}
       >
         <div className="bg-wise-green text-dark-green flex size-8 items-center justify-center rounded-full text-xs font-black">
           {user.name.charAt(0).toUpperCase()}

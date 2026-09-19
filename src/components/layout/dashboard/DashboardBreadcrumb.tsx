@@ -70,6 +70,26 @@ export function DashboardBreadcrumb() {
         return t("admin.subscriptionsTitle");
       case "messages":
         return t("dashboardMenu.messages");
+      case "send":
+        return t("dashboardMenu.groupSend");
+      case "message":
+        return t("dashboardMenu.sendQuickMessage");
+      case "broadcast":
+        return t("dashboardMenu.sendBroadcast");
+      case "reminder":
+        return t("dashboardMenu.sendReminder");
+      case "reservation":
+        return t("dashboardMenu.sendReservation");
+      case "autoreply":
+        return t("dashboardMenu.groupAutoreply");
+      case "flow":
+        return t("dashboardMenu.autoreplyFlow");
+      case "submission":
+        return t("dashboardMenu.autoreplySubmission");
+      case "spreadsheet":
+        return t("dashboardMenu.autoreplySpreadsheet");
+      case "new":
+        return t("common.new");
       case "notifications":
         return t("admin.notificationsTitle");
       default:

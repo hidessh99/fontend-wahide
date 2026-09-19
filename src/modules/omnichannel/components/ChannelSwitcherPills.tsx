@@ -3,6 +3,7 @@
 import React from "react";
 import { Smartphone, Building2, Send, Layers } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/lib/i18n/context";
 import {
   OmnichannelChannelType,
   CHANNEL_CONFIGS,
@@ -26,6 +27,7 @@ export function ChannelSwitcherPills({
   className,
   size = "md",
 }: ChannelSwitcherPillsProps) {
+  const { t } = useI18n();
   const options: Array<{
     id: OmnichannelChannelType | "ALL";
     label: string;
@@ -37,7 +39,7 @@ export function ChannelSwitcherPills({
   if (includeAllOption) {
     options.push({
       id: "ALL",
-      label: "Semua Saluran",
+      label: t("common.allFilter") || "Semua Saluran",
       count: counts?.total,
       icon: Layers,
     });
@@ -45,24 +47,24 @@ export function ChannelSwitcherPills({
 
   options.push({
     id: "WHATSMEOW_UNOFFICIAL",
-    label: CHANNEL_CONFIGS.WHATSMEOW_UNOFFICIAL.label,
-    badgeText: CHANNEL_CONFIGS.WHATSMEOW_UNOFFICIAL.badge,
+    label: t("omnichannel.channels.waWeb") || CHANNEL_CONFIGS.WHATSMEOW_UNOFFICIAL.label,
+    badgeText: t("omnichannel.channels.waWebBadge") || CHANNEL_CONFIGS.WHATSMEOW_UNOFFICIAL.badge,
     count: counts?.waWeb,
     icon: Smartphone,
   });
 
   options.push({
     id: "META_WABA_OFFICIAL",
-    label: CHANNEL_CONFIGS.META_WABA_OFFICIAL.label,
-    badgeText: CHANNEL_CONFIGS.META_WABA_OFFICIAL.badge,
+    label: t("omnichannel.channels.waba") || CHANNEL_CONFIGS.META_WABA_OFFICIAL.label,
+    badgeText: t("omnichannel.channels.wabaBadge") || CHANNEL_CONFIGS.META_WABA_OFFICIAL.badge,
     count: counts?.waba,
     icon: Building2,
   });
 
   options.push({
     id: "TELEGRAM_BOT",
-    label: CHANNEL_CONFIGS.TELEGRAM_BOT.label,
-    badgeText: CHANNEL_CONFIGS.TELEGRAM_BOT.badge,
+    label: t("omnichannel.channels.telegram") || CHANNEL_CONFIGS.TELEGRAM_BOT.label,
+    badgeText: t("omnichannel.channels.telegramBadge") || CHANNEL_CONFIGS.TELEGRAM_BOT.badge,
     count: counts?.telegram,
     icon: Send,
   });
@@ -74,7 +76,7 @@ export function ChannelSwitcherPills({
         className,
       )}
       role="tablist"
-      aria-label="Pilih Saluran Pesan"
+      aria-label={t("omnichannel.composer.channelTab")}
     >
       {options.map((opt) => {
         const isSelected = selectedChannel === opt.id;
