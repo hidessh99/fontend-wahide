@@ -18,6 +18,8 @@ export default function robots(): MetadataRoute.Robots {
           "/docs/*",
           "/privacy",
           "/terms",
+          "/feed.xml",
+          "/rss.xml",
         ],
         disallow: [
           "/dashboard",
