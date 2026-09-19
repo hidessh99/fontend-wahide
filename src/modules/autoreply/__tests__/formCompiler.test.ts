@@ -1,13 +1,14 @@
 // ==============================================================================
 // Wahide Frontend - Unit Test: Linear Form to DAG Flow Compiler
 // Executed natively via Bun Test Runner (bun test)
+// Relocated to dedicated module test directory: src/modules/autoreply/__tests__/
 // ==============================================================================
 
 import { describe, it, expect } from "bun:test";
 import {
   compileLinearFormToFlow,
   decompileFlowToLinearForm,
-} from "./formCompiler";
+} from "../utils/formCompiler";
 import { LinearSubmissionFormInput } from "../types/submission.types";
 import { FlowDefinition } from "../types/flow.types";
 
