@@ -230,7 +230,7 @@ export function DateRangePicker({
       {/* Popover Card */}
       {isOpen && (
         <div
-          className={`absolute top-full z-50 mt-2 w-[340px] sm:w-[540px] rounded-2xl border border-border bg-surface p-4 shadow-xl dark:bg-[#151614] animate-in fade-in-50 zoom-in-95 ${
+          className={`absolute top-full z-50 mt-2 w-85 sm:w-135 rounded-2xl border border-border bg-surface p-4 shadow-xl dark:bg-[#151614] animate-in fade-in-50 zoom-in-95 ${
             align === "right" ? "right-0" : "left-0"
           }`}
         >
