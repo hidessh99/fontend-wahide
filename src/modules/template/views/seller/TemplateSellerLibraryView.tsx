@@ -230,12 +230,12 @@ export function TemplateSellerLibraryView({
           icon={<FolderOpen className="size-8 text-foreground-muted" />}
           title={
             search || category !== "ALL" || favoriteOnly
-              ? "Tidak Ada Template yang Cocok"
+              ? t("template.empty.noMatchTitle")
               : t("template.empty.title")
           }
           description={
             search || category !== "ALL" || favoriteOnly
-              ? "Coba sesuaikan kata kunci pencarian atau reset filter kategori untuk menemukan template yang Anda cari."
+              ? t("template.empty.noMatchDesc")
               : t("template.empty.subtitle")
           }
           action={

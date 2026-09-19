@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { Smartphone, ShieldCheck, Bot, CheckCircle2, AlertCircle } from "lucide-react";
 import { CampaignChannelType } from "../../types/campaign.types";
 import { OmnichannelActiveCounts } from "@/modules/omnichannel/types/omnichannel.types";
+import { useI18n } from "@/lib/i18n/context";
 
 interface CampaignChannelSelectorProps {
   selectedChannel: CampaignChannelType;
@@ -19,6 +20,8 @@ export function CampaignChannelSelector({
   activeCounts,
   className,
 }: CampaignChannelSelectorProps) {
+  const { t } = useI18n();
+
   const channels: Array<{
     id: CampaignChannelType;
     title: string;
@@ -32,36 +35,36 @@ export function CampaignChannelSelector({
   }> = [
     {
       id: "WHATSMEOW_UNOFFICIAL",
-      title: "WhatsApp Web (Socket)",
-      description: "Siaran massal via nomor handphone fisik terhubung. Dilengkapi multi-device pooling & proteksi anti-ban.",
-      badge: "Socket QR",
+      title: t("campaign.channels.waWebTitle"),
+      description: t("campaign.channels.waWebDesc"),
+      badge: t("campaign.channels.waWebBadge"),
       icon: Smartphone,
       count: activeCounts.waWeb,
-      activeText: `${activeCounts.waWeb} HP Terhubung`,
+      activeText: t("campaign.channels.waWebActive", { count: activeCounts.waWeb }),
       colorScheme: "emerald",
-      recommendedFor: "Pesan personal, promo harian, dan obrolan kasual",
+      recommendedFor: t("campaign.channels.waWebRecommended"),
     },
     {
       id: "META_WABA_OFFICIAL",
-      title: "WhatsApp Official (WABA)",
-      description: "Jalur resmi Meta Cloud API dengan centang hijau bisnis. Kecepatan ultra tinggi tanpa resiko blokir nomor.",
-      badge: "Official Cloud",
+      title: t("campaign.channels.wabaTitle"),
+      description: t("campaign.channels.wabaDesc"),
+      badge: t("campaign.channels.wabaBadge"),
       icon: ShieldCheck,
       count: activeCounts.waba,
-      activeText: `${activeCounts.waba} Akun Resmi`,
+      activeText: t("campaign.channels.wabaActive", { count: activeCounts.waba }),
       colorScheme: "sky",
-      recommendedFor: "Siaran skala besar (>1.000 pesan), pengumuman resmi & OTP",
+      recommendedFor: t("campaign.channels.wabaRecommended"),
     },
     {
       id: "TELEGRAM_BOT",
-      title: "Telegram Bot Broadcast",
-      description: "Kirim pesan siaran instan hingga 30 pesan/detik langsung ke pelanggan & channel tanpa biaya transmisi.",
-      badge: "100% Gratis",
+      title: t("campaign.channels.telegramTitle"),
+      description: t("campaign.channels.telegramDesc"),
+      badge: t("campaign.channels.telegramBadge"),
       icon: Bot,
       count: activeCounts.telegram,
-      activeText: `${activeCounts.telegram} Bot Aktif`,
+      activeText: t("campaign.channels.telegramActive", { count: activeCounts.telegram }),
       colorScheme: "blue",
-      recommendedFor: "Pemberitahuan komunitas, flash sale, dan buletin gratis",
+      recommendedFor: t("campaign.channels.telegramRecommended"),
     },
   ];
 
@@ -137,7 +140,7 @@ export function CampaignChannelSelector({
               <div className="border-border/60 mt-3 border-t pt-2.5">
                 <div className="flex items-center justify-between text-[11px]">
                   <span className="text-foreground-secondary font-medium">
-                    Status Pengirim:
+                    {t("campaign.channels.senderStatus")}
                   </span>
                   <div className="flex items-center gap-1 font-bold">
                     {hasSenders ? (
@@ -149,7 +152,7 @@ export function CampaignChannelSelector({
                       <>
                         <AlertCircle className="size-3 text-amber-500" />
                         <span className="text-amber-600 dark:text-amber-400">
-                          0 Pengirim Aktif
+                          {t("campaign.channels.noSenders")}
                         </span>
                       </>
                     )}

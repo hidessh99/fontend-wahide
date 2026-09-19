@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Bot, Copy, Check, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
+import { useI18n } from "@/lib/i18n/context";
 
 export interface TelegramTemplateItem {
   id: string;
@@ -20,16 +21,17 @@ interface TelegramTemplateCardProps {
 }
 
 export function TelegramTemplateCard({ template }: TelegramTemplateCardProps) {
+  const { t } = useI18n();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(template.content);
       setCopied(true);
-      toast.success("Sintaks template disalin ke clipboard");
+      toast.success(t("telegram.templates.toastCopied"));
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast.error("Gagal menyalin template");
+      toast.error(t("telegram.templates.toastCopyFailed"));
     }
   };
 
@@ -59,7 +61,7 @@ export function TelegramTemplateCard({ template }: TelegramTemplateCardProps) {
         <div className="rounded-xl border border-border/60 bg-muted/40 p-3.5 space-y-2.5">
           <div className="flex items-center gap-1.5 text-[10px] font-bold text-foreground-muted uppercase tracking-wider">
             <Bot className="size-3 text-sky-500" />
-            <span>Pratinjau Balon Chat</span>
+            <span>{t("telegram.templates.previewBubble")}</span>
           </div>
           <pre className="font-mono text-xs whitespace-pre-wrap break-words text-foreground bg-surface p-2.5 rounded-lg border border-border/40 dark:bg-[#181917]">
             {template.content}
@@ -84,7 +86,7 @@ export function TelegramTemplateCard({ template }: TelegramTemplateCardProps) {
 
       <div className="border-border/60 flex items-center justify-between border-t pt-3 mt-4">
         <span className="text-[11px] text-foreground-muted font-mono">
-          {template.buttons.length} tombol inline
+          {t("telegram.templates.inlineButtonsCount", { count: template.buttons.length })}
         </span>
         <Button
           variant="outline"
@@ -95,12 +97,12 @@ export function TelegramTemplateCard({ template }: TelegramTemplateCardProps) {
           {copied ? (
             <>
               <Check className="mr-1.5 size-3 text-emerald-500" />
-              <span>Tersalin</span>
+              <span>{t("telegram.templates.copied")}</span>
             </>
           ) : (
             <>
               <Copy className="mr-1.5 size-3" />
-              <span>Salin Sintaks</span>
+              <span>{t("telegram.templates.copySyntax")}</span>
             </>
           )}
         </Button>

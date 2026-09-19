@@ -7,8 +7,10 @@ import { WABALogsTable } from "../../components/seller/WABALogsTable";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
 import { Button } from "@/components/ui/button";
 import { ScrollText, RefreshCw } from "lucide-react";
+import { useI18n } from "@/lib/i18n/context";
 
 export function WABALogsView() {
+  const { t } = useI18n();
   const {
     logs,
     total,
@@ -42,11 +44,11 @@ export function WABALogsView() {
               <ScrollText className="size-5" />
             </div>
             <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl">
-              Log Pesan Meta WABA Official
+              {t("whatsapp.wabaLogs.title")}
             </h1>
           </div>
           <p className="text-foreground-secondary text-xs font-medium sm:text-sm">
-            Audit rekam jejak transmisi Meta Cloud API, tanda terima pengiriman resmi (WAMID), dan pelacak status percakapan.
+            {t("whatsapp.wabaLogs.subtitle")}
           </p>
         </div>
 
@@ -58,11 +60,11 @@ export function WABALogsView() {
           className="text-xs font-semibold cursor-pointer"
         >
           <RefreshCw className={`mr-1.5 size-3.5 ${isLoading ? "animate-spin" : ""}`} />
-          <span>Muat Ulang</span>
+          <span>{t("whatsapp.wabaLogs.reload")}</span>
         </Button>
       </div>
 
-      <ErrorBoundary fallbackTitle="Gagal memuat riwayat log pesan Meta WABA">
+      <ErrorBoundary fallbackTitle={t("whatsapp.wabaLogs.fallbackError")}>
         {/* 4 Stats Cards */}
         <WABAStatsCards
           total={total}

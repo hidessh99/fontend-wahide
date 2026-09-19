@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useI18n } from "@/lib/i18n/context";
 import { TelegramBot } from "../../types/telegram.types";
 
 interface TelegramBotCardProps {
@@ -31,6 +32,7 @@ export function TelegramBotCard({
   isDeleting = false,
   disabled = false,
 }: TelegramBotCardProps) {
+  const { t } = useI18n();
   return (
     <div className="bg-surface border-border flex flex-col justify-between rounded-2xl border p-5 shadow-xs transition-all duration-150 hover:shadow-md dark:bg-[#151614]">
       <div className="space-y-4">
@@ -71,20 +73,20 @@ export function TelegramBotCard({
         {/* Webhook & Rate Limit Indicators */}
         <div className="border-border/60 rounded-xl border bg-muted/40 p-3 space-y-2 text-xs">
           <div className="flex items-center justify-between">
-            <span className="text-foreground-secondary text-[11px] font-medium">Webhook Status</span>
+            <span className="text-foreground-secondary text-[11px] font-medium">{t("telegram.bots.webhookStatus")}</span>
             <div className="flex items-center gap-1">
               {bot.webhook_active ? (
                 <>
                   <CheckCircle2 className="size-3.5 text-emerald-500" />
                   <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-                    Aktif & Terhubung
+                    {t("telegram.bots.webhookActive")}
                   </span>
                 </>
               ) : (
                 <>
                   <AlertCircle className="size-3.5 text-rose-500" />
                   <span className="text-[11px] font-bold text-rose-600 dark:text-rose-400">
-                    Terputus
+                    {t("telegram.bots.webhookInactive")}
                   </span>
                 </>
               )}
@@ -92,17 +94,17 @@ export function TelegramBotCard({
           </div>
 
           <div className="flex items-center justify-between">
-            <span className="text-foreground-secondary text-[11px] font-medium">Pesan Terkirim Hari Ini</span>
+            <span className="text-foreground-secondary text-[11px] font-medium">{t("telegram.bots.messagesSentToday")}</span>
             <span className="font-mono text-[11px] font-bold text-foreground">
-              {bot.daily_sent_count.toLocaleString()} pesan
+              {bot.daily_sent_count.toLocaleString()} {t("telegram.bots.messagesUnit")}
             </span>
           </div>
 
           <div className="flex items-center justify-between">
-            <span className="text-foreground-secondary text-[11px] font-medium">Proteksi Rate Limit</span>
+            <span className="text-foreground-secondary text-[11px] font-medium">{t("telegram.bots.rateLimitProtection")}</span>
             <span className="font-mono text-[11px] font-semibold text-wise-green flex items-center gap-1">
               <Zap className="size-3" />
-              30 req/s Global
+              {t("telegram.bots.globalLimit")}
             </span>
           </div>
         </div>
@@ -118,7 +120,7 @@ export function TelegramBotCard({
           className="text-xs font-semibold h-8 rounded-full"
         >
           <RefreshCw className={`mr-1.5 size-3 ${isSyncing ? "animate-spin" : ""}`} />
-          <span>Sync Webhook</span>
+          <span>{t("telegram.bots.syncWebhook")}</span>
         </Button>
 
         <Button
@@ -126,6 +128,8 @@ export function TelegramBotCard({
           size="sm"
           onClick={() => onDelete(bot.id, bot.name)}
           disabled={isDeleting || disabled}
+          aria-label={t("telegram.bots.disconnect")}
+          title={t("telegram.bots.disconnect")}
           className="text-rose-600 hover:bg-rose-50 hover:text-rose-700 dark:hover:bg-rose-950/20 text-xs h-8 rounded-full"
         >
           <Trash2 className="size-3.5" />

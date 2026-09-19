@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { ShieldCheck, Loader2, Key, Info, Eye, EyeOff } from "lucide-react";
 import { ConnectWABAInput } from "../../types/waba.types";
+import { useI18n } from "@/lib/i18n/context";
 
 interface ConnectWABAModalProps {
   isOpen: boolean;
@@ -26,6 +27,7 @@ export function ConnectWABAModal({
   onClose,
   onSubmit,
 }: ConnectWABAModalProps) {
+  const { t } = useI18n();
   const [formData, setFormData] = useState<ConnectWABAInput>({
     name: "",
     waba_account_id: "",
@@ -44,19 +46,19 @@ export function ConnectWABAModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name.trim()) {
-      setError("Nama saluran wajib diisi");
+      setError(t("whatsapp.waba.errNameRequired"));
       return;
     }
     if (!formData.waba_account_id.trim()) {
-      setError("WABA Account ID wajib diisi");
+      setError(t("whatsapp.waba.errWabaIdRequired"));
       return;
     }
     if (!formData.phone_number_id.trim()) {
-      setError("Phone Number ID wajib diisi");
+      setError(t("whatsapp.waba.errPhoneIdRequired"));
       return;
     }
     if (!formData.system_access_token.trim()) {
-      setError("System User Access Token wajib diisi");
+      setError(t("whatsapp.waba.errTokenRequired"));
       return;
     }
 
@@ -80,7 +82,7 @@ export function ConnectWABAModal({
       const msg =
         err instanceof Error
           ? err.message
-          : "Gagal menghubungkan Meta WABA. Pastikan Phone ID & Token valid.";
+          : t("whatsapp.waba.errConnectFailed");
       setError(msg);
     } finally {
       setIsLoading(false);
@@ -100,10 +102,10 @@ export function ConnectWABAModal({
             </div>
             <div>
               <DialogTitle className="text-lg font-bold">
-                Hubungkan WhatsApp Official (Meta WABA)
+                {t("whatsapp.waba.modalTitle")}
               </DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground">
-                Integrasikan nomor centang hijau resmi melalui Meta WhatsApp Cloud API
+                {t("whatsapp.waba.modalSubtitle")}
               </DialogDescription>
             </div>
           </div>
@@ -118,11 +120,11 @@ export function ConnectWABAModal({
 
           <div className="space-y-1.5">
             <Label htmlFor="waba-name" className="text-xs font-semibold">
-              Nama Label Saluran <span className="text-destructive">*</span>
+              {t("whatsapp.waba.channelLabel")} <span className="text-destructive">*</span>
             </Label>
             <Input
               id="waba-name"
-              placeholder="Contoh: CS Centang Hijau Utama"
+              placeholder={t("whatsapp.waba.channelLabelPlaceholder")}
               value={formData.name}
               onChange={(e) => handleChange("name", e.target.value)}
               disabled={isLoading}
@@ -130,14 +132,14 @@ export function ConnectWABAModal({
               autoFocus
             />
             <p className="text-[11px] text-muted-foreground">
-              Nama internal saluran untuk membedakan nomor di dashboard.
+              {t("whatsapp.waba.channelLabelHint")}
             </p>
           </div>
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label htmlFor="waba-account-id" className="text-xs font-semibold">
-                WABA Account ID <span className="text-destructive">*</span>
+                {t("whatsapp.waba.wabaIdLabel")} <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="waba-account-id"
@@ -151,7 +153,7 @@ export function ConnectWABAModal({
 
             <div className="space-y-1.5">
               <Label htmlFor="waba-phone-id" className="text-xs font-semibold">
-                Phone Number ID <span className="text-destructive">*</span>
+                {t("whatsapp.waba.phoneIdLabel")} <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="waba-phone-id"
@@ -166,7 +168,7 @@ export function ConnectWABAModal({
 
           <div className="space-y-1.5">
             <Label htmlFor="waba-token" className="text-xs font-semibold">
-              Permanent System User Token <span className="text-destructive">*</span>
+              {t("whatsapp.waba.systemTokenLabel")} <span className="text-destructive">*</span>
             </Label>
             <div className="relative">
               <Input
@@ -193,17 +195,17 @@ export function ConnectWABAModal({
               </button>
             </div>
             <p className="text-[11px] text-muted-foreground">
-              Token permanen dengan permission <code>whatsapp_business_messaging</code>.
+              {t("whatsapp.waba.systemTokenHint")}
             </p>
           </div>
 
           <div className="rounded-xl border border-border/60 bg-muted/40 p-3 space-y-1 text-xs">
             <div className="flex items-center gap-1.5 font-medium text-foreground">
               <Info className="h-3.5 w-3.5 text-emerald-500" />
-              <span>Verifikasi Otomatis Meta Graph API v20.0</span>
+              <span>{t("whatsapp.waba.autoVerifyTitle")}</span>
             </div>
             <p className="text-[11px] text-muted-foreground">
-              Sistem akan memvalidasi Token & Phone ID langsung ke server Meta sebelum menyimpan ke database.
+              {t("whatsapp.waba.autoVerifyDesc")}
             </p>
           </div>
 
@@ -214,7 +216,7 @@ export function ConnectWABAModal({
               onClick={onClose}
               disabled={isLoading}
             >
-              Batal
+              {t("common.cancel")}
             </Button>
             <Button
               type="submit"
@@ -224,12 +226,12 @@ export function ConnectWABAModal({
               {isLoading ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  <span>Verifikasi Meta...</span>
+                  <span>{t("whatsapp.waba.btnVerifying")}</span>
                 </>
               ) : (
                 <>
                   <Key className="h-4 w-4" />
-                  <span>Verifikasi & Hubungkan</span>
+                  <span>{t("whatsapp.waba.btnVerifyConnect")}</span>
                 </>
               )}
             </Button>

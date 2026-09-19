@@ -4,10 +4,12 @@ import React, { useState } from "react";
 import { useTelegramBots } from "../../hooks/useTelegramBots";
 import { ConnectTelegramBotModal } from "../../components/seller/ConnectTelegramBotModal";
 import { TelegramBotList } from "../../components/seller/TelegramBotList";
+import { useI18n } from "@/lib/i18n/context";
 import { Button } from "@/components/ui/button";
 import { Bot, Plus, RefreshCw } from "lucide-react";
 
 export function TelegramBotsView() {
+  const { t } = useI18n();
   const {
     bots,
     isLoading,
@@ -31,7 +33,7 @@ export function TelegramBotsView() {
   const handleDelete = async (id: string, name: string) => {
     if (
       confirm(
-        `Apakah Anda yakin ingin memutuskan bot "${name}"? Webhook Telegram akan otomatis dicabut.`,
+        t("telegram.bots.deleteConfirm", { name }),
       )
     ) {
       setDeletingId(id);
@@ -50,11 +52,11 @@ export function TelegramBotsView() {
               <Bot className="size-5" />
             </div>
             <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl">
-              Telegram Bot Engine
+              {t("telegram.bots.title")}
             </h1>
           </div>
           <p className="text-foreground-secondary text-xs font-medium sm:text-sm">
-            Kelola bot resmi Telegram, pantau sinkronisasi webhook, dan optimalkan pengiriman notifikasi otomatis.
+            {t("telegram.bots.subtitle")}
           </p>
         </div>
 
@@ -67,7 +69,7 @@ export function TelegramBotsView() {
             className="text-xs font-semibold"
           >
             <RefreshCw className={`mr-1.5 size-3.5 ${isLoading ? "animate-spin" : ""}`} />
-            <span>Muat Ulang</span>
+            <span>{t("telegram.bots.reload")}</span>
           </Button>
           <Button
             size="sm"
@@ -75,7 +77,7 @@ export function TelegramBotsView() {
             className="bg-wise-green text-dark-green hover:bg-wise-green/90 text-xs font-bold shadow-sm"
           >
             <Plus className="mr-1.5 size-3.5" />
-            <span>Hubungkan Bot</span>
+            <span>{t("telegram.bots.connectBot")}</span>
           </Button>
         </div>
       </div>

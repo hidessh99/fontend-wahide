@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus, Trash2, ExternalLink, Bot } from "lucide-react";
+import { useI18n } from "@/lib/i18n/context";
 
 export interface TelegramButton {
   text: string;
@@ -26,6 +27,7 @@ export function TelegramKeyboardCampaignPicker({
   onChangeParseMode,
   className,
 }: TelegramKeyboardCampaignPickerProps) {
+  const { t } = useI18n();
   const [newBtnText, setNewBtnText] = useState("");
   const [newBtnUrl, setNewBtnUrl] = useState("");
 
@@ -47,10 +49,10 @@ export function TelegramKeyboardCampaignPicker({
         <div className="flex items-center justify-between rounded-xl border border-border/80 bg-muted/20 p-3">
           <div className="space-y-0.5">
             <Label className="text-xs font-bold text-foreground">
-              Format Teks Pesan Telegram
+              {t("campaign.telegramPicker.parseModeTitle")}
             </Label>
             <p className="text-[11px] text-foreground-secondary">
-              Dukungan format tebal, miring, dan tautan teks
+              {t("campaign.telegramPicker.parseModeDesc")}
             </p>
           </div>
           <div className="flex rounded-full border border-border bg-surface p-0.5">
@@ -84,10 +86,10 @@ export function TelegramKeyboardCampaignPicker({
           <div className="flex items-center justify-between">
             <Label className="text-xs font-bold text-foreground flex items-center gap-1.5">
               <Bot className="size-3.5 text-blue-500" />
-              <span>Tombol Interaktif (Inline Keyboard URL)</span>
+              <span>{t("campaign.telegramPicker.inlineKeyboardTitle")}</span>
             </Label>
             <span className="text-[10px] text-foreground-muted font-medium">
-              Maks. 3 tombol
+              {t("campaign.telegramPicker.maxButtons")}
             </span>
           </div>
 
@@ -125,7 +127,7 @@ export function TelegramKeyboardCampaignPicker({
                 <Input
                   value={newBtnText}
                   onChange={(e) => setNewBtnText(e.target.value)}
-                  placeholder="Label Tombol (cth: Beli Sekarang)"
+                  placeholder={t("campaign.telegramPicker.btnLabelPlaceholder")}
                   className="h-8 text-xs font-medium"
                 />
               </div>
@@ -133,7 +135,7 @@ export function TelegramKeyboardCampaignPicker({
                 <Input
                   value={newBtnUrl}
                   onChange={(e) => setNewBtnUrl(e.target.value)}
-                  placeholder="https://..."
+                  placeholder={t("campaign.telegramPicker.btnUrlPlaceholder")}
                   className="h-8 text-xs font-medium"
                 />
               </div>
@@ -146,7 +148,7 @@ export function TelegramKeyboardCampaignPicker({
                   className="w-full h-8 text-xs font-bold rounded-lg cursor-pointer bg-blue-600 hover:bg-blue-700 text-white"
                 >
                   <Plus className="size-3 mr-1" />
-                  Tambah
+                  {t("campaign.telegramPicker.btnAdd")}
                 </Button>
               </div>
             </div>

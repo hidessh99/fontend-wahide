@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Bot, Eye, EyeOff, ExternalLink, Loader2, KeyRound } from "lucide-react";
+import { useI18n } from "@/lib/i18n/context";
 import { ConnectTelegramBotInput } from "../../types/telegram.types";
 
 interface ConnectTelegramBotModalProps {
@@ -28,6 +29,7 @@ export function ConnectTelegramBotModal({
   onConnect,
   isLoading = false,
 }: ConnectTelegramBotModalProps) {
+  const { t } = useI18n();
   const [name, setName] = useState("");
   const [botToken, setBotToken] = useState("");
   const [showToken, setShowToken] = useState(false);
@@ -36,11 +38,11 @@ export function ConnectTelegramBotModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
-      setError("Nama bot harus diisi");
+      setError(t("telegram.bots.nameRequired"));
       return;
     }
     if (!botToken.trim() || botToken.trim().length < 20) {
-      setError("Bot token BotFather minimal 20 karakter valid");
+      setError(t("telegram.bots.invalidToken"));
       return;
     }
 
@@ -66,9 +68,9 @@ export function ConnectTelegramBotModal({
               <Bot className="size-5" />
             </div>
             <div>
-              <DialogTitle className="text-base font-bold">Hubungkan Bot Telegram</DialogTitle>
+              <DialogTitle className="text-base font-bold">{t("telegram.bots.connectModalTitle")}</DialogTitle>
               <DialogDescription className="text-xs">
-                Daftarkan token API resmi dari BotFather untuk mengaktifkan bot engine.
+                {t("telegram.bots.connectModalSubtitle")}
               </DialogDescription>
             </div>
           </div>
@@ -83,11 +85,11 @@ export function ConnectTelegramBotModal({
 
           <div className="space-y-1.5">
             <Label htmlFor="botName" className="text-xs font-semibold">
-              Nama Label Bot
+              {t("telegram.bots.botNameLabel")}
             </Label>
             <Input
               id="botName"
-              placeholder="e.g. Bot Notifikasi CS Utama"
+              placeholder={t("telegram.bots.botNamePlaceholder")}
               value={name}
               onChange={(e) => setName(e.target.value)}
               disabled={isLoading}
@@ -99,7 +101,7 @@ export function ConnectTelegramBotModal({
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <Label htmlFor="botToken" className="text-xs font-semibold">
-                HTTP API Bot Token (BotFather)
+                {t("telegram.bots.tokenLabel")}
               </Label>
               <a
                 href="https://t.me/BotFather"
@@ -107,7 +109,7 @@ export function ConnectTelegramBotModal({
                 rel="noreferrer"
                 className="flex items-center gap-1 text-[11px] font-semibold text-sky-600 hover:underline dark:text-sky-400"
               >
-                <span>Buka BotFather</span>
+                <span>{t("telegram.bots.openBotFather")}</span>
                 <ExternalLink className="size-3" />
               </a>
             </div>
@@ -115,7 +117,7 @@ export function ConnectTelegramBotModal({
               <Input
                 id="botToken"
                 type={showToken ? "text" : "password"}
-                placeholder="123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ"
+                placeholder={t("telegram.bots.tokenPlaceholder")}
                 value={botToken}
                 onChange={(e) => setBotToken(e.target.value)}
                 disabled={isLoading}
@@ -131,7 +133,7 @@ export function ConnectTelegramBotModal({
               </button>
             </div>
             <p className="text-foreground-secondary text-[11px]">
-              Dapatkan token dengan mengirim perintah <code className="bg-muted rounded px-1">/newbot</code> ke @BotFather di aplikasi Telegram.
+              {t("telegram.bots.tokenHint")}
             </p>
           </div>
 
@@ -139,9 +141,9 @@ export function ConnectTelegramBotModal({
           <div className="border-border/60 flex items-start gap-2.5 rounded-xl border bg-muted/40 p-3 text-xs">
             <KeyRound className="size-4 shrink-0 text-sky-500 mt-0.5" />
             <div className="space-y-1">
-              <p className="font-semibold text-foreground">Otomatisasi Webhook Instan</p>
+              <p className="font-semibold text-foreground">{t("telegram.bots.webhookNoteTitle")}</p>
               <p className="text-foreground-secondary text-[11px] leading-relaxed">
-                Backend Wahide akan langsung mendaftarkan endpoint webhook aman dengan sertifikat SSL dan mengaktifkan token-bucket rate limiter.
+                {t("telegram.bots.webhookNoteDesc")}
               </p>
             </div>
           </div>
@@ -155,7 +157,7 @@ export function ConnectTelegramBotModal({
               disabled={isLoading}
               className="text-xs"
             >
-              Batal
+              {t("common.cancel")}
             </Button>
             <Button
               type="submit"
@@ -166,10 +168,10 @@ export function ConnectTelegramBotModal({
               {isLoading ? (
                 <>
                   <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-                  <span>Memverifikasi...</span>
+                  <span>{t("telegram.bots.btnConnecting")}</span>
                 </>
               ) : (
-                <span>Hubungkan Bot</span>
+                <span>{t("telegram.bots.btnConnect")}</span>
               )}
             </Button>
           </DialogFooter>

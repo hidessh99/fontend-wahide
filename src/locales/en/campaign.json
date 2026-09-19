@@ -169,5 +169,33 @@
   "warmupEngineDesc": "The system applies an adaptive daily quota based on sender device age. If today's quota is reached, dispatch automatically pauses and can be resumed tomorrow without repeating sent contacts.",
   "warmupPausedBanner": "Auto-Paused (Today's Warmup Quota Reached)",
   "warmupPausedDesc": "Processed up to contact {offset} of {total}. Resume tomorrow to dispatch the remaining recipients.",
-  "poolMultiDevice": "Multi-Device Pool ({count} Devices)"
+  "poolMultiDevice": "Multi-Device Pool ({count} Devices)",
+  "channels": {
+    "waWebTitle": "WhatsApp Web (Socket)",
+    "waWebDesc": "Bulk broadcast via linked physical phone number. Equipped with multi-device pooling & anti-ban protection.",
+    "waWebBadge": "Socket QR",
+    "waWebActive": "{count} Devices Linked",
+    "waWebRecommended": "Personal messages, daily promos, and casual conversations",
+    "wabaTitle": "WhatsApp Official (WABA)",
+    "wabaDesc": "Official Meta Cloud API gateway with business green badge. Ultra-high speed with zero phone number ban risk.",
+    "wabaBadge": "Official Cloud",
+    "wabaActive": "{count} Official Accounts",
+    "wabaRecommended": "Large-scale broadcast (>1,000 messages), official notices & OTP",
+    "telegramTitle": "Telegram Bot Broadcast",
+    "telegramDesc": "Send instant broadcast messages up to 30 messages/sec directly to customers & channels with zero per-message cost.",
+    "telegramBadge": "100% Free",
+    "telegramActive": "{count} Active Bots",
+    "telegramRecommended": "Community notices, flash sales, and free newsletters",
+    "senderStatus": "Sender Status:",
+    "noSenders": "0 Active Senders"
+  },
+  "telegramPicker": {
+    "parseModeTitle": "Telegram Message Text Format",
+    "parseModeDesc": "Support for bold, italic, and inline link formatting",
+    "inlineKeyboardTitle": "Interactive Buttons (Inline Keyboard URL)",
+    "maxButtons": "Max. 3 buttons",
+    "btnLabelPlaceholder": "Button Label (e.g. Buy Now)",
+    "btnUrlPlaceholder": "https://...",
+    "btnAdd": "Add"
+  }
 }

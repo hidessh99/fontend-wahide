@@ -15,6 +15,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { useI18n } from "@/lib/i18n/context";
 import {
   Copy,
   Check,
@@ -56,6 +57,7 @@ export function WABAMessageDetailDialog({
   isOpen,
   onClose,
 }: WABAMessageDetailDialogProps) {
+  const { t } = useI18n();
   const { isCopied: copiedText, copy: copyText } = useClipboard();
   const { isCopied: copiedPhone, copy: copyPhone } = useClipboard();
   const { isCopied: copiedWamid, copy: copyWamid } = useClipboard();
@@ -73,7 +75,7 @@ export function WABAMessageDetailDialog({
     if (!log.message_body) return;
     const ok = await copyText(log.message_body);
     if (ok) {
-      toast.success("Teks pesan Meta WABA berhasil disalin!", {
+      toast.success(t("whatsapp.wabaLogs.toastCopiedBody"), {
         id: "copy-waba-text",
       });
     }
@@ -83,7 +85,7 @@ export function WABAMessageDetailDialog({
     if (!phone || phone === "-") return;
     const ok = await copyPhone(phone);
     if (ok) {
-      toast.success("Nomor penerima berhasil disalin!", {
+      toast.success(t("whatsapp.wabaLogs.toastCopiedPhone"), {
         id: "copy-waba-phone",
       });
     }
@@ -93,7 +95,7 @@ export function WABAMessageDetailDialog({
     if (!wamid) return;
     const ok = await copyWamid(wamid);
     if (ok) {
-      toast.success("Meta WAMID berhasil disalin!", {
+      toast.success(t("whatsapp.wabaLogs.toastCopiedWamid"), {
         id: "copy-waba-wamid",
       });
     }
@@ -103,7 +105,7 @@ export function WABAMessageDetailDialog({
     if (!log.id) return;
     const ok = await copyId(log.id);
     if (ok) {
-      toast.success("ID Log audit berhasil disalin!", {
+      toast.success(t("whatsapp.wabaLogs.toastCopiedId"), {
         id: "copy-waba-logid",
       });
     }
@@ -119,7 +121,7 @@ export function WABAMessageDetailDialog({
             className="gap-1 px-2.5 py-0.5 text-[11px] font-bold"
           >
             <CheckCheck className="size-3.5" />
-            <span>READ (Dibaca)</span>
+            <span>{t("whatsapp.wabaLogs.statusReadLabel")}</span>
           </Badge>
         );
       case "DELIVERED":
@@ -129,7 +131,7 @@ export function WABAMessageDetailDialog({
             className="gap-1 px-2.5 py-0.5 text-[11px] font-bold"
           >
             <CheckCircle2 className="size-3.5" />
-            <span>DELIVERED (Diterima)</span>
+            <span>{t("whatsapp.wabaLogs.statusDeliveredLabel")}</span>
           </Badge>
         );
       case "SENT":
@@ -139,7 +141,7 @@ export function WABAMessageDetailDialog({
             className="gap-1 px-2.5 py-0.5 text-[11px] font-bold"
           >
             <Check className="size-3.5" />
-            <span>SENT (Terkirim)</span>
+            <span>{t("whatsapp.wabaLogs.statusSentLabel")}</span>
           </Badge>
         );
       case "FAILED":
@@ -149,7 +151,7 @@ export function WABAMessageDetailDialog({
             className="gap-1 px-2.5 py-0.5 text-[11px] font-bold"
           >
             <XCircle className="size-3.5" />
-            <span>FAILED (Gagal)</span>
+            <span>{t("whatsapp.wabaLogs.statusFailedLabel")}</span>
           </Badge>
         );
       default:
@@ -175,13 +177,13 @@ export function WABAMessageDetailDialog({
                 <ScrollText className="size-4.5" />
               </div>
               <DialogTitle className="text-base font-bold sm:text-lg">
-                Detail Pesan Meta WABA Official
+                {t("whatsapp.wabaLogs.detailTitle")}
               </DialogTitle>
             </div>
             {renderStatusBadge(log.status)}
           </div>
           <p className="text-foreground-secondary text-xs">
-            Audit rekam jejak resmi Meta Cloud API, WAMID, dan kategori percakapan.
+            {t("whatsapp.wabaLogs.detailSubtitle")}
           </p>
         </DialogHeader>
 
@@ -191,7 +193,7 @@ export function WABAMessageDetailDialog({
             <div className="flex items-start gap-2.5 rounded-xl border border-rose-500/20 bg-rose-500/10 p-3 text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/15 dark:text-rose-400">
               <AlertCircle className="size-4.5 shrink-0 mt-0.5" />
               <div className="space-y-1 min-w-0 flex-1">
-                <p className="font-bold text-xs">Penolakan Transmisi Meta Cloud API</p>
+                <p className="font-bold text-xs">{t("whatsapp.wabaLogs.rejectionTitle")}</p>
                 <p className="font-mono text-[11px] break-all">
                   {log.error_message || "Meta Cloud API returned an unclassified rejection"}
                 </p>
@@ -203,7 +205,7 @@ export function WABAMessageDetailDialog({
           <div className="space-y-2 rounded-xl border border-border bg-surface p-3 dark:bg-muted/20">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-bold uppercase tracking-wider text-foreground-secondary">
-                Nomor Tujuan
+                {t("whatsapp.wabaLogs.recipientLabel")}
               </span>
               <div className="flex items-center gap-1">
                 <span className="font-mono font-bold text-foreground text-sm">
@@ -231,7 +233,7 @@ export function WABAMessageDetailDialog({
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-foreground-secondary">
-                      Meta Official WAMID
+                      {t("whatsapp.wabaLogs.wamidLabel")}
                     </span>
                     <Button
                       type="button"
@@ -245,7 +247,7 @@ export function WABAMessageDetailDialog({
                       ) : (
                         <Copy className="size-3" />
                       )}
-                      <span>Salin WAMID</span>
+                      <span>{t("whatsapp.wabaLogs.copyWamidBtn")}</span>
                     </Button>
                   </div>
                   <div className="rounded bg-muted/60 px-2 py-1.5 font-mono text-[11px] text-foreground break-all border border-border/50">
@@ -260,7 +262,7 @@ export function WABAMessageDetailDialog({
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1 rounded-xl border border-border bg-surface p-3 dark:bg-muted/20">
               <span className="text-[10px] font-bold uppercase tracking-wider text-foreground-secondary">
-                Kategori Percakapan
+                {t("whatsapp.wabaLogs.catLabel")}
               </span>
               <div className="pt-0.5">
                 <Badge variant="outline" className="font-mono text-[10px] font-bold">
@@ -271,7 +273,7 @@ export function WABAMessageDetailDialog({
 
             <div className="space-y-1 rounded-xl border border-border bg-surface p-3 dark:bg-muted/20">
               <span className="text-[10px] font-bold uppercase tracking-wider text-foreground-secondary">
-                Estimasi Biaya Meta
+                {t("whatsapp.wabaLogs.feeLabel")}
               </span>
               <div className="flex items-center gap-1 pt-0.5 font-mono text-xs font-bold text-foreground">
                 <DollarSign className="size-3.5 text-emerald-600 dark:text-emerald-400" />
@@ -279,7 +281,7 @@ export function WABAMessageDetailDialog({
                   {typeof log.waba_info?.conversation_fee === "number" &&
                   log.waba_info.conversation_fee > 0
                     ? `$${log.waba_info.conversation_fee.toFixed(4)}`
-                    : "Termasuk Kuota"}
+                    : t("whatsapp.wabaLogs.feeQuotaIncluded")}
                 </span>
               </div>
             </div>
@@ -289,7 +291,7 @@ export function WABAMessageDetailDialog({
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-bold uppercase tracking-wider text-foreground-secondary">
-                Konten Pesan / Template
+                {t("whatsapp.wabaLogs.contentLabel")}
               </span>
               {log.message_body && (
                 <Button
@@ -304,14 +306,14 @@ export function WABAMessageDetailDialog({
                   ) : (
                     <Copy className="size-3" />
                   )}
-                  <span>Salin Pesan</span>
+                  <span>{t("whatsapp.wabaLogs.copyMsgBtn")}</span>
                 </Button>
               )}
             </div>
             <div className="max-h-40 overflow-y-auto rounded-xl border border-border bg-muted/40 p-3 font-sans text-xs leading-relaxed text-foreground whitespace-pre-wrap select-text">
               {log.message_body || (
                 <span className="italic text-foreground-muted">
-                  (Pesan template Meta HSM atau lampiran berkas media)
+                  {t("whatsapp.wabaLogs.templateHsm")}
                 </span>
               )}
             </div>
@@ -336,7 +338,7 @@ export function WABAMessageDetailDialog({
                 )}
               >
                 <ExternalLink className="size-3" />
-                <span>Buka</span>
+                <span>{t("whatsapp.wabaLogs.mediaOpenBtn")}</span>
               </a>
             </div>
           )}
@@ -345,7 +347,7 @@ export function WABAMessageDetailDialog({
           <div className="rounded-xl border border-border bg-surface p-3 space-y-2 dark:bg-muted/20">
             <div className="flex items-center justify-between text-[11px]">
               <span className="text-foreground-secondary font-medium flex items-center gap-1.5">
-                <Calendar className="size-3.5" /> Dibuat
+                <Calendar className="size-3.5" /> {t("whatsapp.wabaLogs.createdAtLabel")}
               </span>
               <span className="font-mono text-foreground">
                 {formatDetailTime(log.created_at)}
@@ -355,7 +357,7 @@ export function WABAMessageDetailDialog({
             {log.sent_at && (
               <div className="flex items-center justify-between text-[11px]">
                 <span className="text-foreground-secondary font-medium flex items-center gap-1.5">
-                  <Clock className="size-3.5" /> Terkirim ke Meta
+                  <Clock className="size-3.5" /> {t("whatsapp.wabaLogs.sentAtLabel")}
                 </span>
                 <span className="font-mono text-foreground">
                   {formatDetailTime(log.sent_at)}
@@ -367,7 +369,7 @@ export function WABAMessageDetailDialog({
 
             <div className="flex items-center justify-between text-[11px]">
               <span className="text-foreground-secondary font-medium">
-                Log UUID
+                {t("whatsapp.wabaLogs.logUuidLabel")}
               </span>
               <div className="flex items-center gap-1">
                 <span className="font-mono text-[10px] text-foreground-muted truncate max-w-[170px] sm:max-w-xs">
@@ -399,7 +401,7 @@ export function WABAMessageDetailDialog({
             onClick={onClose}
             className="w-full sm:w-auto text-xs font-semibold cursor-pointer"
           >
-            Tutup
+            {t("whatsapp.wabaLogs.closeBtn")}
           </Button>
         </DialogFooter>
       </DialogContent>

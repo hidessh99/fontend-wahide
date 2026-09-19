@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { Smartphone, ShieldCheck, Bot, CheckCircle2, AlertCircle } from "lucide-react";
 import { ReminderChannelType } from "../../types/reminder.types";
 import { OmnichannelActiveCounts } from "@/modules/omnichannel/types/omnichannel.types";
+import { useI18n } from "@/lib/i18n/context";
 
 interface ReminderChannelSelectorProps {
   selectedChannel: ReminderChannelType;
@@ -21,6 +22,8 @@ export function ReminderChannelSelector({
   className,
   variant = "cards",
 }: ReminderChannelSelectorProps) {
+  const { t } = useI18n();
+
   const channels: Array<{
     id: ReminderChannelType;
     title: string;
@@ -34,36 +37,36 @@ export function ReminderChannelSelector({
   }> = [
     {
       id: "WHATSAPP_WEB",
-      title: "WhatsApp Web",
-      description: "Pengingat otomatis via nomor WhatsApp fisik/socket. Cocok untuk pesan ramah personal & follow-up santai.",
-      badge: "Socket",
+      title: t("reminder.channels.waWebTitle"),
+      description: t("reminder.channels.waWebDesc"),
+      badge: t("reminder.channels.waWebBadge"),
       icon: Smartphone,
       count: activeCounts.waWeb,
-      activeText: `${activeCounts.waWeb} HP Aktif`,
+      activeText: t("reminder.channels.waWebActive", { count: activeCounts.waWeb }),
       colorScheme: "emerald",
-      recommendedFor: "Pesan kasual, konfirmasi ramah & follow-up H+1",
+      recommendedFor: t("reminder.channels.waWebRecommended"),
     },
     {
       id: "WHATSAPP_OFFICIAL",
-      title: "Meta WABA Official",
-      description: "Pengingat resmi Meta Verified (Centang Hijau) kategori UTILITY. Jaminan 98% terkirim & bebas risiko blokir.",
-      badge: "Resmi Meta",
+      title: t("reminder.channels.wabaTitle"),
+      description: t("reminder.channels.wabaDesc"),
+      badge: t("reminder.channels.wabaBadge"),
       icon: ShieldCheck,
       count: activeCounts.waba,
-      activeText: `${activeCounts.waba} Akun Resmi`,
+      activeText: t("reminder.channels.wabaActive", { count: activeCounts.waba }),
       colorScheme: "sky",
-      recommendedFor: "Pengingat H-1 & Hari H klinik, salon, atau institusi resmi",
+      recommendedFor: t("reminder.channels.wabaRecommended"),
     },
     {
       id: "TELEGRAM",
-      title: "Telegram Bot",
-      description: "Pengingat instan via Bot Telegram ke pelanggan. 100% gratis tanpa biaya per pesan & mendukung tombol interaktif.",
-      badge: "Gratis",
+      title: t("reminder.channels.telegramTitle"),
+      description: t("reminder.channels.telegramDesc"),
+      badge: t("reminder.channels.telegramBadge"),
       icon: Bot,
       count: activeCounts.telegram,
-      activeText: `${activeCounts.telegram} Bot Aktif`,
+      activeText: t("reminder.channels.telegramActive", { count: activeCounts.telegram }),
       colorScheme: "blue",
-      recommendedFor: "Klien VIP, komunitas, konsultasi & pengguna IT",
+      recommendedFor: t("reminder.channels.telegramRecommended"),
     },
   ];
 
@@ -209,7 +212,7 @@ export function ReminderChannelSelector({
               {!isAvailable && (
                 <span className="flex items-center gap-1 text-[10px] text-foreground-muted">
                   <AlertCircle className="size-3" />
-                  Belum siap
+                  {t("reminder.channels.notReady")}
                 </span>
               )}
             </div>

@@ -4,6 +4,7 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { TelegramMessage } from "../../types/telegram.types";
 import { useClipboard } from "@/hooks/useClipboard";
+import { useI18n } from "@/lib/i18n/context";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -58,6 +59,7 @@ export function TelegramMessageDetailDialog({
   isOpen,
   onClose,
 }: TelegramMessageDetailDialogProps) {
+  const { t } = useI18n();
   const { isCopied: copiedText, copy: copyText } = useClipboard();
   const { isCopied: copiedChatId, copy: copyChatId } = useClipboard();
   const { isCopied: copiedId, copy: copyId } = useClipboard();
@@ -70,7 +72,7 @@ export function TelegramMessageDetailDialog({
     if (!log.text) return;
     const ok = await copyText(log.text);
     if (ok) {
-      toast.success("Teks pesan Telegram berhasil disalin!", {
+      toast.success(t("telegram.logs.detail.toastCopyText"), {
         id: "copy-tele-text",
       });
     }
@@ -80,7 +82,7 @@ export function TelegramMessageDetailDialog({
     if (!log.chat_id) return;
     const ok = await copyChatId(String(log.chat_id));
     if (ok) {
-      toast.success("Chat ID Telegram berhasil disalin!", {
+      toast.success(t("telegram.logs.detail.toastCopyChatId"), {
         id: "copy-tele-chatid",
       });
     }
@@ -90,7 +92,7 @@ export function TelegramMessageDetailDialog({
     if (!log.id) return;
     const ok = await copyId(log.id);
     if (ok) {
-      toast.success("ID Log Telegram berhasil disalin!", {
+      toast.success(t("telegram.logs.detail.toastCopyLogId"), {
         id: "copy-tele-logid",
       });
     }
@@ -107,7 +109,7 @@ export function TelegramMessageDetailDialog({
             className="gap-1 px-2.5 py-0.5 text-[11px] font-bold"
           >
             <CheckCircle2 className="size-3.5" />
-            <span>TERKIRIM</span>
+            <span>{t("telegram.logs.statusDeliveredBadge")}</span>
           </Badge>
         );
       case "FAILED":
@@ -117,7 +119,7 @@ export function TelegramMessageDetailDialog({
             className="gap-1 px-2.5 py-0.5 text-[11px] font-bold"
           >
             <XCircle className="size-3.5" />
-            <span>GAGAL</span>
+            <span>{t("telegram.logs.statusFailedBadge")}</span>
           </Badge>
         );
       default:
@@ -127,7 +129,7 @@ export function TelegramMessageDetailDialog({
             className="gap-1 px-2.5 py-0.5 text-[11px] font-bold"
           >
             <Clock className="size-3.5" />
-            <span>{s || "ANTEAN"}</span>
+            <span>{s || t("telegram.logs.statusQueuedBadge")}</span>
           </Badge>
         );
     }
@@ -143,13 +145,13 @@ export function TelegramMessageDetailDialog({
                 <Send className="size-4.5" />
               </div>
               <DialogTitle className="text-base font-bold sm:text-lg">
-                Detail Pesan Telegram
+                {t("telegram.logs.detail.title")}
               </DialogTitle>
             </div>
             {renderStatusBadge(log.status)}
           </div>
           <p className="text-foreground-secondary text-xs">
-            Audit transmisi bot Telegram dan payload pesan API real-time.
+            {t("telegram.logs.detail.subtitle")}
           </p>
         </DialogHeader>
 
@@ -159,7 +161,7 @@ export function TelegramMessageDetailDialog({
             <div className="flex items-start gap-2.5 rounded-xl border border-rose-500/20 bg-rose-500/10 p-3 text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/15 dark:text-rose-400">
               <AlertCircle className="size-4.5 shrink-0 mt-0.5" />
               <div className="space-y-1 min-w-0 flex-1">
-                <p className="font-bold text-xs">Pengiriman Telegram Gagal</p>
+                <p className="font-bold text-xs">{t("telegram.logs.detail.errorBannerTitle")}</p>
                 <p className="font-mono text-[11px] break-all">
                   {log.error_reason || "Unknown API delivery failure"}
                 </p>
@@ -171,7 +173,7 @@ export function TelegramMessageDetailDialog({
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1 rounded-xl border border-border bg-surface p-3 dark:bg-muted/20">
               <span className="text-[10px] font-bold uppercase tracking-wider text-foreground-secondary">
-                Chat ID Penerima
+                {t("telegram.logs.detail.recipientChatId")}
               </span>
               <div className="flex items-center justify-between gap-1">
                 <span className="font-mono font-bold text-foreground text-sm truncate">
@@ -195,7 +197,7 @@ export function TelegramMessageDetailDialog({
 
             <div className="space-y-1 rounded-xl border border-border bg-surface p-3 dark:bg-muted/20">
               <span className="text-[10px] font-bold uppercase tracking-wider text-foreground-secondary">
-                Arah & Tipe
+                {t("telegram.logs.detail.directionAndType")}
               </span>
               <div className="flex items-center gap-1.5 pt-0.5">
                 <Badge
@@ -207,7 +209,7 @@ export function TelegramMessageDetailDialog({
                   ) : (
                     <ArrowDownLeft className="size-3" />
                   )}
-                  <span>{isOutbound ? "Keluar (Bot)" : "Masuk (User)"}</span>
+                  <span>{isOutbound ? t("telegram.logs.directionOutBot") : t("telegram.logs.directionInUser")}</span>
                 </Badge>
                 <Badge variant="outline" className="font-mono text-[10px]">
                   {log.message_type}
@@ -220,7 +222,7 @@ export function TelegramMessageDetailDialog({
           <div className="space-y-1.5 rounded-xl border border-border bg-surface p-3 dark:bg-muted/20">
             <div className="flex items-center justify-between text-[11px]">
               <span className="text-foreground-secondary font-medium flex items-center gap-1.5">
-                <Bot className="size-3.5" /> Bot ID
+                <Bot className="size-3.5" /> {t("telegram.logs.detail.botId")}
               </span>
               <span className="font-mono font-semibold text-foreground truncate max-w-[200px]">
                 {log.bot_id || "-"}
@@ -232,7 +234,7 @@ export function TelegramMessageDetailDialog({
                 <Separator className="bg-border/60" />
                 <div className="flex items-center justify-between text-[11px]">
                   <span className="text-foreground-secondary font-medium flex items-center gap-1.5">
-                    <Radio className="size-3.5" /> Telegram Message ID
+                    <Radio className="size-3.5" /> {t("telegram.logs.detail.messageId")}
                   </span>
                   <span className="font-mono font-semibold text-foreground">
                     #{log.message_id}
@@ -246,7 +248,7 @@ export function TelegramMessageDetailDialog({
                 <Separator className="bg-border/60" />
                 <div className="flex items-center justify-between text-[11px]">
                   <span className="text-foreground-secondary font-medium truncate">
-                    Idempotency Key
+                    {t("telegram.logs.detail.idempotencyKey")}
                   </span>
                   <span className="font-mono text-[10px] text-foreground-muted truncate max-w-[200px]">
                     {log.idempotency_key}
@@ -260,7 +262,7 @@ export function TelegramMessageDetailDialog({
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-bold uppercase tracking-wider text-foreground-secondary">
-                Isi Pesan
+                {t("telegram.logs.detail.messageContent")}
               </span>
               {log.text && (
                 <Button
@@ -275,14 +277,14 @@ export function TelegramMessageDetailDialog({
                   ) : (
                     <Copy className="size-3" />
                   )}
-                  <span>Salin Pesan</span>
+                  <span>{t("telegram.logs.detail.copyMessage")}</span>
                 </Button>
               )}
             </div>
             <div className="max-h-40 overflow-y-auto rounded-xl border border-border bg-muted/40 p-3 font-sans text-xs leading-relaxed text-foreground whitespace-pre-wrap select-text">
               {log.text || (
                 <span className="italic text-foreground-muted">
-                  (Tidak ada konten teks / Pesan Berkas Media)
+                  {t("telegram.logs.detail.noContent")}
                 </span>
               )}
             </div>
@@ -307,7 +309,7 @@ export function TelegramMessageDetailDialog({
                 )}
               >
                 <ExternalLink className="size-3" />
-                <span>Buka</span>
+                <span>{t("telegram.logs.detail.openMedia")}</span>
               </a>
             </div>
           )}
@@ -316,7 +318,7 @@ export function TelegramMessageDetailDialog({
           <div className="rounded-xl border border-border bg-surface p-3 space-y-2 dark:bg-muted/20">
             <div className="flex items-center justify-between text-[11px]">
               <span className="text-foreground-secondary font-medium flex items-center gap-1.5">
-                <Calendar className="size-3.5" /> Dibuat
+                <Calendar className="size-3.5" /> {t("telegram.logs.detail.created")}
               </span>
               <span className="font-mono text-foreground">
                 {formatDetailTime(log.created_at)}
@@ -326,7 +328,7 @@ export function TelegramMessageDetailDialog({
             {log.sent_at && (
               <div className="flex items-center justify-between text-[11px]">
                 <span className="text-foreground-secondary font-medium flex items-center gap-1.5">
-                  <Clock className="size-3.5" /> Dikirim
+                  <Clock className="size-3.5" /> {t("telegram.logs.detail.sent")}
                 </span>
                 <span className="font-mono text-foreground">
                   {formatDetailTime(log.sent_at)}
@@ -338,7 +340,7 @@ export function TelegramMessageDetailDialog({
 
             <div className="flex items-center justify-between text-[11px]">
               <span className="text-foreground-secondary font-medium">
-                Log UUID
+                {t("telegram.logs.detail.logUuid")}
               </span>
               <div className="flex items-center gap-1">
                 <span className="font-mono text-[10px] text-foreground-muted truncate max-w-[170px] sm:max-w-xs">
@@ -370,7 +372,7 @@ export function TelegramMessageDetailDialog({
             onClick={onClose}
             className="w-full sm:w-auto text-xs font-semibold cursor-pointer"
           >
-            Tutup
+            {t("telegram.logs.close")}
           </Button>
         </DialogFooter>
       </DialogContent>

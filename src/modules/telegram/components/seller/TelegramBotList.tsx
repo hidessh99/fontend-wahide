@@ -5,6 +5,7 @@ import { Bot, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty";
+import { useI18n } from "@/lib/i18n/context";
 import { TelegramBot } from "../../types/telegram.types";
 import { TelegramBotCard } from "./TelegramBotCard";
 
@@ -29,6 +30,7 @@ export function TelegramBotList({
   deletingId = null,
   isActionLoading = false,
 }: TelegramBotListProps) {
+  const { t } = useI18n();
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -56,8 +58,8 @@ export function TelegramBotList({
     return (
       <EmptyState
         icon={<Bot className="size-10" />}
-        title="Belum Ada Bot Telegram Terhubung"
-        description="Hubungkan bot Telegram pertama Anda menggunakan BotFather token untuk mulai mengirimkan pesan dan notifikasi instan."
+        title={t("telegram.bots.emptyTitle")}
+        description={t("telegram.bots.emptyDesc")}
         action={
           <Button
             size="sm"
@@ -65,7 +67,7 @@ export function TelegramBotList({
             className="bg-wise-green text-dark-green hover:bg-wise-green/90 font-bold text-xs"
           >
             <Plus className="mr-1.5 size-3.5" />
-            <span>Hubungkan Bot Telegram</span>
+            <span>{t("telegram.bots.connectBot")}</span>
           </Button>
         }
       />

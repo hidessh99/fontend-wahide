@@ -20,6 +20,7 @@ import { NativeSelect } from "@/components/ui/native-select";
 import { DataTablePagination } from "@/components/ui/pagination";
 import { EmptyState } from "@/components/ui/empty";
 import { WABAMessageDetailDialog } from "./WABAMessageDetailDialog";
+import { useI18n } from "@/lib/i18n/context";
 
 const idDateFormatter = new Intl.DateTimeFormat("id-ID", {
   day: "2-digit",
@@ -66,6 +67,7 @@ export function WABALogsTable({
   onPageChange,
   onPageSizeChange,
 }: WABALogsTableProps) {
+  const { t } = useI18n();
   const [draftSearch, setDraftSearch] = useState(searchQuery ?? "");
   const [selectedLog, setSelectedLog] = useState<MessageLogResponse | null>(
     null,
@@ -182,8 +184,8 @@ export function WABALogsTable({
             onChange={setDraftSearch}
             onSearch={handleSearchSubmit}
             onClear={handleSearchClear}
-            placeholder="Cari nomor telepon atau WAMID..."
-            buttonText="Cari"
+            placeholder={t("whatsapp.wabaLogs.searchPlaceholder")}
+            buttonText={t("whatsapp.wabaLogs.searchBtn")}
             hideSubmitButton={false}
           />
         </div>
@@ -196,11 +198,11 @@ export function WABALogsTable({
             variant="pill"
             wrapperClassName="w-auto"
           >
-            <option value="ALL">Semua Kategori</option>
-            <option value="MARKETING">Marketing</option>
-            <option value="UTILITY">Utility</option>
-            <option value="AUTHENTICATION">Authentication</option>
-            <option value="SERVICE">Service</option>
+            <option value="ALL">{t("whatsapp.wabaLogs.catAll")}</option>
+            <option value="MARKETING">{t("whatsapp.wabaLogs.catMarketing")}</option>
+            <option value="UTILITY">{t("whatsapp.wabaLogs.catUtility")}</option>
+            <option value="AUTHENTICATION">{t("whatsapp.wabaLogs.catAuth")}</option>
+            <option value="SERVICE">{t("whatsapp.wabaLogs.catService")}</option>
           </NativeSelect>
 
           {/* Status Filter */}
@@ -210,11 +212,11 @@ export function WABALogsTable({
             variant="pill"
             wrapperClassName="w-auto"
           >
-            <option value="ALL">Semua Status</option>
-            <option value="READ">Dibaca (Read)</option>
-            <option value="DELIVERED">Diterima (Delivered)</option>
-            <option value="SENT">Terkirim (Sent)</option>
-            <option value="FAILED">Gagal</option>
+            <option value="ALL">{t("whatsapp.wabaLogs.statusAll")}</option>
+            <option value="READ">{t("whatsapp.wabaLogs.statusRead")}</option>
+            <option value="DELIVERED">{t("whatsapp.wabaLogs.statusDelivered")}</option>
+            <option value="SENT">{t("whatsapp.wabaLogs.statusSent")}</option>
+            <option value="FAILED">{t("whatsapp.wabaLogs.statusFailed")}</option>
           </NativeSelect>
 
           {/* Export CSV */}
@@ -227,7 +229,7 @@ export function WABALogsTable({
             className="border-border hover:border-foreground-muted h-10 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold disabled:opacity-40"
           >
             <Download className="size-3.5" />
-            <span>Ekspor CSV</span>
+            <span>{t("whatsapp.wabaLogs.exportCsv")}</span>
           </Button>
         </div>
       </div>
@@ -237,15 +239,15 @@ export function WABALogsTable({
         <div className="space-y-3 p-8 text-center sm:p-12">
           <Loader2 className="text-emerald-600 dark:text-emerald-400 mx-auto size-8 animate-spin" />
           <p className="text-foreground-secondary text-xs font-semibold">
-            Memuat riwayat log pesan Meta WABA...
+            {t("whatsapp.wabaLogs.loading")}
           </p>
         </div>
       ) : logs.length === 0 ? (
         <div className="py-12">
           <EmptyState
             icon={<ScrollText className="size-10" />}
-            title="Tidak Ada Log Pesan Meta WABA"
-            description="Pesan yang dikirimkan melalui saluran Meta WABA Official akan tercatat lengkap dengan WAMID dan status ACK."
+            title={t("whatsapp.wabaLogs.emptyTitle")}
+            description={t("whatsapp.wabaLogs.emptyDesc")}
           />
         </div>
       ) : (
@@ -291,7 +293,7 @@ export function WABALogsTable({
                       </span>
                     )}
                     <span className="line-clamp-2">
-                      {log.message_body || "(Pesan template Meta HSM)"}
+                      {log.message_body || t("whatsapp.wabaLogs.templateHsm")}
                     </span>
                     {log.error_message && (
                       <p className="text-[11px] text-rose-500 font-semibold truncate pt-1">
@@ -316,11 +318,11 @@ export function WABALogsTable({
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-border/80 bg-muted/30 text-[11px] font-bold text-foreground-secondary uppercase tracking-wider">
-                  <th className="py-3 px-4">Penerima & WAMID</th>
-                  <th className="py-3 px-4">Konten Pesan / Template</th>
-                  <th className="py-3 px-4">Kategori Meta</th>
-                  <th className="py-3 px-4">Waktu</th>
-                  <th className="py-3 px-4 text-right">Status</th>
+                  <th className="py-3 px-4">{t("whatsapp.wabaLogs.colRecipientWamid")}</th>
+                  <th className="py-3 px-4">{t("whatsapp.wabaLogs.colContent")}</th>
+                  <th className="py-3 px-4">{t("whatsapp.wabaLogs.colCategory")}</th>
+                  <th className="py-3 px-4">{t("whatsapp.wabaLogs.colTime")}</th>
+                  <th className="py-3 px-4 text-right">{t("whatsapp.wabaLogs.colStatus")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/60 text-xs">
@@ -364,7 +366,7 @@ export function WABALogsTable({
                             <FileText className="size-2.5" /> Media
                           </span>
                         )}
-                        <span>{log.message_body || "(Template Meta HSM)"}</span>
+                        <span>{log.message_body || t("whatsapp.wabaLogs.templateHsmShort")}</span>
                         {log.error_message && (
                           <span className="text-[10px] text-rose-500 font-semibold block truncate">
                             Error: {log.error_message}
@@ -406,9 +408,9 @@ export function WABALogsTable({
         onPageChange={onPageChange}
         onPageSizeChange={onPageSizeChange}
         pageSizeOptions={[10, 30, 50]}
-        prevText="Sebelumnya"
-        nextText="Selanjutnya"
-        entityName="log pesan"
+        prevText={t("whatsapp.wabaLogs.paginationPrev")}
+        nextText={t("whatsapp.wabaLogs.paginationNext")}
+        entityName={t("whatsapp.wabaLogs.entityName")}
       />
 
       {/* WABA Message Detail Modal */}

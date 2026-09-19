@@ -15,27 +15,29 @@ import {
   Inbox,
   ShieldCheck,
 } from "lucide-react";
+import { useI18n } from "@/lib/i18n/context";
 import {
   useWABAStats,
   WABAStatsTimeRange,
 } from "@/modules/whatsapp/hooks/useWABAStats";
 
-const TIME_RANGES: {
-  id: WABAStatsTimeRange;
-  label: string;
-  badgeLabel: string;
-}[] = [
-  { id: "today", label: "Hari Ini", badgeLabel: "today" },
-  { id: "7d", label: "7 Hari", badgeLabel: "last 7 days" },
-  { id: "30d", label: "30 Hari", badgeLabel: "last 30 days" },
-];
-
 export function WABAStatsView() {
+  const { t } = useI18n();
   const { timeRange, setTimeRange, stats, isLoading, refetch } =
     useWABAStats();
 
+  const timeRanges: {
+    id: WABAStatsTimeRange;
+    label: string;
+    badgeLabel: string;
+  }[] = [
+    { id: "today", label: t("whatsapp.stats.periodToday"), badgeLabel: t("whatsapp.stats.badgeToday") },
+    { id: "7d", label: t("whatsapp.stats.period7d"), badgeLabel: t("whatsapp.stats.badge7d") },
+    { id: "30d", label: t("whatsapp.stats.period30d"), badgeLabel: t("whatsapp.stats.badge30d") },
+  ];
+
   const activePeriodLabel =
-    TIME_RANGES.find((r) => r.id === timeRange)?.badgeLabel || "today";
+    timeRanges.find((r) => r.id === timeRange)?.badgeLabel || t("whatsapp.stats.badgeToday");
 
   // Calculate maximum total volume for normalized bar scaling in Daily Activity
   const maxDayTotal = Math.max(
@@ -53,18 +55,18 @@ export function WABAStatsView() {
               <BarChart3 className="size-5" />
             </div>
             <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl">
-              Statistik Meta WABA Official
+              {t("whatsapp.waba.statsTitle")}
             </h1>
           </div>
           <p className="text-foreground-secondary text-xs font-medium sm:text-sm">
-            Pantau transmisi Cloud API resmi Meta, rasio delivery ACK, dan utilisasi nomor WABA.
+            {t("whatsapp.waba.statsSubtitle")}
           </p>
         </div>
 
         {/* Action Bar: Time Range Selector & Refresh */}
         <div className="flex items-center gap-2.5 self-start sm:self-auto">
           <div className="bg-muted/60 border-border/80 flex items-center rounded-full border p-1">
-            {TIME_RANGES.map((range) => {
+            {timeRanges.map((range) => {
               const isActive = timeRange === range.id;
               return (
                 <button
@@ -93,7 +95,7 @@ export function WABAStatsView() {
             <RefreshCw
               className={`mr-1.5 size-3.5 ${isLoading ? "animate-spin" : ""}`}
             />
-            <span>Muat Ulang</span>
+            <span>{t("whatsapp.stats.reload")}</span>
           </Button>
         </div>
       </div>
@@ -104,7 +106,7 @@ export function WABAStatsView() {
         <div className="bg-surface border-border rounded-2xl border p-5 space-y-3 shadow-xs dark:bg-[#151614]">
           <div className="flex items-center justify-between">
             <span className="text-foreground-secondary text-xs font-semibold">
-              Total sends
+              {t("whatsapp.stats.kpiTotalSends")}
             </span>
             <div className="flex size-8 items-center justify-center rounded-xl bg-muted/60 text-foreground-secondary">
               <Send className="size-4" />
@@ -128,7 +130,7 @@ export function WABAStatsView() {
         <div className="bg-surface border-border rounded-2xl border p-5 space-y-3 shadow-xs dark:bg-[#151614]">
           <div className="flex items-center justify-between">
             <span className="text-foreground-secondary text-xs font-semibold">
-              Delivered
+              {t("whatsapp.stats.kpiDelivered")}
             </span>
             <div className="flex size-8 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400">
               <CheckCircle2 className="size-4" />
@@ -144,7 +146,7 @@ export function WABAStatsView() {
             )}
           </div>
           <p className="text-emerald-600 dark:text-emerald-400 text-[11px] font-semibold">
-            {stats.deliveryRate}% delivery rate
+            {t("whatsapp.stats.kpiDeliveryRate", { rate: stats.deliveryRate.toString() })}
           </p>
         </div>
 
@@ -152,7 +154,7 @@ export function WABAStatsView() {
         <div className="bg-surface border-border rounded-2xl border p-5 space-y-3 shadow-xs dark:bg-[#151614]">
           <div className="flex items-center justify-between">
             <span className="text-foreground-secondary text-xs font-semibold">
-              Failed
+              {t("whatsapp.stats.kpiFailed")}
             </span>
             <div className="flex size-8 items-center justify-center rounded-xl bg-rose-500/10 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400">
               <AlertCircle className="size-4" />
@@ -174,7 +176,7 @@ export function WABAStatsView() {
             )}
           </div>
           <p className="text-rose-600/90 dark:text-rose-400/90 text-[11px] font-semibold">
-            {stats.failureRate}% failure rate
+            {t("whatsapp.stats.kpiFailureRate", { rate: stats.failureRate.toString() })}
           </p>
         </div>
       </div>
@@ -183,9 +185,11 @@ export function WABAStatsView() {
       <div className="bg-surface border-border rounded-2xl border p-6 space-y-5 shadow-xs dark:bg-[#151614]">
         <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h3 className="text-foreground text-sm font-bold">Daily activity</h3>
+            <h3 className="text-foreground text-sm font-bold">
+              {t("whatsapp.stats.dailyActivityTitle")}
+            </h3>
             <p className="text-foreground-secondary text-xs">
-              Delivered vs failed per day — {activePeriodLabel}
+              {t("whatsapp.stats.dailyActivitySub", { period: activePeriodLabel })}
             </p>
           </div>
 
@@ -193,11 +197,11 @@ export function WABAStatsView() {
           <div className="flex items-center gap-4 text-xs font-medium text-foreground-secondary">
             <div className="flex items-center gap-1.5">
               <span className="size-2 rounded-full bg-emerald-500 dark:bg-wise-green" />
-              <span>Delivered</span>
+              <span>{t("whatsapp.stats.legendDelivered")}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="size-2 rounded-full bg-rose-500" />
-              <span>Failed</span>
+              <span>{t("whatsapp.stats.legendFailed")}</span>
             </div>
           </div>
         </div>
@@ -213,7 +217,7 @@ export function WABAStatsView() {
               <BarChart3 className="size-5" />
             </div>
             <p className="text-foreground-secondary text-xs font-medium">
-              No message activity in this period.
+              {t("whatsapp.stats.noActivity")}
             </p>
           </div>
         ) : (
@@ -241,13 +245,13 @@ export function WABAStatsView() {
                       <div
                         style={{ height: `${deliveredPercent}%` }}
                         className="w-full bg-emerald-500 dark:bg-wise-green transition-all duration-300"
-                        title={`${day.label}: ${day.delivered} delivered`}
+                        title={`${day.label}: ${day.delivered} ${t("whatsapp.stats.legendDelivered")}`}
                       />
                       {/* Failed Stack */}
                       <div
                         style={{ height: `${failedPercent}%` }}
                         className="w-full bg-rose-500 transition-all duration-300"
-                        title={`${day.label}: ${day.failed} failed`}
+                        title={`${day.label}: ${day.failed} ${t("whatsapp.stats.legendFailed")}`}
                       />
                     </div>
 
@@ -268,9 +272,11 @@ export function WABAStatsView() {
         {/* Card 1: Top Send Types */}
         <div className="bg-surface border-border rounded-2xl border p-6 space-y-4 shadow-xs dark:bg-[#151614]">
           <div className="space-y-0.5">
-            <h3 className="text-foreground text-sm font-bold">Top send types</h3>
+            <h3 className="text-foreground text-sm font-bold">
+              {t("whatsapp.stats.topSendTypes")}
+            </h3>
             <p className="text-foreground-secondary text-xs">
-              Direct sends vs named campaigns in this period.
+              {t("whatsapp.stats.topSendTypesSub")}
             </p>
           </div>
 
@@ -283,7 +289,7 @@ export function WABAStatsView() {
             <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/80 py-10 text-center">
               <Inbox className="size-6 text-foreground-muted mb-2" />
               <p className="text-foreground-secondary text-xs font-medium">
-                No sends in this period.
+                {t("whatsapp.stats.noSends")}
               </p>
             </div>
           ) : (
@@ -293,7 +299,7 @@ export function WABAStatsView() {
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-semibold text-foreground flex items-center gap-1.5">
                     <Send className="size-3.5 text-muted-foreground" />
-                    Direct sends (Pesan Cepat HSM / Utility)
+                    {t("whatsapp.waba.directSendsUtility")}
                   </span>
                   <span className="font-mono font-bold text-foreground">
                     {stats.topSendTypes.directCount.toLocaleString()}{" "}
@@ -313,7 +319,7 @@ export function WABAStatsView() {
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-semibold text-foreground flex items-center gap-1.5">
                     <Layers className="size-3.5 text-muted-foreground" />
-                    Named campaigns (Broadcast Marketing)
+                    {t("whatsapp.waba.namedCampaignsMarketing")}
                   </span>
                   <span className="font-mono font-bold text-foreground">
                     {stats.topSendTypes.campaignCount.toLocaleString()}{" "}
@@ -334,9 +340,11 @@ export function WABAStatsView() {
         {/* Card 2: By Number */}
         <div className="bg-surface border-border rounded-2xl border p-6 space-y-4 shadow-xs dark:bg-[#151614]">
           <div className="space-y-0.5">
-            <h3 className="text-foreground text-sm font-bold">By number</h3>
+            <h3 className="text-foreground text-sm font-bold">
+              {t("whatsapp.stats.byNumber")}
+            </h3>
             <p className="text-foreground-secondary text-xs">
-              Top numbers by outbound volume.
+              {t("whatsapp.stats.byNumberSub")}
             </p>
           </div>
 
@@ -349,7 +357,7 @@ export function WABAStatsView() {
             <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/80 py-10 text-center">
               <Smartphone className="size-6 text-foreground-muted mb-2" />
               <p className="text-foreground-secondary text-xs font-medium">
-                No sends in this period.
+                {t("whatsapp.stats.noSends")}
               </p>
             </div>
           ) : (
@@ -384,7 +392,7 @@ export function WABAStatsView() {
 
                     <div className="text-right">
                       <span className="font-mono text-xs font-bold text-foreground">
-                        {acc.count.toLocaleString()} pesan
+                        {acc.count.toLocaleString()} {t("whatsapp.stats.messagesCount")}
                       </span>
                       <span className="text-[10px] text-foreground-muted ml-1">
                         ({acc.percent}%)

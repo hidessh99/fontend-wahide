@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { wabaApi } from "../../api/waba.api";
 import { MetaEmbeddedConfig } from "../../types/waba.types";
+import { useI18n } from "@/lib/i18n/context";
 
 declare global {
   interface Window {
@@ -50,6 +51,7 @@ export function MetaEmbeddedSignupButton({
   onManualClick,
   className = "",
 }: MetaEmbeddedSignupButtonProps) {
+  const { t } = useI18n();
   const [isLoading, setIsLoading] = useState(false);
   const [metaConfig, setMetaConfig] = useState<MetaEmbeddedConfig | null>(null);
   const capturedWabaId = useRef<string | undefined>(undefined);
@@ -82,7 +84,7 @@ export function MetaEmbeddedSignupButton({
         event.data?.type === "WABA_OAUTH_SUCCESS"
       ) {
         setIsLoading(false);
-        toast.success("Nomor WhatsApp Official berhasil terhubung via Meta!");
+        toast.success(t("whatsapp.waba.connectSuccess"));
         onSuccess?.();
         return;
       }
@@ -117,7 +119,7 @@ export function MetaEmbeddedSignupButton({
     return () => {
       window.removeEventListener("message", handleMessage);
     };
-  }, [onSuccess]);
+  }, [onSuccess, t]);
 
   // Dynamically load Facebook JavaScript SDK
   const loadFacebookSDK = useCallback((): Promise<void> => {
@@ -252,13 +254,13 @@ export function MetaEmbeddedSignupButton({
                 phone_number_id: capturedPhoneId.current,
               });
 
-              toast.success("Nomor WhatsApp Official berhasil terhubung via Meta!");
+              toast.success(t("whatsapp.waba.connectSuccess"));
               onSuccess?.();
             } catch (exchangeErr: unknown) {
               const msg =
                 exchangeErr instanceof Error
                   ? exchangeErr.message
-                  : "Gagal menukar otorisasi dengan server Meta.";
+                  : t("whatsapp.waba.exchangeError");
               toast.error(msg);
             } finally {
               setIsLoading(false);
@@ -283,7 +285,7 @@ export function MetaEmbeddedSignupButton({
       const msg =
         err instanceof Error
           ? err.message
-          : "Terjadi kesalahan saat membuka pop-up Meta.";
+          : t("whatsapp.waba.popupError");
       toast.error(msg);
     }
   };
@@ -307,7 +309,7 @@ export function MetaEmbeddedSignupButton({
           <path d="M16.994 4.502c-1.996 0-3.79 1.04-4.994 2.651-1.204-1.611-2.998-2.651-4.994-2.651C3.134 4.502 0 7.636 0 11.496c0 3.86 3.134 6.994 6.994 6.994 1.996 0 3.79-1.04 4.994-2.651 1.204 1.611 2.998 2.651 4.994 2.651 3.86 0 6.994-3.134 6.994-6.994 0-3.86-3.134-6.994-7-6.994zm0 11.49a4.498 4.498 0 0 1-4.496-4.496 4.498 4.498 0 0 1 4.496-4.496 4.498 4.498 0 0 1 4.496 4.496 4.498 4.498 0 0 1-4.496 4.496zm-9.988 0A4.498 4.498 0 0 1 2.51 11.496a4.498 4.498 0 0 1 4.496-4.496 4.498 4.498 0 0 1 4.496 4.496 4.498 4.498 0 0 1-4.496 4.496z" />
         </svg>
       )}
-      <span>Hubungkan dengan Meta</span>
+      <span>{t("whatsapp.waba.connectWithMeta")}</span>
     </Button>
   );
 }

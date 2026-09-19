@@ -4,10 +4,12 @@ import React from "react";
 import { useTelegramLogs } from "../../hooks/useTelegramLogs";
 import { TelegramLogsTable } from "../../components/seller/TelegramLogsTable";
 import { TelegramLogStatsCards } from "../../components/seller/TelegramLogStatsCards";
+import { useI18n } from "@/lib/i18n/context";
 import { Button } from "@/components/ui/button";
 import { ScrollText, RefreshCw } from "lucide-react";
 
 export function TelegramLogsView() {
+  const { t } = useI18n();
   const {
     logs,
     total,
@@ -41,11 +43,11 @@ export function TelegramLogsView() {
               <ScrollText className="size-5" />
             </div>
             <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl">
-              Log Pengiriman Telegram
+              {t("telegram.logs.title")}
             </h1>
           </div>
           <p className="text-foreground-secondary text-xs font-medium sm:text-sm">
-            Audit riwayat pesan masuk dan keluar bot Telegram dengan status pengiriman real-time.
+            {t("telegram.logs.subtitle")}
           </p>
         </div>
 
@@ -57,7 +59,7 @@ export function TelegramLogsView() {
           className="text-xs font-semibold cursor-pointer"
         >
           <RefreshCw className={`mr-1.5 size-3.5 ${isLoading ? "animate-spin" : ""}`} />
-          <span>Muat Ulang</span>
+          <span>{t("telegram.logs.reload")}</span>
         </Button>
       </div>
 

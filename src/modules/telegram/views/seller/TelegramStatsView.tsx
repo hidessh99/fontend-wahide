@@ -3,19 +3,21 @@
 import React from "react";
 import { useTelegramStats, TelegramStatsTimeRange } from "../../hooks/useTelegramStats";
 import { TelegramStatsCards } from "../../components/seller/TelegramStatsCards";
+import { useI18n } from "@/lib/i18n/context";
 import { Button } from "@/components/ui/button";
 import { BarChart3, RefreshCw } from "lucide-react";
 
 const TIME_RANGES: {
   id: TelegramStatsTimeRange;
-  label: string;
+  labelKey: "rangeToday" | "range7d" | "range30d";
 }[] = [
-  { id: "today", label: "Hari Ini" },
-  { id: "7d", label: "7 Hari" },
-  { id: "30d", label: "30 Hari" },
+  { id: "today", labelKey: "rangeToday" },
+  { id: "7d", labelKey: "range7d" },
+  { id: "30d", labelKey: "range30d" },
 ];
 
 export function TelegramStatsView() {
+  const { t } = useI18n();
   const { stats, isLoading, timeRange, setTimeRange, reload } =
     useTelegramStats();
 
@@ -29,11 +31,11 @@ export function TelegramStatsView() {
               <BarChart3 className="size-5" />
             </div>
             <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl">
-              Statistik Telegram Bot
+              {t("telegram.stats.title")}
             </h1>
           </div>
           <p className="text-foreground-secondary text-xs font-medium sm:text-sm">
-            Pantau performa transmisi bot Telegram, rasio keberhasilan dispatch, dan beban throughput bot.
+            {t("telegram.stats.subtitle")}
           </p>
         </div>
 
@@ -53,7 +55,7 @@ export function TelegramStatsView() {
                       : "text-foreground-secondary hover:text-foreground"
                   }`}
                 >
-                  {range.label}
+                  {t(`telegram.stats.${range.labelKey}`)}
                 </button>
               );
             })}
@@ -69,7 +71,7 @@ export function TelegramStatsView() {
             <RefreshCw
               className={`mr-1.5 size-3.5 ${isLoading ? "animate-spin" : ""}`}
             />
-            <span>Muat Ulang</span>
+            <span>{t("telegram.stats.reload")}</span>
           </Button>
         </div>
       </div>

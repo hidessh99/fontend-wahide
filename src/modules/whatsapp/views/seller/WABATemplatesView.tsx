@@ -30,6 +30,7 @@ import {
   Info,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useI18n } from "@/lib/i18n/context";
 
 export interface WABATemplateMock {
   id: string;
@@ -112,6 +113,7 @@ const DEFAULT_WABA_TEMPLATES: WABATemplateMock[] = [
 ];
 
 export function WABATemplatesView() {
+  const { t } = useI18n();
   const [templates, setTemplates] = useState<WABATemplateMock[]>(DEFAULT_WABA_TEMPLATES);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("ALL");
@@ -148,7 +150,7 @@ export function WABATemplatesView() {
   const handleSaveDraft = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formName.trim()) {
-      toast.error("Nama template resmi wajib diisi");
+      toast.error(t("whatsapp.wabaTemplates.errNameRequired"));
       return;
     }
     const cleanName = formName.toLowerCase().replace(/[^a-z0-9_]/g, "_");
@@ -172,7 +174,7 @@ export function WABATemplatesView() {
 
     setTemplates([newTpl, ...templates]);
     setIsEditorOpen(false);
-    toast.success("Template HSM berhasil diajukan ke Meta untuk review!");
+    toast.success(t("whatsapp.wabaTemplates.toastSubmitted"));
   };
 
   const filteredTemplates = templates.filter((tpl) => {
@@ -194,11 +196,11 @@ export function WABATemplatesView() {
               <ShieldCheck className="size-5" />
             </div>
             <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl">
-              Template Resmi Meta WABA (HSM)
+              {t("whatsapp.wabaTemplates.title")}
             </h1>
           </div>
           <p className="text-foreground-secondary text-xs font-medium sm:text-sm">
-            Kelola template pesan terverifikasi Meta WhatsApp Business Platform untuk transmisi siaran massal resmi.
+            {t("whatsapp.wabaTemplates.subtitle")}
           </p>
         </div>
 
@@ -208,7 +210,7 @@ export function WABATemplatesView() {
           className="bg-wise-green text-dark-green hover:bg-wise-green/90 text-xs font-bold shadow-sm"
         >
           <Plus className="mr-1.5 size-3.5" />
-          <span>Buat Template HSM</span>
+          <span>{t("whatsapp.wabaTemplates.createBtn")}</span>
         </Button>
       </div>
 
@@ -216,11 +218,10 @@ export function WABATemplatesView() {
       <div className="border-border rounded-2xl border bg-muted/40 p-4 space-y-2">
         <div className="flex items-center gap-2 text-xs font-bold text-foreground">
           <Info className="size-4 text-wise-green" />
-          <span>Ketentuan Resmi Template Meta Cloud API (Graph API v20.0):</span>
+          <span>{t("whatsapp.wabaTemplates.rulesTitle")}</span>
         </div>
         <p className="text-foreground-secondary text-xs">
-          Template WhatsApp Official (HSM) wajib dikurasi oleh sistem AI & tim peninjau Meta sebelum dapat digunakan.
-          Variabel wajib menggunakan penomoran berurutan (<code className="bg-muted px-1 rounded font-mono">{"{{1}}"}</code>, <code className="bg-muted px-1 rounded font-mono">{"{{2}}"}</code>) dan tidak diperkenankan menggunakan karakter Spintax.
+          {t("whatsapp.wabaTemplates.rulesDesc")}
         </p>
       </div>
 
@@ -229,7 +230,7 @@ export function WABATemplatesView() {
         <div className="relative flex-1 max-w-sm">
           <Search className="text-foreground-muted absolute left-3 top-1/2 size-4 -translate-y-1/2" />
           <Input
-            placeholder="Cari template resmi..."
+            placeholder={t("whatsapp.wabaTemplates.searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9 text-xs"
@@ -242,10 +243,10 @@ export function WABATemplatesView() {
             onChange={(e) => setCategoryFilter(e.target.value)}
             className="text-xs w-36 h-9"
           >
-            <option value="ALL">Semua Kategori</option>
-            <option value="MARKETING">Marketing</option>
-            <option value="UTILITY">Utility</option>
-            <option value="AUTHENTICATION">Authentication</option>
+            <option value="ALL">{t("whatsapp.wabaTemplates.catAll")}</option>
+            <option value="MARKETING">{t("whatsapp.wabaTemplates.formCatMarketing")}</option>
+            <option value="UTILITY">{t("whatsapp.wabaTemplates.formCatUtility")}</option>
+            <option value="AUTHENTICATION">{t("whatsapp.wabaTemplates.formCatAuth")}</option>
           </NativeSelect>
 
           <NativeSelect
@@ -253,11 +254,11 @@ export function WABATemplatesView() {
             onChange={(e) => setStatusFilter(e.target.value)}
             className="text-xs w-36 h-9"
           >
-            <option value="ALL">Semua Status</option>
-            <option value="APPROVED">Disetujui (Approved)</option>
-            <option value="PENDING">Review (Pending)</option>
-            <option value="REJECTED">Ditolak (Rejected)</option>
-            <option value="DRAFT">Draft</option>
+            <option value="ALL">{t("whatsapp.wabaTemplates.statusAll")}</option>
+            <option value="APPROVED">{t("whatsapp.wabaTemplates.metaStatusApproved")}</option>
+            <option value="PENDING">{t("whatsapp.wabaTemplates.metaStatusPending")}</option>
+            <option value="REJECTED">{t("whatsapp.wabaTemplates.metaStatusRejected")}</option>
+            <option value="DRAFT">{t("whatsapp.wabaTemplates.metaStatusDraft")}</option>
           </NativeSelect>
         </div>
       </div>
@@ -266,8 +267,8 @@ export function WABATemplatesView() {
       {filteredTemplates.length === 0 ? (
         <EmptyState
           icon={<ShieldCheck className="size-10" />}
-          title="Tidak Ada Template WABA Ditemukan"
-          description="Buat template resmi Meta pertama Anda untuk mulai mengirimkan notifikasi dan siaran WhatsApp centang hijau."
+          title={t("whatsapp.wabaTemplates.emptyTitle")}
+          description={t("whatsapp.wabaTemplates.emptyDesc")}
           action={
             <Button
               size="sm"
@@ -275,7 +276,7 @@ export function WABATemplatesView() {
               className="bg-wise-green text-dark-green hover:bg-wise-green/90 font-bold text-xs"
             >
               <Plus className="mr-1.5 size-3.5" />
-              <span>Buat Template HSM</span>
+              <span>{t("whatsapp.wabaTemplates.createBtn")}</span>
             </Button>
           }
         />
@@ -296,17 +297,17 @@ export function WABATemplatesView() {
                   {tpl.metaStatus === "APPROVED" ? (
                     <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400">
                       <CheckCircle2 className="size-3" />
-                      <span>APPROVED</span>
+                      <span>{t("whatsapp.wabaTemplates.statusApproved")}</span>
                     </span>
                   ) : tpl.metaStatus === "PENDING" ? (
                     <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:bg-amber-950/30 dark:text-amber-400">
                       <Clock className="size-3" />
-                      <span>IN REVIEW</span>
+                      <span>{t("whatsapp.wabaTemplates.statusInReview")}</span>
                     </span>
                   ) : (
                     <span className="inline-flex items-center gap-1 rounded-full bg-rose-50 px-2 py-0.5 text-[10px] font-bold text-rose-700 dark:bg-rose-950/30 dark:text-rose-400">
                       <AlertCircle className="size-3" />
-                      <span>REJECTED</span>
+                      <span>{t("whatsapp.wabaTemplates.statusRejected")}</span>
                     </span>
                   )}
                 </div>
@@ -315,14 +316,14 @@ export function WABATemplatesView() {
                   <h3 className="text-foreground text-sm font-bold font-mono tracking-tight">
                     {tpl.name}
                   </h3>
-                  <span className="text-[11px] text-foreground-muted font-mono">Bahasa: {tpl.language}</span>
+                  <span className="text-[11px] text-foreground-muted font-mono">{t("whatsapp.wabaTemplates.languageLabel", { lang: tpl.language })}</span>
                 </div>
 
                 {/* WhatsApp Official Bubble Live Mockup */}
                 <div className="rounded-2xl border border-emerald-500/20 bg-emerald-50/20 dark:bg-emerald-950/10 p-3.5 space-y-2">
                   <div className="flex items-center gap-1 text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">
                     <ShieldCheck className="size-3" />
-                    <span>WhatsApp Official Bubble</span>
+                    <span>{t("whatsapp.wabaTemplates.bubbleTitle")}</span>
                   </div>
 
                   {tpl.headerText && (
@@ -365,7 +366,7 @@ export function WABATemplatesView() {
               {/* Card Footer */}
               <div className="border-border/60 flex items-center justify-between border-t pt-3 mt-4 text-[11px] text-foreground-muted font-mono">
                 <span>ID: {tpl.metaTemplateId.slice(0, 8)}...</span>
-                <span>{Object.keys(tpl.exampleValues).length} variabel</span>
+                <span>{t("whatsapp.wabaTemplates.variablesCount", { count: Object.keys(tpl.exampleValues).length })}</span>
               </div>
             </div>
           ))}
@@ -381,9 +382,9 @@ export function WABATemplatesView() {
                 <ShieldCheck className="size-5" />
               </div>
               <div>
-                <DialogTitle className="text-base font-bold">Buat Template Resmi Meta (HSM)</DialogTitle>
+                <DialogTitle className="text-base font-bold">{t("whatsapp.wabaTemplates.dialogTitle")}</DialogTitle>
                 <DialogDescription className="text-xs">
-                  Susun komponen pesan sesuai spesifikasi resmi Meta Graph API v20.0 untuk kurasi review.
+                  {t("whatsapp.wabaTemplates.dialogDesc")}
                 </DialogDescription>
               </div>
             </div>
@@ -392,10 +393,10 @@ export function WABATemplatesView() {
           <form onSubmit={handleSaveDraft} className="space-y-4 py-2">
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label htmlFor="tplName" className="text-xs font-semibold">Nama Template (Snake_Case)</Label>
+                <Label htmlFor="tplName" className="text-xs font-semibold">{t("whatsapp.wabaTemplates.formNameLabel")}</Label>
                 <Input
                   id="tplName"
-                  placeholder="e.g. konfirmasi_tiket_event"
+                  placeholder={t("whatsapp.wabaTemplates.formNamePlaceholder")}
                   value={formName}
                   onChange={(e) => setFormName(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, "_"))}
                   className="font-mono text-xs"
@@ -404,7 +405,7 @@ export function WABATemplatesView() {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="tplCategory" className="text-xs font-semibold">Kategori Meta</Label>
+                <Label htmlFor="tplCategory" className="text-xs font-semibold">{t("whatsapp.wabaTemplates.formCatLabel")}</Label>
                 <NativeSelect
                   id="tplCategory"
                   value={formCategory}
@@ -415,24 +416,24 @@ export function WABATemplatesView() {
                   }
                   className="text-xs h-9"
                 >
-                  <option value="UTILITY">Utility (Transaksi/Alert)</option>
-                  <option value="MARKETING">Marketing (Promosi)</option>
-                  <option value="AUTHENTICATION">Authentication (OTP)</option>
+                  <option value="UTILITY">{t("whatsapp.wabaTemplates.formCatUtility")}</option>
+                  <option value="MARKETING">{t("whatsapp.wabaTemplates.formCatMarketing")}</option>
+                  <option value="AUTHENTICATION">{t("whatsapp.wabaTemplates.formCatAuth")}</option>
                 </NativeSelect>
               </div>
             </div>
 
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <Label htmlFor="tplBody" className="text-xs font-semibold">Konten Utama (Body Text)</Label>
-                <span className="text-[11px] text-foreground-muted">Gunakan {"{{1}}"}, {"{{2}}"} untuk variabel</span>
+                <Label htmlFor="tplBody" className="text-xs font-semibold">{t("whatsapp.wabaTemplates.formBodyLabel")}</Label>
+                <span className="text-[11px] text-foreground-muted">{t("whatsapp.wabaTemplates.formBodyHint")}</span>
               </div>
               <Textarea
                 id="tplBody"
                 rows={4}
                 value={formBodyText}
                 onChange={(e) => setFormBodyText(e.target.value)}
-                placeholder="Halo {{1}}, pesanan {{2}} Anda telah berhasil dibuat."
+                placeholder={t("whatsapp.wabaTemplates.formBodyPlaceholder")}
                 className="text-xs"
                 required
               />
@@ -443,16 +444,16 @@ export function WABATemplatesView() {
               <div className="rounded-xl border border-border/80 bg-muted/40 p-3.5 space-y-2.5">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
                   <Sparkles className="size-3.5 text-wise-green" />
-                  <span>Contoh Nilai Variabel (Wajib untuk Kurasi Review Meta):</span>
+                  <span>{t("whatsapp.wabaTemplates.exampleValuesTitle")}</span>
                 </div>
                 <div className="grid grid-cols-2 gap-2.5">
                   {detectedVariables.map((v) => (
                     <div key={v} className="space-y-1">
-                      <Label className="text-[11px] font-mono text-foreground-secondary">Variabel {"{{" + v + "}}"}</Label>
+                      <Label className="text-[11px] font-mono text-foreground-secondary">{t("whatsapp.wabaTemplates.exampleValueLabel", { var: "{{" + v + "}}" })}</Label>
                       <Input
                         value={exampleValues[v] || ""}
                         onChange={(e) => setExampleValues({ ...exampleValues, [v]: e.target.value })}
-                        placeholder={`Contoh nilai {{${v}}}`}
+                        placeholder={t("whatsapp.wabaTemplates.exampleValuePlaceholder", { var: `{{${v}}}` })}
                         className="text-xs h-8"
                         required
                       />
@@ -463,11 +464,11 @@ export function WABATemplatesView() {
             )}
 
             <div className="space-y-1.5">
-              <Label htmlFor="tplFooter" className="text-xs font-semibold">Footer Disclaimer (Opsional - Maks 60 Karakter)</Label>
+              <Label htmlFor="tplFooter" className="text-xs font-semibold">{t("whatsapp.wabaTemplates.formFooterLabel")}</Label>
               <Input
                 id="tplFooter"
                 maxLength={60}
-                placeholder="Balas STOP untuk berhenti berlangganan"
+                placeholder={t("whatsapp.wabaTemplates.formFooterPlaceholder")}
                 value={formFooterText}
                 onChange={(e) => setFormFooterText(e.target.value)}
                 className="text-xs"
@@ -481,13 +482,13 @@ export function WABATemplatesView() {
                 onClick={() => setIsEditorOpen(false)}
                 className="text-xs"
               >
-                Batal
+                {t("whatsapp.wabaTemplates.cancelBtn")}
               </Button>
               <Button
                 type="submit"
                 className="bg-wise-green text-dark-green hover:bg-wise-green/90 font-bold text-xs"
               >
-                Ajukan ke Meta (Review)
+                {t("whatsapp.wabaTemplates.submitReviewBtn")}
               </Button>
             </DialogFooter>
           </form>

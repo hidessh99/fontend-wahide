@@ -128,5 +128,23 @@
     "phone": "WhatsApp Number",
     "date": "Schedule Date",
     "notes": "Service Notes"
+  },
+  "channels": {
+    "waWebTitle": "WhatsApp Web",
+    "waWebDesc": "Automated reminder via physical/socket WhatsApp number. Ideal for friendly personal messages & casual follow-ups.",
+    "waWebBadge": "Socket",
+    "waWebActive": "{count} Active Devices",
+    "waWebRecommended": "Casual messages, friendly confirmations & D+1 follow-up",
+    "wabaTitle": "Meta WABA Official",
+    "wabaDesc": "Official Meta Verified (Green Badge) reminder in UTILITY category. 98% delivery guarantee & zero ban risk.",
+    "wabaBadge": "Meta Official",
+    "wabaActive": "{count} Official Accounts",
+    "wabaRecommended": "D-1 & Day-of reminders for clinics, salons, or official institutions",
+    "telegramTitle": "Telegram Bot",
+    "telegramDesc": "Instant reminders via Telegram Bot to customers. 100% free with zero per-message cost & interactive buttons support.",
+    "telegramBadge": "Free",
+    "telegramActive": "{count} Active Bots",
+    "telegramRecommended": "VIP clients, communities, consultations & tech users",
+    "notReady": "Not ready"
   }
 }

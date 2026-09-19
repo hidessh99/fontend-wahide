@@ -96,7 +96,10 @@ function mapTemplateToTelegramItem(t: Template): TelegramTemplateItem {
   };
 }
 
+import { useI18n } from "@/lib/i18n/context";
+
 export function TelegramTemplatesView() {
+  const { t } = useI18n();
   const {
     templates,
     isLoading,
@@ -162,11 +165,11 @@ export function TelegramTemplatesView() {
               <LayoutTemplate className="size-5" />
             </div>
             <h1 className="text-foreground text-xl font-black tracking-tight sm:text-2xl">
-              Template Pesan Telegram
+              {t("telegram.templates.title")}
             </h1>
           </div>
           <p className="text-foreground-secondary text-xs font-medium sm:text-sm">
-            Format pesan bot kaya fitur dengan dukungan HTML / MarkdownV2 dan tombol interaktif inline keyboard.
+            {t("telegram.templates.subtitle")}
           </p>
         </div>
 
@@ -181,7 +184,7 @@ export function TelegramTemplatesView() {
             <RefreshCw
               className={`mr-1.5 size-3.5 ${isLoading ? "animate-spin" : ""}`}
             />
-            <span>Segarkan</span>
+            <span>{t("telegram.templates.reload")}</span>
           </Button>
 
           <Button
@@ -190,7 +193,7 @@ export function TelegramTemplatesView() {
             className="bg-wise-green text-dark-green hover:bg-wise-green/90 h-8 rounded-full px-3.5 text-xs font-bold shadow-xs cursor-pointer"
           >
             <Plus className="mr-1.5 size-3.5" />
-            <span>Buat Template Baru</span>
+            <span>{t("telegram.templates.createNew")}</span>
           </Button>
         </div>
       </div>
@@ -199,19 +202,19 @@ export function TelegramTemplatesView() {
       <div className="border-border rounded-2xl border bg-muted/40 p-4 space-y-3">
         <div className="flex items-center gap-2 text-xs font-bold text-foreground">
           <Code2 className="size-4 text-wise-green" />
-          <span>Format & Parse Mode Telegram yang Didukung:</span>
+          <span>{t("telegram.templates.guideTitle")}</span>
         </div>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 text-xs">
           <div className="rounded-xl border border-border/60 bg-surface p-3 space-y-1 dark:bg-[#181917]">
-            <p className="font-bold text-foreground">Mode HTML (Direkomendasikan)</p>
+            <p className="font-bold text-foreground">{t("telegram.templates.modeHtml")}</p>
             <p className="text-foreground-secondary text-[11px]">
-              Gunakan tag standar seperti <code className="bg-muted px-1 rounded">&lt;b&gt;tebal&lt;/b&gt;</code>, <code className="bg-muted px-1 rounded">&lt;code&gt;kode&lt;/code&gt;</code>, dan <code className="bg-muted px-1 rounded">&lt;a href=&quot;...&quot;&gt;tautan&lt;/a&gt;</code>.
+              {t("telegram.templates.modeHtmlDesc")}
             </p>
           </div>
           <div className="rounded-xl border border-border/60 bg-surface p-3 space-y-1 dark:bg-[#181917]">
-            <p className="font-bold text-foreground">Mode MarkdownV2</p>
+            <p className="font-bold text-foreground">{t("telegram.templates.modeMarkdown")}</p>
             <p className="text-foreground-secondary text-[11px]">
-              Gunakan <code className="bg-muted px-1 rounded">*tebal*</code>, <code className="bg-muted px-1 rounded">_miring_</code>, dan <code className="bg-muted px-1 rounded">`inline`</code>. Karakter khusus wajib di-escape dengan backslash.
+              {t("telegram.templates.modeMarkdownDesc")}
             </p>
           </div>
         </div>
@@ -221,7 +224,7 @@ export function TelegramTemplatesView() {
       <div className="relative max-w-sm">
         <Search className="text-foreground-muted absolute left-3 top-1/2 size-4 -translate-y-1/2" />
         <Input
-          placeholder="Cari template bot..."
+          placeholder={t("telegram.templates.searchPlaceholder")}
           value={search}
           onChange={(e) => handleSearchChange(e.target.value)}
           className="pl-9 text-xs"

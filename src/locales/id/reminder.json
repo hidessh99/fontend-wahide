@@ -128,5 +128,23 @@
     "phone": "Nomor WhatsApp",
     "date": "Tanggal Jadwal",
     "notes": "Catatan Layanan"
+  },
+  "channels": {
+    "waWebTitle": "WhatsApp Web",
+    "waWebDesc": "Pengingat otomatis via nomor WhatsApp fisik/socket. Cocok untuk pesan ramah personal & follow-up santai.",
+    "waWebBadge": "Socket",
+    "waWebActive": "{count} HP Aktif",
+    "waWebRecommended": "Pesan kasual, konfirmasi ramah & follow-up H+1",
+    "wabaTitle": "Meta WABA Official",
+    "wabaDesc": "Pengingat resmi Meta Verified (Centang Hijau) kategori UTILITY. Jaminan 98% terkirim & bebas risiko blokir.",
+    "wabaBadge": "Resmi Meta",
+    "wabaActive": "{count} Akun Resmi",
+    "wabaRecommended": "Pengingat H-1 & Hari H klinik, salon, atau institusi resmi",
+    "telegramTitle": "Telegram Bot",
+    "telegramDesc": "Pengingat instan via Bot Telegram ke pelanggan. 100% gratis tanpa biaya per pesan & mendukung tombol interaktif.",
+    "telegramBadge": "Gratis",
+    "telegramActive": "{count} Bot Aktif",
+    "telegramRecommended": "Klien VIP, komunitas, konsultasi & pengguna IT",
+    "notReady": "Belum siap"
   }
 }

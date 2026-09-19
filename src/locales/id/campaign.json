@@ -170,5 +170,33 @@
   "warmupEngineDesc": "Sistem otomatis menerapkan kuota adaptif berdasarkan usia nomor pengirim. Jika kuota hari ini tercapai, kampanye akan otomatis di-pause dan dapat di-resume esok hari tanpa mengulang kontak yang sudah terkirim.",
   "warmupPausedBanner": "Dijeda Otomatis (Kuota Warmup Hari Ini Tercapai)",
   "warmupPausedDesc": "Telah diproses hingga kontak ke-{offset} dari {total}. Lanjutkan kembali (Resume) esok hari untuk sisa kontak.",
-  "poolMultiDevice": "Pool Multi-Device ({count} Perangkat)"
+  "poolMultiDevice": "Pool Multi-Device ({count} Perangkat)",
+  "channels": {
+    "waWebTitle": "WhatsApp Web (Socket)",
+    "waWebDesc": "Siaran massal via nomor handphone fisik terhubung. Dilengkapi multi-device pooling & proteksi anti-ban.",
+    "waWebBadge": "Socket QR",
+    "waWebActive": "{count} HP Terhubung",
+    "waWebRecommended": "Pesan personal, promo harian, dan obrolan kasual",
+    "wabaTitle": "WhatsApp Official (WABA)",
+    "wabaDesc": "Jalur resmi Meta Cloud API dengan centang hijau bisnis. Kecepatan ultra tinggi tanpa resiko blokir nomor.",
+    "wabaBadge": "Official Cloud",
+    "wabaActive": "{count} Akun Resmi",
+    "wabaRecommended": "Siaran skala besar (>1.000 pesan), pengumuman resmi & OTP",
+    "telegramTitle": "Telegram Bot Broadcast",
+    "telegramDesc": "Kirim pesan siaran instan hingga 30 pesan/detik langsung ke pelanggan & channel tanpa biaya transmisi.",
+    "telegramBadge": "100% Gratis",
+    "telegramActive": "{count} Bot Aktif",
+    "telegramRecommended": "Pemberitahuan komunitas, flash sale, dan buletin gratis",
+    "senderStatus": "Status Pengirim:",
+    "noSenders": "0 Pengirim Aktif"
+  },
+  "telegramPicker": {
+    "parseModeTitle": "Format Teks Pesan Telegram",
+    "parseModeDesc": "Dukungan format tebal, miring, dan tautan teks",
+    "inlineKeyboardTitle": "Tombol Interaktif (Inline Keyboard URL)",
+    "maxButtons": "Maks. 3 tombol",
+    "btnLabelPlaceholder": "Label Tombol (cth: Beli Sekarang)",
+    "btnUrlPlaceholder": "https://...",
+    "btnAdd": "Tambah"
+  }
 }

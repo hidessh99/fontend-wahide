@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Send, CheckCheck, CheckCircle2, XCircle } from "lucide-react";
+import { useI18n } from "@/lib/i18n/context";
 
 interface TelegramLogStatsCardsProps {
   total: number;
@@ -14,6 +15,7 @@ export function TelegramLogStatsCards({
   failedCount = 0,
   isLoading = false,
 }: TelegramLogStatsCardsProps) {
+  const { t } = useI18n();
   const successCount = Math.max(0, total - failedCount);
   const successRate =
     total > 0 ? ((successCount / total) * 100).toFixed(1) : "0.0";
@@ -27,7 +29,7 @@ export function TelegramLogStatsCards({
         <div className="flex items-start justify-between gap-2">
           <div className="space-y-1 sm:space-y-1.5 min-w-0 flex-1">
             <p className="text-[10px] sm:text-xs font-bold text-foreground-secondary uppercase tracking-wider leading-tight line-clamp-2 min-h-[2.4em] sm:min-h-0">
-              Total Log Telegram
+              {t("telegram.logs.kpiTotalTitle")}
             </p>
             <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-foreground tracking-tight">
               {isLoading ? "..." : total.toLocaleString()}
@@ -44,13 +46,13 @@ export function TelegramLogStatsCards({
         <div className="flex items-start justify-between gap-2">
           <div className="space-y-1 sm:space-y-1.5 min-w-0 flex-1">
             <p className="text-[10px] sm:text-xs font-bold text-foreground-secondary uppercase tracking-wider leading-tight line-clamp-2 min-h-[2.4em] sm:min-h-0">
-              Pesan Terkirim
+              {t("telegram.logs.kpiDeliveredTitle")}
             </p>
             <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-foreground tracking-tight">
               {isLoading ? "..." : successCount.toLocaleString()}
             </h3>
             <p className="text-[10px] sm:text-xs text-foreground-secondary line-clamp-1 font-medium">
-              Terkirim ke Chat / Grup
+              {t("telegram.logs.kpiDeliveredSubtitle")}
             </p>
           </div>
           <div className="flex size-8 sm:size-11 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-purple-500/10 text-purple-700 dark:bg-purple-500/15 dark:text-purple-400">
@@ -64,7 +66,7 @@ export function TelegramLogStatsCards({
         <div className="flex items-start justify-between gap-2">
           <div className="space-y-1 sm:space-y-1.5 w-full pr-1 sm:pr-2 min-w-0 flex-1">
             <p className="text-[10px] sm:text-xs font-bold text-foreground-secondary uppercase tracking-wider leading-tight line-clamp-2 min-h-[2.4em] sm:min-h-0">
-              Tingkat Keberhasilan
+              {t("telegram.logs.kpiSuccessRateTitle")}
             </p>
             <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-foreground tracking-tight">
               {isLoading ? "..." : `${successRate}%`}
@@ -87,7 +89,7 @@ export function TelegramLogStatsCards({
         <div className="flex items-start justify-between gap-2">
           <div className="space-y-1 sm:space-y-1.5 w-full pr-1 sm:pr-2 min-w-0 flex-1">
             <p className="text-[10px] sm:text-xs font-bold text-foreground-secondary uppercase tracking-wider leading-tight line-clamp-2 min-h-[2.4em] sm:min-h-0">
-              Pesan Gagal
+              {t("telegram.logs.kpiFailedTitle")}
             </p>
             <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-foreground tracking-tight">
               {isLoading ? "..." : failedCount.toLocaleString()}

@@ -18,8 +18,10 @@ import {
   Layers,
 } from "lucide-react";
 import { WABAAccount } from "../../types/waba.types";
+import { useI18n } from "@/lib/i18n/context";
 
 export function WABASellerAccountsView() {
+  const { t, locale } = useI18n();
   const {
     filteredAccounts,
     isLoading,
@@ -36,7 +38,7 @@ export function WABASellerAccountsView() {
   const handleDisconnect = async (id: string, name: string) => {
     if (
       !confirm(
-        `Apakah Anda yakin ingin memutuskan integrasi Meta WABA untuk "${name}"? Pesan resmi tidak akan dapat dikirim melalui nomor ini.`,
+        t("whatsapp.waba.confirmDisconnect", { name })
       )
     ) {
       return;
@@ -86,7 +88,7 @@ export function WABASellerAccountsView() {
     return (
       <Badge variant="secondary" className="font-mono text-[10px] gap-1">
         <Zap className="h-2.5 w-2.5 text-amber-500" />
-        {formatted} / hari
+        {formatted} {t("whatsapp.waba.perDay")}
       </Badge>
     );
   };
@@ -97,10 +99,10 @@ export function WABASellerAccountsView() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-            Device WABA
+            {t("whatsapp.waba.pageTitle")}
           </h1>
           <p className="mt-1 text-xs sm:text-sm text-muted-foreground">
-            Hubungkan nomor WhatsApp Business via Meta Embedded Signup.
+            {t("whatsapp.waba.pageSubtitle")}
           </p>
         </div>
 
@@ -117,7 +119,7 @@ export function WABASellerAccountsView() {
             onClick={() => setIsConnectModalOpen(true)}
             className="text-[11px] text-muted-foreground hover:text-foreground hover:underline transition-colors pr-1 font-medium"
           >
-            Mode Pengembang: Input Manual Kredensial
+            {t("whatsapp.waba.manualDevMode")}
           </button>
         </div>
       </div>
@@ -125,10 +127,10 @@ export function WABASellerAccountsView() {
       {/* 2. Kirisan Contextual Notice Callout Box */}
       <div className="rounded-xl border border-border/70 bg-muted/30 p-4 text-xs text-muted-foreground leading-relaxed space-y-1.5 shadow-2xs">
         <p>
-          Saat Anda klik <strong className="text-foreground font-semibold">Hubungkan dengan Meta</strong>, Anda masuk dengan Meta untuk menautkan nomor. Chat yang sudah ada dan aplikasi WhatsApp Business di ponsel tetap berjalan — pastikan aplikasinya versi v2.24.17 atau lebih baru.
+          {t("whatsapp.waba.calloutText1")}
         </p>
         <p>
-          Jika Meta mengeluarkan Anda nanti, gunakan <strong className="text-foreground font-semibold">Hubungkan ulang</strong> pada baris itu. Token API dan paket berbayar tetap sama — jangan putuskan lalu tambah lagi.
+          {t("whatsapp.waba.calloutText2")}
         </p>
       </div>
 
@@ -137,7 +139,7 @@ export function WABASellerAccountsView() {
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Pilih kolom pencarian..."
+            placeholder={t("whatsapp.waba.searchColPlaceholder")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-9 text-xs h-9"
@@ -154,7 +156,7 @@ export function WABASellerAccountsView() {
           <RefreshCw
             className={`h-3.5 w-3.5 ${isLoading ? "animate-spin" : ""}`}
           />
-          <span>Segarkan</span>
+          <span>{t("whatsapp.waba.refreshBtn")}</span>
         </Button>
       </div>
 
@@ -164,16 +166,16 @@ export function WABASellerAccountsView() {
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="border-b border-border/60 bg-muted/40 text-[11px] font-semibold text-muted-foreground tracking-wider uppercase">
-                <th className="py-3 px-4">Nama Tampilan</th>
-                <th className="py-3 px-4">Telepon</th>
-                <th className="py-3 px-4">Paket</th>
-                <th className="py-3 px-4">Kredit</th>
-                <th className="py-3 px-4">Quality Rating</th>
-                <th className="py-3 px-4">ID Nomor Telepon</th>
-                <th className="py-3 px-4">ID WABA</th>
-                <th className="py-3 px-4">Token API</th>
-                <th className="py-3 px-4">Dibuat</th>
-                <th className="py-3 px-4 text-right">Aksi</th>
+                <th className="py-3 px-4">{t("whatsapp.waba.colDisplayName")}</th>
+                <th className="py-3 px-4">{t("whatsapp.waba.colPhone")}</th>
+                <th className="py-3 px-4">{t("whatsapp.waba.colPlan")}</th>
+                <th className="py-3 px-4">{t("whatsapp.waba.colCredit")}</th>
+                <th className="py-3 px-4">{t("whatsapp.waba.colQuality")}</th>
+                <th className="py-3 px-4">{t("whatsapp.waba.colPhoneId")}</th>
+                <th className="py-3 px-4">{t("whatsapp.waba.colWabaId")}</th>
+                <th className="py-3 px-4">{t("whatsapp.waba.colApiToken")}</th>
+                <th className="py-3 px-4">{t("whatsapp.waba.colCreated")}</th>
+                <th className="py-3 px-4 text-right">{t("whatsapp.waba.colAction")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40">
@@ -183,7 +185,7 @@ export function WABASellerAccountsView() {
                     <div className="flex flex-col items-center justify-center gap-2">
                       <RefreshCw className="h-6 w-6 animate-spin text-emerald-600" />
                       <p className="text-xs text-muted-foreground">
-                        Memuat data akun WhatsApp Official...
+                        {t("whatsapp.waba.loadingAccounts")}
                       </p>
                     </div>
                   </td>
@@ -194,7 +196,7 @@ export function WABASellerAccountsView() {
                     colSpan={10}
                     className="py-16 text-center text-xs text-muted-foreground font-medium"
                   >
-                    Belum ada data.
+                    {t("whatsapp.waba.noData")}
                   </td>
                 </tr>
               ) : (
@@ -227,7 +229,7 @@ export function WABASellerAccountsView() {
                         className="text-[10px] font-mono gap-1 border-muted-foreground/30"
                       >
                         <Layers className="h-2.5 w-2.5 text-muted-foreground" />
-                        WABA REGULAR
+                        {t("whatsapp.waba.regularPlan")}
                       </Badge>
                     </td>
 
@@ -255,13 +257,13 @@ export function WABASellerAccountsView() {
                     <td className="py-3.5 px-4 whitespace-nowrap">
                       <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20 text-[10px] gap-1 font-mono">
                         <KeyRound className="h-2.5 w-2.5 text-emerald-600" />
-                        Aktif
+                        {t("whatsapp.waba.tokenActive")}
                       </Badge>
                     </td>
 
                     {/* Dibuat */}
                     <td className="py-3.5 px-4 text-xs text-muted-foreground whitespace-nowrap">
-                      {new Date(account.created_at).toLocaleDateString("id-ID", {
+                      {new Date(account.created_at).toLocaleDateString(locale === "id" ? "id-ID" : "en-US", {
                         day: "numeric",
                         month: "short",
                         year: "numeric",
@@ -289,7 +291,7 @@ export function WABASellerAccountsView() {
                           className="h-7 px-2 text-[11px] text-rose-600 hover:text-rose-700 hover:bg-rose-500/10 gap-1"
                         >
                           <Trash2 className="h-3 w-3" />
-                          <span>Putuskan</span>
+                          <span>{t("whatsapp.waba.disconnect")}</span>
                         </Button>
                       </div>
                     </td>

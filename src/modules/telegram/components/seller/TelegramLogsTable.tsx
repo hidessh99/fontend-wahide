@@ -18,6 +18,7 @@ import { SearchInput } from "@/components/ui/search-input";
 import { NativeSelect } from "@/components/ui/native-select";
 import { DataTablePagination } from "@/components/ui/pagination";
 import { EmptyState } from "@/components/ui/empty";
+import { useI18n } from "@/lib/i18n/context";
 import {
   TelegramMessage,
   TelegramMessageDirection,
@@ -70,6 +71,7 @@ export function TelegramLogsTable({
   onPageChange,
   onPageSizeChange,
 }: TelegramLogsTableProps) {
+  const { t } = useI18n();
   const [draftSearch, setDraftSearch] = useState(searchQuery ?? "");
   const [selectedLog, setSelectedLog] = useState<TelegramMessage | null>(null);
 
@@ -151,21 +153,21 @@ export function TelegramLogsTable({
         return (
           <Badge variant="success" className="gap-1">
             <CheckCircle2 className="size-3" />
-            <span>TERKIRIM</span>
+            <span>{t("telegram.logs.statusDeliveredBadge")}</span>
           </Badge>
         );
       case "FAILED":
         return (
           <Badge variant="danger" className="gap-1">
             <AlertCircle className="size-3" />
-            <span>GAGAL</span>
+            <span>{t("telegram.logs.statusFailedBadge")}</span>
           </Badge>
         );
       default:
         return (
           <Badge variant="warning" className="gap-1">
             <Clock className="size-3" />
-            <span>{s || "ANTEAN"}</span>
+            <span>{s || t("telegram.logs.statusQueuedBadge")}</span>
           </Badge>
         );
     }
@@ -181,8 +183,8 @@ export function TelegramLogsTable({
             onChange={setDraftSearch}
             onSearch={handleSearchSubmit}
             onClear={handleSearchClear}
-            placeholder="Cari Chat ID, isi pesan..."
-            buttonText="Cari"
+            placeholder={t("telegram.logs.searchPlaceholder")}
+            buttonText={t("common.search")}
             hideSubmitButton={false}
           />
         </div>
@@ -199,9 +201,9 @@ export function TelegramLogsTable({
             variant="pill"
             wrapperClassName="w-auto"
           >
-            <option value="ALL">Semua Arah</option>
-            <option value="OUTBOUND">Keluar (Bot)</option>
-            <option value="INBOUND">Masuk (User)</option>
+            <option value="ALL">{t("telegram.logs.directionAll")}</option>
+            <option value="OUTBOUND">{t("telegram.logs.directionOutBot")}</option>
+            <option value="INBOUND">{t("telegram.logs.directionInUser")}</option>
           </NativeSelect>
 
           {/* Status Filter */}
@@ -215,10 +217,10 @@ export function TelegramLogsTable({
             variant="pill"
             wrapperClassName="w-auto"
           >
-            <option value="ALL">Semua Status</option>
-            <option value="DELIVERED">Terkirim</option>
-            <option value="FAILED">Gagal</option>
-            <option value="QUEUED">Antrean</option>
+            <option value="ALL">{t("telegram.logs.statusAll")}</option>
+            <option value="DELIVERED">{t("telegram.logs.statusDelivered")}</option>
+            <option value="FAILED">{t("telegram.logs.statusFailed")}</option>
+            <option value="QUEUED">{t("telegram.logs.statusQueued")}</option>
           </NativeSelect>
 
           {/* Export CSV */}
@@ -231,7 +233,7 @@ export function TelegramLogsTable({
             className="border-border hover:border-foreground-muted h-10 cursor-pointer gap-1.5 rounded-full px-3.5 text-xs font-bold disabled:opacity-40"
           >
             <Download className="size-3.5" />
-            <span>Ekspor CSV</span>
+            <span>{t("telegram.logs.exportCsv")}</span>
           </Button>
         </div>
       </div>
@@ -241,15 +243,15 @@ export function TelegramLogsTable({
         <div className="space-y-3 p-8 text-center sm:p-12">
           <Loader2 className="text-sky-500 mx-auto size-8 animate-spin" />
           <p className="text-foreground-secondary text-xs font-semibold">
-            Memuat riwayat log pesan Telegram...
+            {t("telegram.logs.loading")}
           </p>
         </div>
       ) : logs.length === 0 ? (
         <div className="py-12">
           <EmptyState
             icon={<MessageSquare className="size-10" />}
-            title="Belum Ada Log Pesan Telegram"
-            description="Pesan yang dikirimkan atau diterima melalui bot Telegram Anda akan tercatat secara otomatis pada tabel ini."
+            title={t("telegram.logs.empty")}
+            description={t("telegram.logs.emptyDesc")}
           />
         </div>
       ) : (
@@ -289,11 +291,11 @@ export function TelegramLogsTable({
                   <div className="text-xs text-foreground/90">
                     {log.media_url && (
                       <span className="inline-flex items-center gap-1 mr-1.5 text-[10px] bg-muted px-1.5 py-0.5 rounded text-foreground-secondary">
-                        <FileText className="size-2.5" /> Media
+                        <FileText className="size-2.5" /> {t("telegram.logs.mediaLabel")}
                       </span>
                     )}
                     <span className="line-clamp-2">
-                      {log.text || "(Lampiran berkas media)"}
+                      {log.text || t("telegram.logs.mediaAttachmentFallback")}
                     </span>
                     {log.error_reason && (
                       <p className="text-[11px] text-rose-500 font-semibold truncate pt-1">
@@ -318,12 +320,12 @@ export function TelegramLogsTable({
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-border/80 bg-muted/30 text-[11px] font-bold text-foreground-secondary uppercase tracking-wider">
-                  <th className="py-3 px-4">Arah</th>
-                  <th className="py-3 px-4">Chat ID</th>
-                  <th className="py-3 px-4">Tipe</th>
-                  <th className="py-3 px-4">Konten Pesan</th>
-                  <th className="py-3 px-4">Waktu</th>
-                  <th className="py-3 px-4 text-right">Status</th>
+                  <th className="py-3 px-4">{t("telegram.logs.colDirection")}</th>
+                  <th className="py-3 px-4">{t("telegram.logs.colChatIdHeader")}</th>
+                  <th className="py-3 px-4">{t("telegram.logs.colType")}</th>
+                  <th className="py-3 px-4">{t("telegram.logs.colContent")}</th>
+                  <th className="py-3 px-4">{t("telegram.logs.colTimeHeader")}</th>
+                  <th className="py-3 px-4 text-right">{t("telegram.logs.colStatusHeader")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/60 text-xs">
@@ -355,7 +357,7 @@ export function TelegramLogsTable({
                             <ArrowDownLeft className="size-3.5 text-emerald-500" />
                           )}
                           <span className="font-semibold text-[11px] text-foreground">
-                            {isOutbound ? "Keluar" : "Masuk"}
+                            {isOutbound ? t("telegram.logs.directionOut") : t("telegram.logs.directionIn")}
                           </span>
                         </div>
                       </td>
@@ -376,7 +378,7 @@ export function TelegramLogsTable({
                       <td className="py-3 px-4 max-w-xs sm:max-w-md truncate text-foreground/90">
                         {log.media_url && (
                           <span className="inline-flex items-center gap-1 mr-1.5 text-[10px] bg-muted px-1.5 py-0.5 rounded text-foreground-secondary">
-                            <FileText className="size-2.5" /> Media
+                            <FileText className="size-2.5" /> {t("telegram.logs.mediaLabel")}
                           </span>
                         )}
                         <span>{log.text || "-"}</span>
@@ -412,9 +414,9 @@ export function TelegramLogsTable({
         onPageChange={onPageChange}
         onPageSizeChange={onPageSizeChange}
         pageSizeOptions={[10, 30, 50]}
-        prevText="Sebelumnya"
-        nextText="Selanjutnya"
-        entityName="log pesan"
+        prevText={t("telegram.logs.prevText")}
+        nextText={t("telegram.logs.nextText")}
+        entityName={t("telegram.logs.entityName")}
       />
 
       {/* Message Detail Modal */}
