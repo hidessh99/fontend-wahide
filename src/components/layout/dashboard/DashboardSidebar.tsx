@@ -29,7 +29,6 @@ import {
   MessageSquare,
   SendHorizontal,
   Workflow,
-  Inbox,
   FileSpreadsheet,
 } from "lucide-react";
 import { useAuth } from "@/modules/iam/hooks/useAuth";
@@ -262,18 +261,18 @@ export const AUTOREPLY_NAV_SECTION: AutoreplyNavSection = {
       hideForCS: true,
     },
     {
-      key: "dashboardMenu.autoreplyFlow",
-      href: "/autoreply/flow",
-      icon: Workflow,
-      badge: "DAG",
+      key: "dashboardMenu.autoreplySubmission",
+      href: "/autoreply/submission",
+      icon: ClipboardList,
+      badge: "Form",
       roles: SELLER_ROLES,
       hideForCS: true,
     },
     {
-      key: "dashboardMenu.autoreplySubmission",
-      href: "/autoreply/submission",
-      icon: Inbox,
-      badge: "Leads",
+      key: "dashboardMenu.autoreplyFlow",
+      href: "/autoreply/flow",
+      icon: Workflow,
+      badge: "DAG",
       roles: SELLER_ROLES,
       hideForCS: true,
     },
@@ -372,45 +371,52 @@ export function DashboardSidebar({
   const { t } = useI18n();
   const userIsCS = isCS(user?.role);
 
-  // Collapsible Send accordion state
-  const [openSend, setOpenSend] = useState<boolean>(true);
+  // Helper route checkers for contextual accordion
+  const isSendRoute = (path: string) =>
+    path.startsWith("/send") ||
+    path === "/messages" ||
+    path.startsWith("/messages/") ||
+    path === "/campaigns" ||
+    path.startsWith("/campaigns/") ||
+    path === "/reminders" ||
+    path.startsWith("/reminders/") ||
+    path === "/reservations" ||
+    path.startsWith("/reservations/");
 
-  // Collapsible Autoreply accordion state
-  const [openAutoreply, setOpenAutoreply] = useState<boolean>(true);
+  const isAutoreplyRoute = (path: string) => path.startsWith("/autoreply");
 
-  // Collapsible channel accordions state
-  const [openChannels, setOpenChannels] = useState<Record<string, boolean>>({
-    wa: true,
-    waba: false,
-    tele: false,
-  });
+  const isWaRoute = (path: string) =>
+    path.startsWith("/wa") || path === "/devices" || path.startsWith("/devices/");
 
-  // Auto-expand Send, Autoreply & channel accordions based on current route
+  const isWabaRoute = (path: string) => path.startsWith("/waba");
+  const isTeleRoute = (path: string) => path.startsWith("/tele");
+
+  // Smart Contextual Accordions: only open the section if current route matches (no hardcoded true)
+  const [openSend, setOpenSend] = useState<boolean>(() => isSendRoute(pathname));
+  const [openAutoreply, setOpenAutoreply] = useState<boolean>(() => isAutoreplyRoute(pathname));
+  const [openChannels, setOpenChannels] = useState<Record<string, boolean>>(() => ({
+    wa: isWaRoute(pathname),
+    waba: isWabaRoute(pathname),
+    tele: isTeleRoute(pathname),
+  }));
+
+  // Contextual route sync: When user navigates, only expand the relevant section and collapse others
   useEffect(() => {
-    if (
-      pathname.startsWith("/send") ||
-      pathname === "/messages" ||
-      pathname.startsWith("/messages/") ||
-      pathname === "/campaigns" ||
-      pathname.startsWith("/campaigns/") ||
-      pathname === "/reminders" ||
-      pathname.startsWith("/reminders/") ||
-      pathname === "/reservations" ||
-      pathname.startsWith("/reservations/")
-    ) {
-      setOpenSend(true);
-    }
+    const isSend = isSendRoute(pathname);
+    const isAuto = isAutoreplyRoute(pathname);
+    const isWa = isWaRoute(pathname);
+    const isWaba = isWabaRoute(pathname);
+    const isTele = isTeleRoute(pathname);
 
-    if (pathname.startsWith("/autoreply")) {
-      setOpenAutoreply(true);
-    }
-
-    if (pathname.startsWith("/wa") || pathname === "/devices" || pathname.startsWith("/devices/")) {
-      setOpenChannels((prev) => ({ ...prev, wa: true }));
-    } else if (pathname.startsWith("/waba")) {
-      setOpenChannels((prev) => ({ ...prev, waba: true }));
-    } else if (pathname.startsWith("/tele")) {
-      setOpenChannels((prev) => ({ ...prev, tele: true }));
+    // If current page belongs to an accordion group, focus exclusively on that group
+    if (isSend || isAuto || isWa || isWaba || isTele) {
+      setOpenSend(isSend);
+      setOpenAutoreply(isAuto);
+      setOpenChannels({
+        wa: isWa,
+        waba: isWaba,
+        tele: isTele,
+      });
     }
   }, [pathname]);
 

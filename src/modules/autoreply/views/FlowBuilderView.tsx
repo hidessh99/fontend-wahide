@@ -214,34 +214,35 @@ export function FlowBuilderView({ flowId }: FlowBuilderViewProps) {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-6rem)] -m-6 sm:-m-8">
+    <div className="flex flex-col h-[calc(100vh-4rem)] -mb-8 sm:-mb-12 overflow-hidden">
       {/* Top Header Bar */}
-      <div className="border-border bg-surface flex flex-wrap items-center justify-between border-b px-6 py-3 shadow-sm z-30 dark:bg-[#131412]">
-        <div className="flex items-center gap-4">
+      <div className="border-border bg-surface flex items-center justify-between border-b px-3 sm:px-6 py-2.5 sm:py-3 shadow-sm z-30 shrink-0 dark:bg-[#131412]">
+        <div className="flex items-center gap-2 sm:gap-4 min-w-0">
           <Link
             href="/autoreply/flow"
-            className="text-foreground-secondary hover:text-foreground hover:bg-muted rounded-xl p-2 transition-colors cursor-pointer"
+            className="text-foreground-secondary hover:text-foreground hover:bg-muted rounded-xl p-2 transition-colors cursor-pointer shrink-0"
             title="Kembali ke Daftar Flow"
           >
             <ArrowLeft className="size-4" />
           </Link>
-          <div>
+          <div className="min-w-0">
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder={t("autoreply.flows.namePlaceholder")}
-              className="bg-transparent text-foreground text-sm font-bold focus:outline-none focus:border-b focus:border-wise-green"
+              className="bg-transparent text-foreground text-xs sm:text-sm font-bold focus:outline-none focus:border-b focus:border-wise-green w-full max-w-[150px] sm:max-w-xs truncate"
             />
-            <p className="text-foreground-muted text-[10px]">
-              Visual DAG Canvas • {graph.nodes.length} Node • {graph.edges.length} Koneksi
+            <p className="text-foreground-muted text-[10px] truncate">
+              <span className="hidden sm:inline">Visual DAG Canvas • </span>
+              {graph.nodes.length} Node • {graph.edges.length} Koneksi
             </p>
           </div>
         </div>
 
         {/* Trigger Keywords Pills & Actions */}
-        <div className="flex items-center gap-3">
-          <div className="hidden md:flex items-center gap-1.5 border border-border bg-background rounded-xl px-2.5 py-1 text-xs">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          <div className="hidden lg:flex items-center gap-1.5 border border-border bg-background rounded-xl px-2.5 py-1 text-xs">
             <Tag className="size-3 text-wise-green" />
             <span className="text-foreground-muted text-[11px]">Pemicu:</span>
             {triggerKeywords.map((kw) => (
@@ -272,7 +273,8 @@ export function FlowBuilderView({ flowId }: FlowBuilderViewProps) {
           <button
             type="button"
             onClick={() => setIsSimulatorOpen(true)}
-            className="border-border bg-surface hover:bg-muted text-foreground flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition-colors cursor-pointer"
+            className="border-border bg-surface hover:bg-muted text-foreground flex items-center gap-1.5 rounded-xl border px-2.5 sm:px-3 py-1.5 text-xs font-bold transition-colors cursor-pointer"
+            title={t("autoreply.flows.testFlow")}
           >
             <Play className="size-3.5 text-wise-green" />
             <span className="hidden sm:inline">{t("autoreply.flows.testFlow")}</span>
@@ -282,7 +284,7 @@ export function FlowBuilderView({ flowId }: FlowBuilderViewProps) {
             type="button"
             onClick={() => handleSaveGraph(graph)}
             disabled={isSaving}
-            className="bg-wise-green text-dark-green hover:brightness-105 flex items-center gap-1.5 rounded-xl px-4 py-1.5 text-xs font-bold transition-all shadow-sm disabled:opacity-50 cursor-pointer"
+            className="bg-wise-green text-dark-green hover:brightness-105 flex items-center gap-1.5 rounded-xl px-3 sm:px-4 py-1.5 text-xs font-bold transition-all shadow-sm disabled:opacity-50 cursor-pointer"
           >
             <Save className="size-3.5" />
             <span>{isSaving ? "Menyimpan..." : "Simpan Flow"}</span>
@@ -295,23 +297,32 @@ export function FlowBuilderView({ flowId }: FlowBuilderViewProps) {
         {/* Visual Graph Canvas */}
         <FlowCanvas
           initialGraph={graph}
-          onSave={handleSaveGraph}
-          onTestSimulation={() => setIsSimulatorOpen(true)}
+          onChangeGraph={setGraph}
           onSelectNode={setSelectedNode}
           selectedNodeId={selectedNode?.id}
-          isSaving={isSaving}
         />
 
-        {/* Node Properties Panel (Floating Right) */}
+        {/* Node Properties Panel: Bottom Sheet on Mobile (<md), Floating Panel on Desktop (md+) */}
         {selectedNode && (
-          <div className="absolute right-4 top-4 bottom-4 z-20">
-            <NodePropertiesPanel
-              selectedNode={selectedNode}
-              onUpdateNodeData={handleUpdateNodeData}
-              onDeleteNode={handleDeleteNode}
-              onClose={() => setSelectedNode(null)}
+          <>
+            {/* Mobile backdrop */}
+            <div
+              className="fixed inset-0 z-30 bg-black/40 backdrop-blur-xs md:hidden"
+              onClick={() => setSelectedNode(null)}
             />
-          </div>
+            <div
+              className="fixed inset-x-0 bottom-0 z-40 max-h-[85vh] md:max-h-none md:absolute md:inset-auto md:right-4 md:top-4 md:bottom-4 md:z-20 flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+              onMouseDown={(e) => e.stopPropagation()}
+            >
+              <NodePropertiesPanel
+                selectedNode={selectedNode}
+                onUpdateNodeData={handleUpdateNodeData}
+                onDeleteNode={handleDeleteNode}
+                onClose={() => setSelectedNode(null)}
+              />
+            </div>
+          </>
         )}
       </div>
 

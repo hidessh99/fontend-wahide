@@ -26,3 +26,24 @@ export interface ListSubmissionsQuery {
   page?: number;
   limit?: number;
 }
+
+// Linear Form Builder Types for Simple WhatsApp Submission Bots
+export type FormQuestionType = "text" | "number" | "phone" | "email";
+
+export interface FormQuestionItem {
+  id: string;
+  question: string;
+  variableName: string;
+  type: FormQuestionType;
+}
+
+export interface LinearSubmissionFormInput {
+  id?: string;
+  name: string;
+  description?: string;
+  trigger_keywords: string[];
+  welcome_message?: string;
+  questions: FormQuestionItem[];
+  completion_message: string;
+  is_active?: boolean;
+}

@@ -3,7 +3,6 @@
 import React, { useState, useRef } from "react";
 import {
   Play,
-  Save,
   ZoomIn,
   ZoomOut,
   Bot,
@@ -13,7 +12,6 @@ import {
   Globe,
   Flag,
 } from "lucide-react";
-import { useI18n } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 import {
   FlowNode,
@@ -24,27 +22,32 @@ import {
 
 interface FlowCanvasProps {
   initialGraph: CanvasGraph;
-  onSave: (graph: CanvasGraph) => void;
-  onTestSimulation: () => void;
+  onChangeGraph?: (graph: CanvasGraph) => void;
   onSelectNode: (node: FlowNode | null) => void;
   selectedNodeId?: string;
-  isSaving?: boolean;
 }
 
 export function FlowCanvas({
   initialGraph,
-  onSave,
-  onTestSimulation,
+  onChangeGraph,
   onSelectNode,
   selectedNodeId,
-  isSaving,
 }: FlowCanvasProps) {
-  const { t } = useI18n();
 
   const [nodes, setNodes] = useState<FlowNode[]>(initialGraph.nodes || []);
   const [edges, setEdges] = useState<FlowEdge[]>(initialGraph.edges || []);
   const [zoom, setZoom] = useState(1);
   const [connectingSource, setConnectingSource] = useState<string | null>(null);
+
+  // Sync state if initialGraph updates from parent
+  React.useEffect(() => {
+    if (initialGraph?.nodes) {
+      setNodes(initialGraph.nodes);
+    }
+    if (initialGraph?.edges) {
+      setEdges(initialGraph.edges);
+    }
+  }, [initialGraph]);
 
   // Dragging state
   const [draggingNodeId, setDraggingNodeId] = useState<string | null>(null);
@@ -62,6 +65,18 @@ export function FlowCanvas({
     };
   };
 
+  const handleTouchStartNode = (e: React.TouchEvent, node: FlowNode) => {
+    e.stopPropagation();
+    onSelectNode(node);
+    const touch = e.touches[0];
+    if (!touch) return;
+    setDraggingNodeId(node.id);
+    dragOffset.current = {
+      x: touch.clientX - node.position.x * zoom,
+      y: touch.clientY - node.position.y * zoom,
+    };
+  };
+
   const handleMouseMoveCanvas = (e: React.MouseEvent) => {
     if (!draggingNodeId) return;
     const newX = Math.round((e.clientX - dragOffset.current.x) / zoom);
@@ -74,7 +89,31 @@ export function FlowCanvas({
     );
   };
 
+  const handleTouchMoveCanvas = (e: React.TouchEvent) => {
+    if (!draggingNodeId) return;
+    const touch = e.touches[0];
+    if (!touch) return;
+    const newX = Math.round((touch.clientX - dragOffset.current.x) / zoom);
+    const newY = Math.round((touch.clientY - dragOffset.current.y) / zoom);
+
+    setNodes((prev) =>
+      prev.map((n) =>
+        n.id === draggingNodeId ? { ...n, position: { x: newX, y: newY } } : n,
+      ),
+    );
+  };
+
   const handleMouseUpCanvas = () => {
+    if (draggingNodeId) {
+      onChangeGraph?.({ nodes, edges, viewport: { x: 0, y: 0, zoom } });
+    }
+    setDraggingNodeId(null);
+  };
+
+  const handleTouchEndCanvas = () => {
+    if (draggingNodeId) {
+      onChangeGraph?.({ nodes, edges, viewport: { x: 0, y: 0, zoom } });
+    }
     setDraggingNodeId(null);
   };
 
@@ -105,7 +144,9 @@ export function FlowCanvas({
       },
     };
 
-    setNodes((prev) => [...prev, newNode]);
+    const updatedNodes = [...nodes, newNode];
+    setNodes(updatedNodes);
+    onChangeGraph?.({ nodes: updatedNodes, edges, viewport: { x: 0, y: 0, zoom } });
     onSelectNode(newNode);
   };
 
@@ -119,10 +160,12 @@ export function FlowCanvas({
           (e) => e.source === connectingSource && e.target === nodeId,
         );
         if (!exists) {
-          setEdges((prev) => [
-            ...prev,
+          const updatedEdges = [
+            ...edges,
             { id: edgeId, source: connectingSource, target: nodeId },
-          ]);
+          ];
+          setEdges(updatedEdges);
+          onChangeGraph?.({ nodes, edges: updatedEdges, viewport: { x: 0, y: 0, zoom } });
         }
       }
       setConnectingSource(null);
@@ -130,11 +173,9 @@ export function FlowCanvas({
   };
 
   const handleDeleteEdge = (edgeId: string) => {
-    setEdges((prev) => prev.filter((e) => e.id !== edgeId));
-  };
-
-  const handleTriggerSave = () => {
-    onSave({ nodes, edges, viewport: { x: 0, y: 0, zoom } });
+    const updatedEdges = edges.filter((e) => e.id !== edgeId);
+    setEdges(updatedEdges);
+    onChangeGraph?.({ nodes, edges: updatedEdges, viewport: { x: 0, y: 0, zoom } });
   };
 
   // Node Type Visual Badges
@@ -181,8 +222,10 @@ export function FlowCanvas({
       ref={canvasRef}
       onMouseMove={handleMouseMoveCanvas}
       onMouseUp={handleMouseUpCanvas}
+      onTouchMove={handleTouchMoveCanvas}
+      onTouchEnd={handleTouchEndCanvas}
       onClick={() => onSelectNode(null)}
-      className="relative flex-1 h-full w-full select-none overflow-hidden bg-[#fafafa] dark:bg-[#0e0f0d] cursor-default"
+      className="relative flex-1 h-full w-full select-none overflow-hidden bg-[#fafafa] dark:bg-[#0e0f0d] cursor-default touch-none"
       style={{
         backgroundImage:
           "radial-gradient(circle, rgba(120, 120, 120, 0.15) 1px, transparent 1px)",
@@ -190,16 +233,16 @@ export function FlowCanvas({
       }}
     >
       {/* Top Floating Action Bar */}
-      <div className="absolute top-4 left-4 z-20 flex flex-wrap items-center gap-2">
+      <div className="absolute top-3 left-3 right-3 sm:right-auto z-20 flex items-center gap-2 max-w-[calc(100vw-1.5rem)] overflow-x-auto scrollbar-none py-1">
         {/* Add Nodes Toolbar */}
-        <div className="border-border bg-surface/90 backdrop-blur-md flex items-center gap-1 rounded-2xl border p-1 shadow-md dark:bg-[#151714]/90">
+        <div className="border-border bg-surface/90 backdrop-blur-md flex items-center gap-1 rounded-2xl border p-1 shadow-md dark:bg-[#151714]/90 shrink-0">
           <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
               handleAddNode("message");
             }}
-            className="text-foreground-secondary hover:text-foreground hover:bg-muted flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs font-bold transition-colors cursor-pointer"
+            className="text-foreground-secondary hover:text-foreground hover:bg-muted flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs font-bold transition-colors cursor-pointer shrink-0"
           >
             <Bot className="size-3.5 text-wise-green" />
             <span>Pesan</span>
@@ -210,10 +253,10 @@ export function FlowCanvas({
               e.stopPropagation();
               handleAddNode("question");
             }}
-            className="text-foreground-secondary hover:text-foreground hover:bg-muted flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs font-bold transition-colors cursor-pointer"
+            className="text-foreground-secondary hover:text-foreground hover:bg-muted flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs font-bold transition-colors cursor-pointer shrink-0"
           >
             <HelpCircle className="size-3.5 text-sky-500" />
-            <span>Tanya & Input</span>
+            <span>Tanya</span>
           </button>
           <button
             type="button"
@@ -221,7 +264,7 @@ export function FlowCanvas({
               e.stopPropagation();
               handleAddNode("condition");
             }}
-            className="text-foreground-secondary hover:text-foreground hover:bg-muted flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs font-bold transition-colors cursor-pointer"
+            className="text-foreground-secondary hover:text-foreground hover:bg-muted flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs font-bold transition-colors cursor-pointer shrink-0"
           >
             <GitBranch className="size-3.5 text-amber-500" />
             <span>Kondisi</span>
@@ -232,7 +275,7 @@ export function FlowCanvas({
               e.stopPropagation();
               handleAddNode("delay");
             }}
-            className="text-foreground-secondary hover:text-foreground hover:bg-muted flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs font-bold transition-colors cursor-pointer"
+            className="text-foreground-secondary hover:text-foreground hover:bg-muted flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs font-bold transition-colors cursor-pointer shrink-0"
           >
             <Clock className="size-3.5 text-purple-500" />
             <span>Jeda</span>
@@ -243,68 +286,47 @@ export function FlowCanvas({
               e.stopPropagation();
               handleAddNode("api_call");
             }}
-            className="text-foreground-secondary hover:text-foreground hover:bg-muted flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs font-bold transition-colors cursor-pointer"
+            className="text-foreground-secondary hover:text-foreground hover:bg-muted flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs font-bold transition-colors cursor-pointer shrink-0"
           >
             <Globe className="size-3.5 text-pink-500" />
-            <span>API Webhook</span>
+            <span>API</span>
           </button>
         </div>
 
         {/* Zoom Controls */}
-        <div className="border-border bg-surface/90 backdrop-blur-md flex items-center gap-1 rounded-2xl border p-1 shadow-md dark:bg-[#151714]/90">
+        <div className="border-border bg-surface/90 backdrop-blur-md flex items-center gap-1 rounded-2xl border p-1 shadow-md dark:bg-[#151714]/90 shrink-0">
           <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              setZoom((z) => Math.min(1.8, z + 0.1));
+              setZoom((z) => Math.min(1.8, parseFloat((z + 0.1).toFixed(2))));
             }}
-            className="text-foreground-muted hover:text-foreground hover:bg-muted rounded-xl p-1.5 transition-colors"
+            className="text-foreground-muted hover:text-foreground hover:bg-muted rounded-xl p-1.5 transition-colors cursor-pointer"
+            title="Perbesar"
           >
             <ZoomIn className="size-3.5" />
           </button>
-          <span className="text-foreground-muted px-1 text-[11px] font-mono">
-            {Math.round(zoom * 100)}%
-          </span>
           <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              setZoom((z) => Math.max(0.4, z - 0.1));
+              setZoom(1);
             }}
-            className="text-foreground-muted hover:text-foreground hover:bg-muted rounded-xl p-1.5 transition-colors"
+            className="text-foreground-muted hover:text-foreground hover:bg-muted rounded-lg px-1.5 py-1 text-[11px] font-mono cursor-pointer transition-colors"
+            title="Reset Zoom (100%)"
+          >
+            {Math.round(zoom * 100)}%
+          </button>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setZoom((z) => Math.max(0.4, parseFloat((z - 0.1).toFixed(2))));
+            }}
+            className="text-foreground-muted hover:text-foreground hover:bg-muted rounded-xl p-1.5 transition-colors cursor-pointer"
+            title="Perkecil"
           >
             <ZoomOut className="size-3.5" />
-          </button>
-        </div>
-
-        {/* Simulator & Save Buttons */}
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onTestSimulation();
-            }}
-            className="border-border bg-surface/90 hover:bg-muted text-foreground flex items-center gap-1.5 rounded-2xl border px-3.5 py-2 text-xs font-bold shadow-md transition-colors cursor-pointer"
-          >
-            <Play className="size-3.5 text-wise-green" />
-            <span>{t("autoreply.flows.builder.testSimulator")}</span>
-          </button>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleTriggerSave();
-            }}
-            disabled={isSaving}
-            className="bg-wise-green text-dark-green hover:brightness-105 flex items-center gap-1.5 rounded-2xl px-4 py-2 text-xs font-bold shadow-md transition-all disabled:opacity-50 cursor-pointer"
-          >
-            <Save className="size-3.5" />
-            <span>
-              {isSaving
-                ? t("autoreply.flows.builder.saving")
-                : t("autoreply.flows.builder.saveFlow")}
-            </span>
           </button>
         </div>
       </div>
@@ -373,6 +395,11 @@ export function FlowCanvas({
             <div
               key={node.id}
               onMouseDown={(e) => handleMouseDownNode(e, node)}
+              onTouchStart={(e) => handleTouchStartNode(e, node)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelectNode(node);
+              }}
               className={cn(
                 "absolute w-52 rounded-2xl border p-3.5 shadow-md transition-shadow cursor-move select-none bg-surface/95 backdrop-blur-sm",
                 getNodeColor(node.type),

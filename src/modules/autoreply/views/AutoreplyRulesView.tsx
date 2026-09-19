@@ -67,7 +67,7 @@ export function AutoreplyRulesView() {
   };
 
   return (
-    <div className="space-y-5 sm:space-y-6 pb-12">
+    <div className="mx-auto max-w-7xl space-y-5 sm:space-y-6 p-4 sm:p-6 lg:p-8 pb-12">
       {/* Top Header & Ecosystem Navigation Tabs */}
       <div className="space-y-3 sm:space-y-4">
         <div>
@@ -80,7 +80,7 @@ export function AutoreplyRulesView() {
         </div>
 
         {/* Tab Navigation with clean touch swipe and hidden scrollbar */}
-        <div className="border-border flex items-center gap-1.5 sm:gap-2 border-b pb-2.5 sm:pb-3 overflow-x-auto scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-3 px-3 sm:mx-0 sm:px-0">
+        <div className="border-border flex items-center gap-1.5 sm:gap-2 border-b pb-2.5 sm:pb-3 overflow-x-auto scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-4 px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0">
           <Link
             href="/autoreply"
             className="flex items-center gap-2 rounded-xl bg-wise-green px-3.5 py-1.5 text-xs font-bold text-dark-green shadow-xs whitespace-nowrap shrink-0"
@@ -113,62 +113,62 @@ export function AutoreplyRulesView() {
       </div>
 
       {/* Responsive Metrics Bar: Compact 3-col on mobile, spacious on desktop */}
-      <div className="grid grid-cols-3 gap-2 sm:gap-4">
+      <div className="grid grid-cols-3 gap-2.5 sm:gap-4 lg:gap-5">
         {/* Total Rules */}
-        <div className="border-border bg-surface flex flex-col justify-between sm:flex-row sm:items-center rounded-xl sm:rounded-2xl border p-2.5 sm:p-4 shadow-xs">
+        <div className="border-border/80 bg-surface hover:border-border flex flex-col justify-between sm:flex-row sm:items-center rounded-xl sm:rounded-2xl border p-3 sm:p-4 lg:p-5 shadow-2xs transition-colors">
           <div className="min-w-0">
             <p className="text-foreground-muted text-[11px] sm:text-xs font-semibold sm:normal-case tracking-tight sm:tracking-normal truncate">
               <span className="sm:hidden">{t("autoreply.rules.statTotal")}</span>
               <span className="hidden sm:inline">{t("autoreply.rules.totalRules")}</span>
             </p>
-            <p className="text-foreground text-lg sm:text-2xl font-black mt-0.5 font-mono">
+            <p className="text-foreground text-lg sm:text-2xl lg:text-3xl font-black mt-0.5 font-mono">
               {total}
             </p>
           </div>
-          <div className="hidden sm:flex rounded-xl bg-muted p-2.5 text-foreground-muted shrink-0 ml-2">
+          <div className="hidden sm:flex rounded-xl bg-muted p-2.5 lg:p-3 text-foreground-muted shrink-0 ml-2">
             <Bot className="size-5" />
           </div>
         </div>
 
         {/* Active Rules */}
-        <div className="border-border bg-surface flex flex-col justify-between sm:flex-row sm:items-center rounded-xl sm:rounded-2xl border p-2.5 sm:p-4 shadow-xs">
+        <div className="border-border/80 bg-surface hover:border-border flex flex-col justify-between sm:flex-row sm:items-center rounded-xl sm:rounded-2xl border p-3 sm:p-4 lg:p-5 shadow-2xs transition-colors">
           <div className="min-w-0">
             <p className="text-foreground-muted text-[11px] sm:text-xs font-semibold sm:normal-case tracking-tight sm:tracking-normal truncate">
               <span className="sm:hidden">{t("autoreply.rules.statActive")}</span>
               <span className="hidden sm:inline">{t("autoreply.rules.activeRules")}</span>
             </p>
-            <p className="text-emerald-600 dark:text-emerald-400 text-lg sm:text-2xl font-black mt-0.5 font-mono">
+            <p className="text-emerald-600 dark:text-emerald-400 text-lg sm:text-2xl lg:text-3xl font-black mt-0.5 font-mono">
               {activeCount}
             </p>
           </div>
-          <div className="hidden sm:flex rounded-xl bg-emerald-500/10 p-2.5 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 shrink-0 ml-2">
+          <div className="hidden sm:flex rounded-xl bg-emerald-500/10 p-2.5 lg:p-3 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 shrink-0 ml-2">
             <CheckCircle2 className="size-5" />
           </div>
         </div>
 
         {/* Inactive Rules */}
-        <div className="border-border bg-surface flex flex-col justify-between sm:flex-row sm:items-center rounded-xl sm:rounded-2xl border p-2.5 sm:p-4 shadow-xs">
+        <div className="border-border/80 bg-surface hover:border-border flex flex-col justify-between sm:flex-row sm:items-center rounded-xl sm:rounded-2xl border p-3 sm:p-4 lg:p-5 shadow-2xs transition-colors">
           <div className="min-w-0">
             <p className="text-foreground-muted text-[11px] sm:text-xs font-semibold sm:normal-case tracking-tight sm:tracking-normal truncate">
               <span className="sm:hidden">{t("autoreply.rules.statInactive")}</span>
               <span className="hidden sm:inline">{t("autoreply.rules.inactiveRules")}</span>
             </p>
-            <p className="text-foreground-muted text-lg sm:text-2xl font-black mt-0.5 font-mono">
+            <p className="text-foreground-muted text-lg sm:text-2xl lg:text-3xl font-black mt-0.5 font-mono">
               {inactiveCount}
             </p>
           </div>
-          <div className="hidden sm:flex rounded-xl bg-muted p-2.5 text-foreground-muted shrink-0 ml-2">
+          <div className="hidden sm:flex rounded-xl bg-muted p-2.5 lg:p-3 text-foreground-muted shrink-0 ml-2">
             <XCircle className="size-5" />
           </div>
         </div>
       </div>
 
       {/* Responsive Action Toolbar & Filters */}
-      <div className="space-y-2.5 sm:space-y-0 sm:flex sm:items-center sm:justify-between sm:gap-3">
+      <div className="flex flex-col gap-2.5 sm:gap-3 lg:flex-row lg:items-center lg:justify-between">
         {/* Search & Filters Container */}
-        <div className="flex flex-col gap-2 sm:flex-row sm:flex-1 sm:items-center">
+        <div className="flex flex-col gap-2 sm:flex-row sm:flex-1 sm:items-center sm:flex-wrap lg:flex-nowrap">
           {/* Row 1 on mobile: Search + Refresh */}
-          <div className="flex items-center gap-2 flex-1">
+          <div className="flex items-center gap-2 flex-1 min-w-[200px] sm:min-w-[240px]">
             <div className="border-border bg-surface focus-within:ring-wise-green/30 focus-within:border-wise-green flex flex-1 items-center gap-2 rounded-xl border px-3 py-2 text-xs focus-within:ring-2 shadow-2xs">
               <Search className="size-3.5 text-foreground-muted shrink-0" />
               <input
@@ -192,7 +192,7 @@ export function AutoreplyRulesView() {
           </div>
 
           {/* Row 2 on mobile: Equal 2-column Dropdowns (Saluran & Perangkat) */}
-          <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-2">
+          <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-2 shrink-0">
             {/* Channel Filter */}
             <select
               value={channelType}

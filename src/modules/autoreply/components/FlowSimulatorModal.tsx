@@ -39,6 +39,7 @@ export function FlowSimulatorModal({
   const [variables, setVariables] = useState<Record<string, unknown>>({});
   const [isBotTyping, setIsBotTyping] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const [mobileTab, setMobileTab] = useState<"chat" | "variables">("chat");
   const chatBottomRef = useRef<HTMLDivElement>(null);
 
   const startSimulation = useCallback(async () => {
@@ -158,36 +159,37 @@ export function FlowSimulatorModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150">
-      <div className="bg-surface border-border flex h-[85vh] w-full max-w-3xl flex-col rounded-2xl border shadow-2xl dark:bg-[#151714] overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150">
+      <div className="bg-surface border-border flex h-[90vh] sm:h-[85vh] w-full max-w-3xl flex-col rounded-2xl border shadow-2xl dark:bg-[#151714] overflow-hidden">
         {/* Header */}
-        <div className="border-border flex items-center justify-between border-b px-6 py-4 bg-muted/20">
-          <div className="flex items-center gap-3">
-            <div className="rounded-full bg-emerald-500/10 p-2 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400">
-              <Smartphone className="size-5" />
+        <div className="border-border flex items-center justify-between border-b px-4 sm:px-6 py-3 sm:py-4 bg-muted/20">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            <div className="rounded-full bg-emerald-500/10 p-2 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 shrink-0">
+              <Smartphone className="size-4 sm:size-5" />
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <h3 className="text-foreground text-sm font-bold">
+                <h3 className="text-foreground text-xs sm:text-sm font-bold truncate">
                   {t("autoreply.flows.simulator.title")}
                 </h3>
-                <span className="rounded-full bg-wise-green/20 text-dark-green dark:text-wise-green px-2 py-0.2 text-[9px] font-bold uppercase">
+                <span className="rounded-full bg-wise-green/20 text-dark-green dark:text-wise-green px-2 py-0.2 text-[9px] font-bold uppercase shrink-0">
                   Live Test
                 </span>
               </div>
-              <p className="text-foreground-muted text-xs truncate max-w-sm">
+              <p className="text-foreground-muted text-[11px] sm:text-xs truncate max-w-[180px] sm:max-w-sm">
                 {flow.name}
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <button
               type="button"
               onClick={startSimulation}
-              className="text-foreground-secondary hover:text-foreground hover:bg-muted flex items-center gap-1.5 rounded-xl border border-border px-3 py-1.5 text-xs font-bold transition-colors cursor-pointer"
+              className="text-foreground-secondary hover:text-foreground hover:bg-muted flex items-center gap-1.5 rounded-xl border border-border px-2.5 sm:px-3 py-1.5 text-xs font-bold transition-colors cursor-pointer"
+              title={t("autoreply.flows.simulator.startSimulation")}
             >
               <RotateCcw className="size-3.5" />
-              <span>{t("autoreply.flows.simulator.startSimulation")}</span>
+              <span className="hidden sm:inline">{t("autoreply.flows.simulator.startSimulation")}</span>
             </button>
             <button
               type="button"
@@ -199,10 +201,43 @@ export function FlowSimulatorModal({
           </div>
         </div>
 
+        {/* Mobile Tab Switcher */}
+        <div className="flex md:hidden border-b border-border bg-surface px-3 py-1.5 gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={() => setMobileTab("chat")}
+            className={cn(
+              "flex-1 py-1 text-xs font-bold rounded-lg transition-colors cursor-pointer",
+              mobileTab === "chat"
+                ? "bg-wise-green/10 text-dark-green dark:text-wise-green"
+                : "text-foreground-muted hover:text-foreground",
+            )}
+          >
+            Obrolan ({messages.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobileTab("variables")}
+            className={cn(
+              "flex-1 py-1 text-xs font-bold rounded-lg transition-colors cursor-pointer",
+              mobileTab === "variables"
+                ? "bg-wise-green/10 text-dark-green dark:text-wise-green"
+                : "text-foreground-muted hover:text-foreground",
+            )}
+          >
+            Variabel ({Object.keys(variables).length})
+          </button>
+        </div>
+
         {/* Content Layout: Chat View on Left, Session Variables on Right */}
         <div className="flex flex-1 overflow-hidden">
           {/* WhatsApp Style Chat Screen */}
-          <div className="flex-1 flex flex-col bg-[#efeae2]/40 dark:bg-[#0c0d0b]">
+          <div
+            className={cn(
+              "flex-1 flex-col bg-[#efeae2]/40 dark:bg-[#0c0d0b]",
+              mobileTab === "chat" ? "flex" : "hidden md:flex",
+            )}
+          >
             <div className="flex-1 overflow-y-auto p-4 space-y-3">
               {messages.map((msg) => (
                 <div
@@ -274,7 +309,12 @@ export function FlowSimulatorModal({
           </div>
 
           {/* Session Variables Sidebar */}
-          <div className="border-border bg-surface w-64 border-l flex flex-col dark:bg-[#151714]">
+          <div
+            className={cn(
+              "border-border bg-surface w-full md:w-64 border-t md:border-t-0 md:border-l flex-col dark:bg-[#151714]",
+              mobileTab === "variables" ? "flex" : "hidden md:flex",
+            )}
+          >
             <div className="border-border flex items-center gap-2 border-b px-4 py-3 bg-muted/20">
               <Database className="size-3.5 text-wise-green" />
               <h4 className="text-foreground text-xs font-bold">

@@ -109,7 +109,7 @@ export function SpreadsheetConfigView() {
   };
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6 lg:p-8 pb-12">
       {/* Top Header & Navigation Tabs */}
       <div className="space-y-4">
         <div>
@@ -122,7 +122,7 @@ export function SpreadsheetConfigView() {
         </div>
 
         {/* Tab Navigation */}
-        <div className="border-border flex items-center gap-1.5 sm:gap-2 border-b pb-3 overflow-x-auto scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-3 px-3 sm:mx-0 sm:px-0">
+        <div className="border-border flex items-center gap-1.5 sm:gap-2 border-b pb-3 overflow-x-auto scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-4 px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0">
           <Link
             href="/autoreply"
             className="text-foreground-secondary hover:text-foreground hover:bg-muted flex items-center gap-2 rounded-xl border border-transparent px-3.5 py-1.5 text-xs font-bold transition-all whitespace-nowrap"

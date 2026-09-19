@@ -41,21 +41,30 @@ export function NodePropertiesPanel({
   const { id, type, data } = selectedNode;
 
   return (
-    <div className="border-border bg-surface/95 backdrop-blur-md flex h-full w-80 flex-col rounded-2xl border shadow-xl dark:bg-[#151714]/95 overflow-hidden">
+    <div
+      onClick={(e) => e.stopPropagation()}
+      onMouseDown={(e) => e.stopPropagation()}
+      className="border-border bg-surface/98 backdrop-blur-md flex h-full max-h-[80vh] md:max-h-none w-full md:w-80 flex-col rounded-t-3xl md:rounded-2xl border-t md:border shadow-2xl dark:bg-[#151714]/98 overflow-hidden"
+    >
+      {/* Mobile Drawer Pull Indicator */}
+      <div className="pt-2.5 pb-1 flex justify-center md:hidden">
+        <div className="w-10 h-1 rounded-full bg-foreground-muted/30" />
+      </div>
+
       {/* Panel Header */}
       <div className="border-border flex items-center justify-between border-b px-5 py-3.5 bg-muted/20">
         <div className="flex items-center gap-2">
           <span className="rounded-md bg-wise-green/10 text-dark-green dark:text-wise-green px-2 py-0.5 text-[10px] font-bold uppercase">
             {type}
           </span>
-          <span className="text-foreground text-xs font-bold truncate max-w-[120px]">
+          <span className="text-foreground text-xs font-bold truncate max-w-[160px] sm:max-w-[120px]">
             {data.label || id}
           </span>
         </div>
         <button
           type="button"
           onClick={onClose}
-          className="text-foreground-muted hover:text-foreground rounded-lg p-1 transition-colors"
+          className="text-foreground-muted hover:text-foreground rounded-lg p-1.5 transition-colors cursor-pointer"
         >
           <X className="size-4" />
         </button>
