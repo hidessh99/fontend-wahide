@@ -87,7 +87,7 @@ function SheetContent({
               <Button
                 variant="ghost"
                 size="icon-sm"
-                className="absolute top-4 right-4 rounded-full text-foreground-muted hover:text-foreground cursor-pointer"
+                className="absolute top-4 right-4 z-50 rounded-full text-foreground-muted hover:text-foreground cursor-pointer"
               />
             }
           >

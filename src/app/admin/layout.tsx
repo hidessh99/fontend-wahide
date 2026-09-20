@@ -3,8 +3,16 @@
 import React, { useState } from "react";
 import { AdminSidebar } from "@/components/layout/admin/AdminSidebar";
 import { AdminHeader } from "@/components/layout/admin/AdminHeader";
-import { AdminMobileNav } from "@/components/layout/admin/AdminMobileNav";
+import dynamic from "next/dynamic";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
+
+const AdminMobileNav = dynamic(
+  () =>
+    import("@/components/layout/admin/AdminMobileNav").then(
+      (m) => m.AdminMobileNav,
+    ),
+  { ssr: false },
+);
 
 export default function AdminLayout({
   children,

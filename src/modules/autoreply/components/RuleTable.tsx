@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/table";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -72,26 +73,24 @@ export function RuleTable({
 
   if (rules.length === 0) {
     return (
-      <div className="border-border/80 bg-surface flex min-h-[250px] sm:min-h-[280px] flex-col items-center justify-center rounded-2xl border p-6 sm:p-8 text-center shadow-xs">
-        <div className="rounded-full bg-emerald-500/10 p-3 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400">
-          <Bot className="size-7 sm:size-8" />
-        </div>
-        <h4 className="text-foreground mt-3.5 text-sm font-bold">
-          {t("autoreply.rules.empty")}
-        </h4>
-        <p className="text-foreground-muted mt-1 max-w-md text-xs leading-relaxed">
-          {t("autoreply.subtitle")}
-        </p>
-        <Button
-          type="button"
-          variant="primaryPill"
-          size="sm"
-          onClick={onCreateNew}
-          className="mt-4 sm:mt-5 text-xs font-bold"
-        >
-          {t("autoreply.rules.addRule")}
-        </Button>
-      </div>
+      <Card className="border-border bg-surface rounded-2xl border p-2 shadow-xs">
+        <EmptyState
+          icon={<Bot className="size-9 text-wise-green" />}
+          title={t("autoreply.rules.empty")}
+          description={t("autoreply.subtitle")}
+          action={
+            <Button
+              type="button"
+              variant="primaryPill"
+              size="sm"
+              onClick={onCreateNew}
+              className="text-xs font-bold"
+            >
+              {t("autoreply.rules.addRule")}
+            </Button>
+          }
+        />
+      </Card>
     );
   }
 

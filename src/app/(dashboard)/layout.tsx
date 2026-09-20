@@ -6,8 +6,16 @@ import { useAuth } from "@/modules/iam/hooks/useAuth";
 import { getCookie } from "@/lib/storage/cookies";
 import { DashboardSidebar } from "@/components/layout/dashboard/DashboardSidebar";
 import { DashboardHeader } from "@/components/layout/dashboard/DashboardHeader";
-import { DashboardMobileNav } from "@/components/layout/dashboard/DashboardMobileNav";
+import dynamic from "next/dynamic";
 import { ErrorBoundary } from "@/components/layout/shared/ErrorBoundary";
+
+const DashboardMobileNav = dynamic(
+  () =>
+    import("@/components/layout/dashboard/DashboardMobileNav").then(
+      (m) => m.DashboardMobileNav,
+    ),
+  { ssr: false },
+);
 
 export default function DashboardLayout({
   children,

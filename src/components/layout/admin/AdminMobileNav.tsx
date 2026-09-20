@@ -1,9 +1,13 @@
 "use client";
 
+import React from "react";
 import { AdminSidebar } from "./AdminSidebar";
-import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { useI18n } from "@/lib/i18n/context";
-import { X } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+} from "@/components/ui/sheet";
 
 interface AdminMobileNavProps {
   open: boolean;
@@ -12,38 +16,22 @@ interface AdminMobileNavProps {
 
 export function AdminMobileNav({ open, onClose }: AdminMobileNavProps) {
   const { t } = useI18n();
-  // Universal Escape key dismissal with zero listener churn
-  useEscapeKey(open, onClose);
-
-  if (!open) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 lg:hidden"
-      role="dialog"
-      aria-modal="true"
-    >
-      {/* Backdrop Overlay */}
-      <div
-        onClick={onClose}
-        className="animate-in fade-in fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
-      />
+    <Sheet open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
+      <SheetContent
+        side="left"
+        showCloseButton={true}
+        className="w-full max-w-xs p-0 gap-0 border-r border-border bg-surface dark:bg-[#121310] flex flex-col lg:hidden"
+      >
+        <SheetTitle className="sr-only">
+          {t("admin.adminMenu.closeAdminMenuAria") || "Menu Navigasi Admin"}
+        </SheetTitle>
 
-      {/* Drawer Container */}
-      <div className="bg-surface animate-in slide-in-from-left fixed inset-y-0 left-0 z-50 flex w-full max-w-xs flex-col shadow-2xl duration-200 dark:bg-[#121310]">
-        <div className="absolute top-4 right-4 z-50">
-          <button
-            onClick={onClose}
-            className="text-foreground-secondary hover:text-foreground hover:bg-muted/60 flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-full p-2.5 transition"
-            aria-label={
-              t("admin.adminMenu.closeAdminMenuAria") || "Tutup Menu Admin"
-            }
-          >
-            <X className="size-5" />
-          </button>
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden pt-2">
+          <AdminSidebar onItemClick={onClose} className="w-full border-r-0" />
         </div>
-        <AdminSidebar onItemClick={onClose} className="w-full border-r-0" />
-      </div>
-    </div>
+      </SheetContent>
+    </Sheet>
   );
 }

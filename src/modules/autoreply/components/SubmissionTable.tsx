@@ -24,6 +24,7 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -76,18 +77,13 @@ export function SubmissionTable({
 
   if (submissions.length === 0) {
     return (
-      <div className="border-border bg-surface flex min-h-[350px] flex-col items-center justify-center rounded-2xl border p-8 text-center shadow-xs">
-        <div className="rounded-full bg-emerald-500/10 p-3.5 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400">
-          <Inbox className="size-8" />
-        </div>
-        <h4 className="text-foreground mt-4 text-sm font-bold">
-          {t("autoreply.submissions.empty")}
-        </h4>
-        <p className="text-foreground-muted mt-1 max-w-sm text-xs">
-          Jawaban formulir yang diisi oleh pelanggan lewat alur flow WhatsApp
-          akan tersimpan otomatis di sini.
-        </p>
-      </div>
+      <Card className="border-border bg-surface rounded-2xl border p-2 shadow-xs">
+        <EmptyState
+          icon={<Inbox className="size-9 text-wise-green" />}
+          title={t("autoreply.submissions.empty")}
+          description="Jawaban formulir yang diisi oleh pelanggan lewat alur flow WhatsApp akan tersimpan otomatis di sini."
+        />
+      </Card>
     );
   }
 
