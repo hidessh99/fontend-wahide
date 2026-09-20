@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import {
   Plus,
   Search,
@@ -17,9 +18,19 @@ import { useI18n } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 import { useAutoreplyRules } from "../hooks/useAutoreplyRules";
 import { RuleTable } from "../components/RuleTable";
-import { RuleModal } from "../components/RuleModal";
-import { AutoreplyRule, CreateRuleInput, UpdateRuleInput } from "../types/autoreply.types";
+import {
+  AutoreplyRule,
+  CreateRuleInput,
+  UpdateRuleInput,
+} from "../types/autoreply.types";
 import { useDevices } from "@/modules/whatsapp/hooks/useDevices";
+import { Button } from "@/components/ui/button";
+import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
+
+const RuleModal = dynamic(
+  () => import("../components/RuleModal").then((m) => m.RuleModal),
+  { ssr: false },
+);
 
 export function AutoreplyRulesView() {
   const { t } = useI18n();
@@ -60,51 +71,63 @@ export function AutoreplyRulesView() {
 
   const handleSaveRule = async (input: CreateRuleInput | UpdateRuleInput) => {
     if (editingRule) {
-      return await updateRule(editingRule.id, input as UpdateRuleInput);
-    } else {
-      return await createRule(input as CreateRuleInput);
+      return await updateRule(editingRule.id, input);
     }
+    return await createRule(input as CreateRuleInput);
   };
 
   return (
-    <div className="mx-auto max-w-7xl space-y-5 sm:space-y-6 p-4 sm:p-6 lg:p-8 pb-12">
-      {/* Top Header & Ecosystem Navigation Tabs */}
+    <div className="mx-auto max-w-7xl space-y-4 sm:space-y-6 p-3 sm:p-6 lg:p-8 pb-12">
+      {/* Top Header & Navigation Tabs */}
       <div className="space-y-3 sm:space-y-4">
-        <div>
-          <h1 className="text-foreground text-xl sm:text-2xl font-black tracking-tight">
-            {t("autoreply.title")}
-          </h1>
-          <p className="text-foreground-muted text-xs sm:text-sm mt-1 max-w-2xl leading-relaxed">
-            {t("autoreply.subtitle")}
-          </p>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-foreground text-xl sm:text-2xl font-black tracking-tight">
+              {t("autoreply.title")}
+            </h1>
+            <p className="text-foreground-muted text-xs sm:text-sm mt-0.5 sm:mt-1 max-w-2xl">
+              {t("autoreply.subtitle")}
+            </p>
+          </div>
+
+          <Button
+            type="button"
+            variant="primaryPill"
+            size="sm"
+            onClick={handleOpenCreate}
+            className="gap-2 px-5 text-xs font-bold shadow-xs whitespace-nowrap self-start sm:self-auto"
+          >
+            <Plus className="size-4" />
+            <span>{t("autoreply.rules.addRule")}</span>
+          </Button>
         </div>
 
-        {/* Tab Navigation with clean touch swipe and hidden scrollbar */}
-        <div className="border-border flex items-center gap-1.5 sm:gap-2 border-b pb-2.5 sm:pb-3 overflow-x-auto scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-4 px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0">
+        {/* Tab Navigation */}
+        <div className="border-border flex items-center gap-1.5 sm:gap-2 border-b pb-3 overflow-x-auto scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-3 px-3 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0">
           <Link
             href="/autoreply"
-            className="flex items-center gap-2 rounded-xl bg-wise-green px-3.5 py-1.5 text-xs font-bold text-dark-green shadow-xs whitespace-nowrap shrink-0"
+            className="flex items-center gap-2 rounded-xl bg-wise-green px-3.5 py-1.5 text-xs font-bold text-dark-green shadow-xs whitespace-nowrap"
           >
             <Bot className="size-3.5" />
             <span>{t("autoreply.tabs.rules")}</span>
           </Link>
           <Link
             href="/autoreply/flow"
-            className="text-foreground-secondary hover:text-foreground hover:bg-muted flex items-center gap-2 rounded-xl border border-transparent px-3.5 py-1.5 text-xs font-bold transition-all whitespace-nowrap shrink-0"
+            className="text-foreground-secondary hover:text-foreground hover:bg-muted flex items-center gap-2 rounded-xl border border-transparent px-3.5 py-1.5 text-xs font-bold transition-all whitespace-nowrap"
           >
             <Workflow className="size-3.5" />
             <span>{t("autoreply.tabs.flows")}</span>
           </Link>
           <Link
             href="/autoreply/submission"
-            className="text-foreground-secondary hover:text-foreground hover:bg-muted flex items-center gap-2 rounded-xl border border-transparent px-3.5 py-1.5 text-xs font-bold transition-all whitespace-nowrap shrink-0"
+            className="text-foreground-secondary hover:text-foreground hover:bg-muted flex items-center gap-2 rounded-xl border border-transparent px-3.5 py-1.5 text-xs font-bold transition-all whitespace-nowrap"
           >
             <Inbox className="size-3.5" />
             <span>{t("autoreply.tabs.submissions")}</span>
           </Link>
           <Link
             href="/autoreply/spreadsheet"
-            className="text-foreground-secondary hover:text-foreground hover:bg-muted flex items-center gap-2 rounded-xl border border-transparent px-3.5 py-1.5 text-xs font-bold transition-all whitespace-nowrap shrink-0"
+            className="text-foreground-secondary hover:text-foreground hover:bg-muted flex items-center gap-2 rounded-xl border border-transparent px-3.5 py-1.5 text-xs font-bold transition-all whitespace-nowrap"
           >
             <FileSpreadsheet className="size-3.5" />
             <span>{t("autoreply.tabs.spreadsheet")}</span>
@@ -112,30 +135,36 @@ export function AutoreplyRulesView() {
         </div>
       </div>
 
-      {/* Responsive Metrics Bar: Compact 3-col on mobile, spacious on desktop */}
-      <div className="grid grid-cols-3 gap-2.5 sm:gap-4 lg:gap-5">
-        {/* Total Rules */}
+      {/* KPI Stats Cards - Mobile 3-column compact grid */}
+      <div className="grid grid-cols-3 gap-2 sm:gap-4">
         <div className="border-border/80 bg-surface hover:border-border flex flex-col justify-between sm:flex-row sm:items-center rounded-xl sm:rounded-2xl border p-3 sm:p-4 lg:p-5 shadow-2xs transition-colors">
           <div className="min-w-0">
             <p className="text-foreground-muted text-[11px] sm:text-xs font-semibold sm:normal-case tracking-tight sm:tracking-normal truncate">
-              <span className="sm:hidden">{t("autoreply.rules.statTotal")}</span>
-              <span className="hidden sm:inline">{t("autoreply.rules.totalRules")}</span>
+              <span className="sm:hidden">
+                {t("autoreply.rules.statTotal")}
+              </span>
+              <span className="hidden sm:inline">
+                {t("autoreply.rules.totalRules")}
+              </span>
             </p>
             <p className="text-foreground text-lg sm:text-2xl lg:text-3xl font-black mt-0.5 font-mono">
               {total}
             </p>
           </div>
-          <div className="hidden sm:flex rounded-xl bg-muted p-2.5 lg:p-3 text-foreground-muted shrink-0 ml-2">
+          <div className="hidden sm:flex rounded-xl bg-wise-green/10 p-2.5 lg:p-3 text-dark-green dark:text-wise-green shrink-0 ml-2">
             <Bot className="size-5" />
           </div>
         </div>
 
-        {/* Active Rules */}
         <div className="border-border/80 bg-surface hover:border-border flex flex-col justify-between sm:flex-row sm:items-center rounded-xl sm:rounded-2xl border p-3 sm:p-4 lg:p-5 shadow-2xs transition-colors">
           <div className="min-w-0">
             <p className="text-foreground-muted text-[11px] sm:text-xs font-semibold sm:normal-case tracking-tight sm:tracking-normal truncate">
-              <span className="sm:hidden">{t("autoreply.rules.statActive")}</span>
-              <span className="hidden sm:inline">{t("autoreply.rules.activeRules")}</span>
+              <span className="sm:hidden">
+                {t("autoreply.rules.statActive")}
+              </span>
+              <span className="hidden sm:inline">
+                {t("autoreply.rules.activeRules")}
+              </span>
             </p>
             <p className="text-emerald-600 dark:text-emerald-400 text-lg sm:text-2xl lg:text-3xl font-black mt-0.5 font-mono">
               {activeCount}
@@ -146,12 +175,15 @@ export function AutoreplyRulesView() {
           </div>
         </div>
 
-        {/* Inactive Rules */}
         <div className="border-border/80 bg-surface hover:border-border flex flex-col justify-between sm:flex-row sm:items-center rounded-xl sm:rounded-2xl border p-3 sm:p-4 lg:p-5 shadow-2xs transition-colors">
           <div className="min-w-0">
             <p className="text-foreground-muted text-[11px] sm:text-xs font-semibold sm:normal-case tracking-tight sm:tracking-normal truncate">
-              <span className="sm:hidden">{t("autoreply.rules.statInactive")}</span>
-              <span className="hidden sm:inline">{t("autoreply.rules.inactiveRules")}</span>
+              <span className="sm:hidden">
+                {t("autoreply.rules.statInactive")}
+              </span>
+              <span className="hidden sm:inline">
+                {t("autoreply.rules.inactiveRules")}
+              </span>
             </p>
             <p className="text-foreground-muted text-lg sm:text-2xl lg:text-3xl font-black mt-0.5 font-mono">
               {inactiveCount}
@@ -180,70 +212,80 @@ export function AutoreplyRulesView() {
               />
             </div>
             {/* Refresh Button on Mobile (next to search) */}
-            <button
+            <Button
               type="button"
+              variant="outline"
+              size="icon-sm"
               onClick={() => fetchRules()}
-              className="border-border bg-surface text-foreground-secondary hover:bg-muted sm:hidden rounded-xl border p-2.5 transition-colors cursor-pointer shrink-0 shadow-2xs"
+              className="sm:hidden rounded-xl border-border bg-surface text-foreground-secondary hover:text-foreground shrink-0"
               title="Muat ulang data"
               aria-label="Muat ulang data"
             >
-              <RefreshCw className={cn("size-3.5", isLoading && "animate-spin")} />
-            </button>
+              <RefreshCw
+                className={cn("size-3.5", isLoading && "animate-spin")}
+              />
+            </Button>
           </div>
 
           {/* Row 2 on mobile: Equal 2-column Dropdowns (Saluran & Perangkat) */}
           <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-2 shrink-0">
             {/* Channel Filter */}
-            <select
+            <NativeSelect
               value={channelType}
               onChange={(e) => setChannelType(e.target.value)}
-              className="border-border bg-surface text-foreground rounded-xl border px-2.5 py-2 text-xs font-semibold focus:outline-none w-full sm:w-auto shadow-2xs cursor-pointer"
+              variant="rounded"
+              className="w-full sm:w-auto text-xs"
             >
-              <option value="">{t("autoreply.rules.filterChannel")}</option>
-              <option value="whatsapp">{t("autoreply.rules.channelWhatsApp")}</option>
-              <option value="telegram">{t("autoreply.rules.channelTelegram")}</option>
-              <option value="waba">{t("autoreply.rules.channelWABA")}</option>
-            </select>
+              <NativeSelectOption value="">
+                {t("autoreply.rules.filterChannel")}
+              </NativeSelectOption>
+              <NativeSelectOption value="whatsapp">
+                {t("autoreply.rules.channelWhatsApp")}
+              </NativeSelectOption>
+              <NativeSelectOption value="telegram">
+                {t("autoreply.rules.channelTelegram")}
+              </NativeSelectOption>
+              <NativeSelectOption value="waba">
+                {t("autoreply.rules.channelWABA")}
+              </NativeSelectOption>
+            </NativeSelect>
 
             {/* Device Filter */}
-            <select
+            <NativeSelect
               value={deviceId}
               onChange={(e) => setDeviceId(e.target.value)}
-              className="border-border bg-surface text-foreground rounded-xl border px-2.5 py-2 text-xs font-semibold focus:outline-none w-full sm:max-w-[190px] truncate shadow-2xs cursor-pointer"
+              variant="rounded"
+              className="w-full sm:max-w-[190px] text-xs"
             >
-              <option value="">{t("autoreply.rules.filterDevice")}</option>
+              <NativeSelectOption value="">
+                {t("autoreply.rules.filterDevice")}
+              </NativeSelectOption>
               {devices.map((d) => (
-                <option key={d.id} value={d.id}>
+                <NativeSelectOption key={d.id} value={d.id}>
                   {d.name || d.phone || d.id}
-                </option>
+                </NativeSelectOption>
               ))}
-            </select>
+            </NativeSelect>
           </div>
 
           {/* Refresh Button on Desktop (inline) */}
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="icon-sm"
             onClick={() => fetchRules()}
-            className="border-border bg-surface text-foreground-secondary hover:bg-muted hidden sm:flex rounded-xl border p-2.5 transition-colors cursor-pointer shrink-0 shadow-2xs"
+            className="hidden sm:flex rounded-xl border-border bg-surface text-foreground-secondary hover:text-foreground shrink-0"
             title="Muat ulang data"
             aria-label="Muat ulang data"
           >
-            <RefreshCw className={cn("size-3.5", isLoading && "animate-spin")} />
-          </button>
+            <RefreshCw
+              className={cn("size-3.5", isLoading && "animate-spin")}
+            />
+          </Button>
         </div>
-
-        {/* Create Rule Button: Full width on mobile, auto on desktop */}
-        <button
-          type="button"
-          onClick={handleOpenCreate}
-          className="bg-wise-green text-dark-green hover:brightness-105 flex items-center justify-center gap-2 rounded-xl w-full sm:w-auto px-4 py-2.5 text-xs font-bold transition-all shadow-xs cursor-pointer whitespace-nowrap shrink-0"
-        >
-          <Plus className="size-4" />
-          <span>{t("autoreply.rules.addRule")}</span>
-        </button>
       </div>
 
-      {/* Rules Table */}
+      {/* Rules Table Component */}
       <RuleTable
         rules={rules}
         isLoading={isLoading}
@@ -253,7 +295,7 @@ export function AutoreplyRulesView() {
         onCreateNew={handleOpenCreate}
       />
 
-      {/* Create / Edit Rule Modal */}
+      {/* Create / Edit Rule Modal (Lazy Loaded) */}
       <RuleModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

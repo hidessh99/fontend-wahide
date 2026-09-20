@@ -17,6 +17,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import {
   Ticket,
   Percent,
@@ -334,15 +335,19 @@ export function CouponFormModal({
                   <Layers className="size-3.5 text-muted-foreground" />
                   <span>{t("admin.coupons.formProduct") || "Target Produk"}</span>
                 </label>
-                <select
+                <NativeSelect
                   value={applicableProduct}
                   onChange={(e) => setApplicableProduct(e.target.value)}
                   disabled={isSubmitting}
-                  className="border-input bg-background text-foreground flex h-9 w-full rounded-md border px-3 py-1 text-xs shadow-xs focus-visible:outline-hidden"
+                  className="w-full text-xs"
                 >
-                  <option value="SUBSCRIPTION">Hanya Langganan (SUBSCRIPTION)</option>
-                  <option value="ALL">Semua Produk (ALL)</option>
-                </select>
+                  <NativeSelectOption value="SUBSCRIPTION">
+                    Hanya Langganan (SUBSCRIPTION)
+                  </NativeSelectOption>
+                  <NativeSelectOption value="ALL">
+                    Semua Produk (ALL)
+                  </NativeSelectOption>
+                </NativeSelect>
               </div>
 
               <div className="flex items-center justify-between rounded-xl border border-border p-3">

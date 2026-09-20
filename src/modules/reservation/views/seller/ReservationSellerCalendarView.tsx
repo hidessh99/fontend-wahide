@@ -14,9 +14,16 @@ import { useI18n } from "@/lib/i18n/context";
 import { useReservations } from "../../hooks/useReservations";
 import { MonthlyCalendar } from "../../components/seller/MonthlyCalendar";
 import { DailyAgendaList } from "../../components/seller/DailyAgendaList";
-import { AddReservationForm } from "../../components/seller/AddReservationForm";
 import dynamic from "next/dynamic";
 import { Reservation } from "../../types/reservation.types";
+
+const AddReservationForm = dynamic(
+  () =>
+    import("../../components/seller/AddReservationForm").then(
+      (m) => m.AddReservationForm,
+    ),
+  { ssr: false },
+);
 
 const DeleteReservationModal = dynamic(
   () =>

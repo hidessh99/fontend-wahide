@@ -15,13 +15,35 @@ import {
   HelpCircle,
   Clock,
   Sparkles,
-  Table,
+  Table as TableIcon,
+  Loader2,
 } from "lucide-react";
 import { useI18n } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 import { useSpreadsheet } from "../hooks/useSpreadsheet";
 import { useDevices } from "@/modules/whatsapp/hooks/useDevices";
 import { toast } from "sonner";
+import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Card } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
 
 export function SpreadsheetConfigView() {
   const { t } = useI18n();
@@ -74,37 +96,43 @@ export function SpreadsheetConfigView() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedDeviceId) {
-      toast.error("Pilih perangkat pengirim terlebih dahulu");
+      toast.error(t("autoreply.spreadsheet.selectDeviceWarning"));
       return;
     }
     if (!sheetUrl.trim()) {
-      toast.error("Masukkan tautan URL CSV Google Sheets");
+      toast.error(t("autoreply.spreadsheet.emptyUrlWarning"));
       return;
     }
 
-    await saveConfig({
+    const ok = await saveConfig({
       device_id: selectedDeviceId,
       channel_type: channelType,
       sheet_url: sheetUrl.trim(),
       sync_interval_minutes: syncInterval,
       is_active: isActive,
     });
+
+    if (ok) {
+      toast.success(t("autoreply.spreadsheet.saveSuccess"));
+    }
   };
 
   const handlePreview = async () => {
     if (!sheetUrl.trim()) {
-      toast.error("Masukkan tautan URL CSV Google Sheets terlebih dahulu");
+      toast.error(t("autoreply.spreadsheet.emptyUrlWarning"));
       return;
     }
     const res = await previewSheet(sheetUrl.trim());
-    if (res) {
+    if (res && res.sample_rows?.length > 0) {
       setIsPreviewOpen(true);
+    } else {
+      toast.error(t("autoreply.spreadsheet.previewFailed"));
     }
   };
 
   const handleTestMatch = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedDeviceId || !testInput.trim()) return;
+    if (!testInput.trim() || !selectedDeviceId) return;
     await testMatch(selectedDeviceId, testInput.trim());
   };
 
@@ -146,7 +174,7 @@ export function SpreadsheetConfigView() {
           </Link>
           <Link
             href="/autoreply/spreadsheet"
-            className="flex items-center gap-2 rounded-xl bg-wise-green px-3.5 py-1.5 text-xs font-bold text-dark-green shadow-sm whitespace-nowrap"
+            className="flex items-center gap-2 rounded-xl bg-wise-green px-3.5 py-1.5 text-xs font-bold text-dark-green shadow-xs whitespace-nowrap"
           >
             <FileSpreadsheet className="size-3.5" />
             <span>{t("autoreply.tabs.spreadsheet")}</span>
@@ -155,28 +183,32 @@ export function SpreadsheetConfigView() {
       </div>
 
       {/* Device Selector Card */}
-      <div className="border-border bg-surface flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-2xl border p-5 shadow-sm">
+      <Card className="border-border bg-surface flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-2xl border p-5 shadow-xs">
         <div className="space-y-1">
           <label className="text-foreground text-xs font-bold">
             {t("autoreply.spreadsheet.deviceSelect")}
           </label>
           <p className="text-foreground-muted text-[11px]">
-            Setiap perangkat WhatsApp/Telegram memiliki konfigurasi Google Sheets tersendiri.
+            Setiap perangkat WhatsApp/Telegram memiliki konfigurasi Google
+            Sheets tersendiri.
           </p>
         </div>
-        <select
+        <NativeSelect
           value={selectedDeviceId}
           onChange={(e) => setSelectedDeviceId(e.target.value)}
-          className="border-border bg-background text-foreground rounded-xl border px-4 py-2.5 text-xs font-bold focus:outline-none min-w-[240px]"
+          variant="rounded"
+          className="min-w-[240px] text-xs font-bold"
         >
-          <option value="">{t("autoreply.spreadsheet.selectDevicePlaceholder")}</option>
+          <NativeSelectOption value="">
+            {t("autoreply.spreadsheet.selectDevicePlaceholder")}
+          </NativeSelectOption>
           {devices.map((d) => (
-            <option key={d.id} value={d.id}>
+            <NativeSelectOption key={d.id} value={d.id}>
               {d.name || d.phone || d.id} ({d.status})
-            </option>
+            </NativeSelectOption>
           ))}
-        </select>
-      </div>
+        </NativeSelect>
+      </Card>
 
       {/* Main Grid: Settings & Guide */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -184,11 +216,11 @@ export function SpreadsheetConfigView() {
         <div className="lg:col-span-2 space-y-6">
           <form
             onSubmit={handleSave}
-            className="border-border bg-surface rounded-2xl border p-6 shadow-sm space-y-5"
+            className="border-border bg-surface rounded-2xl border p-6 shadow-xs space-y-5"
           >
             <div className="flex items-center justify-between pb-3 border-b border-border">
               <div className="flex items-center gap-2.5">
-                <div className="rounded-xl bg-wise-green/10 p-2 text-wise-green">
+                <div className="rounded-xl bg-wise-green/10 p-2 text-dark-green dark:text-wise-green">
                   <FileSpreadsheet className="size-5" />
                 </div>
                 <div>
@@ -204,15 +236,24 @@ export function SpreadsheetConfigView() {
               </div>
 
               {config && (
-                <button
+                <Button
                   type="button"
+                  variant="outline"
+                  size="sm"
                   onClick={() => syncNow(selectedDeviceId)}
                   disabled={isSyncing}
-                  className="border-border bg-background hover:bg-muted text-foreground flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition-colors cursor-pointer disabled:opacity-50"
+                  className="gap-1.5 rounded-xl text-xs font-bold"
                 >
-                  <RefreshCw className={cn("size-3.5", isSyncing && "animate-spin text-wise-green")} />
-                  <span>{isSyncing ? "Menyinkronkan..." : "Sinkronkan Sekarang"}</span>
-                </button>
+                  <RefreshCw
+                    className={cn(
+                      "size-3.5",
+                      isSyncing && "animate-spin text-wise-green",
+                    )}
+                  />
+                  <span>
+                    {isSyncing ? "Menyinkronkan..." : "Sinkronkan Sekarang"}
+                  </span>
+                </Button>
               )}
             </div>
 
@@ -222,23 +263,30 @@ export function SpreadsheetConfigView() {
                 {t("autoreply.spreadsheet.sheetUrlLabel")}
               </label>
               <div className="flex gap-2">
-                <input
+                <Input
                   type="url"
                   value={sheetUrl}
                   onChange={(e) => setSheetUrl(e.target.value)}
                   placeholder={t("autoreply.spreadsheet.sheetUrlPlaceholder")}
-                  className="border-border bg-background text-foreground focus:ring-wise-green/30 focus:border-wise-green flex-1 rounded-xl border px-3.5 py-2.5 text-xs font-medium focus:ring-2 focus:outline-none"
+                  variant="rounded"
+                  className="flex-1 text-xs"
                   required
                 />
-                <button
+                <Button
                   type="button"
+                  variant="outline"
+                  size="sm"
                   onClick={handlePreview}
                   disabled={isPreviewing}
-                  className="border-border bg-background hover:bg-muted text-foreground flex items-center gap-1.5 rounded-xl border px-3.5 py-2.5 text-xs font-bold transition-colors cursor-pointer disabled:opacity-50"
+                  className="gap-1.5 rounded-xl text-xs font-bold shrink-0"
                 >
-                  <Eye className="size-3.5 text-wise-green" />
+                  {isPreviewing ? (
+                    <Loader2 className="size-3.5 animate-spin" />
+                  ) : (
+                    <Eye className="size-3.5 text-wise-green" />
+                  )}
                   <span>{isPreviewing ? "Memuat..." : "Pratinjau"}</span>
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -249,52 +297,68 @@ export function SpreadsheetConfigView() {
                   <Clock className="size-3.5 text-wise-green" />
                   <span>Interval Sinkronisasi Otomatis</span>
                 </label>
-                <select
+                <NativeSelect
                   value={syncInterval}
-                  onChange={(e) => setSyncInterval(parseInt(e.target.value, 10))}
-                  className="border-border bg-background text-foreground rounded-xl border px-3 py-2 text-xs font-medium focus:outline-none w-full"
+                  onChange={(e) =>
+                    setSyncInterval(parseInt(e.target.value, 10))
+                  }
+                  variant="rounded"
+                  className="w-full text-xs"
                 >
-                  <option value={15}>Setiap 15 Menit</option>
-                  <option value={30}>Setiap 30 Menit (Direkomendasikan)</option>
-                  <option value={60}>Setiap 1 Jam</option>
-                  <option value={360}>Setiap 6 Jam</option>
-                </select>
+                  <NativeSelectOption value={15}>
+                    Setiap 15 Menit
+                  </NativeSelectOption>
+                  <NativeSelectOption value={30}>
+                    Setiap 30 Menit (Direkomendasikan)
+                  </NativeSelectOption>
+                  <NativeSelectOption value={60}>
+                    Setiap 1 Jam
+                  </NativeSelectOption>
+                  <NativeSelectOption value={360}>
+                    Setiap 6 Jam
+                  </NativeSelectOption>
+                </NativeSelect>
               </div>
 
-              <div className="flex items-center sm:justify-end pt-5">
-                <label className="flex items-center gap-2.5 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={isActive}
-                    onChange={(e) => setIsActive(e.target.checked)}
-                    className="accent-wise-green size-4 rounded"
-                  />
-                  <span className="text-foreground text-xs font-bold">
+              <div className="flex items-center justify-between sm:justify-end sm:gap-4 rounded-xl border border-border p-3 sm:border-0 sm:p-0 pt-2 sm:pt-5">
+                <div className="space-y-0.5 sm:text-right">
+                  <span className="text-foreground text-xs font-bold block">
                     {t("autoreply.spreadsheet.isActiveLabel")}
                   </span>
-                </label>
+                  <span className="text-foreground-muted text-[10px]">
+                    {isActive ? "Sinkronisasi Aktif" : "Nonaktif"}
+                  </span>
+                </div>
+                <Switch checked={isActive} onCheckedChange={setIsActive} />
               </div>
             </div>
 
             {/* Save Button */}
             <div className="flex justify-end pt-2 border-t border-border">
-              <button
+              <Button
                 type="submit"
+                variant="primaryPill"
+                size="sm"
                 disabled={isSaving}
-                className="bg-wise-green text-dark-green hover:brightness-105 flex items-center gap-1.5 rounded-xl px-5 py-2 text-xs font-bold transition-all shadow-sm disabled:opacity-50 cursor-pointer"
+                className="gap-1.5 px-5 text-xs font-bold"
               >
-                <Save className="size-3.5" />
-                <span>
-                  {isSaving
-                    ? t("autoreply.rules.modal.saving")
-                    : t("autoreply.spreadsheet.saveConfig")}
-                </span>
-              </button>
+                {isSaving ? (
+                  <>
+                    <Loader2 className="size-3.5 animate-spin" />
+                    <span>{t("autoreply.rules.modal.saving")}</span>
+                  </>
+                ) : (
+                  <>
+                    <Save className="size-3.5" />
+                    <span>{t("autoreply.spreadsheet.saveConfig")}</span>
+                  </>
+                )}
+              </Button>
             </div>
           </form>
 
           {/* Test Match Simulator Card */}
-          <div className="border-border bg-surface rounded-2xl border p-6 shadow-sm space-y-4">
+          <div className="border-border bg-surface rounded-2xl border p-6 shadow-xs space-y-4">
             <div className="flex items-center gap-2">
               <Sparkles className="size-4 text-wise-green" />
               <h3 className="text-foreground text-sm font-bold">
@@ -302,24 +366,37 @@ export function SpreadsheetConfigView() {
               </h3>
             </div>
             <p className="text-foreground-muted text-xs">
-              Ketik kata kunci untuk menguji apakah algoritma Aho-Corasick berhasil mencocokkan baris dari Google Sheets secara real-time.
+              Ketik kata kunci untuk menguji apakah algoritma Aho-Corasick
+              berhasil mencocokkan baris dari Google Sheets secara real-time.
             </p>
 
             <form onSubmit={handleTestMatch} className="flex gap-2">
-              <input
+              <Input
                 type="text"
                 value={testInput}
                 onChange={(e) => setTestInput(e.target.value)}
-                placeholder={t("autoreply.spreadsheet.testKeywordPlaceholder")}
-                className="border-border bg-background text-foreground focus:ring-wise-green/30 focus:border-wise-green flex-1 rounded-xl border px-3.5 py-2 text-xs font-medium focus:ring-2 focus:outline-none"
+                placeholder={t(
+                  "autoreply.spreadsheet.testKeywordPlaceholder",
+                )}
+                variant="rounded"
+                className="flex-1 text-xs"
               />
-              <button
+              <Button
                 type="submit"
+                variant="primaryPill"
+                size="sm"
                 disabled={isTesting || !testInput.trim()}
-                className="bg-wise-green text-dark-green hover:brightness-105 rounded-xl px-4 py-2 text-xs font-bold transition-all disabled:opacity-50 cursor-pointer"
+                className="px-4 text-xs font-bold shrink-0"
               >
-                {isTesting ? "Menguji..." : t("autoreply.spreadsheet.testButton")}
-              </button>
+                {isTesting ? (
+                  <>
+                    <Loader2 className="size-3.5 animate-spin mr-1" />
+                    <span>Menguji...</span>
+                  </>
+                ) : (
+                  t("autoreply.spreadsheet.testButton")
+                )}
+              </Button>
             </form>
 
             {testResult && (
@@ -346,9 +423,13 @@ export function SpreadsheetConfigView() {
                 {testResult.matched && (
                   <div className="mt-2 space-y-1 text-xs">
                     <p className="text-foreground-muted">
-                      Kata Kunci Cocok: <strong className="text-foreground font-mono">{testResult.matched_keyword}</strong> ({testResult.matched_logic})
+                      Kata Kunci Cocok:{" "}
+                      <strong className="text-foreground font-mono">
+                        {testResult.matched_keyword}
+                      </strong>{" "}
+                      ({testResult.matched_logic})
                     </p>
-                    <div className="bg-surface rounded-xl border border-border p-3 text-foreground whitespace-pre-wrap">
+                    <div className="bg-surface rounded-xl border border-border p-3 text-foreground whitespace-pre-wrap shadow-xs">
                       {testResult.response_payload}
                     </div>
                   </div>
@@ -360,7 +441,7 @@ export function SpreadsheetConfigView() {
 
         {/* Right 1 Col: Educational Step Guide */}
         <div className="space-y-6">
-          <div className="border-border bg-surface rounded-2xl border p-5 shadow-sm space-y-4">
+          <div className="border-border bg-surface rounded-2xl border p-5 shadow-xs space-y-4">
             <div className="flex items-center gap-2">
               <HelpCircle className="size-4 text-wise-green" />
               <h3 className="text-foreground text-xs font-bold uppercase tracking-wider">
@@ -369,9 +450,21 @@ export function SpreadsheetConfigView() {
             </div>
             <div className="space-y-2.5 text-xs text-foreground-muted leading-relaxed">
               <p>{t("autoreply.spreadsheet.step1")}</p>
-              <p dangerouslySetInnerHTML={{ __html: t("autoreply.spreadsheet.step2") }} />
-              <p dangerouslySetInnerHTML={{ __html: t("autoreply.spreadsheet.step3") }} />
-              <p dangerouslySetInnerHTML={{ __html: t("autoreply.spreadsheet.step4") }} />
+              <p
+                dangerouslySetInnerHTML={{
+                  __html: t("autoreply.spreadsheet.step2"),
+                }}
+              />
+              <p
+                dangerouslySetInnerHTML={{
+                  __html: t("autoreply.spreadsheet.step3"),
+                }}
+              />
+              <p
+                dangerouslySetInnerHTML={{
+                  __html: t("autoreply.spreadsheet.step4"),
+                }}
+              />
             </div>
 
             {/* Required Columns Info */}
@@ -395,69 +488,64 @@ export function SpreadsheetConfigView() {
         </div>
       </div>
 
-      {/* CSV Preview Modal */}
-      {isPreviewOpen && previewResult && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="bg-surface border-border max-w-2xl w-full rounded-2xl border p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-border">
-              <div className="flex items-center gap-2">
-                <Table className="size-5 text-wise-green" />
-                <h3 className="text-foreground text-sm font-bold">
-                  {t("autoreply.spreadsheet.previewTitle")}
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsPreviewOpen(false)}
-                className="text-foreground-muted hover:text-foreground rounded-lg p-1.5"
-              >
-                &times;
-              </button>
+      {/* CSV Preview Modal with shadcn Dialog */}
+      <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+        <DialogContent className="max-w-2xl rounded-2xl p-6">
+          <DialogHeader>
+            <div className="flex items-center gap-2">
+              <TableIcon className="size-5 text-wise-green" />
+              <DialogTitle className="text-foreground text-sm font-bold">
+                {t("autoreply.spreadsheet.previewTitle")}
+              </DialogTitle>
             </div>
+            <DialogDescription className="text-foreground-muted text-xs">
+              Ditemukan total {previewResult?.total_rows || 0} baris dengan{" "}
+              {previewResult?.total_keywords || 0} kata kunci unik.
+            </DialogDescription>
+          </DialogHeader>
 
-            <p className="text-foreground-muted text-xs">
-              Ditemukan total {previewResult.total_rows} baris dengan {previewResult.total_keywords} kata kunci unik.
-            </p>
-
-            <div className="border border-border rounded-xl overflow-hidden">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-muted/40 text-foreground-muted uppercase text-[10px] font-bold border-b border-border">
-                  <tr>
-                    <th className="px-3 py-2">Keyword</th>
-                    <th className="px-3 py-2">Logic</th>
-                    <th className="px-3 py-2">Response</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {previewResult.sample_rows.map((row, idx) => (
-                    <tr key={idx} className="hover:bg-muted/30">
-                      <td className="px-3 py-2 font-mono text-foreground font-semibold">
-                        {row.keyword}
-                      </td>
-                      <td className="px-3 py-2 text-foreground-muted">
-                        {row.logic}
-                      </td>
-                      <td className="px-3 py-2 text-foreground truncate max-w-xs">
-                        {row.response}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            <div className="flex justify-end pt-2">
-              <button
-                type="button"
-                onClick={() => setIsPreviewOpen(false)}
-                className="bg-wise-green text-dark-green hover:brightness-105 rounded-xl px-4 py-1.5 text-xs font-bold transition-all shadow-sm cursor-pointer"
-              >
-                Tutup Pratinjau
-              </button>
-            </div>
+          <div className="border border-border rounded-xl overflow-hidden my-2">
+            <Table className="w-full text-left text-xs">
+              <TableHeader className="bg-muted/40 text-foreground-muted uppercase text-[10px] font-bold border-b border-border">
+                <TableRow>
+                  <TableHead className="px-3 py-2 font-bold">Keyword</TableHead>
+                  <TableHead className="px-3 py-2 font-bold">Logic</TableHead>
+                  <TableHead className="px-3 py-2 font-bold">
+                    Response
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody className="divide-y divide-border">
+                {previewResult?.sample_rows?.map((row, idx) => (
+                  <TableRow key={idx} className="hover:bg-muted/30">
+                    <TableCell className="px-3 py-2 font-mono text-foreground font-semibold">
+                      {row.keyword}
+                    </TableCell>
+                    <TableCell className="px-3 py-2 text-foreground-muted">
+                      {row.logic}
+                    </TableCell>
+                    <TableCell className="px-3 py-2 text-foreground truncate max-w-xs">
+                      {row.response}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
-        </div>
-      )}
+
+          <DialogFooter className="flex justify-end pt-2">
+            <Button
+              type="button"
+              variant="primaryPill"
+              size="sm"
+              onClick={() => setIsPreviewOpen(false)}
+              className="text-xs font-bold"
+            >
+              Tutup Pratinjau
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -1,15 +1,31 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  Edit2,
-  Trash2,
-  Bot,
-  AlertTriangle,
-} from "lucide-react";
+import { Edit2, Trash2, Bot, AlertTriangle, Loader2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 import { AutoreplyRule } from "../types/autoreply.types";
+import { Card } from "@/components/ui/card";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
+import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 
 interface RuleTableProps {
   rules: AutoreplyRule[];
@@ -33,16 +49,19 @@ export function RuleTable({
   const [isDeleting, setIsDeleting] = useState(false);
 
   const confirmDelete = async () => {
-    if (!deleteId) return;
+    if (!deleteId || isDeleting) return;
     setIsDeleting(true);
-    await onDelete(deleteId);
-    setIsDeleting(false);
-    setDeleteId(null);
+    try {
+      await onDelete(deleteId);
+      setDeleteId(null);
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   if (isLoading) {
     return (
-      <div className="border-border bg-surface flex min-h-[260px] sm:min-h-[300px] flex-col items-center justify-center rounded-2xl border p-6 sm:p-8">
+      <div className="border-border bg-surface flex min-h-[260px] sm:min-h-[300px] flex-col items-center justify-center rounded-2xl border p-6 sm:p-8 shadow-xs">
         <div className="border-wise-green h-8 w-8 animate-spin rounded-full border-3 border-t-transparent" />
         <p className="text-foreground-muted mt-3 text-xs font-medium">
           {t("autoreply.rules.loading")}
@@ -53,7 +72,7 @@ export function RuleTable({
 
   if (rules.length === 0) {
     return (
-      <div className="border-border/80 bg-surface flex min-h-[250px] sm:min-h-[280px] flex-col items-center justify-center rounded-2xl border p-6 sm:p-8 text-center shadow-2xs">
+      <div className="border-border/80 bg-surface flex min-h-[250px] sm:min-h-[280px] flex-col items-center justify-center rounded-2xl border p-6 sm:p-8 text-center shadow-xs">
         <div className="rounded-full bg-emerald-500/10 p-3 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400">
           <Bot className="size-7 sm:size-8" />
         </div>
@@ -63,54 +82,74 @@ export function RuleTable({
         <p className="text-foreground-muted mt-1 max-w-md text-xs leading-relaxed">
           {t("autoreply.subtitle")}
         </p>
-        <button
+        <Button
           type="button"
+          variant="primaryPill"
+          size="sm"
           onClick={onCreateNew}
-          className="bg-wise-green text-dark-green hover:brightness-105 mt-4 sm:mt-5 rounded-xl px-4 py-2.5 text-xs font-bold transition-all shadow-xs cursor-pointer inline-flex items-center gap-2"
+          className="mt-4 sm:mt-5 text-xs font-bold"
         >
           {t("autoreply.rules.addRule")}
-        </button>
+        </Button>
       </div>
     );
   }
 
   return (
     <>
-      {/* 1. Desktop Mode: Classic High-Density Table (hidden on mobile, visible on md+) */}
-      <div className="hidden md:block border-border bg-surface overflow-hidden rounded-2xl border shadow-xs">
+      {/* 1. Desktop Mode: High-Density Table with shadcn Primitives */}
+      <Card className="hidden md:block border-border bg-surface overflow-hidden rounded-2xl border p-0 gap-0 shadow-xs">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="border-border bg-muted/40 text-foreground-muted border-b uppercase text-[10px] font-bold tracking-wider">
-              <tr>
-                <th className="px-5 py-3.5">{t("autoreply.rules.table.name")}</th>
-                <th className="px-4 py-3.5">{t("autoreply.rules.table.channel")}</th>
-                <th className="px-4 py-3.5">{t("autoreply.rules.table.keywords")}</th>
-                <th className="px-4 py-3.5">{t("autoreply.rules.table.logic")}</th>
-                <th className="px-4 py-3.5">{t("autoreply.rules.table.replyType")}</th>
-                <th className="px-4 py-3.5">{t("autoreply.rules.table.priority")}</th>
-                <th className="px-4 py-3.5 text-center">{t("autoreply.rules.table.status")}</th>
-                <th className="px-5 py-3.5 text-right">{t("autoreply.rules.table.actions")}</th>
-              </tr>
-            </thead>
-            <tbody className="divide-border divide-y">
+          <Table className="w-full text-left text-xs">
+            <TableHeader className="border-border bg-muted/40 text-foreground-muted border-b uppercase text-[10px] font-bold tracking-wider">
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="px-5 py-3.5 font-bold">
+                  {t("autoreply.rules.table.name")}
+                </TableHead>
+                <TableHead className="px-4 py-3.5 font-bold">
+                  {t("autoreply.rules.table.channel")}
+                </TableHead>
+                <TableHead className="px-4 py-3.5 font-bold">
+                  {t("autoreply.rules.table.keywords")}
+                </TableHead>
+                <TableHead className="px-4 py-3.5 font-bold">
+                  {t("autoreply.rules.table.logic")}
+                </TableHead>
+                <TableHead className="px-4 py-3.5 font-bold">
+                  {t("autoreply.rules.table.replyType")}
+                </TableHead>
+                <TableHead className="px-4 py-3.5 font-bold">
+                  {t("autoreply.rules.table.priority")}
+                </TableHead>
+                <TableHead className="px-4 py-3.5 text-center font-bold">
+                  {t("autoreply.rules.table.status")}
+                </TableHead>
+                <TableHead className="px-5 py-3.5 text-right font-bold">
+                  {t("autoreply.rules.table.actions")}
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="divide-border divide-y">
               {rules.map((rule) => {
                 return (
-                  <tr
+                  <TableRow
                     key={rule.id}
                     className="hover:bg-muted/30 transition-colors group"
                   >
                     {/* Name */}
-                    <td className="px-5 py-3.5 font-semibold text-foreground">
+                    <TableCell className="px-5 py-3.5 font-semibold text-foreground">
                       <div className="flex items-center gap-2">
-                        <span className="truncate max-w-[200px]">{rule.name}</span>
+                        <span className="truncate max-w-[200px]">
+                          {rule.name}
+                        </span>
                       </div>
                       <span className="text-foreground-muted text-[10px] font-mono">
                         {rule.id.slice(0, 10)}...
                       </span>
-                    </td>
+                    </TableCell>
 
                     {/* Channel */}
-                    <td className="px-4 py-3.5 whitespace-nowrap">
+                    <TableCell className="px-4 py-3.5 whitespace-nowrap">
                       <span
                         className={cn(
                           "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase",
@@ -124,10 +163,10 @@ export function RuleTable({
                       >
                         {rule.channel_type}
                       </span>
-                    </td>
+                    </TableCell>
 
                     {/* Keywords */}
-                    <td className="px-4 py-3.5">
+                    <TableCell className="px-4 py-3.5">
                       <div className="flex flex-wrap gap-1 max-w-[260px]">
                         {rule.keywords?.slice(0, 3).map((kw) => (
                           <span
@@ -143,82 +182,83 @@ export function RuleTable({
                           </span>
                         )}
                       </div>
-                    </td>
+                    </TableCell>
 
                     {/* Match Logic */}
-                    <td className="px-4 py-3.5 whitespace-nowrap">
+                    <TableCell className="px-4 py-3.5 whitespace-nowrap">
                       <span className="rounded-md bg-[#eef2eb] px-1.5 py-0.5 text-[10px] font-bold text-foreground-muted dark:bg-[#212320]">
                         {rule.match_logic}
                       </span>
-                    </td>
+                    </TableCell>
 
                     {/* Reply Type & Preview */}
-                    <td className="px-4 py-3.5 max-w-[240px]">
+                    <TableCell className="px-4 py-3.5 max-w-[240px]">
                       <span className="text-[10px] font-bold text-wise-green block">
                         {rule.reply_type}
                       </span>
                       <p className="text-foreground-muted truncate text-[11px]">
                         {rule.reply_type === "TEXT" && (rule.reply_text || "-")}
-                        {rule.reply_type === "MEDIA" && (rule.media_url || "-")}
-                        {rule.reply_type === "FLOW_TRIGGER" && `Flow: ${rule.flow_id}`}
+                        {rule.reply_type === "MEDIA" &&
+                          (rule.media_url || "-")}
+                        {rule.reply_type === "FLOW_TRIGGER" &&
+                          `Flow: ${rule.flow_id}`}
                       </p>
-                    </td>
+                    </TableCell>
 
                     {/* Priority */}
-                    <td className="px-4 py-3.5 whitespace-nowrap font-mono text-foreground-muted">
+                    <TableCell className="px-4 py-3.5 whitespace-nowrap font-mono text-foreground-muted">
                       {rule.priority}
-                    </td>
+                    </TableCell>
 
                     {/* Status Toggle */}
-                    <td className="px-4 py-3.5 text-center whitespace-nowrap">
-                      <button
-                        type="button"
-                        role="switch"
-                        aria-checked={rule.is_active}
-                        aria-label={rule.is_active ? "Nonaktifkan aturan" : "Aktifkan aturan"}
-                        onClick={() => onToggle(rule.id, rule.is_active)}
-                        className={cn(
-                          "relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
-                          rule.is_active ? "bg-wise-green" : "bg-muted",
-                        )}
-                      >
-                        <span
-                          className={cn(
-                            "pointer-events-none inline-block size-4 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out",
-                            rule.is_active ? "translate-x-4" : "translate-x-0",
-                          )}
+                    <TableCell className="px-4 py-3.5 text-center whitespace-nowrap">
+                      <div className="flex justify-center">
+                        <Switch
+                          checked={rule.is_active}
+                          onCheckedChange={() =>
+                            onToggle(rule.id, rule.is_active)
+                          }
+                          aria-label={
+                            rule.is_active
+                              ? "Nonaktifkan aturan"
+                              : "Aktifkan aturan"
+                          }
                         />
-                      </button>
-                    </td>
+                      </div>
+                    </TableCell>
 
                     {/* Actions */}
-                    <td className="px-5 py-3.5 text-right whitespace-nowrap">
+                    <TableCell className="px-5 py-3.5 text-right whitespace-nowrap">
                       <div className="flex items-center justify-end gap-1.5">
-                        <button
+                        <Button
                           type="button"
+                          variant="ghost"
+                          size="icon-xs"
                           onClick={() => onEdit(rule)}
-                          className="text-foreground-muted hover:text-foreground hover:bg-muted rounded-lg p-1.5 transition-colors cursor-pointer"
+                          className="text-foreground-muted hover:text-foreground rounded-lg"
                           title="Edit Aturan"
                         >
                           <Edit2 className="size-3.5" />
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           type="button"
+                          variant="ghost"
+                          size="icon-xs"
                           onClick={() => setDeleteId(rule.id)}
-                          className="text-foreground-muted hover:text-destructive hover:bg-destructive/10 rounded-lg p-1.5 transition-colors cursor-pointer"
+                          className="text-foreground-muted hover:text-destructive rounded-lg"
                           title="Hapus Aturan"
                         >
                           <Trash2 className="size-3.5" />
-                        </button>
+                        </Button>
                       </div>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 );
               })}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
-      </div>
+      </Card>
 
       {/* 2. Mobile Mode: Adaptive Rule Cards Stack (visible on mobile, hidden on md+) */}
       <div className="md:hidden space-y-3">
@@ -295,96 +335,101 @@ export function RuleTable({
             <div className="flex items-center justify-between border-t border-border/80 pt-2.5">
               {/* Status Toggle Switch with Label */}
               <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={rule.is_active}
-                  onClick={() => onToggle(rule.id, rule.is_active)}
+                <Switch
+                  checked={rule.is_active}
+                  onCheckedChange={() => onToggle(rule.id, rule.is_active)}
+                  aria-label={
+                    rule.is_active ? "Nonaktifkan aturan" : "Aktifkan aturan"
+                  }
+                />
+                <span
                   className={cn(
-                    "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
-                    rule.is_active ? "bg-wise-green" : "bg-muted",
+                    "text-xs font-bold",
+                    rule.is_active
+                      ? "text-emerald-600 dark:text-emerald-400"
+                      : "text-foreground-muted",
                   )}
-                  aria-label={rule.is_active ? "Nonaktifkan aturan" : "Aktifkan aturan"}
                 >
-                  <span
-                    className={cn(
-                      "pointer-events-none inline-block size-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out",
-                      rule.is_active ? "translate-x-5" : "translate-x-0",
-                    )}
-                  />
-                </button>
-                <span className={cn(
-                  "text-xs font-bold",
-                  rule.is_active ? "text-emerald-600 dark:text-emerald-400" : "text-foreground-muted"
-                )}>
                   {rule.is_active ? "Aktif" : "Nonaktif"}
                 </span>
               </div>
 
-              {/* Action Buttons (Touch Friendly) */}
+              {/* Action Buttons */}
               <div className="flex items-center gap-1.5">
-                <button
+                <Button
                   type="button"
+                  variant="outline"
+                  size="icon-xs"
                   onClick={() => onEdit(rule)}
-                  className="flex size-9 items-center justify-center rounded-xl border border-border bg-surface text-foreground-secondary hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+                  className="rounded-xl border-border bg-surface text-foreground-secondary hover:text-foreground"
                   title="Edit Aturan"
-                  aria-label="Edit Aturan"
                 >
-                  <Edit2 className="size-4" />
-                </button>
-                <button
+                  <Edit2 className="size-3.5" />
+                </Button>
+                <Button
                   type="button"
+                  variant="outline"
+                  size="icon-xs"
                   onClick={() => setDeleteId(rule.id)}
-                  className="flex size-9 items-center justify-center rounded-xl border border-border bg-surface text-foreground-secondary hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
+                  className="rounded-xl border-border bg-surface text-foreground-secondary hover:text-destructive hover:bg-destructive/10"
                   title="Hapus Aturan"
-                  aria-label="Hapus Aturan"
                 >
-                  <Trash2 className="size-4" />
-                </button>
+                  <Trash2 className="size-3.5" />
+                </Button>
               </div>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Delete Confirmation Modal */}
-      {deleteId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="bg-surface border-border max-w-sm w-full rounded-2xl border p-6 shadow-2xl space-y-4">
+      {/* Delete Confirmation Alert Dialog (Standardized shadcn) */}
+      <AlertDialog
+        open={Boolean(deleteId)}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+      >
+        <AlertDialogContent className="max-w-sm rounded-2xl p-6">
+          <AlertDialogHeader>
             <div className="flex items-center gap-3">
               <div className="rounded-full bg-destructive/10 p-2.5 text-destructive">
                 <AlertTriangle className="size-5" />
               </div>
-              <div>
-                <h4 className="text-foreground text-sm font-bold">
+              <div className="text-left">
+                <AlertDialogTitle className="text-foreground text-sm font-bold">
                   {t("autoreply.rules.deleteConfirmTitle")}
-                </h4>
-                <p className="text-foreground-muted text-xs mt-0.5">
+                </AlertDialogTitle>
+                <AlertDialogDescription className="text-foreground-muted text-xs mt-0.5">
                   {t("autoreply.rules.deleteConfirmDesc")}
-                </p>
+                </AlertDialogDescription>
               </div>
             </div>
-            <div className="flex items-center justify-end gap-2 pt-2">
-              <button
-                type="button"
-                onClick={() => setDeleteId(null)}
-                disabled={isDeleting}
-                className="border-border text-foreground-secondary hover:bg-muted rounded-xl border px-3.5 py-1.5 text-xs font-bold transition-colors"
-              >
-                {t("common.cancel")}
-              </button>
-              <button
-                type="button"
-                onClick={confirmDelete}
-                disabled={isDeleting}
-                className="bg-destructive text-white hover:bg-destructive/90 rounded-xl px-4 py-1.5 text-xs font-bold transition-colors disabled:opacity-50"
-              >
-                {isDeleting ? t("common.deleting") : t("common.delete")}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex items-center justify-end gap-2 pt-2 sm:justify-end">
+            <AlertDialogCancel
+              disabled={isDeleting}
+              className="rounded-xl text-xs font-bold"
+            >
+              {t("common.cancel")}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                confirmDelete();
+              }}
+              disabled={isDeleting}
+              className="bg-destructive text-white hover:bg-destructive/90 rounded-xl text-xs font-bold"
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="size-3.5 animate-spin mr-1" />
+                  <span>{t("common.deleting")}</span>
+                </>
+              ) : (
+                t("common.delete")
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

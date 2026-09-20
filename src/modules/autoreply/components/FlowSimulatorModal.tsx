@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
-  X,
   Send,
   RotateCcw,
   CheckCircle2,
@@ -11,6 +10,15 @@ import {
 } from "lucide-react";
 import { useI18n } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { FlowDefinition } from "../types/flow.types";
 import { flowApi } from "../api/flow.api";
 
@@ -33,6 +41,7 @@ export function FlowSimulatorModal({
   flow,
 }: FlowSimulatorModalProps) {
   const { t } = useI18n();
+  const isMountedRef = useRef(true);
   const [messages, setMessages] = useState<MessageBubble[]>([]);
   const [inputText, setInputText] = useState("");
   const [currentNode, setCurrentNode] = useState<string>("");
@@ -41,6 +50,13 @@ export function FlowSimulatorModal({
   const [isComplete, setIsComplete] = useState(false);
   const [mobileTab, setMobileTab] = useState<"chat" | "variables">("chat");
   const chatBottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   const startSimulation = useCallback(async () => {
     setMessages([]);
@@ -51,7 +67,9 @@ export function FlowSimulatorModal({
 
     try {
       // Find start node from flow graph
-      const startNode = flow.canvas_graph?.nodes?.find((n) => n.type === "start");
+      const startNode = flow.canvas_graph?.nodes?.find(
+        (n) => n.type === "start",
+      );
       const initialNodeId = startNode ? startNode.id : "";
 
       const res = await flowApi.simulateStep({
@@ -61,7 +79,7 @@ export function FlowSimulatorModal({
         variables: {},
       });
 
-      if (res) {
+      if (isMountedRef.current && res) {
         setCurrentNode(res.next_node_id);
         setVariables(res.variables || {});
         setIsComplete(res.is_complete);
@@ -71,23 +89,33 @@ export function FlowSimulatorModal({
               id: "msg_init",
               sender: "bot",
               text: res.reply_text,
-              time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+              time: new Date().toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
             },
           ]);
         }
       }
     } catch {
       // Fallback greeting if simulation backend has not registered flow yet
-      setMessages([
-        {
-          id: "msg_fallback",
-          sender: "bot",
-          text: `Halo! Ini adalah simulasi alur "${flow.name}". Silakan ketik pesan untuk menguji balasan.`,
-          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        },
-      ]);
+      if (isMountedRef.current) {
+        setMessages([
+          {
+            id: "msg_fallback",
+            sender: "bot",
+            text: `Halo! Ini adalah simulasi alur "${flow.name}". Silakan ketik pesan untuk menguji balasan.`,
+            time: new Date().toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+          },
+        ]);
+      }
     } finally {
-      setIsBotTyping(false);
+      if (isMountedRef.current) {
+        setIsBotTyping(false);
+      }
     }
   }, [flow.id, flow.name, flow.canvas_graph]);
 
@@ -101,8 +129,6 @@ export function FlowSimulatorModal({
     chatBottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isBotTyping]);
 
-  if (!isOpen) return null;
-
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     const text = inputText.trim();
@@ -112,7 +138,10 @@ export function FlowSimulatorModal({
       id: `usr_${Date.now()}`,
       sender: "user",
       text,
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      time: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
     };
 
     setMessages((prev) => [...prev, userMsg]);
@@ -127,7 +156,7 @@ export function FlowSimulatorModal({
         variables,
       });
 
-      if (res) {
+      if (isMountedRef.current && res) {
         setCurrentNode(res.next_node_id);
         setVariables(res.variables || {});
         setIsComplete(res.is_complete);
@@ -138,95 +167,96 @@ export function FlowSimulatorModal({
               id: `bot_${Date.now()}`,
               sender: "bot",
               text: res.reply_text,
-              time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+              time: new Date().toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
             },
           ]);
         }
       }
     } catch {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `bot_err_${Date.now()}`,
-          sender: "bot",
-          text: "Pesan Anda diterima dan diproses oleh alur flow.",
-          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        },
-      ]);
+      if (isMountedRef.current) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `bot_err_${Date.now()}`,
+            sender: "bot",
+            text: "Pesan Anda diterima dan diproses oleh alur flow.",
+            time: new Date().toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+          },
+        ]);
+      }
     } finally {
-      setIsBotTyping(false);
+      if (isMountedRef.current) {
+        setIsBotTyping(false);
+      }
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150">
-      <div className="bg-surface border-border flex h-[90vh] sm:h-[85vh] w-full max-w-3xl flex-col rounded-2xl border shadow-2xl dark:bg-[#151714] overflow-hidden">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="bg-surface border-border flex h-[90vh] sm:h-[85vh] w-[95vw] sm:max-w-3xl flex-col rounded-2xl p-0 shadow-2xl dark:bg-[#151714] overflow-hidden gap-0">
         {/* Header */}
-        <div className="border-border flex items-center justify-between border-b px-4 sm:px-6 py-3 sm:py-4 bg-muted/20">
+        <DialogHeader className="border-border flex flex-row items-center justify-between border-b px-4 sm:px-6 py-3 sm:py-4 bg-muted/20 shrink-0">
           <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
             <div className="rounded-full bg-emerald-500/10 p-2 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 shrink-0">
               <Smartphone className="size-4 sm:size-5" />
             </div>
-            <div className="min-w-0">
+            <div className="min-w-0 text-left">
               <div className="flex items-center gap-2">
-                <h3 className="text-foreground text-xs sm:text-sm font-bold truncate">
+                <DialogTitle className="text-foreground text-xs sm:text-sm font-bold truncate">
                   {t("autoreply.flows.simulator.title")}
-                </h3>
+                </DialogTitle>
                 <span className="rounded-full bg-wise-green/20 text-dark-green dark:text-wise-green px-2 py-0.2 text-[9px] font-bold uppercase shrink-0">
                   Live Test
                 </span>
               </div>
-              <p className="text-foreground-muted text-[11px] sm:text-xs truncate max-w-[180px] sm:max-w-sm">
+              <DialogDescription className="text-foreground-muted text-[11px] sm:text-xs truncate max-w-[180px] sm:max-w-sm">
                 {flow.name}
-              </p>
+              </DialogDescription>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-            <button
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 pr-6 sm:pr-8">
+            <Button
               type="button"
+              variant="outline"
+              size="sm"
               onClick={startSimulation}
-              className="text-foreground-secondary hover:text-foreground hover:bg-muted flex items-center gap-1.5 rounded-xl border border-border px-2.5 sm:px-3 py-1.5 text-xs font-bold transition-colors cursor-pointer"
+              className="h-8 gap-1.5 rounded-full px-3 text-xs font-bold"
               title={t("autoreply.flows.simulator.startSimulation")}
             >
               <RotateCcw className="size-3.5" />
-              <span className="hidden sm:inline">{t("autoreply.flows.simulator.startSimulation")}</span>
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="text-foreground-muted hover:text-foreground rounded-lg p-1.5 transition-colors cursor-pointer"
-            >
-              <X className="size-5" />
-            </button>
+              <span className="hidden sm:inline">
+                {t("autoreply.flows.simulator.startSimulation")}
+              </span>
+            </Button>
           </div>
-        </div>
+        </DialogHeader>
 
         {/* Mobile Tab Switcher */}
         <div className="flex md:hidden border-b border-border bg-surface px-3 py-1.5 gap-2 shrink-0">
-          <button
+          <Button
             type="button"
+            variant={mobileTab === "chat" ? "primaryPill" : "ghost"}
+            size="sm"
             onClick={() => setMobileTab("chat")}
-            className={cn(
-              "flex-1 py-1 text-xs font-bold rounded-lg transition-colors cursor-pointer",
-              mobileTab === "chat"
-                ? "bg-wise-green/10 text-dark-green dark:text-wise-green"
-                : "text-foreground-muted hover:text-foreground",
-            )}
+            className="flex-1 text-xs font-bold h-8"
           >
             Obrolan ({messages.length})
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant={mobileTab === "variables" ? "primaryPill" : "ghost"}
+            size="sm"
             onClick={() => setMobileTab("variables")}
-            className={cn(
-              "flex-1 py-1 text-xs font-bold rounded-lg transition-colors cursor-pointer",
-              mobileTab === "variables"
-                ? "bg-wise-green/10 text-dark-green dark:text-wise-green"
-                : "text-foreground-muted hover:text-foreground",
-            )}
+            className="flex-1 text-xs font-bold h-8"
           >
             Variabel ({Object.keys(variables).length})
-          </button>
+          </Button>
         </div>
 
         {/* Content Layout: Chat View on Left, Session Variables on Right */}
@@ -244,7 +274,9 @@ export function FlowSimulatorModal({
                   key={msg.id}
                   className={cn(
                     "flex flex-col max-w-[75%]",
-                    msg.sender === "user" ? "ml-auto items-end" : "mr-auto items-start",
+                    msg.sender === "user"
+                      ? "ml-auto items-end"
+                      : "mr-auto items-start",
                   )}
                 >
                   <div
@@ -290,21 +322,24 @@ export function FlowSimulatorModal({
               onSubmit={handleSendMessage}
               className="border-border bg-surface flex items-center gap-2 border-t p-3 dark:bg-[#131412]"
             >
-              <input
+              <Input
                 type="text"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder={t("autoreply.flows.simulator.inputPlaceholder")}
                 disabled={isBotTyping}
-                className="border-border bg-background text-foreground focus:ring-wise-green/30 focus:border-wise-green flex-1 rounded-xl border px-3.5 py-2 text-xs font-medium focus:ring-2 focus:outline-none"
+                variant="rounded"
+                className="flex-1 text-xs"
               />
-              <button
+              <Button
                 type="submit"
+                variant="primaryPill"
+                size="icon-sm"
                 disabled={!inputText.trim() || isBotTyping}
-                className="bg-wise-green text-dark-green hover:brightness-105 rounded-xl p-2.5 transition-all shadow-sm disabled:opacity-50 cursor-pointer"
+                className="shrink-0"
               >
                 <Send className="size-4" />
-              </button>
+              </Button>
             </form>
           </div>
 
@@ -330,7 +365,7 @@ export function FlowSimulatorModal({
                 Object.entries(variables).map(([k, v]) => (
                   <div
                     key={k}
-                    className="border-border bg-background rounded-xl border p-2.5 space-y-1"
+                    className="border-border bg-background rounded-xl border p-2.5 space-y-1 shadow-xs"
                   >
                     <span className="text-foreground-muted text-[10px] font-mono block truncate">
                       {k}
@@ -344,7 +379,7 @@ export function FlowSimulatorModal({
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

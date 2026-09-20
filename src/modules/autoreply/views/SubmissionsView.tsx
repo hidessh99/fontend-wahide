@@ -2,12 +2,13 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import {
   Inbox,
+  Search,
   Bot,
   Workflow,
   FileSpreadsheet,
-  Search,
   Download,
   RefreshCw,
   FileText,
@@ -18,16 +19,38 @@ import { cn } from "@/lib/utils";
 import { useSubmissions } from "../hooks/useSubmissions";
 import { useFlows } from "../hooks/useFlows";
 import { SubmissionTable } from "../components/SubmissionTable";
-import { SubmissionDrawer } from "../components/SubmissionDrawer";
 import { SubmissionFormList } from "../components/SubmissionFormList";
-import { CreateSubmissionModal } from "../components/CreateSubmissionModal";
-import { FlowSubmission, LinearSubmissionFormInput } from "../types/submission.types";
+import {
+  FlowSubmission,
+  LinearSubmissionFormInput,
+} from "../types/submission.types";
 import { FlowDefinition } from "../types/flow.types";
 import { decompileFlowToLinearForm } from "../utils/formCompiler";
+import { Button } from "@/components/ui/button";
+import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
+
+const CreateSubmissionModal = dynamic(
+  () =>
+    import("../components/CreateSubmissionModal").then(
+      (m) => m.CreateSubmissionModal,
+    ),
+  { ssr: false },
+);
+
+const SubmissionDrawer = dynamic(
+  () =>
+    import("../components/SubmissionDrawer").then((m) => m.SubmissionDrawer),
+  { ssr: false },
+);
 
 export function SubmissionsView() {
   const { t } = useI18n();
-  const { flows, isLoading: isFlowsLoading, fetchFlows, deleteFlow } = useFlows();
+  const {
+    flows,
+    isLoading: isFlowsLoading,
+    fetchFlows,
+    deleteFlow,
+  } = useFlows();
   const {
     submissions,
     total,
@@ -41,10 +64,14 @@ export function SubmissionsView() {
     exportToCsv,
   } = useSubmissions();
 
-  const [activeSubTab, setActiveSubTab] = useState<"forms" | "responses">("forms");
-  const [selectedSubmission, setSelectedSubmission] = useState<FlowSubmission | null>(null);
+  const [activeSubTab, setActiveSubTab] = useState<"forms" | "responses">(
+    "forms",
+  );
+  const [selectedSubmission, setSelectedSubmission] =
+    useState<FlowSubmission | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [editingForm, setEditingForm] = useState<LinearSubmissionFormInput | null>(null);
+  const [editingForm, setEditingForm] =
+    useState<LinearSubmissionFormInput | null>(null);
 
   const handleCreateNew = () => {
     setEditingForm(null);
@@ -57,21 +84,9 @@ export function SubmissionsView() {
       setEditingForm(decompiled);
       setIsCreateModalOpen(true);
     } else {
-      // Form contains complex branching, notify user to edit in Visual Flow
       toast.info(
-        "Formulir ini memiliki percabangan lanjutan (DAG). Silakan edit melalui editor Alur Flow.",
+        "Formulir ini memiliki percabangan kondisional kompleks. Silakan edit lewat Visual Flow Builder.",
       );
-    }
-  };
-
-  const handleViewResponses = (selectedFlowId: string) => {
-    setFlowId(selectedFlowId);
-    setActiveSubTab("responses");
-  };
-
-  const handleDeleteForm = async (id: string) => {
-    if (confirm("Apakah Anda yakin ingin menghapus formulir WhatsApp ini?")) {
-      await deleteFlow(id);
     }
   };
 
@@ -79,16 +94,31 @@ export function SubmissionsView() {
     <div className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6 lg:p-8 pb-12">
       {/* Top Header & Navigation Tabs */}
       <div className="space-y-4">
-        <div>
-          <h1 className="text-foreground text-xl sm:text-2xl font-black tracking-tight">
-            {t("autoreply.submissions.title")}
-          </h1>
-          <p className="text-foreground-muted text-xs sm:text-sm mt-1 max-w-2xl">
-            {t("autoreply.submissions.subtitle")}
-          </p>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-foreground text-xl sm:text-2xl font-black tracking-tight">
+              {t("autoreply.submissions.title")}
+            </h1>
+            <p className="text-foreground-muted text-xs sm:text-sm mt-1 max-w-2xl">
+              {t("autoreply.submissions.subtitle")}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="primaryPill"
+              size="sm"
+              onClick={handleCreateNew}
+              className="gap-2 px-5 text-xs font-bold shadow-xs whitespace-nowrap"
+            >
+              <FileText className="size-4" />
+              <span>{t("autoreply.submissions.createFormBtn")}</span>
+            </Button>
+          </div>
         </div>
 
-        {/* Top Tab Navigation */}
+        {/* Tab Navigation */}
         <div className="border-border flex items-center gap-1.5 sm:gap-2 border-b pb-3 overflow-x-auto scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-4 px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0">
           <Link
             href="/autoreply"
@@ -106,7 +136,7 @@ export function SubmissionsView() {
           </Link>
           <Link
             href="/autoreply/submission"
-            className="flex items-center gap-2 rounded-xl bg-wise-green px-3.5 py-1.5 text-xs font-bold text-dark-green shadow-sm whitespace-nowrap"
+            className="flex items-center gap-2 rounded-xl bg-wise-green px-3.5 py-1.5 text-xs font-bold text-dark-green shadow-xs whitespace-nowrap"
           >
             <Inbox className="size-3.5" />
             <span>{t("autoreply.tabs.submissions")}</span>
@@ -121,64 +151,48 @@ export function SubmissionsView() {
         </div>
       </div>
 
-      {/* Sub-Tab Navigation Switcher */}
-      <div className="border-border flex items-center gap-4 sm:gap-6 border-b">
-        <button
+      {/* Sub-tabs: Daftar Formulir vs Data Masuk */}
+      <div className="border-border bg-muted/40 p-1 flex items-center gap-1 rounded-2xl border w-fit">
+        <Button
           type="button"
+          variant={activeSubTab === "forms" ? "primaryPill" : "ghost"}
+          size="sm"
           onClick={() => setActiveSubTab("forms")}
-          className={cn(
-            "flex items-center gap-2 pb-3 text-xs sm:text-sm font-bold border-b-2 transition-all cursor-pointer",
-            activeSubTab === "forms"
-              ? "border-wise-green text-foreground"
-              : "border-transparent text-foreground-muted hover:text-foreground",
-          )}
+          className="text-xs font-bold h-8"
         >
-          <FileText className="size-4 text-wise-green" />
-          <span>{t("autoreply.submissions.subTabs.forms")}</span>
-          <span className="rounded-full bg-muted text-foreground-muted px-2 py-0.5 text-[10px] font-mono">
-            {flows.length}
-          </span>
-        </button>
-
-        <button
+          {t("autoreply.submissions.subtabs.forms")} ({flows.length})
+        </Button>
+        <Button
           type="button"
+          variant={activeSubTab === "responses" ? "primaryPill" : "ghost"}
+          size="sm"
           onClick={() => setActiveSubTab("responses")}
-          className={cn(
-            "flex items-center gap-2 pb-3 text-xs sm:text-sm font-bold border-b-2 transition-all cursor-pointer",
-            activeSubTab === "responses"
-              ? "border-wise-green text-foreground"
-              : "border-transparent text-foreground-muted hover:text-foreground",
-          )}
+          className="text-xs font-bold h-8"
         >
-          <Inbox className="size-4 text-sky-500" />
-          <span>{t("autoreply.submissions.subTabs.responses")}</span>
-          <span className="rounded-full bg-muted text-foreground-muted px-2 py-0.5 text-[10px] font-mono">
-            {total}
-          </span>
-        </button>
+          {t("autoreply.submissions.subtabs.responses")} ({total})
+        </Button>
       </div>
 
-      {/* VIEW 1: WhatsApp Forms List */}
-      {activeSubTab === "forms" && (
+      {/* Sub-tab Content */}
+      {activeSubTab === "forms" ? (
         <SubmissionFormList
           forms={flows}
           isLoading={isFlowsLoading}
-          onCreateNew={handleCreateNew}
           onEditForm={handleEditForm}
-          onViewResponses={handleViewResponses}
-          onDeleteForm={handleDeleteForm}
+          onDeleteForm={deleteFlow}
+          onViewResponses={(id) => {
+            setFlowId(id);
+            setActiveSubTab("responses");
+          }}
+          onCreateNew={handleCreateNew}
         />
-      )}
-
-      {/* VIEW 2: Form Responses / Leads Table */}
-      {activeSubTab === "responses" && (
+      ) : (
         <div className="space-y-4">
-          {/* Action Toolbar & Filters */}
+          {/* Filter Toolbar */}
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-1 flex-wrap items-center gap-2">
-              {/* Search by Phone or Name */}
-              <div className="border-border bg-surface focus-within:ring-wise-green/30 focus-within:border-wise-green flex flex-1 min-w-[220px] items-center gap-2 rounded-xl border px-3 py-2 text-xs focus-within:ring-2">
-                <Search className="size-3.5 text-foreground-muted" />
+              <div className="border-border bg-surface focus-within:ring-wise-green/30 focus-within:border-wise-green flex flex-1 min-w-[200px] items-center gap-2 rounded-xl border px-3 py-2 text-xs focus-within:ring-2 shadow-2xs">
+                <Search className="size-3.5 text-foreground-muted shrink-0" />
                 <input
                   type="text"
                   value={search}
@@ -189,42 +203,52 @@ export function SubmissionsView() {
               </div>
 
               {/* Flow Filter */}
-              <select
+              <NativeSelect
                 value={flowId}
                 onChange={(e) => setFlowId(e.target.value)}
-                className="border-border bg-surface text-foreground rounded-xl border px-3 py-2 text-xs font-medium focus:outline-none max-w-[200px] truncate"
+                variant="rounded"
+                className="max-w-[200px]"
               >
-                <option value="">{t("autoreply.submissions.filterFlow")}</option>
+                <NativeSelectOption value="">
+                  {t("autoreply.submissions.filterFlow")}
+                </NativeSelectOption>
                 {flows.map((f) => (
-                  <option key={f.id} value={f.id}>
+                  <NativeSelectOption key={f.id} value={f.id}>
                     {f.name}
-                  </option>
+                  </NativeSelectOption>
                 ))}
-              </select>
+              </NativeSelect>
 
               {/* Refresh */}
-              <button
+              <Button
                 type="button"
+                variant="outline"
+                size="icon-sm"
                 onClick={() => fetchSubmissions()}
-                className="border-border bg-surface text-foreground-secondary hover:bg-muted rounded-xl border p-2 transition-colors cursor-pointer"
+                className="rounded-xl border-border bg-surface text-foreground-secondary hover:text-foreground"
                 title="Muat ulang data"
               >
                 <RefreshCw
-                  className={cn("size-3.5", isSubmissionsLoading && "animate-spin")}
+                  className={cn(
+                    "size-3.5",
+                    isSubmissionsLoading && "animate-spin",
+                  )}
                 />
-              </button>
+              </Button>
             </div>
 
             {/* Export CSV Button */}
-            <button
+            <Button
               type="button"
+              variant="outline"
+              size="sm"
               onClick={exportToCsv}
               disabled={submissions.length === 0}
-              className="border-border bg-surface hover:bg-muted text-foreground flex items-center justify-center gap-2 rounded-xl border px-4 py-2 text-xs font-bold transition-all shadow-sm cursor-pointer whitespace-nowrap disabled:opacity-50"
+              className="gap-2 rounded-xl text-xs font-bold"
             >
               <Download className="size-3.5 text-wise-green" />
               <span>{t("autoreply.submissions.exportCsv")}</span>
-            </button>
+            </Button>
           </div>
 
           {/* Submissions Table */}
@@ -237,14 +261,14 @@ export function SubmissionsView() {
         </div>
       )}
 
-      {/* Detail Flyout Drawer */}
+      {/* Detail Flyout Drawer (Lazy Loaded) */}
       <SubmissionDrawer
         submission={selectedSubmission}
         onClose={() => setSelectedSubmission(null)}
         onDelete={deleteSubmission}
       />
 
-      {/* Modal Linear Form Builder */}
+      {/* Modal Linear Form Builder (Lazy Loaded) */}
       <CreateSubmissionModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}

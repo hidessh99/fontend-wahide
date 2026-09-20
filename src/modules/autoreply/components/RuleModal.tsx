@@ -1,14 +1,21 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import {
-  X,
-  Bot,
-  AlertCircle,
-  Tag,
-} from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { Bot, AlertCircle, Tag, Loader2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
+import { Switch } from "@/components/ui/switch";
 import {
   AutoreplyRule,
   ChannelType,
@@ -36,6 +43,7 @@ export function RuleModal({
   const { t } = useI18n();
   const { devices } = useDevices();
   const { flows } = useFlows();
+  const isMountedRef = useRef(true);
 
   const [name, setName] = useState("");
   const [channelType, setChannelType] = useState<ChannelType>("whatsapp");
@@ -51,6 +59,13 @@ export function RuleModal({
   const [isActive, setIsActive] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (editingRule) {
@@ -81,8 +96,6 @@ export function RuleModal({
     setErrorMsg(null);
   }, [editingRule, isOpen, devices]);
 
-  if (!isOpen) return null;
-
   const handleAddKeyword = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" || e.key === ",") {
       e.preventDefault();
@@ -100,6 +113,8 @@ export function RuleModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
     if (!name.trim()) {
       setErrorMsg("Nama aturan wajib diisi");
       return;
@@ -111,7 +126,10 @@ export function RuleModal({
 
     const finalKeywords = [...keywords];
     if (keywordInput.trim()) {
-      const parts = keywordInput.split(",").map((k) => k.trim().toLowerCase()).filter(Boolean);
+      const parts = keywordInput
+        .split(",")
+        .map((k) => k.trim().toLowerCase())
+        .filter(Boolean);
       for (const p of parts) {
         if (!finalKeywords.includes(p)) {
           finalKeywords.push(p);
@@ -151,45 +169,46 @@ export function RuleModal({
       is_active: isActive,
     };
 
-    const success = await onSave(payload);
-    setIsSubmitting(false);
-    if (success) {
-      onClose();
+    try {
+      const success = await onSave(payload);
+      if (success) {
+        onClose();
+      }
+    } finally {
+      if (isMountedRef.current) {
+        setIsSubmitting(false);
+      }
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150">
-      <div className="bg-surface border-border flex max-h-[92vh] sm:max-h-[90vh] w-full max-w-2xl flex-col rounded-2xl border shadow-2xl dark:bg-[#151714]">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="bg-surface border-border flex max-h-[92vh] sm:max-h-[90vh] w-[95vw] sm:max-w-2xl flex-col rounded-2xl p-0 shadow-2xl dark:bg-[#151714] overflow-hidden gap-0">
         {/* Header */}
-        <div className="border-border flex items-center justify-between border-b px-4 py-3 sm:px-6 sm:py-4">
+        <DialogHeader className="border-border flex flex-row items-center justify-between border-b px-4 py-3 sm:px-6 sm:py-4 bg-muted/20 shrink-0">
           <div className="flex items-center gap-2.5 sm:gap-3">
             <div className="rounded-full bg-emerald-500/10 p-2 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400">
               <Bot className="size-5" />
             </div>
             <div>
-              <h3 className="text-foreground text-sm sm:text-base font-bold">
+              <DialogTitle className="text-foreground text-sm sm:text-base font-bold">
                 {editingRule
                   ? t("autoreply.rules.modal.editTitle")
                   : t("autoreply.rules.modal.createTitle")}
-              </h3>
-              <p className="text-foreground-muted text-[11px] sm:text-xs">
+              </DialogTitle>
+              <DialogDescription className="text-foreground-muted text-[11px] sm:text-xs">
                 {t("autoreply.rules.subtitle")}
-              </p>
+              </DialogDescription>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close modal"
-            className="text-foreground-muted hover:text-foreground rounded-lg p-1.5 transition-colors"
-          >
-            <X className="size-5" />
-          </button>
-        </div>
+        </DialogHeader>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-5 space-y-4 sm:space-y-5">
+        <form
+          id="rule-modal-form"
+          onSubmit={handleSubmit}
+          className="flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-5 space-y-4 sm:space-y-5"
+        >
           {errorMsg && (
             <div className="flex items-center gap-2 rounded-xl bg-destructive/10 border border-destructive/20 p-3 text-destructive text-xs font-semibold">
               <AlertCircle className="size-4 shrink-0" />
@@ -202,12 +221,12 @@ export function RuleModal({
             <label className="text-foreground text-xs font-bold">
               {t("autoreply.rules.modal.nameLabel")}
             </label>
-            <input
+            <Input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder={t("autoreply.rules.modal.namePlaceholder")}
-              className="bg-background border-border text-foreground focus:ring-wise-green/30 focus:border-wise-green w-full rounded-xl border px-3.5 py-2.5 text-xs font-medium focus:ring-2 focus:outline-none"
+              variant="rounded"
               required
             />
           </div>
@@ -219,72 +238,84 @@ export function RuleModal({
             </label>
             <div className="grid grid-cols-3 gap-2">
               {(["whatsapp", "waba", "telegram"] as ChannelType[]).map((ch) => (
-                <button
+                <Button
                   key={ch}
                   type="button"
+                  variant={channelType === ch ? "primaryPill" : "outline"}
+                  size="sm"
                   onClick={() => setChannelType(ch)}
                   className={cn(
-                    "flex items-center justify-center gap-2 rounded-xl border py-2 text-xs font-bold transition-all",
-                    channelType === ch
-                      ? "border-wise-green bg-wise-green/10 text-dark-green dark:text-wise-green font-bold shadow-sm"
-                      : "border-border text-foreground-secondary hover:bg-muted",
+                    "w-full capitalize text-xs h-9",
+                    channelType === ch && "shadow-xs font-bold",
                   )}
                 >
-                  <span className="capitalize">{ch}</span>
-                </button>
+                  {ch}
+                </Button>
               ))}
             </div>
           </div>
 
           {/* Device Selector */}
           <div className="space-y-1.5">
-            <label className="text-foreground text-xs font-bold">
+            <label className="text-foreground text-xs font-bold block">
               {t("autoreply.rules.modal.deviceLabel")}
             </label>
-            <select
+            <NativeSelect
               value={deviceId}
               onChange={(e) => setDeviceId(e.target.value)}
-              className="bg-background border-border text-foreground focus:ring-wise-green/30 focus:border-wise-green w-full rounded-xl border px-3.5 py-2.5 text-xs font-medium focus:ring-2 focus:outline-none"
+              variant="rounded"
+              className="w-full"
               required
             >
-              <option value="">{t("autoreply.rules.modal.selectDevice")}</option>
+              <NativeSelectOption value="">
+                {t("autoreply.rules.modal.selectDevice")}
+              </NativeSelectOption>
               {devices.map((d) => (
-                <option key={d.id} value={d.id}>
+                <NativeSelectOption key={d.id} value={d.id}>
                   {d.name || d.phone || d.id} ({d.status})
-                </option>
+                </NativeSelectOption>
               ))}
-            </select>
+            </NativeSelect>
           </div>
 
           {/* Match Logic & Priority */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <label className="text-foreground text-xs font-bold">
+              <label className="text-foreground text-xs font-bold block">
                 {t("autoreply.rules.modal.logicLabel")}
               </label>
-              <select
+              <NativeSelect
                 value={matchLogic}
                 onChange={(e) => setMatchLogic(e.target.value as MatchLogic)}
-                className="bg-background border-border text-foreground focus:ring-wise-green/30 focus:border-wise-green w-full rounded-xl border px-3.5 py-2.5 text-xs font-medium focus:ring-2 focus:outline-none"
+                variant="rounded"
+                className="w-full"
               >
-                <option value="CONTAINS">{t("autoreply.rules.logic.CONTAINS")}</option>
-                <option value="EXACT">{t("autoreply.rules.logic.EXACT")}</option>
-                <option value="STARTS_WITH">{t("autoreply.rules.logic.STARTS_WITH")}</option>
-                <option value="REGEX">{t("autoreply.rules.logic.REGEX")}</option>
-              </select>
+                <NativeSelectOption value="CONTAINS">
+                  {t("autoreply.rules.logic.CONTAINS")}
+                </NativeSelectOption>
+                <NativeSelectOption value="EXACT">
+                  {t("autoreply.rules.logic.EXACT")}
+                </NativeSelectOption>
+                <NativeSelectOption value="STARTS_WITH">
+                  {t("autoreply.rules.logic.STARTS_WITH")}
+                </NativeSelectOption>
+                <NativeSelectOption value="REGEX">
+                  {t("autoreply.rules.logic.REGEX")}
+                </NativeSelectOption>
+              </NativeSelect>
             </div>
 
             <div className="space-y-1.5">
               <label className="text-foreground text-xs font-bold">
                 {t("autoreply.rules.modal.priorityLabel")}
               </label>
-              <input
+              <Input
                 type="number"
                 min="0"
                 max="1000"
                 value={priority}
                 onChange={(e) => setPriority(parseInt(e.target.value, 10) || 0)}
-                className="bg-background border-border text-foreground focus:ring-wise-green/30 focus:border-wise-green w-full rounded-xl border px-3.5 py-2.5 text-xs font-medium focus:ring-2 focus:outline-none"
+                variant="rounded"
               />
             </div>
           </div>
@@ -305,7 +336,7 @@ export function RuleModal({
                   <button
                     type="button"
                     onClick={() => handleRemoveKeyword(kw)}
-                    className="text-foreground-muted hover:text-destructive ml-1"
+                    className="text-foreground-muted hover:text-destructive ml-1 cursor-pointer"
                   >
                     &times;
                   </button>
@@ -325,10 +356,15 @@ export function RuleModal({
                   className="bg-transparent text-foreground flex-1 px-1 text-xs font-medium focus:outline-none min-w-[80px]"
                 />
                 {keywordInput.trim() && (
-                  <button
+                  <Button
                     type="button"
+                    variant="primaryPill"
+                    size="xs"
                     onClick={() => {
-                      const parts = keywordInput.split(",").map((k) => k.trim().toLowerCase()).filter(Boolean);
+                      const parts = keywordInput
+                        .split(",")
+                        .map((k) => k.trim().toLowerCase())
+                        .filter(Boolean);
                       const updated = [...keywords];
                       for (const p of parts) {
                         if (!updated.includes(p)) updated.push(p);
@@ -336,10 +372,10 @@ export function RuleModal({
                       setKeywords(updated);
                       setKeywordInput("");
                     }}
-                    className="bg-wise-green text-dark-green rounded-lg px-2.5 py-1 text-[11px] font-bold shrink-0 transition-opacity hover:opacity-90"
+                    className="text-[11px] font-bold shrink-0"
                   >
                     + Tambah
-                  </button>
+                  </Button>
                 )}
               </div>
             </div>
@@ -351,42 +387,33 @@ export function RuleModal({
               {t("autoreply.rules.modal.replyTypeLabel")}
             </label>
             <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
-              <button
+              <Button
                 type="button"
+                variant={replyType === "TEXT" ? "primaryPill" : "outline"}
+                size="sm"
                 onClick={() => setReplyType("TEXT")}
-                className={cn(
-                  "flex items-center justify-center rounded-xl border px-1.5 py-2.5 sm:px-3 text-[11px] sm:text-xs font-bold text-center leading-tight transition-all",
-                  replyType === "TEXT"
-                    ? "border-wise-green bg-wise-green/10 text-dark-green dark:text-wise-green"
-                    : "border-border text-foreground-secondary hover:bg-muted",
-                )}
+                className="text-[11px] sm:text-xs h-9 font-bold"
               >
                 {t("autoreply.rules.replyType.TEXT")}
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
+                variant={replyType === "MEDIA" ? "primaryPill" : "outline"}
+                size="sm"
                 onClick={() => setReplyType("MEDIA")}
-                className={cn(
-                  "flex items-center justify-center rounded-xl border px-1.5 py-2.5 sm:px-3 text-[11px] sm:text-xs font-bold text-center leading-tight transition-all",
-                  replyType === "MEDIA"
-                    ? "border-wise-green bg-wise-green/10 text-dark-green dark:text-wise-green"
-                    : "border-border text-foreground-secondary hover:bg-muted",
-                )}
+                className="text-[11px] sm:text-xs h-9 font-bold"
               >
                 {t("autoreply.rules.replyType.MEDIA")}
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
+                variant={replyType === "FLOW_TRIGGER" ? "primaryPill" : "outline"}
+                size="sm"
                 onClick={() => setReplyType("FLOW_TRIGGER")}
-                className={cn(
-                  "flex items-center justify-center rounded-xl border px-1.5 py-2.5 sm:px-3 text-[11px] sm:text-xs font-bold text-center leading-tight transition-all",
-                  replyType === "FLOW_TRIGGER"
-                    ? "border-wise-green bg-wise-green/10 text-dark-green dark:text-wise-green"
-                    : "border-border text-foreground-secondary hover:bg-muted",
-                )}
+                className="text-[11px] sm:text-xs h-9 font-bold"
               >
                 {t("autoreply.rules.replyType.FLOW_TRIGGER")}
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -401,7 +428,7 @@ export function RuleModal({
                   {replyText.length} karakter
                 </span>
               </div>
-              <textarea
+              <Textarea
                 rows={4}
                 value={replyText}
                 onChange={(e) => setReplyText(e.target.value)}
@@ -420,12 +447,12 @@ export function RuleModal({
                 <label className="text-foreground text-xs font-bold">
                   {t("autoreply.rules.modal.mediaUrlLabel")}
                 </label>
-                <input
+                <Input
                   type="url"
                   value={mediaUrl}
                   onChange={(e) => setMediaUrl(e.target.value)}
                   placeholder={t("autoreply.rules.modal.mediaUrlPlaceholder")}
-                  className="bg-background border-border text-foreground focus:ring-wise-green/30 focus:border-wise-green w-full rounded-xl border px-3.5 py-2.5 text-xs font-medium focus:ring-2 focus:outline-none"
+                  variant="rounded"
                   required
                 />
               </div>
@@ -433,12 +460,12 @@ export function RuleModal({
                 <label className="text-foreground text-xs font-bold">
                   Caption / Keterangan Teks (Opsional)
                 </label>
-                <input
+                <Input
                   type="text"
                   value={replyText}
                   onChange={(e) => setReplyText(e.target.value)}
                   placeholder="Keterangan gambar atau brosur..."
-                  className="bg-background border-border text-foreground focus:ring-wise-green/30 focus:border-wise-green w-full rounded-xl border px-3.5 py-2.5 text-xs font-medium focus:ring-2 focus:outline-none"
+                  variant="rounded"
                 />
               </div>
             </div>
@@ -446,61 +473,75 @@ export function RuleModal({
 
           {replyType === "FLOW_TRIGGER" && (
             <div className="space-y-1.5">
-              <label className="text-foreground text-xs font-bold">
+              <label className="text-foreground text-xs font-bold block">
                 {t("autoreply.rules.modal.flowLabel")}
               </label>
-              <select
+              <NativeSelect
                 value={flowId}
                 onChange={(e) => setFlowId(e.target.value)}
-                className="bg-background border-border text-foreground focus:ring-wise-green/30 focus:border-wise-green w-full rounded-xl border px-3.5 py-2.5 text-xs font-medium focus:ring-2 focus:outline-none"
+                variant="rounded"
+                className="w-full"
                 required
               >
-                <option value="">{t("autoreply.rules.modal.selectFlow")}</option>
+                <NativeSelectOption value="">
+                  {t("autoreply.rules.modal.selectFlow")}
+                </NativeSelectOption>
                 {flows.map((f) => (
-                  <option key={f.id} value={f.id}>
+                  <NativeSelectOption key={f.id} value={f.id}>
                     {f.name} ({f.canvas_graph?.nodes?.length || 0} nodes)
-                  </option>
+                  </NativeSelectOption>
                 ))}
-              </select>
+              </NativeSelect>
             </div>
           )}
 
-          {/* Active Status Checkbox */}
-          <label className="flex items-center gap-2.5 cursor-pointer pt-1">
-            <input
-              type="checkbox"
-              checked={isActive}
-              onChange={(e) => setIsActive(e.target.checked)}
-              className="accent-wise-green size-4 rounded"
-            />
-            <span className="text-foreground text-xs font-bold">
-              {t("autoreply.rules.modal.activeLabel")}
-            </span>
-          </label>
+          {/* Active Status Switch */}
+          <div className="flex items-center justify-between rounded-xl border border-border p-3">
+            <div className="space-y-0.5">
+              <span className="text-foreground text-xs font-bold block">
+                {t("autoreply.rules.modal.activeLabel")}
+              </span>
+              <span className="text-foreground-muted text-[10px]">
+                {isActive
+                  ? "Aturan aktif dan akan merespons pesan masuk"
+                  : "Aturan nonaktif sementara"}
+              </span>
+            </div>
+            <Switch checked={isActive} onCheckedChange={setIsActive} />
+          </div>
         </form>
 
         {/* Footer */}
-        <div className="border-border flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2 border-t px-4 py-3 sm:px-6 sm:py-4">
-          <button
+        <div className="border-border flex items-center justify-end gap-2 border-t p-4 bg-muted/10 shrink-0">
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={onClose}
             disabled={isSubmitting}
-            className="border-border text-foreground-secondary hover:bg-muted flex h-10 sm:h-9 w-full sm:w-auto items-center justify-center rounded-xl border px-4 text-xs font-bold transition-colors"
+            className="rounded-full px-4 text-xs font-bold"
           >
             {t("autoreply.rules.modal.cancel")}
-          </button>
-          <button
-            type="button"
-            onClick={handleSubmit}
+          </Button>
+          <Button
+            type="submit"
+            form="rule-modal-form"
+            variant="primaryPill"
+            size="sm"
             disabled={isSubmitting}
-            className="bg-wise-green text-dark-green hover:brightness-105 flex h-10 sm:h-9 w-full sm:w-auto items-center justify-center rounded-xl px-5 text-xs font-bold transition-all shadow-sm disabled:opacity-50"
+            className="gap-2 px-5 text-xs font-bold"
           >
-            {isSubmitting
-              ? t("autoreply.rules.modal.saving")
-              : t("autoreply.rules.modal.save")}
-          </button>
+            {isSubmitting ? (
+              <>
+                <Loader2 className="size-3.5 animate-spin" />
+                <span>{t("autoreply.rules.modal.saving")}</span>
+              </>
+            ) : (
+              <span>{t("autoreply.rules.modal.save")}</span>
+            )}
+          </Button>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

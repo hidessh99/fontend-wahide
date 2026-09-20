@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
-  X,
   Plus,
   Trash2,
   Tag,
@@ -13,6 +12,17 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n } from "@/lib/i18n/context";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import {
   LinearSubmissionFormInput,
   FormQuestionItem,
@@ -35,6 +45,7 @@ export function CreateSubmissionModal({
   onSuccess,
 }: CreateSubmissionModalProps) {
   const { t } = useI18n();
+  const isMountedRef = useRef(true);
 
   const [name, setName] = useState("");
   const [triggerKeywords, setTriggerKeywords] = useState<string[]>([]);
@@ -43,6 +54,13 @@ export function CreateSubmissionModal({
   const [questions, setQuestions] = useState<FormQuestionItem[]>([]);
   const [completionMessage, setCompletionMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (initialData) {
@@ -68,7 +86,9 @@ export function CreateSubmissionModal({
     } else {
       setName("");
       setTriggerKeywords(["DAFTAR"]);
-      setWelcomeMessage("Halo! Silakan jawab pertanyaan berikut untuk melengkapi formulir:");
+      setWelcomeMessage(
+        "Halo! Silakan jawab pertanyaan berikut untuk melengkapi formulir:",
+      );
       setQuestions([
         {
           id: "q_1",
@@ -83,11 +103,11 @@ export function CreateSubmissionModal({
           type: "phone",
         },
       ]);
-      setCompletionMessage("Terima kasih! Data formulir Anda telah berhasil kami simpan.");
+      setCompletionMessage(
+        "Terima kasih! Data formulir Anda telah berhasil kami simpan.",
+      );
     }
   }, [initialData, isOpen]);
-
-  if (!isOpen) return null;
 
   const handleAddKeyword = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" || e.key === ",") {
@@ -128,7 +148,10 @@ export function CreateSubmissionModal({
 
         const updated = { ...q, [field]: value };
         // Auto slugify variable name if user is typing question and variableName is generic
-        if (field === "question" && (!q.variableName || q.variableName.startsWith("jawaban_"))) {
+        if (
+          field === "question" &&
+          (!q.variableName || q.variableName.startsWith("jawaban_"))
+        ) {
           const autoVar = value
             .toLowerCase()
             .replace(/[^a-z0-9]/g, "_")
@@ -153,6 +176,7 @@ export function CreateSubmissionModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
 
     if (!name.trim()) {
       toast.error("Nama formulir wajib diisi");
@@ -196,41 +220,37 @@ export function CreateSubmissionModal({
       onSuccess();
       onClose();
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal menyimpan formulir";
+      const msg =
+        err instanceof Error ? err.message : "Gagal menyimpan formulir";
       toast.error(msg);
     } finally {
-      setIsSubmitting(false);
+      if (isMountedRef.current) {
+        setIsSubmitting(false);
+      }
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150">
-      <div className="bg-surface border-border flex h-[90vh] sm:h-[85vh] w-full max-w-2xl flex-col rounded-3xl border shadow-2xl dark:bg-[#141613] overflow-hidden">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="border-border bg-surface flex h-[90vh] sm:h-[85vh] w-[95vw] sm:max-w-2xl flex-col rounded-3xl p-0 shadow-2xl dark:bg-[#141613] overflow-hidden gap-0">
         {/* Modal Header */}
-        <div className="border-border flex items-center justify-between border-b px-5 py-4 bg-muted/20 shrink-0">
+        <DialogHeader className="border-border flex flex-row items-center justify-between border-b px-5 py-4 bg-muted/20 shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="rounded-xl bg-wise-green/10 text-dark-green dark:text-wise-green p-2">
               <FileText className="size-4 sm:size-5" />
             </div>
             <div>
-              <h3 className="text-foreground text-sm sm:text-base font-bold">
+              <DialogTitle className="text-foreground text-sm sm:text-base font-bold">
                 {initialData
                   ? t("autoreply.submissions.forms.modal.titleEdit")
                   : t("autoreply.submissions.forms.modal.titleCreate")}
-              </h3>
-              <p className="text-foreground-muted text-[11px] sm:text-xs">
+              </DialogTitle>
+              <DialogDescription className="text-foreground-muted text-[11px] sm:text-xs">
                 Rancang formulir tanya-jawab interaktif otomatis di WhatsApp
-              </p>
+              </DialogDescription>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-foreground-muted hover:text-foreground rounded-lg p-1.5 transition-colors cursor-pointer"
-          >
-            <X className="size-5" />
-          </button>
-        </div>
+        </DialogHeader>
 
         {/* Scrollable Form Body */}
         <form
@@ -244,12 +264,14 @@ export function CreateSubmissionModal({
               <label className="text-foreground text-xs font-bold">
                 {t("autoreply.submissions.forms.modal.formName")} *
               </label>
-              <input
+              <Input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder={t("autoreply.submissions.forms.modal.formNamePlaceholder")}
-                className="border-border bg-background text-foreground focus:ring-wise-green/30 focus:border-wise-green w-full rounded-xl border px-3.5 py-2.5 text-xs font-medium focus:ring-2 focus:outline-none"
+                placeholder={t(
+                  "autoreply.submissions.forms.modal.formNamePlaceholder",
+                )}
+                variant="rounded"
                 required
               />
             </div>
@@ -286,7 +308,9 @@ export function CreateSubmissionModal({
                   onKeyDown={handleAddKeyword}
                   placeholder={
                     triggerKeywords.length === 0
-                      ? t("autoreply.submissions.forms.modal.keywordsPlaceholder")
+                      ? t(
+                          "autoreply.submissions.forms.modal.keywordsPlaceholder",
+                        )
                       : "+ kata kunci"
                   }
                   className="bg-transparent text-foreground placeholder:text-foreground-muted flex-1 min-w-[120px] text-xs focus:outline-none px-1"
@@ -299,11 +323,13 @@ export function CreateSubmissionModal({
               <label className="text-foreground text-xs font-bold">
                 {t("autoreply.submissions.forms.modal.welcomeMsg")}
               </label>
-              <textarea
+              <Textarea
                 rows={2}
                 value={welcomeMessage}
                 onChange={(e) => setWelcomeMessage(e.target.value)}
-                placeholder={t("autoreply.submissions.forms.modal.welcomePlaceholder")}
+                placeholder={t(
+                  "autoreply.submissions.forms.modal.welcomePlaceholder",
+                )}
                 className="border-border bg-background text-foreground focus:ring-wise-green/30 focus:border-wise-green w-full rounded-xl border p-3 text-xs font-medium focus:ring-2 focus:outline-none"
               />
             </div>
@@ -315,17 +341,22 @@ export function CreateSubmissionModal({
               <div className="flex items-center gap-2">
                 <HelpCircle className="size-4 text-sky-500" />
                 <h4 className="text-foreground text-xs font-bold">
-                  {t("autoreply.submissions.forms.modal.questionsTitle")} ({questions.length})
+                  {t("autoreply.submissions.forms.modal.questionsTitle")} (
+                  {questions.length})
                 </h4>
               </div>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={handleAddQuestion}
-                className="text-wise-green hover:underline flex items-center gap-1 text-xs font-bold cursor-pointer"
+                className="text-wise-green hover:underline gap-1 text-xs font-bold p-0 h-auto"
               >
                 <Plus className="size-3.5" />
-                <span>{t("autoreply.submissions.forms.modal.addQuestion")}</span>
-              </button>
+                <span>
+                  {t("autoreply.submissions.forms.modal.addQuestion")}
+                </span>
+              </Button>
             </div>
 
             <div className="space-y-3">
@@ -338,26 +369,32 @@ export function CreateSubmissionModal({
                     <span className="rounded-md bg-sky-500/10 text-sky-600 dark:text-sky-400 px-2 py-0.5 text-[10px] font-bold">
                       Pertanyaan #{idx + 1}
                     </span>
-                    <button
+                    <Button
                       type="button"
+                      variant="ghost"
+                      size="icon-xs"
                       onClick={() => handleRemoveQuestion(q.id)}
-                      className="text-foreground-muted hover:text-destructive rounded-lg p-1 transition-colors cursor-pointer"
+                      className="text-foreground-muted hover:text-destructive rounded-lg transition-colors cursor-pointer"
                       title="Hapus pertanyaan ini"
                     >
                       <Trash2 className="size-3.5" />
-                    </button>
+                    </Button>
                   </div>
 
                   <div className="space-y-1">
                     <label className="text-foreground-muted text-[11px] font-medium">
                       {t("autoreply.submissions.forms.modal.questionText")} *
                     </label>
-                    <input
+                    <Input
                       type="text"
                       value={q.question}
-                      onChange={(e) => handleUpdateQuestion(q.id, "question", e.target.value)}
-                      placeholder={t("autoreply.submissions.forms.modal.questionPlaceholder")}
-                      className="border-border bg-background text-foreground focus:ring-wise-green/30 focus:border-wise-green w-full rounded-xl border px-3 py-2 text-xs font-medium focus:ring-2 focus:outline-none"
+                      onChange={(e) =>
+                        handleUpdateQuestion(q.id, "question", e.target.value)
+                      }
+                      placeholder={t(
+                        "autoreply.submissions.forms.modal.questionPlaceholder",
+                      )}
+                      variant="rounded"
                       required
                     />
                   </div>
@@ -367,21 +404,28 @@ export function CreateSubmissionModal({
                       <label className="text-foreground-muted text-[11px] font-medium">
                         {t("autoreply.submissions.forms.modal.varName")}
                       </label>
-                      <input
+                      <Input
                         type="text"
                         value={q.variableName}
                         onChange={(e) =>
-                          handleUpdateQuestion(q.id, "variableName", e.target.value)
+                          handleUpdateQuestion(
+                            q.id,
+                            "variableName",
+                            e.target.value,
+                          )
                         }
-                        placeholder={t("autoreply.submissions.forms.modal.varPlaceholder")}
-                        className="border-border bg-background text-foreground focus:ring-wise-green/30 focus:border-wise-green w-full rounded-xl border px-3 py-2 text-xs font-mono focus:ring-2 focus:outline-none"
+                        placeholder={t(
+                          "autoreply.submissions.forms.modal.varPlaceholder",
+                        )}
+                        className="font-mono"
+                        variant="rounded"
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-foreground-muted text-[11px] font-medium">
+                      <label className="text-foreground-muted text-[11px] font-medium block">
                         {t("autoreply.submissions.forms.modal.valType")}
                       </label>
-                      <select
+                      <NativeSelect
                         value={q.type}
                         onChange={(e) =>
                           handleUpdateQuestion(
@@ -390,21 +434,22 @@ export function CreateSubmissionModal({
                             e.target.value as FormQuestionType,
                           )
                         }
-                        className="border-border bg-background text-foreground focus:ring-wise-green/30 focus:border-wise-green w-full rounded-xl border px-3 py-2 text-xs font-medium focus:ring-2 focus:outline-none"
+                        variant="rounded"
+                        className="w-full"
                       >
-                        <option value="text">
+                        <NativeSelectOption value="text">
                           {t("autoreply.submissions.forms.modal.typeText")}
-                        </option>
-                        <option value="phone">
+                        </NativeSelectOption>
+                        <NativeSelectOption value="phone">
                           {t("autoreply.submissions.forms.modal.typePhone")}
-                        </option>
-                        <option value="email">
+                        </NativeSelectOption>
+                        <NativeSelectOption value="email">
                           {t("autoreply.submissions.forms.modal.typeEmail")}
-                        </option>
-                        <option value="number">
+                        </NativeSelectOption>
+                        <NativeSelectOption value="number">
                           {t("autoreply.submissions.forms.modal.typeNumber")}
-                        </option>
-                      </select>
+                        </NativeSelectOption>
+                      </NativeSelect>
                     </div>
                   </div>
                 </div>
@@ -420,11 +465,13 @@ export function CreateSubmissionModal({
                 {t("autoreply.submissions.forms.modal.completionMsg")}
               </label>
             </div>
-            <textarea
+            <Textarea
               rows={2}
               value={completionMessage}
               onChange={(e) => setCompletionMessage(e.target.value)}
-              placeholder={t("autoreply.submissions.forms.modal.completionPlaceholder")}
+              placeholder={t(
+                "autoreply.submissions.forms.modal.completionPlaceholder",
+              )}
               className="border-border bg-background text-foreground focus:ring-wise-green/30 focus:border-wise-green w-full rounded-xl border p-3 text-xs font-medium focus:ring-2 focus:outline-none"
             />
           </div>
@@ -432,19 +479,23 @@ export function CreateSubmissionModal({
 
         {/* Modal Footer */}
         <div className="border-border flex items-center justify-end gap-3 border-t p-4 bg-muted/10 shrink-0">
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={onClose}
             disabled={isSubmitting}
-            className="text-foreground-secondary hover:text-foreground hover:bg-muted rounded-xl px-4 py-2 text-xs font-bold transition-colors cursor-pointer"
+            className="rounded-full px-4 text-xs font-bold"
           >
             {t("autoreply.submissions.forms.modal.cancel")}
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
             form="submission-form-builder"
+            variant="primaryPill"
+            size="sm"
             disabled={isSubmitting}
-            className="bg-wise-green text-dark-green hover:brightness-105 flex items-center gap-2 rounded-xl px-5 py-2 text-xs font-bold shadow-sm transition-all disabled:opacity-50 cursor-pointer"
+            className="gap-2 px-5 text-xs font-bold"
           >
             {isSubmitting ? (
               <>
@@ -454,9 +505,9 @@ export function CreateSubmissionModal({
             ) : (
               <span>{t("autoreply.submissions.forms.modal.save")}</span>
             )}
-          </button>
+          </Button>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

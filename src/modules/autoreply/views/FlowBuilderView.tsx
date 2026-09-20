@@ -10,9 +10,17 @@ import {
   Tag,
 } from "lucide-react";
 import { useI18n } from "@/lib/i18n/context";
+import dynamic from "next/dynamic";
 import { FlowCanvas } from "../components/FlowCanvas";
 import { NodePropertiesPanel } from "../components/NodePropertiesPanel";
-import { FlowSimulatorModal } from "../components/FlowSimulatorModal";
+
+const FlowSimulatorModal = dynamic(
+  () =>
+    import("../components/FlowSimulatorModal").then(
+      (m) => m.FlowSimulatorModal,
+    ),
+  { ssr: false },
+);
 import {
   FlowDefinition,
   CanvasGraph,

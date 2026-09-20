@@ -4,6 +4,10 @@ import React from "react";
 import { X, Trash2, Sliders } from "lucide-react";
 import { useI18n } from "@/lib/i18n/context";
 import { FlowNode } from "../types/flow.types";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
+import { Button } from "@/components/ui/button";
 
 interface NodePropertiesPanelProps {
   selectedNode: FlowNode | null;
@@ -61,13 +65,15 @@ export function NodePropertiesPanel({
             {data.label || id}
           </span>
         </div>
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon-xs"
           onClick={onClose}
-          className="text-foreground-muted hover:text-foreground rounded-lg p-1.5 transition-colors cursor-pointer"
+          className="text-foreground-muted hover:text-foreground rounded-lg"
         >
           <X className="size-4" />
-        </button>
+        </Button>
       </div>
 
       {/* Property Controls */}
@@ -77,11 +83,11 @@ export function NodePropertiesPanel({
           <label className="text-foreground text-xs font-bold">
             {t("autoreply.flows.builder.properties.label")}
           </label>
-          <input
+          <Input
             type="text"
             value={data.label || ""}
             onChange={(e) => onUpdateNodeData(id, { label: e.target.value })}
-            className="border-border bg-background text-foreground focus:ring-wise-green/30 focus:border-wise-green w-full rounded-xl border px-3 py-2 text-xs font-medium focus:ring-2 focus:outline-none"
+            variant="rounded"
           />
         </div>
 
@@ -91,10 +97,12 @@ export function NodePropertiesPanel({
             <label className="text-foreground text-xs font-bold">
               {t("autoreply.flows.builder.properties.messageText")}
             </label>
-            <textarea
+            <Textarea
               rows={4}
               value={data.message || ""}
-              onChange={(e) => onUpdateNodeData(id, { message: e.target.value })}
+              onChange={(e) =>
+                onUpdateNodeData(id, { message: e.target.value })
+              }
               placeholder="Ketik teks pesan atau pertanyaan bot..."
               className="border-border bg-background text-foreground focus:ring-wise-green/30 focus:border-wise-green w-full rounded-xl border p-3 text-xs font-medium focus:ring-2 focus:outline-none"
             />
@@ -108,35 +116,53 @@ export function NodePropertiesPanel({
               <label className="text-foreground text-xs font-bold">
                 {t("autoreply.flows.builder.properties.variableName")}
               </label>
-              <input
+              <Input
                 type="text"
                 value={data.variableName || ""}
                 onChange={(e) =>
-                  onUpdateNodeData(id, { variableName: e.target.value.trim() })
+                  onUpdateNodeData(id, {
+                    variableName: e.target.value.trim(),
+                  })
                 }
-                placeholder={t("autoreply.flows.builder.properties.variablePlaceholder")}
-                className="border-border bg-background text-foreground focus:ring-wise-green/30 focus:border-wise-green w-full rounded-xl border px-3 py-2 text-xs font-medium font-mono focus:ring-2 focus:outline-none"
+                placeholder={t(
+                  "autoreply.flows.builder.properties.variablePlaceholder",
+                )}
+                className="font-mono"
+                variant="rounded"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="text-foreground text-xs font-bold">
+              <label className="text-foreground text-xs font-bold block">
                 {t("autoreply.flows.builder.properties.validationType")}
               </label>
-              <select
+              <NativeSelect
                 value={data.validationType || "any"}
                 onChange={(e) =>
                   onUpdateNodeData(id, {
-                    validationType: e.target.value as "any" | "email" | "number" | "phone",
+                    validationType: e.target.value as
+                      | "any"
+                      | "email"
+                      | "number"
+                      | "phone",
                   })
                 }
-                className="border-border bg-background text-foreground focus:ring-wise-green/30 focus:border-wise-green w-full rounded-xl border px-3 py-2 text-xs font-medium focus:ring-2 focus:outline-none"
+                variant="rounded"
+                className="w-full"
               >
-                <option value="any">{t("autoreply.flows.builder.properties.valAny")}</option>
-                <option value="email">{t("autoreply.flows.builder.properties.valEmail")}</option>
-                <option value="number">{t("autoreply.flows.builder.properties.valNumber")}</option>
-                <option value="phone">{t("autoreply.flows.builder.properties.valPhone")}</option>
-              </select>
+                <NativeSelectOption value="any">
+                  {t("autoreply.flows.builder.properties.valAny")}
+                </NativeSelectOption>
+                <NativeSelectOption value="email">
+                  {t("autoreply.flows.builder.properties.valEmail")}
+                </NativeSelectOption>
+                <NativeSelectOption value="number">
+                  {t("autoreply.flows.builder.properties.valNumber")}
+                </NativeSelectOption>
+                <NativeSelectOption value="phone">
+                  {t("autoreply.flows.builder.properties.valPhone")}
+                </NativeSelectOption>
+              </NativeSelect>
             </div>
           </>
         )}
@@ -148,50 +174,69 @@ export function NodePropertiesPanel({
               <label className="text-foreground text-xs font-bold">
                 {t("autoreply.flows.builder.properties.conditionVariable")}
               </label>
-              <input
+              <Input
                 type="text"
                 value={data.conditionVariable || ""}
                 onChange={(e) =>
-                  onUpdateNodeData(id, { conditionVariable: e.target.value.trim() })
+                  onUpdateNodeData(id, {
+                    conditionVariable: e.target.value.trim(),
+                  })
                 }
                 placeholder="nama_variabel"
-                className="border-border bg-background text-foreground focus:ring-wise-green/30 focus:border-wise-green w-full rounded-xl border px-3 py-2 text-xs font-medium font-mono focus:ring-2 focus:outline-none"
+                className="font-mono"
+                variant="rounded"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="text-foreground text-xs font-bold">
+              <label className="text-foreground text-xs font-bold block">
                 {t("autoreply.flows.builder.properties.conditionOperator")}
               </label>
-              <select
+              <NativeSelect
                 value={data.conditionOperator || "=="}
                 onChange={(e) =>
                   onUpdateNodeData(id, {
-                    conditionOperator: e.target.value as "==" | "!=" | ">" | "<" | "contains",
+                    conditionOperator: e.target.value as
+                      | "=="
+                      | "!="
+                      | ">"
+                      | "<"
+                      | "contains",
                   })
                 }
-                className="border-border bg-background text-foreground focus:ring-wise-green/30 focus:border-wise-green w-full rounded-xl border px-3 py-2 text-xs font-medium focus:ring-2 focus:outline-none"
+                variant="rounded"
+                className="w-full"
               >
-                <option value="==">Sama dengan (==)</option>
-                <option value="!=">Tidak sama (!=)</option>
-                <option value="contains">Mengandung teks</option>
-                <option value=">">Lebih besar (&gt;)</option>
-                <option value="<">Lebih kecil (&lt;)</option>
-              </select>
+                <NativeSelectOption value="==">
+                  Sama dengan (==)
+                </NativeSelectOption>
+                <NativeSelectOption value="!=">
+                  Tidak sama (!=)
+                </NativeSelectOption>
+                <NativeSelectOption value="contains">
+                  Mengandung teks
+                </NativeSelectOption>
+                <NativeSelectOption value=">">
+                  Lebih besar (&gt;)
+                </NativeSelectOption>
+                <NativeSelectOption value="<">
+                  Lebih kecil (&lt;)
+                </NativeSelectOption>
+              </NativeSelect>
             </div>
 
             <div className="space-y-1">
               <label className="text-foreground text-xs font-bold">
                 {t("autoreply.flows.builder.properties.conditionValue")}
               </label>
-              <input
+              <Input
                 type="text"
                 value={data.conditionValue || ""}
                 onChange={(e) =>
                   onUpdateNodeData(id, { conditionValue: e.target.value })
                 }
                 placeholder="nilai pembanding"
-                className="border-border bg-background text-foreground focus:ring-wise-green/30 focus:border-wise-green w-full rounded-xl border px-3 py-2 text-xs font-medium focus:ring-2 focus:outline-none"
+                variant="rounded"
               />
             </div>
           </>
@@ -203,15 +248,17 @@ export function NodePropertiesPanel({
             <label className="text-foreground text-xs font-bold">
               {t("autoreply.flows.builder.properties.delaySeconds")}
             </label>
-            <input
+            <Input
               type="number"
               min="1"
               max="300"
               value={data.delaySeconds || 2}
               onChange={(e) =>
-                onUpdateNodeData(id, { delaySeconds: parseInt(e.target.value, 10) || 1 })
+                onUpdateNodeData(id, {
+                  delaySeconds: parseInt(e.target.value, 10) || 1,
+                })
               }
-              className="border-border bg-background text-foreground focus:ring-wise-green/30 focus:border-wise-green w-full rounded-xl border px-3 py-2 text-xs font-medium focus:ring-2 focus:outline-none"
+              variant="rounded"
             />
           </div>
         )}
@@ -220,27 +267,38 @@ export function NodePropertiesPanel({
         {type === "api_call" && (
           <>
             <div className="space-y-1">
-              <label className="text-foreground text-xs font-bold">URL Webhook API</label>
-              <input
+              <label className="text-foreground text-xs font-bold">
+                URL Webhook API
+              </label>
+              <Input
                 type="url"
                 value={data.apiUrl || ""}
-                onChange={(e) => onUpdateNodeData(id, { apiUrl: e.target.value })}
+                onChange={(e) =>
+                  onUpdateNodeData(id, { apiUrl: e.target.value })
+                }
                 placeholder="https://api.external.com/lead-webhook"
-                className="border-border bg-background text-foreground focus:ring-wise-green/30 focus:border-wise-green w-full rounded-xl border px-3 py-2 text-xs font-medium focus:ring-2 focus:outline-none"
+                variant="rounded"
               />
             </div>
             <div className="space-y-1">
-              <label className="text-foreground text-xs font-bold">HTTP Method</label>
-              <select
+              <label className="text-foreground text-xs font-bold block">
+                HTTP Method
+              </label>
+              <NativeSelect
                 value={data.apiMethod || "POST"}
                 onChange={(e) =>
-                  onUpdateNodeData(id, { apiMethod: e.target.value as "GET" | "POST" })
+                  onUpdateNodeData(id, {
+                    apiMethod: e.target.value as "GET" | "POST",
+                  })
                 }
-                className="border-border bg-background text-foreground focus:ring-wise-green/30 focus:border-wise-green w-full rounded-xl border px-3 py-2 text-xs font-medium focus:ring-2 focus:outline-none"
+                variant="rounded"
+                className="w-full"
               >
-                <option value="POST">POST (JSON Body)</option>
-                <option value="GET">GET</option>
-              </select>
+                <NativeSelectOption value="POST">
+                  POST (JSON Body)
+                </NativeSelectOption>
+                <NativeSelectOption value="GET">GET</NativeSelectOption>
+              </NativeSelect>
             </div>
           </>
         )}
@@ -248,14 +306,16 @@ export function NodePropertiesPanel({
 
       {/* Footer / Delete */}
       <div className="border-border border-t p-4 bg-muted/10">
-        <button
+        <Button
           type="button"
+          variant="destructive"
+          size="sm"
           onClick={() => onDeleteNode(id)}
-          className="border-destructive/30 text-destructive hover:bg-destructive/10 flex w-full items-center justify-center gap-2 rounded-xl border py-2 text-xs font-bold transition-colors cursor-pointer"
+          className="w-full gap-2 rounded-xl text-xs font-bold"
         >
           <Trash2 className="size-3.5" />
           <span>{t("autoreply.flows.builder.properties.deleteNode")}</span>
-        </button>
+        </Button>
       </div>
     </div>
   );

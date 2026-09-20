@@ -8,6 +8,7 @@ import {
 } from "../../types/subscription.types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import {
   Dialog,
   DialogContent,
@@ -207,7 +208,8 @@ export function WebhookLogsTable() {
         </div>
 
         <div className="sm:col-span-3">
-          <select
+          <NativeSelect
+            variant="pill"
             value={filters.event_name || "ALL"}
             onChange={(e) =>
               setFilters((prev) => ({
@@ -216,22 +218,23 @@ export function WebhookLogsTable() {
                 page: 1,
               }))
             }
-            className="border-border bg-background text-foreground h-10 w-full rounded-full border px-3 text-xs font-bold focus:outline-none"
+            className="w-full text-xs font-bold"
           >
-            <option value="ALL">
+            <NativeSelectOption value="ALL">
               {t("subscription.webhookLogs.allEvents")}
-            </option>
-            <option value="message.received">message.received</option>
-            <option value="message.sent">message.sent</option>
-            <option value="message.delivered">message.delivered</option>
-            <option value="message.read">message.read</option>
-            <option value="device.status">device.status</option>
-            <option value="test.ping">test.ping</option>
-          </select>
+            </NativeSelectOption>
+            <NativeSelectOption value="message.received">message.received</NativeSelectOption>
+            <NativeSelectOption value="message.sent">message.sent</NativeSelectOption>
+            <NativeSelectOption value="message.delivered">message.delivered</NativeSelectOption>
+            <NativeSelectOption value="message.read">message.read</NativeSelectOption>
+            <NativeSelectOption value="device.status">device.status</NativeSelectOption>
+            <NativeSelectOption value="test.ping">test.ping</NativeSelectOption>
+          </NativeSelect>
         </div>
 
         <div className="sm:col-span-3">
-          <select
+          <NativeSelect
+            variant="pill"
             value={
               filters.response_status ? String(filters.response_status) : "ALL"
             }
@@ -243,17 +246,17 @@ export function WebhookLogsTable() {
                 page: 1,
               }))
             }
-            className="border-border bg-background text-foreground h-10 w-full rounded-full border px-3 text-xs font-bold focus:outline-none"
+            className="w-full text-xs font-bold"
           >
-            <option value="ALL">
+            <NativeSelectOption value="ALL">
               {t("subscription.webhookLogs.allStatus")}
-            </option>
-            <option value="200">200 OK</option>
-            <option value="400">400 Bad Request</option>
-            <option value="404">404 Not Found</option>
-            <option value="500">500 Server Error</option>
-            <option value="502">502 Bad Gateway</option>
-          </select>
+            </NativeSelectOption>
+            <NativeSelectOption value="200">200 OK</NativeSelectOption>
+            <NativeSelectOption value="400">400 Bad Request</NativeSelectOption>
+            <NativeSelectOption value="404">404 Not Found</NativeSelectOption>
+            <NativeSelectOption value="500">500 Server Error</NativeSelectOption>
+            <NativeSelectOption value="502">502 Bad Gateway</NativeSelectOption>
+          </NativeSelect>
         </div>
       </div>
 
