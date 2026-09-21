@@ -15,6 +15,7 @@ interface TelegramBotListProps {
   onConnectClick: () => void;
   onSync: (id: string) => Promise<void>;
   onDelete: (id: string, name: string) => Promise<void>;
+  onDetail?: (bot: TelegramBot) => void;
   syncingId?: string | null;
   deletingId?: string | null;
   isActionLoading?: boolean;
@@ -26,6 +27,7 @@ export function TelegramBotList({
   onConnectClick,
   onSync,
   onDelete,
+  onDetail,
   syncingId = null,
   deletingId = null,
   isActionLoading = false,
@@ -82,6 +84,7 @@ export function TelegramBotList({
           bot={bot}
           onSync={onSync}
           onDelete={onDelete}
+          onDetail={onDetail}
           isSyncing={syncingId === bot.id}
           isDeleting={deletingId === bot.id}
           disabled={isActionLoading}

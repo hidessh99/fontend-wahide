@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useWABAAccounts } from "../../hooks/useWABAAccounts";
 import { ConnectWABAModal } from "../../components/seller/ConnectWABAModal";
+import { WABAAccountDetailModal } from "../../components/seller/WABAAccountDetailModal";
 import { MetaEmbeddedSignupButton } from "../../components/seller/MetaEmbeddedSignupButton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +17,7 @@ import {
   Zap,
   KeyRound,
   Layers,
+  SlidersHorizontal,
 } from "lucide-react";
 import { WABAAccount } from "../../types/waba.types";
 import { useI18n } from "@/lib/i18n/context";
@@ -33,6 +35,8 @@ export function WABASellerAccountsView() {
   } = useWABAAccounts();
 
   const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
+  const [selectedAccount, setSelectedAccount] = useState<WABAAccount | null>(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [disconnectingId, setDisconnectingId] = useState<string | null>(null);
 
   const handleDisconnect = async (id: string, name: string) => {
@@ -272,7 +276,21 @@ export function WABASellerAccountsView() {
 
                     {/* Aksi */}
                     <td className="py-3.5 px-4 text-right whitespace-nowrap">
-                      <div className="inline-flex items-center gap-1 justify-end">
+                      <div className="inline-flex items-center gap-1.5 justify-end">
+                        {/* Detail & Webhook Action */}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedAccount(account);
+                            setIsDetailModalOpen(true);
+                          }}
+                          className="h-7 px-2 text-[11px] font-semibold gap-1"
+                        >
+                          <SlidersHorizontal className="h-3 w-3" />
+                          <span>Detail & Webhook</span>
+                        </Button>
+
                         {/* Reconnect Action (Re-trigger Meta pop-up) */}
                         <MetaEmbeddedSignupButton
                           onSuccess={fetchAccounts}
@@ -308,6 +326,20 @@ export function WABASellerAccountsView() {
         isOpen={isConnectModalOpen}
         onClose={() => setIsConnectModalOpen(false)}
         onSubmit={connectAccount}
+      />
+
+      {/* Mode 3: WABA Account Detail & Webhook Routing Modal */}
+      <WABAAccountDetailModal
+        account={selectedAccount}
+        isOpen={isDetailModalOpen}
+        onClose={() => {
+          setIsDetailModalOpen(false);
+          setSelectedAccount(null);
+        }}
+        onReconnect={() => {
+          setIsDetailModalOpen(false);
+          setIsConnectModalOpen(true);
+        }}
       />
     </div>
   );

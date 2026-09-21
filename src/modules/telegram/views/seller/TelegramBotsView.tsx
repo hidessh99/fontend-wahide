@@ -3,7 +3,9 @@
 import React, { useState } from "react";
 import { useTelegramBots } from "../../hooks/useTelegramBots";
 import { ConnectTelegramBotModal } from "../../components/seller/ConnectTelegramBotModal";
+import { TelegramBotDetailModal } from "../../components/seller/TelegramBotDetailModal";
 import { TelegramBotList } from "../../components/seller/TelegramBotList";
+import { TelegramBot } from "../../types/telegram.types";
 import { useI18n } from "@/lib/i18n/context";
 import { Button } from "@/components/ui/button";
 import { Bot, Plus, RefreshCw } from "lucide-react";
@@ -21,6 +23,8 @@ export function TelegramBotsView() {
   } = useTelegramBots();
 
   const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
+  const [selectedBot, setSelectedBot] = useState<TelegramBot | null>(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [syncingId, setSyncingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -28,6 +32,11 @@ export function TelegramBotsView() {
     setSyncingId(id);
     await syncWebhook(id);
     setSyncingId(null);
+  };
+
+  const handleDetail = (bot: TelegramBot) => {
+    setSelectedBot(bot);
+    setIsDetailModalOpen(true);
   };
 
   const handleDelete = async (id: string, name: string) => {
@@ -89,6 +98,7 @@ export function TelegramBotsView() {
         onConnectClick={() => setIsConnectModalOpen(true)}
         onSync={handleSync}
         onDelete={handleDelete}
+        onDetail={handleDetail}
         syncingId={syncingId}
         deletingId={deletingId}
         isActionLoading={isActionLoading}
@@ -100,6 +110,18 @@ export function TelegramBotsView() {
         onClose={() => setIsConnectModalOpen(false)}
         onConnect={connectBot}
         isLoading={isActionLoading}
+      />
+
+      {/* Bot Detail & Webhook Routing Modal */}
+      <TelegramBotDetailModal
+        bot={selectedBot}
+        isOpen={isDetailModalOpen}
+        onClose={() => {
+          setIsDetailModalOpen(false);
+          setSelectedBot(null);
+        }}
+        onSync={handleSync}
+        isSyncing={syncingId === selectedBot?.id}
       />
     </div>
   );

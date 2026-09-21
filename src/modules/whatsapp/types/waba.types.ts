@@ -20,6 +20,8 @@ export interface WABAAccount {
   meta_quality_rating: WABAQualityRating;
   meta_messaging_tier: WABAMessagingTier;
   webhook_url?: string | null;
+  webhook_callback_url?: string | null;
+  webhook_verify_token?: string | null;
   created_at: string;
   updated_at?: string;
 }

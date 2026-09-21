@@ -9,6 +9,7 @@ import {
   Zap,
   RefreshCw,
   Trash2,
+  SlidersHorizontal,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -19,6 +20,7 @@ interface TelegramBotCardProps {
   bot: TelegramBot;
   onSync: (id: string) => Promise<void>;
   onDelete: (id: string, name: string) => Promise<void>;
+  onDetail?: (bot: TelegramBot) => void;
   isSyncing?: boolean;
   isDeleting?: boolean;
   disabled?: boolean;
@@ -28,6 +30,7 @@ export function TelegramBotCard({
   bot,
   onSync,
   onDelete,
+  onDetail,
   isSyncing = false,
   isDeleting = false,
   disabled = false,
@@ -112,16 +115,30 @@ export function TelegramBotCard({
 
       {/* Card Actions */}
       <div className="border-border/60 flex items-center justify-between border-t pt-3.5 mt-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onSync(bot.id)}
-          disabled={isSyncing || disabled}
-          className="text-xs font-semibold h-8 rounded-full"
-        >
-          <RefreshCw className={`mr-1.5 size-3 ${isSyncing ? "animate-spin" : ""}`} />
-          <span>{t("telegram.bots.syncWebhook")}</span>
-        </Button>
+        <div className="flex items-center gap-2">
+          {onDetail && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onDetail(bot)}
+              className="text-xs font-semibold h-8 rounded-full gap-1.5"
+            >
+              <SlidersHorizontal className="size-3" />
+              <span>Detail & Webhook</span>
+            </Button>
+          )}
+
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onSync(bot.id)}
+            disabled={isSyncing || disabled}
+            className="text-xs font-semibold h-8 rounded-full text-foreground-secondary hover:text-foreground"
+          >
+            <RefreshCw className={`mr-1.5 size-3 ${isSyncing ? "animate-spin" : ""}`} />
+            <span>{t("telegram.bots.syncWebhook")}</span>
+          </Button>
+        </div>
 
         <Button
           variant="ghost"
