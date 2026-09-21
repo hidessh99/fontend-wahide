@@ -10,6 +10,7 @@ import {
   RefreshCw,
   Trash2,
   SlidersHorizontal,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -37,7 +38,7 @@ export function TelegramBotCard({
 }: TelegramBotCardProps) {
   const { t } = useI18n();
   return (
-    <div className="bg-surface border-border flex flex-col justify-between rounded-2xl border p-5 shadow-xs transition-all duration-150 hover:shadow-md dark:bg-[#151614]">
+    <div className="bg-surface border-border flex flex-col justify-between rounded-2xl border p-5 shadow-xs transition-all duration-150 hover:shadow-md dark:bg-[#151614] overflow-hidden w-full min-w-0">
       <div className="space-y-4">
         {/* Top Bar: Bot Profile & Status */}
         <div className="flex items-start justify-between gap-3">
@@ -114,17 +115,17 @@ export function TelegramBotCard({
       </div>
 
       {/* Card Actions */}
-      <div className="border-border/60 flex items-center justify-between border-t pt-3.5 mt-4">
-        <div className="flex items-center gap-2">
+      <div className="border-border/60 flex items-center justify-between gap-2 border-t pt-3.5 mt-4">
+        <div className="flex items-center gap-1.5 min-w-0 flex-1">
           {onDetail && (
             <Button
               variant="outline"
               size="sm"
               onClick={() => onDetail(bot)}
-              className="text-xs font-semibold h-8 rounded-full gap-1.5"
+              className="text-xs font-semibold h-8 rounded-xl px-3 gap-1.5 flex-1 min-w-0 justify-center hover:bg-muted text-foreground border-border cursor-pointer transition-colors"
             >
-              <SlidersHorizontal className="size-3" />
-              <span>Detail & Webhook</span>
+              <SlidersHorizontal className="size-3 shrink-0 text-sky-500" />
+              <span className="truncate">Detail & Webhook</span>
             </Button>
           )}
 
@@ -133,10 +134,11 @@ export function TelegramBotCard({
             size="sm"
             onClick={() => onSync(bot.id)}
             disabled={isSyncing || disabled}
-            className="text-xs font-semibold h-8 rounded-full text-foreground-secondary hover:text-foreground"
+            title={t("telegram.bots.syncWebhook")}
+            className="text-xs font-semibold h-8 rounded-xl px-2.5 text-foreground-secondary hover:text-foreground shrink-0 gap-1.5 cursor-pointer transition-colors"
           >
-            <RefreshCw className={`mr-1.5 size-3 ${isSyncing ? "animate-spin" : ""}`} />
-            <span>{t("telegram.bots.syncWebhook")}</span>
+            <RefreshCw className={`size-3 text-sky-500 shrink-0 ${isSyncing ? "animate-spin" : ""}`} />
+            <span className="hidden sm:inline">Sync</span>
           </Button>
         </div>
 
@@ -147,9 +149,13 @@ export function TelegramBotCard({
           disabled={isDeleting || disabled}
           aria-label={t("telegram.bots.disconnect")}
           title={t("telegram.bots.disconnect")}
-          className="text-rose-600 hover:bg-rose-50 hover:text-rose-700 dark:hover:bg-rose-950/20 text-xs h-8 rounded-full"
+          className="size-8 p-0 rounded-xl text-rose-500 hover:text-rose-600 hover:bg-rose-500/10 shrink-0 cursor-pointer flex items-center justify-center transition-colors"
         >
-          <Trash2 className="size-3.5" />
+          {isDeleting ? (
+            <Loader2 className="size-3.5 animate-spin" />
+          ) : (
+            <Trash2 className="size-3.5" />
+          )}
         </Button>
       </div>
     </div>

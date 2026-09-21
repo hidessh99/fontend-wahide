@@ -20,6 +20,7 @@ import {
   X,
   FileText,
   Navigation,
+  ExternalLink,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { httpClient } from "@/lib/api/http-client";
@@ -459,10 +460,26 @@ export function OmnichannelComposer({
 
       onSuccess?.();
     } catch (err: unknown) {
-      const msg =
+      const rawMsg =
         err instanceof Error ? err.message : t("common.genericError");
-      setErrorMessage(msg);
-      toast.error(msg);
+
+      const isChatNotFound =
+        rawMsg.toLowerCase().includes("chat not found") ||
+        rawMsg.toLowerCase().includes("belum menekan start") ||
+        rawMsg.toLowerCase().includes("telegram_chat_not_found") ||
+        rawMsg.toLowerCase().includes("telegram_bot_blocked") ||
+        rawMsg.toLowerCase().includes("bot was blocked");
+
+      let userMsg = rawMsg;
+      if (selectedChannel === "TELEGRAM_BOT" && isChatNotFound) {
+        const botName = selectedSender?.identifier || "bot Telegram ini";
+        userMsg = t("omnichannel.composer.teleErrNotStarted", { bot: botName });
+      }
+
+      setErrorMessage(userMsg);
+      toast.error(userMsg, {
+        duration: 7000,
+      });
     } finally {
       setIsSending(false);
     }
@@ -568,9 +585,29 @@ export function OmnichannelComposer({
 
       {/* Error alert */}
       {errorMessage && (
-        <div className="flex items-center gap-2.5 rounded-xl border border-rose-500/20 bg-rose-500/10 p-3.5 text-xs font-medium text-rose-700 dark:text-rose-400">
-          <AlertCircle className="size-4 shrink-0" />
-          <span>{errorMessage}</span>
+        <div className="flex flex-col gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 p-4 text-xs text-rose-700 dark:text-rose-400 animate-fadeIn">
+          <div className="flex items-start gap-2.5 font-medium">
+            <AlertCircle className="size-4 shrink-0 mt-0.5 text-rose-600 dark:text-rose-400" />
+            <div className="flex-1 leading-relaxed">{errorMessage}</div>
+          </div>
+          {selectedChannel === "TELEGRAM_BOT" &&
+            selectedSender &&
+            (errorMessage.includes("START") ||
+              errorMessage.toLowerCase().includes("chat not found")) && (
+              <div className="pl-6.5 pt-1">
+                <a
+                  href={`https://t.me/${selectedSender.identifier.replace(/^@/, "")}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white px-3.5 py-1.5 text-xs font-bold transition-all shadow-xs"
+                >
+                  <Send className="size-3.5" />
+                  <span>
+                    Buka {selectedSender.identifier} & Tekan START ↗
+                  </span>
+                </a>
+              </div>
+            )}
         </div>
       )}
 
@@ -659,7 +696,7 @@ export function OmnichannelComposer({
           </Label>
 
           {selectedChannel === "TELEGRAM_BOT" ? (
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               <div className="relative">
                 <Input
                   type="text"
@@ -671,10 +708,52 @@ export function OmnichannelComposer({
                 />
                 <Bot className="absolute left-3.5 top-3.5 size-4 text-foreground-muted pointer-events-none" />
               </div>
-              <p className="text-[11px] text-muted-foreground flex items-center gap-1">
-                <HelpCircle className="size-3 text-sky-500" />
-                Pengguna dapat menemukan Chat ID melalui bot @userinfobot di Telegram.
-              </p>
+
+              {/* Bot START Action Button & Guide */}
+              {selectedSender?.identifier && (
+                <div className="rounded-2xl border border-sky-500/30 bg-sky-500/5 p-3 sm:p-3.5 space-y-2.5 animate-fadeIn">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <div className="flex size-7 items-center justify-center rounded-lg bg-sky-500/20 text-sky-600 dark:text-sky-400">
+                        <Bot className="size-4" />
+                      </div>
+                      <span className="text-xs font-bold text-foreground">
+                        Izin Chat Telegram Bot
+                      </span>
+                    </div>
+
+                    <a
+                      href={`https://t.me/${selectedSender.identifier.replace(/^@/, "")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-full bg-sky-600 hover:bg-sky-500 text-white px-3.5 py-1.5 text-xs font-bold transition-all shadow-xs cursor-pointer group"
+                    >
+                      <Send className="size-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                      <span>
+                        {t("omnichannel.composer.teleStartButton", {
+                          bot: selectedSender.identifier,
+                        })}
+                      </span>
+                      <ExternalLink className="size-3 opacity-80" />
+                    </a>
+                  </div>
+
+                  <p className="text-[11px] text-foreground-secondary leading-relaxed flex items-start gap-1.5">
+                    <HelpCircle className="size-3.5 text-sky-500 shrink-0 mt-0.5" />
+                    <span>
+                      {t("omnichannel.composer.teleStartHint")} Chat ID dapat dilihat dengan membuka bot{" "}
+                      <a
+                        href="https://t.me/userinfobot"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-mono text-sky-600 hover:underline dark:text-sky-400"
+                      >
+                        @userinfobot
+                      </a>.
+                    </span>
+                  </p>
+                </div>
+              )}
             </div>
           ) : (
             <div className="space-y-1.5">

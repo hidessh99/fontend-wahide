@@ -31,6 +31,7 @@ import {
   Activity,
   CheckCircle2,
   AlertCircle,
+  Info,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -82,10 +83,8 @@ export function TelegramBotDetailModal({
 
   if (!bot) return null;
 
-  const publicCallbackUrl =
-    typeof window !== "undefined"
-      ? `${window.location.origin}/api/v1/telegram/webhook/${bot.id}`
-      : `https://api.wahide.com/api/v1/telegram/webhook/${bot.id}`;
+  const registeredWebhookUrl =
+    bot.webhook_active && bot.webhook_url ? bot.webhook_url : "";
 
   const handleCopy = async (text: string, fieldId: string, label: string) => {
     const success = await copy(text, fieldId);
@@ -169,7 +168,7 @@ export function TelegramBotDetailModal({
                 <Webhook className="size-4 text-sky-600 dark:text-sky-400" />
                 <span>Inbound Webhook (Telegram API → Wahide)</span>
               </div>
-              {bot.webhook_active ? (
+              {registeredWebhookUrl ? (
                 <Badge
                   variant="outline"
                   className="gap-1 border-emerald-500/30 bg-emerald-500/10 text-[10px] font-bold text-emerald-600 dark:text-emerald-400"
@@ -180,18 +179,30 @@ export function TelegramBotDetailModal({
               ) : (
                 <Badge
                   variant="outline"
-                  className="gap-1 border-amber-500/30 bg-amber-500/10 text-[10px] font-bold text-amber-600 dark:text-amber-400"
+                  className="gap-1 border-zinc-500/30 bg-zinc-500/10 text-[10px] font-bold text-muted-foreground"
                 >
-                  <AlertCircle className="size-3" />
-                  <span>Perlu Sinkronisasi</span>
+                  <Info className="size-3" />
+                  <span>Nonaktif (Opsional)</span>
                 </Badge>
               )}
             </div>
 
-            <p className="text-foreground-secondary text-[11px] leading-relaxed">
-              Wahide secara otomatis menerima event percakapan dan pesan masuk
-              dari Telegram Bot API melalui webhook khusus di bawah ini:
-            </p>
+            {registeredWebhookUrl ? (
+              <p className="text-foreground-secondary text-[11px] leading-relaxed">
+                Wahide secara otomatis menerima event percakapan dan pesan masuk
+                dari Telegram Bot API melalui webhook khusus ber-HTTPS di bawah ini:
+              </p>
+            ) : (
+              <div className="rounded-lg border border-sky-500/20 bg-sky-500/5 p-3 text-[11px] text-foreground-secondary leading-relaxed space-y-1">
+                <div className="flex items-center gap-1.5 font-bold text-sky-600 dark:text-sky-400">
+                  <Info className="size-3.5 shrink-0" />
+                  <span>Webhook Tidak Diperlukan untuk Kirim Pesan</span>
+                </div>
+                <p>
+                  Webhook hanya dibutuhkan jika Anda ingin bot <strong>menerima balasan masuk otomatis</strong> dari pelanggan via domain publik ber-HTTPS. Untuk mengirim pesan keluar (seperti via menu Kirim Pesan), bot sudah aktif dan dapat langsung digunakan tanpa webhook.
+                </p>
+              </div>
+            )}
 
             {/* Inbound Callback URL */}
             <div className="space-y-1.5">
@@ -202,25 +213,36 @@ export function TelegramBotDetailModal({
                 <Input
                   variant="rounded"
                   readOnly
-                  value={publicCallbackUrl}
-                  className="font-mono text-xs bg-surface dark:bg-zinc-900"
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() =>
-                    handleCopy(publicCallbackUrl, "callback", "Callback URL")
+                  placeholder={
+                    registeredWebhookUrl
+                      ? ""
+                      : "Belum ada webhook terdaftar (Pesan keluar tetap aktif normal)"
                   }
-                  className="shrink-0 h-9 px-3 gap-1 text-xs font-semibold"
-                >
-                  {copiedField === "callback" ? (
-                    <Check className="size-3.5 text-emerald-600" />
-                  ) : (
-                    <Copy className="size-3.5" />
-                  )}
-                  <span>Salin</span>
-                </Button>
+                  value={registeredWebhookUrl}
+                  className={`font-mono text-xs bg-surface dark:bg-zinc-900 ${
+                    !registeredWebhookUrl
+                      ? "italic text-foreground-muted"
+                      : ""
+                  }`}
+                />
+                {registeredWebhookUrl && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      handleCopy(registeredWebhookUrl, "callback", "Callback URL")
+                    }
+                    className="shrink-0 h-9 px-3 gap-1 text-xs font-semibold"
+                  >
+                    {copiedField === "callback" ? (
+                      <Check className="size-3.5 text-emerald-600" />
+                    ) : (
+                      <Copy className="size-3.5" />
+                    )}
+                    <span>Salin</span>
+                  </Button>
+                )}
               </div>
             </div>
 
@@ -228,7 +250,7 @@ export function TelegramBotDetailModal({
             {onSync && (
               <div className="pt-1 flex items-center justify-between border-t border-border/40">
                 <span className="text-foreground-muted text-[11px]">
-                  Pendaftaran webhook diperbarui secara otomatis dengan sertifikat SSL.
+                  Sinkronisasi hanya diperlukan jika Anda menggunakan domain publik HTTPS.
                 </span>
                 <Button
                   type="button"
