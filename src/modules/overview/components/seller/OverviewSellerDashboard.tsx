@@ -353,7 +353,7 @@ export function UserDashboardOverview({
                         key={day.date}
                         className="flex flex-1 flex-col items-center gap-2"
                       >
-                        <div className="bg-muted/40 relative flex h-40 w-full max-w-[36px] flex-col justify-end overflow-hidden rounded-t-md">
+                        <div className="bg-muted/40 relative flex h-40 w-full max-w-9 flex-col justify-end overflow-hidden rounded-t-md">
                           <div
                             style={{ height: `${barHeightPct}%` }}
                             className="bg-emerald-600 dark:bg-emerald-500 w-full rounded-t-md transition-all duration-500"

@@ -117,7 +117,7 @@ export function OmnichannelChatPreview({
 
           {/* Canvas */}
           <div
-            className="relative min-h-[260px] p-4 flex flex-col justify-end bg-[#efeae2] dark:bg-[#0b141a] transition-colors"
+            className="relative min-h-65 p-4 flex flex-col justify-end bg-[#efeae2] dark:bg-[#0b141a] transition-colors"
             style={{
               backgroundImage:
                 "radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.03) 1px, transparent 1px)",
@@ -180,7 +180,7 @@ export function OmnichannelChatPreview({
                 )}
 
                 {/* Message Body */}
-                <p className="whitespace-pre-wrap text-xs sm:text-sm leading-relaxed break-words">
+                <p className="whitespace-pre-wrap text-xs sm:text-sm leading-relaxed wrap-break-words">
                   {messageText || (
                     <span className="italic text-foreground-muted opacity-70">
                       {t("omnichannel.preview.empty")}
@@ -247,7 +247,7 @@ export function OmnichannelChatPreview({
 
           {/* Canvas */}
           <div
-            className="relative min-h-[260px] p-4 flex flex-col justify-end bg-[#efeae2] dark:bg-[#0b141a]"
+            className="relative min-h-65 p-4 flex flex-col justify-end bg-[#efeae2] dark:bg-[#0b141a]"
             style={{
               backgroundImage:
                 "radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.03) 1px, transparent 1px)",
@@ -291,7 +291,7 @@ export function OmnichannelChatPreview({
                 )}
 
                 {/* Body Content */}
-                <div className="whitespace-pre-wrap text-xs sm:text-sm leading-relaxed break-words">
+                <div className="whitespace-pre-wrap text-xs sm:text-sm leading-relaxed wrap-break-words">
                   {messageText ? (
                     messageText
                   ) : (
@@ -400,7 +400,7 @@ export function OmnichannelChatPreview({
 
         {/* Telegram Canvas */}
         <div
-          className="relative min-h-[260px] p-4 flex flex-col justify-end bg-[#0e1621] dark:bg-[#0e1621] text-white"
+          className="relative min-h-65 p-4 flex flex-col justify-end bg-[#0e1621] dark:bg-[#0e1621] text-white"
           style={{
             backgroundImage:
               "radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04) 1px, transparent 1px)",
@@ -454,7 +454,7 @@ export function OmnichannelChatPreview({
               )}
 
               {/* Message Body with Parse Mode indication */}
-              <div className="text-xs sm:text-sm leading-relaxed whitespace-pre-wrap break-words">
+              <div className="text-xs sm:text-sm leading-relaxed whitespace-pre-wrap wrap-break-words">
                 {messageText ? (
                   parseMode === "HTML" ? (
                     <span>{messageText}</span>
