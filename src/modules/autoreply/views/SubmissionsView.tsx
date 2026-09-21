@@ -84,9 +84,7 @@ export function SubmissionsView() {
       setEditingForm(decompiled);
       setIsCreateModalOpen(true);
     } else {
-      toast.info(
-        "Formulir ini memiliki percabangan kondisional kompleks. Silakan edit lewat Visual Flow Builder.",
-      );
+      toast.info(t("autoreply.submissions.complexDagNotice"));
     }
   };
 
@@ -226,7 +224,7 @@ export function SubmissionsView() {
                 size="icon-sm"
                 onClick={() => fetchSubmissions()}
                 className="rounded-xl border-border bg-surface text-foreground-secondary hover:text-foreground"
-                title="Muat ulang data"
+                title={t("autoreply.submissions.refresh")}
               >
                 <RefreshCw
                   className={cn(

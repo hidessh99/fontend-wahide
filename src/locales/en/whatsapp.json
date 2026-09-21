@@ -390,7 +390,7 @@
     "disconnect": "Disconnect"
   },
   "logs": {
-    "title": "WhatsApp Web Message Logs (Unofficial)",
+    "title": "WhatsApp Web Message Logs",
     "subtitle": "Monitor WhatsApp web socket transmission history, ACK delivery ticks, and failure reports.",
     "reload": "Reload",
     "fallbackError": "Failed to load WhatsApp Web message logs history",

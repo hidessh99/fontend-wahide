@@ -41,7 +41,7 @@ export function SubmissionFormList({
       <div className="border-border bg-surface flex h-64 items-center justify-center rounded-2xl border p-8">
         <div className="border-wise-green h-8 w-8 animate-spin rounded-full border-3 border-t-transparent" />
         <p className="text-foreground-muted ml-3 text-xs font-medium">
-          Memuat daftar formulir WhatsApp...
+          {t("autoreply.submissions.forms.loading")}
         </p>
       </div>
     );
@@ -78,10 +78,12 @@ export function SubmissionFormList({
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-foreground text-sm sm:text-base font-bold">
-            Daftar Formulir WhatsApp
+            {t("autoreply.submissions.forms.listTitle")}
           </h2>
           <p className="text-foreground-muted text-xs">
-            {forms.length} formulir tanya-jawab aktif untuk mengumpulkan prospek pelanggan
+            {t("autoreply.submissions.forms.listSubtitle", {
+              count: forms.length,
+            })}
           </p>
         </div>
         <button
@@ -114,7 +116,8 @@ export function SubmissionFormList({
                       {form.name}
                     </h3>
                     <p className="text-foreground-muted text-[11px] line-clamp-1 mt-0.5">
-                      {form.description || "Formulir pendaftaran interaktif"}
+                      {form.description ||
+                        t("autoreply.submissions.forms.defaultDesc")}
                     </p>
                   </div>
                   <span
@@ -149,7 +152,7 @@ export function SubmissionFormList({
                     ))
                   ) : (
                     <span className="text-foreground-muted text-[10px]">
-                      Tanpa kata kunci
+                      {t("autoreply.submissions.forms.noKeywords")}
                     </span>
                   )}
                 </div>

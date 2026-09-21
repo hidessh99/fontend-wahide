@@ -69,7 +69,7 @@ export function SubmissionTable({
       <div className="border-border bg-surface flex min-h-[300px] flex-col items-center justify-center rounded-2xl border p-8 shadow-xs">
         <div className="border-wise-green h-8 w-8 animate-spin rounded-full border-3 border-t-transparent" />
         <p className="text-foreground-muted mt-3 text-xs font-medium">
-          Memuat data leads submission...
+          {t("autoreply.submissions.table.loading")}
         </p>
       </div>
     );
@@ -81,7 +81,7 @@ export function SubmissionTable({
         <EmptyState
           icon={<Inbox className="size-9 text-wise-green" />}
           title={t("autoreply.submissions.empty")}
-          description="Jawaban formulir yang diisi oleh pelanggan lewat alur flow WhatsApp akan tersimpan otomatis di sini."
+          description={t("autoreply.submissions.emptyDesc")}
         />
       </Card>
     );
@@ -154,7 +154,10 @@ export function SubmissionTable({
                     <TableCell className="px-4 py-3.5 text-foreground font-semibold">
                       <div className="flex items-center gap-1.5">
                         <User className="size-3 text-foreground-muted" />
-                        <span>{subm.sender_name || "Pelanggan"}</span>
+                        <span>
+                          {subm.sender_name ||
+                            t("autoreply.submissions.table.defaultSender")}
+                        </span>
                       </div>
                     </TableCell>
 
@@ -180,7 +183,9 @@ export function SubmissionTable({
                         ))}
                         {answerEntries.length > 2 && (
                           <span className="text-foreground-muted text-[10px] self-center">
-                            +{answerEntries.length - 2} lagi
+                            {t("autoreply.submissions.table.moreAnswers", {
+                              count: answerEntries.length - 2,
+                            })}
                           </span>
                         )}
                       </div>
@@ -198,7 +203,7 @@ export function SubmissionTable({
                           size="icon-xs"
                           onClick={() => onViewDetail(subm)}
                           className="text-foreground-muted hover:text-foreground rounded-lg"
-                          title="Lihat Detail"
+                          title={t("autoreply.submissions.table.viewDetail")}
                         >
                           <Eye className="size-3.5" />
                         </Button>
@@ -208,7 +213,7 @@ export function SubmissionTable({
                           size="icon-xs"
                           onClick={() => setDeleteId(subm.id)}
                           className="text-foreground-muted hover:text-destructive rounded-lg"
-                          title="Hapus Data"
+                          title={t("autoreply.submissions.table.deleteData")}
                         >
                           <Trash2 className="size-3.5" />
                         </Button>

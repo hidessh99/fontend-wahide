@@ -33,7 +33,9 @@ export function useSubmissions() {
       setTotal(res.total);
     } catch (err: unknown) {
       const msg =
-        err instanceof Error ? err.message : t("autoreply.submissions.deleteFailed");
+        err instanceof Error
+          ? err.message
+          : t("autoreply.submissions.fetchFailed");
       setError(msg);
     } finally {
       setIsLoading(false);

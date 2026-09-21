@@ -19,7 +19,7 @@ export const CHANNEL_CONFIGS: Record<OmnichannelChannelType, ChannelMeta> = {
   WHATSMEOW_UNOFFICIAL: {
     id: "WHATSMEOW_UNOFFICIAL",
     label: "WhatsApp Web",
-    badge: "Unofficial",
+    badge: "WA Web",
     description: "Koneksi multi-device WhatsApp Web via scan QR / pairing phone",
     iconName: "Smartphone",
     colorClass: "emerald",

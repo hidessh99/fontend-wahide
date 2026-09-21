@@ -390,7 +390,7 @@
     "disconnect": "Putuskan"
   },
   "logs": {
-    "title": "Log Pesan WhatsApp Web (Unofficial)",
+    "title": "Log Pesan WhatsApp Web",
     "subtitle": "Pantau riwayat transmisi pesan socket web whatsapp, status ACK tanda centang, dan laporan kegagalan.",
     "reload": "Muat Ulang",
     "fallbackError": "Gagal memuat riwayat log pesan WhatsApp Web",

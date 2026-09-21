@@ -5,6 +5,7 @@ import { Edit2, Trash2, Bot, AlertTriangle, Loader2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 import { AutoreplyRule } from "../types/autoreply.types";
+import { getChannelShortLabel } from "@/lib/utils/channel";
 import { Card } from "@/components/ui/card";
 import {
   Table,
@@ -160,7 +161,7 @@ export function RuleTable({
                             "bg-violet-500/10 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400",
                         )}
                       >
-                        {rule.channel_type}
+                        {getChannelShortLabel(rule.channel_type)}
                       </span>
                     </TableCell>
 
@@ -287,7 +288,7 @@ export function RuleTable({
                     "bg-violet-500/10 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400",
                 )}
               >
-                {rule.channel_type}
+                {getChannelShortLabel(rule.channel_type)}
               </span>
             </div>
 

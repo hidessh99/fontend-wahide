@@ -24,6 +24,7 @@ import {
   Mail,
   Send,
 } from "lucide-react";
+import { ChannelBadge } from "@/lib/utils/channel";
 
 interface UserDashboardOverviewProps {
   stats: UserDashboardStats | null;
@@ -441,9 +442,7 @@ export function UserDashboardOverview({
                         <span className="font-mono font-bold text-foreground truncate">
                           {msg.recipient_jid}
                         </span>
-                        <span className="bg-muted/60 text-[10px] px-2 py-0.5 rounded font-bold uppercase text-foreground-secondary">
-                          {msg.channel_type}
-                        </span>
+                        <ChannelBadge channelType={msg.channel_type} />
                       </div>
                       <p className="text-foreground-muted truncate text-[11px] mt-0.5">
                         {msg.message_body || "-"}

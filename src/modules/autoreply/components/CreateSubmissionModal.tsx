@@ -73,7 +73,7 @@ export function CreateSubmissionModal({
           : [
               {
                 id: "q_1",
-                question: "Siapa nama lengkap Anda?",
+                question: t("autoreply.submissions.forms.modal.defaultQ1"),
                 variableName: "nama_lengkap",
                 type: "text",
               },
@@ -81,33 +81,33 @@ export function CreateSubmissionModal({
       );
       setCompletionMessage(
         initialData.completion_message ||
-          "Terima kasih! Data pendaftaran Anda telah kami terima.",
+          t("autoreply.submissions.forms.modal.defaultCompletion"),
       );
     } else {
       setName("");
       setTriggerKeywords(["DAFTAR"]);
       setWelcomeMessage(
-        "Halo! Silakan jawab pertanyaan berikut untuk melengkapi formulir:",
+        t("autoreply.submissions.forms.modal.defaultWelcome"),
       );
       setQuestions([
         {
           id: "q_1",
-          question: "Siapa nama lengkap Anda?",
+          question: t("autoreply.submissions.forms.modal.defaultQ1"),
           variableName: "nama_lengkap",
           type: "text",
         },
         {
           id: "q_2",
-          question: "Berapa nomor WhatsApp aktif Anda?",
+          question: t("autoreply.submissions.forms.modal.defaultQ2"),
           variableName: "nomor_telepon",
           type: "phone",
         },
       ]);
       setCompletionMessage(
-        "Terima kasih! Data formulir Anda telah berhasil kami simpan.",
+        t("autoreply.submissions.forms.modal.defaultCompletion"),
       );
     }
-  }, [initialData, isOpen]);
+  }, [initialData, isOpen, t]);
 
   const handleAddKeyword = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" || e.key === ",") {
@@ -168,7 +168,7 @@ export function CreateSubmissionModal({
 
   const handleRemoveQuestion = (id: string) => {
     if (questions.length <= 1) {
-      toast.error("Formulir harus memiliki minimal 1 pertanyaan.");
+      toast.error(t("autoreply.submissions.forms.modal.errorMinQuestions"));
       return;
     }
     setQuestions((prev) => prev.filter((q) => q.id !== id));
@@ -179,18 +179,22 @@ export function CreateSubmissionModal({
     if (isSubmitting) return;
 
     if (!name.trim()) {
-      toast.error("Nama formulir wajib diisi");
+      toast.error(t("autoreply.submissions.forms.modal.errorNameRequired"));
       return;
     }
 
     if (triggerKeywords.length === 0) {
-      toast.error("Wajib memiliki minimal 1 kata kunci pemicu");
+      toast.error(t("autoreply.submissions.forms.modal.errorKeywordRequired"));
       return;
     }
 
     for (let i = 0; i < questions.length; i++) {
       if (!questions[i].question.trim()) {
-        toast.error(`Pertanyaan nomor ${i + 1} belum diisi`);
+        toast.error(
+          t("autoreply.submissions.forms.modal.errorQuestionEmpty", {
+            num: i + 1,
+          }),
+        );
         return;
       }
     }
@@ -211,17 +215,19 @@ export function CreateSubmissionModal({
 
       if (initialData?.id) {
         await flowApi.updateFlow(initialData.id, flowPayload);
-        toast.success("Formulir WhatsApp berhasil diperbarui");
+        toast.success(t("autoreply.submissions.forms.modal.updateSuccess"));
       } else {
         await flowApi.createFlow(flowPayload);
-        toast.success("Formulir WhatsApp berhasil dibuat dan aktif");
+        toast.success(t("autoreply.submissions.forms.modal.createSuccess"));
       }
 
       onSuccess();
       onClose();
     } catch (err: unknown) {
       const msg =
-        err instanceof Error ? err.message : "Gagal menyimpan formulir";
+        err instanceof Error
+          ? err.message
+          : t("autoreply.submissions.forms.modal.saveFailed");
       toast.error(msg);
     } finally {
       if (isMountedRef.current) {
@@ -246,7 +252,7 @@ export function CreateSubmissionModal({
                   : t("autoreply.submissions.forms.modal.titleCreate")}
               </DialogTitle>
               <DialogDescription className="text-foreground-muted text-[11px] sm:text-xs">
-                Rancang formulir tanya-jawab interaktif otomatis di WhatsApp
+                {t("autoreply.submissions.forms.modal.desc")}
               </DialogDescription>
             </div>
           </div>
@@ -281,7 +287,7 @@ export function CreateSubmissionModal({
               <label className="text-foreground text-xs font-bold flex items-center justify-between">
                 <span>{t("autoreply.submissions.forms.modal.keywords")} *</span>
                 <span className="text-foreground-muted text-[10px] font-normal">
-                  Tekan Enter untuk menambah
+                  {t("autoreply.submissions.forms.modal.enterToAdd")}
                 </span>
               </label>
               <div className="border-border bg-background flex flex-wrap items-center gap-1.5 rounded-xl border p-2 min-h-[42px]">
@@ -311,7 +317,9 @@ export function CreateSubmissionModal({
                       ? t(
                           "autoreply.submissions.forms.modal.keywordsPlaceholder",
                         )
-                      : "+ kata kunci"
+                      : t(
+                          "autoreply.submissions.forms.modal.addKeywordPlaceholder",
+                        )
                   }
                   className="bg-transparent text-foreground placeholder:text-foreground-muted flex-1 min-w-[120px] text-xs focus:outline-none px-1"
                 />
@@ -367,7 +375,9 @@ export function CreateSubmissionModal({
                 >
                   <div className="flex items-center justify-between">
                     <span className="rounded-md bg-sky-500/10 text-sky-600 dark:text-sky-400 px-2 py-0.5 text-[10px] font-bold">
-                      Pertanyaan #{idx + 1}
+                      {t("autoreply.submissions.forms.modal.questionNum", {
+                        num: idx + 1,
+                      })}
                     </span>
                     <Button
                       type="button"
@@ -375,7 +385,9 @@ export function CreateSubmissionModal({
                       size="icon-xs"
                       onClick={() => handleRemoveQuestion(q.id)}
                       className="text-foreground-muted hover:text-destructive rounded-lg transition-colors cursor-pointer"
-                      title="Hapus pertanyaan ini"
+                      title={t(
+                        "autoreply.submissions.forms.modal.deleteQuestion",
+                      )}
                     >
                       <Trash2 className="size-3.5" />
                     </Button>

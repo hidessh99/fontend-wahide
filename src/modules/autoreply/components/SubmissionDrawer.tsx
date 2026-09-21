@@ -100,16 +100,17 @@ export function SubmissionDrawer({
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <span className="text-foreground-muted text-[10px] block">
-                      Nama
+                      {t("autoreply.submissions.drawer.name")}
                     </span>
                     <span className="text-foreground font-semibold flex items-center gap-1.5 mt-0.5">
                       <User className="size-3 text-wise-green" />
-                      {submission.sender_name || "Pelanggan"}
+                      {submission.sender_name ||
+                        t("autoreply.submissions.table.defaultSender")}
                     </span>
                   </div>
                   <div>
                     <span className="text-foreground-muted text-[10px] block">
-                      No Handphone
+                      {t("autoreply.submissions.drawer.phone")}
                     </span>
                     <span className="text-foreground font-semibold flex items-center gap-1.5 mt-0.5">
                       <Phone className="size-3 text-wise-green" />
@@ -118,7 +119,7 @@ export function SubmissionDrawer({
                   </div>
                   <div>
                     <span className="text-foreground-muted text-[10px] block">
-                      Flow Terpilih
+                      {t("autoreply.submissions.drawer.flow")}
                     </span>
                     <span className="text-foreground font-semibold flex items-center gap-1.5 mt-0.5 truncate">
                       <Workflow className="size-3 text-wise-green" />
@@ -127,7 +128,7 @@ export function SubmissionDrawer({
                   </div>
                   <div>
                     <span className="text-foreground-muted text-[10px] block">
-                      Waktu Masuk
+                      {t("autoreply.submissions.drawer.date")}
                     </span>
                     <span className="text-foreground font-semibold flex items-center gap-1.5 mt-0.5">
                       <Calendar className="size-3 text-wise-green" />
@@ -151,7 +152,11 @@ export function SubmissionDrawer({
                     className="h-auto p-1 gap-1 text-[11px] font-bold text-foreground-secondary hover:text-wise-green"
                   >
                     <Code className="size-3" />
-                    <span>{showJson ? "Tampilan Kartu" : "Raw JSON"}</span>
+                    <span>
+                      {showJson
+                        ? t("autoreply.submissions.drawer.cardView")
+                        : t("autoreply.submissions.drawer.jsonView")}
+                    </span>
                   </Button>
                 </div>
 
@@ -163,7 +168,7 @@ export function SubmissionDrawer({
                       size="icon-xs"
                       onClick={handleCopyJson}
                       className="absolute top-2.5 right-2.5 bg-surface text-foreground-muted hover:text-foreground cursor-pointer"
-                      title="Salin JSON"
+                      title={t("autoreply.submissions.drawer.copyJson")}
                     >
                       {copied ? (
                         <Check className="size-3 text-wise-green" />
@@ -179,7 +184,7 @@ export function SubmissionDrawer({
                   <div className="space-y-2">
                     {Object.keys(submission.answers || {}).length === 0 ? (
                       <p className="text-foreground-muted text-xs py-4 text-center">
-                        Tidak ada variabel yang tersimpan.
+                        {t("autoreply.submissions.drawer.noAnswers")}
                       </p>
                     ) : (
                       Object.entries(submission.answers || {}).map(
@@ -216,7 +221,7 @@ export function SubmissionDrawer({
                 {isDeleting ? (
                   <>
                     <Loader2 className="size-3.5 animate-spin" />
-                    <span>Menghapus...</span>
+                    <span>{t("common.deleting")}</span>
                   </>
                 ) : (
                   <>
