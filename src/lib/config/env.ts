@@ -27,6 +27,17 @@ const envSchema = z
     NEXT_PUBLIC_TURNSTILE_SITE_KEY: z
       .string()
       .optional()
+      .transform((val) => {
+        // Di mode production build, hindari kebocoran dummy testing key Cloudflare (1x000000...)
+        if (
+          process.env.NODE_ENV === "production" &&
+          val &&
+          val.startsWith("1x000000")
+        ) {
+          return "0x4AAAAAADOgaNLRGt1f6A6-";
+        }
+        return val && val.trim() !== "" ? val : "0x4AAAAAADOgaNLRGt1f6A6-";
+      })
       .default("0x4AAAAAADOgaNLRGt1f6A6-"),
   })
   .transform((data) => {
