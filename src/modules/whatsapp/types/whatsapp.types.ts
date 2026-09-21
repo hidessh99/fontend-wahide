@@ -30,6 +30,8 @@ export interface Device {
   webhookSecret?: string | null;
   webhook_events?: string[] | null;
   webhookEvents?: string[] | null;
+  proxy_url?: string | null;
+  proxyUrl?: string | null;
 }
 
 export interface UpdateDeviceInput {
@@ -37,6 +39,7 @@ export interface UpdateDeviceInput {
   webhook_url?: string | null;
   webhook_secret?: string | null;
   webhook_events?: string[] | null;
+  proxy_url?: string | null;
 }
 
 export interface QREventData {
@@ -49,6 +52,7 @@ export interface QREventData {
 
 export interface CreateDeviceInput {
   push_name: string;
+  proxy_url?: string;
 }
 
 export interface PairDeviceResponse {

@@ -71,6 +71,8 @@ const mapBackendDevice = (d: any): Device => {
     webhookSecret: d.webhook_secret ?? null,
     webhook_events: d.webhook_events ?? null,
     webhookEvents: d.webhook_events ?? null,
+    proxy_url: d.proxy_url ?? null,
+    proxyUrl: d.proxy_url ?? null,
   };
 };
 
@@ -107,6 +109,7 @@ export const whatsappApi = {
       `${WHATSAPP_BASE}/whatsapp/devices`,
       {
         push_name: payload.push_name,
+        proxy_url: payload.proxy_url || undefined,
       },
     );
     const data = res.payload || res;

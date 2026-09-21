@@ -149,6 +149,8 @@ function DeviceListContent({
       push_name?: string;
       webhook_url?: string | null;
       webhook_secret?: string | null;
+      webhook_events?: string[] | null;
+      proxy_url?: string | null;
     },
   ) => {
     const updated = await updateDeviceSettings(id, data);
@@ -432,8 +434,8 @@ function DeviceListContent({
       <AddDeviceModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        onSubmit={async (name) => {
-          await createDevice(name);
+        onSubmit={async (name, proxyUrl) => {
+          await createDevice(name, proxyUrl);
         }}
       />
 

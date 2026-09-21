@@ -47,6 +47,9 @@
   "addModalSubtitle": "Beri nama pengenal untuk perangkat ini (misal: CS Sales 01, Admin Support).",
   "deviceNameLabel": "Nama Perangkat / Label",
   "deviceNamePlaceholder": "Contoh: CS Customer Support 01",
+  "proxyLabel": "Network Proxy (Opsional)",
+  "proxyPlaceholder": "socks5://user:pass@host:port atau http://host:port",
+  "proxyHint": "Mendukung protokol socks5://, socks5h://, http://, atau https://. Kosongkan jika ingin memakai koneksi langsung server.",
   "submitAddDevice": "Buat Slot Perangkat",
   "submittingAddDevice": "Membuat Slot...",
   "cancel": "Batal",
@@ -248,6 +251,23 @@
     "toastWebhookResetFailed": "Gagal mereset webhook perangkat",
     "toastSecretGenerated": "Secret acak baru berhasil dibuat",
     "toastPingFailed": "Gagal mengirim ping: {error}"
+  },
+  "deviceProxy": {
+    "title": "Proxy Jaringan / IP Reputation Shield",
+    "badgeActive": "Proxy Aktif",
+    "badgeDirect": "Koneksi Langsung (Direct IP)",
+    "desc": "Gunakan proxy SOCKS5 atau HTTP per perangkat untuk menyamarkan alamat IP gateway dan mencegah blokir massal oleh Meta.",
+    "urlLabel": "Proxy URL (SOCKS5 / HTTP / HTTPS)",
+    "urlPlaceholder": "socks5://user:pass@host:port atau http://host:port",
+    "urlHint": "Mendukung protokol socks5://, socks5h://, http://, dan https://. Kosongkan untuk menonaktifkan proxy.",
+    "saveBtn": "Simpan Proxy",
+    "savingBtn": "Menyimpan Proxy...",
+    "clearBtn": "Hapus Proxy (Gunakan Direct IP)",
+    "toastSaved": "Pengaturan proxy perangkat berhasil disimpan!",
+    "toastSaveFailed": "Gagal menyimpan proxy perangkat",
+    "toastCleared": "Proxy berhasil dihapus, perangkat kembali ke koneksi langsung!",
+    "errInvalidScheme": "Protokol proxy tidak valid. Harus diawali socks5://, socks5h://, http://, atau https://",
+    "proxyBadge": "Proxy"
   },
   "stats": {
     "title": "Statistik WhatsApp Web",

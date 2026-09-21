@@ -47,6 +47,9 @@
   "addModalSubtitle": "Provide an identifier for this device (e.g. Sales CS 01, Admin Support).",
   "deviceNameLabel": "Device Name / Label",
   "deviceNamePlaceholder": "e.g. CS Customer Support 01",
+  "proxyLabel": "Network Proxy (Optional)",
+  "proxyPlaceholder": "socks5://user:pass@host:port or http://host:port",
+  "proxyHint": "Supports socks5://, socks5h://, http://, or https://. Leave blank to use server direct connection.",
   "submitAddDevice": "Create Device Slot",
   "submittingAddDevice": "Creating Slot...",
   "cancel": "Cancel",
@@ -248,6 +251,23 @@
     "toastWebhookResetFailed": "Failed to reset device webhook",
     "toastSecretGenerated": "New random secret successfully generated",
     "toastPingFailed": "Failed to send ping: {error}"
+  },
+  "deviceProxy": {
+    "title": "Network Proxy / IP Reputation Shield",
+    "badgeActive": "Proxy Active",
+    "badgeDirect": "Direct Connection (Direct IP)",
+    "desc": "Use per-device SOCKS5 or HTTP proxies to mask the gateway IP address and prevent mass IP bans by Meta.",
+    "urlLabel": "Proxy URL (SOCKS5 / HTTP / HTTPS)",
+    "urlPlaceholder": "socks5://user:pass@host:port or http://host:port",
+    "urlHint": "Supports socks5://, socks5h://, http://, and https:// protocols. Leave empty to disable proxy.",
+    "saveBtn": "Save Proxy",
+    "savingBtn": "Saving Proxy...",
+    "clearBtn": "Remove Proxy (Use Direct IP)",
+    "toastSaved": "Device proxy settings saved successfully!",
+    "toastSaveFailed": "Failed to save device proxy",
+    "toastCleared": "Proxy removed successfully, device reverted to direct connection!",
+    "errInvalidScheme": "Invalid proxy protocol. Must start with socks5://, socks5h://, http://, or https://",
+    "proxyBadge": "Proxy"
   },
   "stats": {
     "title": "WhatsApp Web Statistics",

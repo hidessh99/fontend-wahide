@@ -37,6 +37,7 @@ import {
   Info,
   ExternalLink,
   Webhook,
+  Globe,
 } from "lucide-react";
 import { formatDisplayPhone } from "@/lib/phone";
 
@@ -186,6 +187,21 @@ export function DeviceCard({
           className="flex shrink-0 items-center gap-1.5 sm:gap-2"
           onClick={(e) => e.stopPropagation()}
         >
+          {Boolean(device.proxy_url || device.proxyUrl) && (
+            <Tooltip>
+              <TooltipTrigger>
+                <span className="flex items-center gap-1 rounded-full bg-sky-500/10 px-2 py-0.5 text-[10px] font-bold text-sky-800 dark:text-sky-400">
+                  <Globe className="size-2.5" />
+                  <span>{t("whatsapp.deviceProxy.proxyBadge") || "Proxy"}</span>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                <span className="font-mono text-xs">
+                  {device.proxy_url || device.proxyUrl}
+                </span>
+              </TooltipContent>
+            </Tooltip>
+          )}
           {Boolean(device.webhook_url || device.webhookUrl) && (
             <Tooltip>
               <TooltipTrigger>

@@ -48,6 +48,7 @@ import {
   AlertTriangle,
   Radio,
   SlidersHorizontal,
+  Globe,
 } from "lucide-react";
 
 interface DeviceDetailModalProps {
@@ -65,6 +66,7 @@ interface DeviceDetailModalProps {
       webhook_url?: string | null;
       webhook_secret?: string | null;
       webhook_events?: string[] | null;
+      proxy_url?: string | null;
     },
   ) => Promise<unknown>;
 }
@@ -108,6 +110,12 @@ export function DeviceDetailModal({
     error?: string;
   } | null>(null);
 
+  // Network Proxy State
+  const [proxyUrl, setProxyUrl] = useState(
+    device?.proxy_url || device?.proxyUrl || "",
+  );
+  const [isSavingProxy, setIsSavingProxy] = useState(false);
+
   React.useEffect(() => {
     if (device) {
       setWebhookUrl(device.webhook_url || device.webhookUrl || "");
@@ -122,6 +130,7 @@ export function DeviceDetailModal({
           device.webhookEvents || ["message.received", "device.status"],
       );
       setPingResult(null);
+      setProxyUrl(device.proxy_url || device.proxyUrl || "");
     }
   }, [device]);
 
@@ -214,6 +223,73 @@ export function DeviceDetailModal({
       toast.error(msg);
     } finally {
       setIsSavingWebhook(false);
+    }
+  };
+
+  const handleSaveProxy = async () => {
+    if (!device) return;
+    const trimmed = proxyUrl.trim();
+    if (trimmed) {
+      const p = trimmed.toLowerCase();
+      if (
+        !p.startsWith("socks5://") &&
+        !p.startsWith("socks5h://") &&
+        !p.startsWith("http://") &&
+        !p.startsWith("https://")
+      ) {
+        toast.error(t("whatsapp.deviceProxy.errInvalidScheme"));
+        return;
+      }
+    }
+
+    setIsSavingProxy(true);
+    try {
+      const payload = {
+        proxy_url: trimmed || null,
+      };
+      if (onUpdateSettings) {
+        await onUpdateSettings(device.id, payload);
+      } else {
+        await whatsappApi.updateDevice(device.id, payload);
+      }
+      toast.success(
+        trimmed
+          ? t("whatsapp.deviceProxy.toastSaved")
+          : t("whatsapp.deviceProxy.toastCleared"),
+      );
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : t("whatsapp.deviceProxy.toastSaveFailed");
+      toast.error(msg);
+    } finally {
+      setIsSavingProxy(false);
+    }
+  };
+
+  const handleClearProxy = async () => {
+    if (!device) return;
+    setIsSavingProxy(true);
+    try {
+      const payload = {
+        proxy_url: "",
+      };
+      if (onUpdateSettings) {
+        await onUpdateSettings(device.id, payload);
+      } else {
+        await whatsappApi.updateDevice(device.id, payload);
+      }
+      setProxyUrl("");
+      toast.success(t("whatsapp.deviceProxy.toastCleared"));
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : t("whatsapp.deviceProxy.toastSaveFailed");
+      toast.error(msg);
+    } finally {
+      setIsSavingProxy(false);
     }
   };
 
@@ -572,6 +648,117 @@ export function DeviceDetailModal({
                 <span className="text-foreground font-mono font-bold">
                   {formatDateTime(device.createdAt)}
                 </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Proxy Jaringan / Anti-Ban IP Shield */}
+          <div className="border-border bg-muted/20 space-y-4 rounded-xl border p-4 dark:bg-[#10110e]">
+            <div className="flex items-center justify-between">
+              <div className="text-foreground flex items-center gap-2 text-xs font-black tracking-wider uppercase">
+                <Globe className="dark:text-wise-green size-4 text-emerald-700" />
+                <span>{t("whatsapp.deviceProxy.title")}</span>
+              </div>
+              {device.proxy_url ? (
+                <Badge
+                  variant="success"
+                  className="gap-1 py-0.5 text-[10px] font-bold"
+                >
+                  <ShieldCheck className="size-2.5 text-emerald-500" />
+                  {t("whatsapp.deviceProxy.badgeActive")}
+                </Badge>
+              ) : (
+                <Badge
+                  variant="neutral"
+                  className="gap-1 py-0.5 text-[10px] font-bold"
+                >
+                  <Radio className="size-2.5 text-zinc-500" />
+                  {t("whatsapp.deviceProxy.badgeDirect")}
+                </Badge>
+              )}
+            </div>
+
+            <p className="text-foreground-secondary text-[11px] leading-relaxed font-normal">
+              {t("whatsapp.deviceProxy.desc")}
+            </p>
+
+            <div className="space-y-3">
+              <div className="space-y-1.5">
+                <label className="text-foreground-muted block text-[11px] font-bold">
+                  {t("whatsapp.deviceProxy.urlLabel")}
+                </label>
+                <div className="relative">
+                  <Input
+                    variant="rounded"
+                    type="text"
+                    placeholder={t("whatsapp.deviceProxy.urlPlaceholder")}
+                    value={proxyUrl}
+                    onChange={(e) => setProxyUrl(e.target.value)}
+                    className="font-mono text-xs pr-20"
+                  />
+                  {proxyUrl && (
+                    <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() =>
+                          handleCopy(
+                            proxyUrl,
+                            t("whatsapp.deviceProxy.urlLabel"),
+                          )
+                        }
+                        className="h-7 w-7 p-0 text-foreground-muted hover:text-foreground"
+                      >
+                        {copiedField === proxyUrl ? (
+                          <Check className="size-3.5 text-emerald-600" />
+                        ) : (
+                          <Copy className="size-3.5" />
+                        )}
+                      </Button>
+                    </div>
+                  )}
+                </div>
+                <p className="text-foreground-muted text-[10px]">
+                  {t("whatsapp.deviceProxy.urlHint")}
+                </p>
+              </div>
+
+              {/* Action Buttons for Proxy */}
+              <div className="flex items-center gap-2 pt-1">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="primaryPill"
+                  disabled={isSavingProxy}
+                  onClick={handleSaveProxy}
+                  className="gap-1.5 text-xs font-bold"
+                >
+                  {isSavingProxy ? (
+                    <Loader2 className="size-3.5 animate-spin" />
+                  ) : (
+                    <Save className="size-3.5" />
+                  )}
+                  <span>
+                    {isSavingProxy
+                      ? t("whatsapp.deviceProxy.savingBtn")
+                      : t("whatsapp.deviceProxy.saveBtn")}
+                  </span>
+                </Button>
+
+                {(device.proxy_url || proxyUrl) && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    disabled={isSavingProxy}
+                    onClick={handleClearProxy}
+                    className="border-border rounded-full text-xs font-bold text-foreground-muted hover:text-foreground hover:bg-muted/50"
+                  >
+                    <RotateCcw className="size-3.5" />
+                    <span>{t("whatsapp.deviceProxy.clearBtn")}</span>
+                  </Button>
+                )}
               </div>
             </div>
           </div>

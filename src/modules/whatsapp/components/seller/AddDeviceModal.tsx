@@ -13,12 +13,12 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { useI18n } from "@/lib/i18n/context";
-import { Smartphone, Loader2, Plus } from "lucide-react";
+import { Smartphone, Loader2, Plus, Globe } from "lucide-react";
 
 interface AddDeviceModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (name: string) => Promise<unknown>;
+  onSubmit: (name: string, proxyUrl?: string) => Promise<unknown>;
 }
 
 export function AddDeviceModal({
@@ -28,6 +28,7 @@ export function AddDeviceModal({
 }: AddDeviceModalProps) {
   const { t } = useI18n();
   const [name, setName] = useState("");
+  const [proxyUrl, setProxyUrl] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -38,11 +39,25 @@ export function AddDeviceModal({
       return;
     }
 
+    if (proxyUrl.trim()) {
+      const p = proxyUrl.trim().toLowerCase();
+      if (
+        !p.startsWith("socks5://") &&
+        !p.startsWith("socks5h://") &&
+        !p.startsWith("http://") &&
+        !p.startsWith("https://")
+      ) {
+        setError(t("whatsapp.deviceProxy.errInvalidScheme"));
+        return;
+      }
+    }
+
     setIsLoading(true);
     setError(null);
     try {
-      await onSubmit(name.trim());
+      await onSubmit(name.trim(), proxyUrl.trim() || undefined);
       setName("");
+      setProxyUrl("");
       onClose();
     } catch (err: unknown) {
       const msg =
@@ -106,6 +121,32 @@ export function AddDeviceModal({
                 variant="pill"
                 autoFocus
               />
+            </div>
+
+            <div>
+              <Label
+                htmlFor="device-proxy-input"
+                className="text-foreground-secondary mb-1.5 flex items-center gap-1.5 text-xs font-semibold tracking-wider uppercase"
+              >
+                <Globe className="size-3 text-emerald-600 dark:text-emerald-400" />
+                <span>{t("whatsapp.proxyLabel")}</span>
+              </Label>
+              <Input
+                id="device-proxy-input"
+                type="text"
+                value={proxyUrl}
+                onChange={(e) => {
+                  setProxyUrl(e.target.value);
+                  setError(null);
+                }}
+                placeholder={t("whatsapp.proxyPlaceholder")}
+                disabled={isLoading}
+                variant="pill"
+                className="font-mono text-xs"
+              />
+              <p className="text-foreground-muted mt-1.5 text-[11px] leading-tight">
+                {t("whatsapp.proxyHint")}
+              </p>
             </div>
           </div>
 

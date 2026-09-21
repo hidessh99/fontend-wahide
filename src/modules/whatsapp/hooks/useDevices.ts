@@ -69,9 +69,15 @@ export function useDevices() {
     };
   }, []);
 
-  const createDevice = async (name: string): Promise<Device> => {
+  const createDevice = async (
+    name: string,
+    proxyUrl?: string,
+  ): Promise<Device> => {
     try {
-      const newDevice = await whatsappApi.createDevice({ push_name: name });
+      const newDevice = await whatsappApi.createDevice({
+        push_name: name,
+        proxy_url: proxyUrl?.trim() || undefined,
+      });
       setDevices((prev) => [newDevice, ...prev]);
       toast.success(t("whatsapp.toastCreated"));
       return newDevice;
@@ -190,6 +196,8 @@ export function useDevices() {
       push_name?: string;
       webhook_url?: string | null;
       webhook_secret?: string | null;
+      webhook_events?: string[] | null;
+      proxy_url?: string | null;
     },
   ): Promise<Device> => {
     const targetDevice = devices.find((d) => d.id === id);
