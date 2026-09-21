@@ -117,6 +117,9 @@ export const telegramApi = {
       if (query.status && query.status !== "ALL") searchParams.set("status", query.status);
       if (query.start_date?.trim()) searchParams.set("start_date", query.start_date.trim());
       if (query.end_date?.trim()) searchParams.set("end_date", query.end_date.trim());
+      if (query.message_type?.trim() && query.message_type !== "ALL") {
+        searchParams.set("message_type", query.message_type.trim());
+      }
 
       const qs = searchParams.toString();
       const url = `${BASE_URL}/telegram/messages${qs ? `?${qs}` : ""}`;

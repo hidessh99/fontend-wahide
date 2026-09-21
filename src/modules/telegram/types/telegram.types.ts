@@ -63,6 +63,7 @@ export interface TelegramMessageLogQuery {
   status?: "ALL" | TelegramMessageStatus;
   start_date?: string;
   end_date?: string;
+  message_type?: string;
 }
 
 export interface TelegramStats {

@@ -60,6 +60,7 @@ export function useTelegramLogs(initialPage = 1, initialPageSize = 10) {
         search?: string;
         direction?: "ALL" | TelegramMessageDirection;
         status?: "ALL" | TelegramMessageStatus;
+        messageCategory?: "ALL" | "DIRECT" | "OTP" | "BROADCAST";
         botId?: string;
         timeRange?: LogTimeRange;
         customRange?: DateRange;
@@ -83,6 +84,10 @@ export function useTelegramLogs(initialPage = 1, initialPageSize = 10) {
           overrideParams?.status !== undefined
             ? overrideParams.status
             : statusFilter;
+        const targetCategory =
+          overrideParams?.messageCategory !== undefined
+            ? overrideParams.messageCategory
+            : messageCategory;
         const targetBotId =
           overrideParams?.botId !== undefined
             ? overrideParams.botId
@@ -95,13 +100,6 @@ export function useTelegramLogs(initialPage = 1, initialPageSize = 10) {
           overrideParams?.customRange !== undefined
             ? overrideParams.customRange
             : customRange;
-
-        if (messageCategory === "OTP" || messageCategory === "BROADCAST") {
-          setLogs([]);
-          setTotal(0);
-          setFailedTotal(0);
-          return;
-        }
 
         const { startDate, endDate } = resolveDateRangeISO(
           targetTimeRange,
@@ -117,6 +115,7 @@ export function useTelegramLogs(initialPage = 1, initialPageSize = 10) {
               bot_id: targetBotId,
               direction: targetDirection,
               status: targetStatus,
+              message_type: targetCategory !== "ALL" ? targetCategory : undefined,
               start_date: startDate,
               end_date: endDate,
             },
@@ -129,6 +128,7 @@ export function useTelegramLogs(initialPage = 1, initialPageSize = 10) {
                     status: "FAILED",
                     page_size: 1,
                     bot_id: targetBotId,
+                    message_type: targetCategory !== "ALL" ? targetCategory : undefined,
                     start_date: startDate,
                     end_date: endDate,
                   },
