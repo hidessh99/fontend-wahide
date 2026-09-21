@@ -19,6 +19,57 @@ interface ChannelSwitcherPillsProps {
   size?: "sm" | "md";
 }
 
+interface ChannelColorConfig {
+  activeButton: string;
+  activeIcon: string;
+  activeCount: string;
+  activeBadge: string;
+  inactiveIcon: string;
+  inactiveBadge: string;
+}
+
+const CHANNEL_STYLE_MAP: Record<OmnichannelChannelType | "ALL", ChannelColorConfig> = {
+  WHATSMEOW_UNOFFICIAL: {
+    activeButton:
+      "bg-emerald-600 dark:bg-emerald-600 text-white font-black shadow-md shadow-emerald-600/25 ring-2 ring-emerald-500/60 scale-[1.02]",
+    activeIcon: "text-white",
+    activeCount: "bg-white/20 text-white",
+    activeBadge: "bg-white/20 text-white border-transparent",
+    inactiveIcon: "text-emerald-600 dark:text-emerald-400",
+    inactiveBadge:
+      "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20",
+  },
+  META_WABA_OFFICIAL: {
+    activeButton:
+      "bg-blue-600 dark:bg-blue-600 text-white font-black shadow-md shadow-blue-600/25 ring-2 ring-blue-500/60 scale-[1.02]",
+    activeIcon: "text-white",
+    activeCount: "bg-white/20 text-white",
+    activeBadge: "bg-white/20 text-white border-transparent",
+    inactiveIcon: "text-blue-600 dark:text-blue-400",
+    inactiveBadge:
+      "bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-500/20",
+  },
+  TELEGRAM_BOT: {
+    activeButton:
+      "bg-sky-500 dark:bg-sky-500 text-white font-black shadow-md shadow-sky-500/25 ring-2 ring-sky-400/60 scale-[1.02]",
+    activeIcon: "text-white",
+    activeCount: "bg-white/20 text-white",
+    activeBadge: "bg-white/20 text-white border-transparent",
+    inactiveIcon: "text-sky-500 dark:text-sky-400",
+    inactiveBadge:
+      "bg-sky-500/10 text-sky-700 dark:text-sky-400 border border-sky-500/20",
+  },
+  ALL: {
+    activeButton:
+      "bg-wise-green text-dark-green font-black shadow-md shadow-wise-green/25 ring-2 ring-wise-green/60 scale-[1.02]",
+    activeIcon: "text-dark-green",
+    activeCount: "bg-dark-green/20 text-dark-green",
+    activeBadge: "bg-dark-green/20 text-dark-green border-transparent",
+    inactiveIcon: "text-foreground-muted",
+    inactiveBadge: "bg-muted text-foreground-muted border border-border/40",
+  },
+};
+
 export function ChannelSwitcherPills({
   selectedChannel,
   onSelectChannel,
@@ -72,7 +123,7 @@ export function ChannelSwitcherPills({
   return (
     <div
       className={cn(
-        "inline-flex flex-wrap items-center gap-1.5 rounded-2xl bg-muted/60 dark:bg-muted/30 p-1 border border-border/80 shadow-xs",
+        "inline-flex flex-wrap items-center gap-1.5 rounded-2xl bg-muted/60 dark:bg-muted/30 p-1.5 border border-border/80 shadow-xs",
         className,
       )}
       role="tablist"
@@ -81,6 +132,7 @@ export function ChannelSwitcherPills({
       {options.map((opt) => {
         const isSelected = selectedChannel === opt.id;
         const IconComponent = opt.icon;
+        const styleConfig = CHANNEL_STYLE_MAP[opt.id];
 
         return (
           <button
@@ -90,27 +142,19 @@ export function ChannelSwitcherPills({
             aria-selected={isSelected}
             onClick={() => onSelectChannel(opt.id)}
             className={cn(
-              "group relative flex items-center gap-2 rounded-xl font-bold transition-all duration-200 cursor-pointer select-none",
+              "group relative flex items-center gap-2 rounded-xl transition-all duration-200 cursor-pointer select-none active:scale-95",
               size === "sm" ? "px-3 py-1.5 text-xs" : "px-4 py-2 text-xs sm:text-sm",
               isSelected
-                ? "bg-surface text-foreground shadow-sm dark:bg-[#1f201d] ring-1 ring-border/80"
-                : "text-foreground-secondary hover:text-foreground hover:bg-surface/50",
+                ? styleConfig.activeButton
+                : "font-semibold text-foreground-secondary hover:text-foreground hover:bg-surface/80 dark:hover:bg-zinc-800/80 border border-transparent",
             )}
           >
             {/* Channel Icon */}
             <IconComponent
               className={cn(
-                "transition-transform group-hover:scale-110",
+                "transition-transform duration-200 group-hover:scale-110",
                 size === "sm" ? "size-3.5" : "size-4",
-                isSelected
-                  ? opt.id === "WHATSMEOW_UNOFFICIAL"
-                    ? "text-emerald-600 dark:text-emerald-400"
-                    : opt.id === "META_WABA_OFFICIAL"
-                      ? "text-blue-600 dark:text-blue-400"
-                      : opt.id === "TELEGRAM_BOT"
-                        ? "text-sky-500 dark:text-sky-400"
-                        : "text-wise-green"
-                  : "text-foreground-muted",
+                isSelected ? styleConfig.activeIcon : styleConfig.inactiveIcon,
               )}
             />
 
@@ -123,8 +167,8 @@ export function ChannelSwitcherPills({
                 className={cn(
                   "rounded-full px-1.5 py-0.2 text-[10px] font-extrabold transition-colors",
                   isSelected
-                    ? "bg-muted text-foreground"
-                    : "bg-muted/70 text-foreground-muted",
+                    ? styleConfig.activeCount
+                    : "bg-muted/80 text-foreground-muted",
                 )}
               >
                 {opt.count}
@@ -135,32 +179,12 @@ export function ChannelSwitcherPills({
             {opt.badgeText && size !== "sm" && (
               <span
                 className={cn(
-                  "hidden sm:inline-block text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded font-black",
-                  opt.id === "META_WABA_OFFICIAL"
-                    ? "bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20"
-                    : opt.id === "TELEGRAM_BOT"
-                      ? "bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20"
-                      : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20",
+                  "hidden sm:inline-block text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded font-black transition-colors",
+                  isSelected ? styleConfig.activeBadge : styleConfig.inactiveBadge,
                 )}
               >
                 {opt.badgeText}
               </span>
-            )}
-
-            {/* Active Pill Indicator Dot */}
-            {isSelected && (
-              <span
-                className={cn(
-                  "absolute -bottom-1 left-1/2 -translate-x-1/2 size-1 rounded-full",
-                  opt.id === "WHATSMEOW_UNOFFICIAL"
-                    ? "bg-emerald-500"
-                    : opt.id === "META_WABA_OFFICIAL"
-                      ? "bg-blue-500"
-                      : opt.id === "TELEGRAM_BOT"
-                        ? "bg-sky-400"
-                        : "bg-wise-green",
-                )}
-              />
             )}
           </button>
         );
