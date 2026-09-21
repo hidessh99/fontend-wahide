@@ -14,6 +14,7 @@ import {
   Bot,
   ExternalLink,
   BellOff,
+  Image as ImageIcon,
 } from "lucide-react";
 import { formatDisplayPhone } from "@/lib/phone";
 import { useI18n } from "@/lib/i18n/context";
@@ -126,22 +127,33 @@ export function OmnichannelChatPreview({
             <div className="self-end max-w-[85%] sm:max-w-[78%]">
               <div className="relative rounded-2xl rounded-tr-xs bg-[#d9fdd3] dark:bg-[#005c4b] p-3 text-zinc-900 dark:text-zinc-100 shadow-xs">
                 {/* Media Image */}
-                {messageType === "image" && mediaUrl && (
-                  <div className="mb-2 overflow-hidden rounded-xl border border-black/5 bg-black/10">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={mediaUrl}
-                      alt="Preview Attachment"
-                      className="max-h-48 w-full object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLElement).style.display = "none";
-                      }}
-                    />
-                  </div>
+                {(messageType === "image" || messageType === "photo") && (
+                  mediaUrl ? (
+                    <div className="mb-2 overflow-hidden rounded-xl border border-black/5 bg-black/10">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={mediaUrl}
+                        alt="Preview Attachment"
+                        className="max-h-48 w-full object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLElement).style.display = "none";
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div className="mb-2 flex flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed border-emerald-600/30 dark:border-emerald-400/30 bg-black/5 dark:bg-black/20 p-4 text-center">
+                      <div className="flex size-9 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">
+                        <ImageIcon className="size-4.5" />
+                      </div>
+                      <p className="text-[11px] font-semibold text-zinc-700 dark:text-zinc-200">
+                        {t("omnichannel.preview.placeholderImage")}
+                      </p>
+                    </div>
+                  )
                 )}
 
                 {/* Media File */}
-                {messageType === "file" && (
+                {(messageType === "file" || messageType === "document") && (
                   <div className="mb-2 flex items-center gap-3 rounded-xl bg-black/5 dark:bg-black/20 p-2.5">
                     <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-emerald-600 text-white shadow-xs">
                       <FileText className="size-5" />
@@ -151,7 +163,7 @@ export function OmnichannelChatPreview({
                         {fileName || "document.pdf"}
                       </p>
                       <p className="text-[10px] text-foreground-secondary">
-                        Dokumen PDF • Siap Dikirim
+                        {fileName ? "Dokumen PDF • Siap Dikirim" : t("omnichannel.preview.placeholderFile")}
                       </p>
                     </div>
                   </div>
@@ -162,7 +174,7 @@ export function OmnichannelChatPreview({
                   <div className="mb-2 flex items-center gap-2.5 rounded-xl bg-black/5 dark:bg-black/20 p-2.5">
                     <MapPin className="size-4 shrink-0 text-rose-500" />
                     <p className="text-xs font-semibold text-foreground truncate">
-                      {locationAddress || "Lokasi Koordinat GPS"}
+                      {locationAddress || t("omnichannel.preview.placeholderLocation")}
                     </p>
                   </div>
                 )}
@@ -255,18 +267,27 @@ export function OmnichannelChatPreview({
                 </div>
 
                 {/* Optional Media Header */}
-                {mediaUrl && (
-                  <div className="overflow-hidden rounded-xl border border-border/50 bg-muted/40">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={mediaUrl}
-                      alt="Header Attachment"
-                      className="max-h-40 w-full object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLElement).style.display = "none";
-                      }}
-                    />
-                  </div>
+                {(messageType === "image" || messageType === "photo" || mediaUrl) && (
+                  mediaUrl ? (
+                    <div className="overflow-hidden rounded-xl border border-border/50 bg-muted/40">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={mediaUrl}
+                        alt="Header Attachment"
+                        className="max-h-40 w-full object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLElement).style.display = "none";
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-emerald-500/30 bg-emerald-500/5 p-3 text-center">
+                      <ImageIcon className="size-4 text-emerald-600 dark:text-emerald-400" />
+                      <span className="text-[10px] text-muted-foreground">
+                        {t("omnichannel.preview.placeholderImage")}
+                      </span>
+                    </div>
+                  )
                 )}
 
                 {/* Body Content */}
@@ -394,17 +415,41 @@ export function OmnichannelChatPreview({
           <div className="self-end max-w-[85%] sm:max-w-[78%]">
             <div className="relative rounded-2xl rounded-tr-xs bg-[#2b5278] p-3.5 text-white shadow-md space-y-2">
               {/* Media Photo */}
-              {mediaUrl && (
-                <div className="overflow-hidden rounded-xl bg-black/20">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={mediaUrl}
-                    alt="Telegram Attachment"
-                    className="max-h-48 w-full object-cover"
-                    onError={(e) => {
-                      (e.target as HTMLElement).style.display = "none";
-                    }}
-                  />
+              {(messageType === "image" || messageType === "photo") && (
+                mediaUrl ? (
+                  <div className="overflow-hidden rounded-xl bg-black/20">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={mediaUrl}
+                      alt="Telegram Attachment"
+                      className="max-h-48 w-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLElement).style.display = "none";
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-white/20 bg-white/10 p-3 text-center">
+                    <ImageIcon className="size-4 text-sky-200" />
+                    <span className="text-[10px] text-sky-100">
+                      {t("omnichannel.preview.placeholderImage")}
+                    </span>
+                  </div>
+                )
+              )}
+
+              {/* Media File */}
+              {(messageType === "file" || messageType === "document") && (
+                <div className="flex items-center gap-2.5 rounded-xl bg-white/10 p-2.5">
+                  <FileText className="size-5 text-sky-300 shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-xs font-bold text-white">
+                      {fileName || "document.pdf"}
+                    </p>
+                    <p className="text-[10px] text-sky-200/80">
+                      {fileName ? "Berkas Siap Kirim" : t("omnichannel.preview.placeholderFile")}
+                    </p>
+                  </div>
                 </div>
               )}
 

@@ -57,7 +57,21 @@
     "toastFailed": "Failed to send message: {error}",
     "errRecipientRequired": "Recipient number or ID is required.",
     "errMessageRequired": "Message text cannot be empty.",
-    "errSenderRequired": "Please select a sender number or bot first."
+    "errSenderRequired": "Please select a sender number or bot first.",
+    "panelImageTitle": "Image Attachment",
+    "panelFileTitle": "Document / File Attachment",
+    "panelLocationTitle": "Location Attachment (GPS)",
+    "uploadTabFile": "Direct File Upload",
+    "uploadTabUrl": "External URL Link",
+    "dropzoneImage": "Click or drag image file here",
+    "dropzoneImageHint": "Supports PNG, JPG, JPEG, WEBP, GIF (Max. 10MB)",
+    "dropzoneFile": "Click or drag document file here",
+    "dropzoneFileHint": "Supports PDF, DOCX, XLSX, CSV, TXT (Max. 25MB)",
+    "uploadingMedia": "Uploading file to server...",
+    "changeFile": "Change File",
+    "removeFile": "Remove Attachment",
+    "useCurrentLocation": "Use My Current Location (GPS)",
+    "gettingLocation": "Detecting GPS coordinates..."
   },
   "preview": {
     "title": "Live Chat Preview",
@@ -66,6 +80,9 @@
     "empty": "No message content yet...",
     "statusDelivered": "Delivered",
     "documentBadge": "DOCUMENT",
-    "locationBadge": "LOCATION"
+    "locationBadge": "LOCATION",
+    "placeholderImage": "Select or upload an image to preview",
+    "placeholderFile": "Select or upload a document to preview",
+    "placeholderLocation": "Specify address or location coordinates"
   }
 }

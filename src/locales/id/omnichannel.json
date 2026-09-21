@@ -57,7 +57,21 @@
     "toastFailed": "Gagal mengirim pesan: {error}",
     "errRecipientRequired": "Nomor atau ID penerima wajib diisi.",
     "errMessageRequired": "Teks pesan tidak boleh kosong.",
-    "errSenderRequired": "Silakan pilih nomor atau bot pengirim terlebih dahulu."
+    "errSenderRequired": "Silakan pilih nomor atau bot pengirim terlebih dahulu.",
+    "panelImageTitle": "Lampiran Gambar",
+    "panelFileTitle": "Lampiran Dokumen / Berkas",
+    "panelLocationTitle": "Lampiran Lokasi (GPS)",
+    "uploadTabFile": "Unggah Berkas Langsung",
+    "uploadTabUrl": "Tautan URL Eksternal",
+    "dropzoneImage": "Klik atau seret file gambar ke sini",
+    "dropzoneImageHint": "Mendukung PNG, JPG, JPEG, WEBP, GIF (Maks. 10MB)",
+    "dropzoneFile": "Klik atau seret file dokumen ke sini",
+    "dropzoneFileHint": "Mendukung PDF, DOCX, XLSX, CSV, TXT (Maks. 25MB)",
+    "uploadingMedia": "Mengunggah berkas ke server...",
+    "changeFile": "Ganti Berkas",
+    "removeFile": "Hapus Lampiran",
+    "useCurrentLocation": "Gunakan Lokasi Saya Saat Ini (GPS)",
+    "gettingLocation": "Mendeteksi koordinat GPS..."
   },
   "preview": {
     "title": "Live Chat Preview",
@@ -66,6 +80,9 @@
     "empty": "Belum ada pesan...",
     "statusDelivered": "Terkirim",
     "documentBadge": "DOKUMEN",
-    "locationBadge": "LOKASI"
+    "locationBadge": "LOKASI",
+    "placeholderImage": "Pilih atau unggah foto untuk melihat pratinjau",
+    "placeholderFile": "Pilih atau unggah dokumen untuk melihat pratinjau",
+    "placeholderLocation": "Tentukan alamat atau koordinat lokasi"
   }
 }

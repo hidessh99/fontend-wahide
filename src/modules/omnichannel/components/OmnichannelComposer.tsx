@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
 import {
   Smartphone,
@@ -16,7 +16,14 @@ import {
   MapPin,
   MessageSquare,
   Paperclip,
+  Upload,
+  X,
+  FileText,
+  Navigation,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { httpClient } from "@/lib/api/http-client";
+import { env } from "@/lib/config/env";
 import { Button } from "@/components/ui/button";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Input } from "@/components/ui/input";
@@ -103,6 +110,12 @@ export function OmnichannelComposer({
   const [messageType, setMessageType] = useState<
     "chat" | "image" | "file" | "location" | "photo" | "document"
   >("chat");
+  const [mediaInputMode, setMediaInputMode] = useState<"upload" | "url">("upload");
+  const [selectedLocalFile, setSelectedLocalFile] = useState<File | null>(null);
+  const [isUploadingMedia, setIsUploadingMedia] = useState<boolean>(false);
+  const [isGettingLocation, setIsGettingLocation] = useState<boolean>(false);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // WhatsApp Web specific
   const [simulateTyping, setSimulateTyping] = useState<boolean>(true);
@@ -206,6 +219,106 @@ export function OmnichannelComposer({
   ) => {
     setMessageType(type);
     onMessageTypeChange(type);
+  };
+
+  const processSelectedFile = async (file: File) => {
+    setSelectedLocalFile(file);
+    const localUrl = URL.createObjectURL(file);
+    setMediaUrl(localUrl);
+    onMediaUrlChange(localUrl);
+
+    if (messageType === "file" || messageType === "document") {
+      setFileName(file.name);
+      onFileNameChange(file.name);
+    }
+
+    setIsUploadingMedia(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      let uploadedUrl = "";
+      try {
+        const res = await httpClient.post<Record<string, unknown>>(
+          `${env.NEXT_PUBLIC_WHATSAPP_API_URL}/support/tickets/upload`,
+          formData,
+        );
+        const raw = res.payload || (res as unknown as Record<string, unknown>);
+        uploadedUrl = String(raw.url || raw.public_url || "");
+      } catch {
+        const res = await httpClient.post<Record<string, unknown>>(
+          `${env.NEXT_PUBLIC_WHATSAPP_API_URL}/api/upload`,
+          formData,
+        );
+        const raw = res.payload || (res as unknown as Record<string, unknown>);
+        uploadedUrl = String(raw.url || raw.public_url || "");
+      }
+
+      if (uploadedUrl) {
+        setMediaUrl(uploadedUrl);
+        onMediaUrlChange(uploadedUrl);
+        toast.success(`${file.name} berhasil diunggah.`);
+      }
+    } catch {
+      console.warn("Upload fallback: using local object preview.");
+    } finally {
+      setIsUploadingMedia(false);
+    }
+  };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    await processSelectedFile(file);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      await processSelectedFile(file);
+    }
+  };
+
+  const handleRemoveMedia = () => {
+    setSelectedLocalFile(null);
+    setMediaUrl("");
+    onMediaUrlChange("");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleGetCurrentLocation = () => {
+    if (typeof window === "undefined" || !navigator.geolocation) {
+      toast.error("Browser tidak mendukung geolokasi GPS.");
+      return;
+    }
+    setIsGettingLocation(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setIsGettingLocation(false);
+        const coord = `${pos.coords.latitude.toFixed(6)}, ${pos.coords.longitude.toFixed(6)}`;
+        setLocationAddress(coord);
+        onLocationChange(coord);
+        toast.success("Koordinat GPS berhasil diperoleh: " + coord);
+      },
+      (err) => {
+        setIsGettingLocation(false);
+        toast.error("Gagal mendeteksi lokasi GPS: " + err.message);
+      },
+      { timeout: 10000, enableHighAccuracy: true },
+    );
   };
 
   const insertSpintax = (sample: string) => {
@@ -753,117 +866,498 @@ export function OmnichannelComposer({
               <Label className="text-foreground-secondary text-xs font-semibold tracking-wider uppercase">
                 Tipe Pesan & Lampiran
               </Label>
+              {messageType !== "chat" && (
+                <span className="text-[11px] font-bold text-wise-green dark:text-wise-green flex items-center gap-1">
+                  ● Mode Lampiran Aktif
+                </span>
+              )}
             </div>
 
-            <div className="grid grid-cols-4 gap-1.5 p-1 rounded-2xl bg-muted/60 border border-border/80 text-xs font-bold">
+            {/* High-visibility Tab Buttons */}
+            <div className="grid grid-cols-4 gap-2 p-1.5 rounded-2xl bg-muted/70 dark:bg-muted/40 border border-border text-xs font-bold">
+              {/* Tab: Teks */}
               <button
                 type="button"
                 onClick={() => handleTypeSwitch("chat")}
-                className={`py-2 px-2 rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                className={cn(
+                  "py-2.5 px-2 rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer select-none",
                   messageType === "chat"
-                    ? "bg-surface text-foreground shadow-xs"
-                    : "text-foreground-secondary hover:text-foreground"
-                }`}
+                    ? "bg-wise-green text-dark-green font-black shadow-sm ring-2 ring-wise-green/60 scale-[1.02]"
+                    : "text-foreground-secondary hover:text-foreground hover:bg-surface/70 active:scale-95",
+                )}
               >
-                <MessageSquare className="size-3.5" />
+                <MessageSquare
+                  className={cn(
+                    "size-4",
+                    messageType === "chat"
+                      ? "text-dark-green stroke-[2.5]"
+                      : "text-foreground-muted",
+                  )}
+                />
                 <span>{t("omnichannel.composer.typeText")}</span>
               </button>
+
+              {/* Tab: Gambar */}
               <button
                 type="button"
                 onClick={() => handleTypeSwitch("image")}
-                className={`py-2 px-2 rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                className={cn(
+                  "py-2.5 px-2 rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer select-none",
                   messageType === "image" || messageType === "photo"
-                    ? "bg-surface text-foreground shadow-xs"
-                    : "text-foreground-secondary hover:text-foreground"
-                }`}
+                    ? "bg-wise-green text-dark-green font-black shadow-sm ring-2 ring-wise-green/60 scale-[1.02]"
+                    : "text-foreground-secondary hover:text-foreground hover:bg-surface/70 active:scale-95",
+                )}
               >
-                <ImageIcon className="size-3.5" />
+                <ImageIcon
+                  className={cn(
+                    "size-4",
+                    messageType === "image" || messageType === "photo"
+                      ? "text-dark-green stroke-[2.5]"
+                      : "text-foreground-muted",
+                  )}
+                />
                 <span>{t("omnichannel.composer.typeImage")}</span>
               </button>
+
+              {/* Tab: Dokumen */}
               <button
                 type="button"
                 onClick={() => handleTypeSwitch("file")}
-                className={`py-2 px-2 rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                className={cn(
+                  "py-2.5 px-2 rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer select-none",
                   messageType === "file" || messageType === "document"
-                    ? "bg-surface text-foreground shadow-xs"
-                    : "text-foreground-secondary hover:text-foreground"
-                }`}
+                    ? "bg-wise-green text-dark-green font-black shadow-sm ring-2 ring-wise-green/60 scale-[1.02]"
+                    : "text-foreground-secondary hover:text-foreground hover:bg-surface/70 active:scale-95",
+                )}
               >
-                <Paperclip className="size-3.5" />
+                <Paperclip
+                  className={cn(
+                    "size-4",
+                    messageType === "file" || messageType === "document"
+                      ? "text-dark-green stroke-[2.5]"
+                      : "text-foreground-muted",
+                  )}
+                />
                 <span>{t("omnichannel.composer.typeFile")}</span>
               </button>
+
+              {/* Tab: Lokasi */}
               <button
                 type="button"
                 onClick={() => handleTypeSwitch("location")}
                 disabled={selectedChannel === "TELEGRAM_BOT"}
-                className={`py-2 px-2 rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer disabled:opacity-40 ${
+                className={cn(
+                  "py-2.5 px-2 rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer select-none disabled:opacity-40 disabled:cursor-not-allowed",
                   messageType === "location"
-                    ? "bg-surface text-foreground shadow-xs"
-                    : "text-foreground-secondary hover:text-foreground"
-                }`}
+                    ? "bg-wise-green text-dark-green font-black shadow-sm ring-2 ring-wise-green/60 scale-[1.02]"
+                    : "text-foreground-secondary hover:text-foreground hover:bg-surface/70 active:scale-95",
+                )}
               >
-                <MapPin className="size-3.5" />
+                <MapPin
+                  className={cn(
+                    "size-4",
+                    messageType === "location"
+                      ? "text-dark-green stroke-[2.5]"
+                      : "text-foreground-muted",
+                  )}
+                />
                 <span>{t("omnichannel.composer.typeLocation")}</span>
               </button>
             </div>
 
-            {/* Media Attachment URL */}
-            {(messageType === "image" ||
-              messageType === "photo" ||
-              messageType === "file" ||
-              messageType === "document") && (
-              <div className="space-y-1.5 pt-1">
-                <Label className="text-xs font-semibold text-foreground-secondary">
-                  {t("omnichannel.composer.imageUrl")}
-                </Label>
-                <Input
-                  type="url"
-                  placeholder={t("omnichannel.composer.imageUrlPlaceholder")}
-                  value={mediaUrl}
-                  onChange={(e) => {
-                    setMediaUrl(e.target.value);
-                    onMediaUrlChange(e.target.value);
-                  }}
-                  className="h-10 text-xs rounded-xl"
-                />
+            {/* ATTACHMENT PANEL: IMAGE */}
+            {(messageType === "image" || messageType === "photo") && (
+              <div className="rounded-2xl border-2 border-wise-green/50 dark:border-wise-green/40 bg-wise-green/5 dark:bg-wise-green/10 p-4 space-y-3 transition-all animate-in fade-in-50 duration-200">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-wise-green/20 pb-2.5">
+                  <div className="flex items-center gap-2">
+                    <div className="flex size-7 items-center justify-center rounded-lg bg-wise-green text-dark-green shadow-xs">
+                      <ImageIcon className="size-4 stroke-[2.5]" />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-foreground">
+                        {t("omnichannel.composer.panelImageTitle")}
+                      </h4>
+                      <p className="text-[10px] text-foreground-secondary">
+                        {t("omnichannel.composer.dropzoneImageHint")}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Upload vs URL Switcher */}
+                  <div className="flex items-center p-0.5 rounded-lg bg-surface border border-border text-[11px] font-medium shadow-2xs">
+                    <button
+                      type="button"
+                      onClick={() => setMediaInputMode("upload")}
+                      className={cn(
+                        "px-2.5 py-1 rounded-md transition-all cursor-pointer",
+                        mediaInputMode === "upload"
+                          ? "bg-wise-green text-dark-green font-bold shadow-2xs"
+                          : "text-foreground-secondary hover:text-foreground",
+                      )}
+                    >
+                      {t("omnichannel.composer.uploadTabFile")}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMediaInputMode("url")}
+                      className={cn(
+                        "px-2.5 py-1 rounded-md transition-all cursor-pointer",
+                        mediaInputMode === "url"
+                          ? "bg-wise-green text-dark-green font-bold shadow-2xs"
+                          : "text-foreground-secondary hover:text-foreground",
+                      )}
+                    >
+                      {t("omnichannel.composer.uploadTabUrl")}
+                    </button>
+                  </div>
+                </div>
+
+                {mediaInputMode === "upload" ? (
+                  <div>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      accept="image/png,image/jpeg,image/webp,image/gif"
+                      onChange={handleFileSelect}
+                      className="hidden"
+                    />
+
+                    {mediaUrl ? (
+                      /* Image Preview Card */
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-surface border border-border shadow-xs">
+                        <div className="relative size-16 shrink-0 rounded-lg overflow-hidden border border-border bg-black/5">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={mediaUrl}
+                            alt="Preview Foto"
+                            className="size-full object-cover"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-bold text-foreground truncate">
+                            {selectedLocalFile?.name || "image.jpg"}
+                          </p>
+                          <p className="text-[10px] text-foreground-secondary">
+                            {selectedLocalFile
+                              ? `${(selectedLocalFile.size / 1024).toFixed(1)} KB`
+                              : "Tautan gambar aktif"}
+                          </p>
+                          {isUploadingMedia && (
+                            <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1 mt-0.5">
+                              <Loader2 className="size-3 animate-spin" />
+                              {t("omnichannel.composer.uploadingMedia")}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => fileInputRef.current?.click()}
+                            className="text-xs h-8 px-2.5 rounded-lg font-semibold cursor-pointer"
+                          >
+                            {t("omnichannel.composer.changeFile")}
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={handleRemoveMedia}
+                            className="text-xs h-8 px-2 rounded-lg text-rose-500 hover:text-rose-600 hover:bg-rose-500/10 cursor-pointer"
+                            title={t("omnichannel.composer.removeFile")}
+                          >
+                            <X className="size-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      /* Dropzone */
+                      <div
+                        onClick={() => fileInputRef.current?.click()}
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                        className={cn(
+                          "flex flex-col items-center justify-center gap-2 p-6 rounded-xl border-2 border-dashed transition-all cursor-pointer text-center",
+                          isDragging
+                            ? "border-wise-green bg-wise-green/15 scale-[1.01]"
+                            : "border-border hover:border-wise-green/60 bg-surface/60 hover:bg-surface",
+                        )}
+                      >
+                        <div className="flex size-10 items-center justify-center rounded-full bg-wise-green/20 text-emerald-700 dark:text-wise-green shadow-xs">
+                          <Upload className="size-5" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-foreground">
+                            {t("omnichannel.composer.dropzoneImage")}
+                          </p>
+                          <p className="text-[10px] text-foreground-secondary mt-0.5">
+                            {t("omnichannel.composer.dropzoneImageHint")}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  /* URL Mode */
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-semibold text-foreground-secondary">
+                      {t("omnichannel.composer.imageUrl")}
+                    </Label>
+                    <Input
+                      type="url"
+                      placeholder={t("omnichannel.composer.imageUrlPlaceholder")}
+                      value={mediaUrl}
+                      onChange={(e) => {
+                        setMediaUrl(e.target.value);
+                        onMediaUrlChange(e.target.value);
+                      }}
+                      className="h-10 text-xs rounded-xl bg-surface"
+                    />
+                  </div>
+                )}
               </div>
             )}
 
-            {/* File Name if document */}
+            {/* ATTACHMENT PANEL: FILE / DOCUMENT */}
             {(messageType === "file" || messageType === "document") && (
-              <div className="space-y-1.5">
-                <Label className="text-xs font-semibold text-foreground-secondary">
-                  {t("omnichannel.composer.fileName")}
-                </Label>
-                <Input
-                  type="text"
-                  placeholder={t("omnichannel.composer.fileNamePlaceholder")}
-                  value={fileName}
-                  onChange={(e) => {
-                    setFileName(e.target.value);
-                    onFileNameChange(e.target.value);
-                  }}
-                  className="h-10 text-xs rounded-xl"
-                />
+              <div className="rounded-2xl border-2 border-wise-green/50 dark:border-wise-green/40 bg-wise-green/5 dark:bg-wise-green/10 p-4 space-y-3 transition-all animate-in fade-in-50 duration-200">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-wise-green/20 pb-2.5">
+                  <div className="flex items-center gap-2">
+                    <div className="flex size-7 items-center justify-center rounded-lg bg-wise-green text-dark-green shadow-xs">
+                      <Paperclip className="size-4 stroke-[2.5]" />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-foreground">
+                        {t("omnichannel.composer.panelFileTitle")}
+                      </h4>
+                      <p className="text-[10px] text-foreground-secondary">
+                        {t("omnichannel.composer.dropzoneFileHint")}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Upload vs URL Switcher */}
+                  <div className="flex items-center p-0.5 rounded-lg bg-surface border border-border text-[11px] font-medium shadow-2xs">
+                    <button
+                      type="button"
+                      onClick={() => setMediaInputMode("upload")}
+                      className={cn(
+                        "px-2.5 py-1 rounded-md transition-all cursor-pointer",
+                        mediaInputMode === "upload"
+                          ? "bg-wise-green text-dark-green font-bold shadow-2xs"
+                          : "text-foreground-secondary hover:text-foreground",
+                      )}
+                    >
+                      {t("omnichannel.composer.uploadTabFile")}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMediaInputMode("url")}
+                      className={cn(
+                        "px-2.5 py-1 rounded-md transition-all cursor-pointer",
+                        mediaInputMode === "url"
+                          ? "bg-wise-green text-dark-green font-bold shadow-2xs"
+                          : "text-foreground-secondary hover:text-foreground",
+                      )}
+                    >
+                      {t("omnichannel.composer.uploadTabUrl")}
+                    </button>
+                  </div>
+                </div>
+
+                {mediaInputMode === "upload" ? (
+                  <div className="space-y-3">
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.txt"
+                      onChange={handleFileSelect}
+                      className="hidden"
+                    />
+
+                    {selectedLocalFile || mediaUrl ? (
+                      /* Document Preview Card */
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-surface border border-border shadow-xs">
+                        <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-emerald-600 text-white shadow-xs">
+                          <FileText className="size-6" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-bold text-foreground truncate">
+                            {fileName || selectedLocalFile?.name || "document.pdf"}
+                          </p>
+                          <p className="text-[10px] text-foreground-secondary">
+                            {selectedLocalFile
+                              ? `${(selectedLocalFile.size / 1024).toFixed(1)} KB • Dokumen Siap Kirim`
+                              : "Berkas Lampiran Siap Kirim"}
+                          </p>
+                          {isUploadingMedia && (
+                            <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1 mt-0.5">
+                              <Loader2 className="size-3 animate-spin" />
+                              {t("omnichannel.composer.uploadingMedia")}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => fileInputRef.current?.click()}
+                            className="text-xs h-8 px-2.5 rounded-lg font-semibold cursor-pointer"
+                          >
+                            {t("omnichannel.composer.changeFile")}
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={handleRemoveMedia}
+                            className="text-xs h-8 px-2 rounded-lg text-rose-500 hover:text-rose-600 hover:bg-rose-500/10 cursor-pointer"
+                            title={t("omnichannel.composer.removeFile")}
+                          >
+                            <X className="size-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      /* Dropzone */
+                      <div
+                        onClick={() => fileInputRef.current?.click()}
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                        className={cn(
+                          "flex flex-col items-center justify-center gap-2 p-6 rounded-xl border-2 border-dashed transition-all cursor-pointer text-center",
+                          isDragging
+                            ? "border-wise-green bg-wise-green/15 scale-[1.01]"
+                            : "border-border hover:border-wise-green/60 bg-surface/60 hover:bg-surface",
+                        )}
+                      >
+                        <div className="flex size-10 items-center justify-center rounded-full bg-wise-green/20 text-emerald-700 dark:text-wise-green shadow-xs">
+                          <Upload className="size-5" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-foreground">
+                            {t("omnichannel.composer.dropzoneFile")}
+                          </p>
+                          <p className="text-[10px] text-foreground-secondary mt-0.5">
+                            {t("omnichannel.composer.dropzoneFileHint")}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Editable display name for file */}
+                    <div className="space-y-1.5 pt-1">
+                      <Label className="text-xs font-semibold text-foreground-secondary">
+                        {t("omnichannel.composer.fileName")}
+                      </Label>
+                      <Input
+                        type="text"
+                        placeholder={t("omnichannel.composer.fileNamePlaceholder")}
+                        value={fileName}
+                        onChange={(e) => {
+                          setFileName(e.target.value);
+                          onFileNameChange(e.target.value);
+                        }}
+                        className="h-10 text-xs rounded-xl bg-surface"
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  /* URL Mode */
+                  <div className="space-y-3">
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-semibold text-foreground-secondary">
+                        {t("omnichannel.composer.fileUrl")}
+                      </Label>
+                      <Input
+                        type="url"
+                        placeholder={t("omnichannel.composer.fileUrlPlaceholder")}
+                        value={mediaUrl}
+                        onChange={(e) => {
+                          setMediaUrl(e.target.value);
+                          onMediaUrlChange(e.target.value);
+                        }}
+                        className="h-10 text-xs rounded-xl bg-surface"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-semibold text-foreground-secondary">
+                        {t("omnichannel.composer.fileName")}
+                      </Label>
+                      <Input
+                        type="text"
+                        placeholder={t("omnichannel.composer.fileNamePlaceholder")}
+                        value={fileName}
+                        onChange={(e) => {
+                          setFileName(e.target.value);
+                          onFileNameChange(e.target.value);
+                        }}
+                        className="h-10 text-xs rounded-xl bg-surface"
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
-            {/* Location address */}
+            {/* ATTACHMENT PANEL: LOCATION */}
             {messageType === "location" && (
-              <div className="space-y-1.5">
-                <Label className="text-xs font-semibold text-foreground-secondary">
-                  {t("omnichannel.composer.location")}
-                </Label>
-                <Input
-                  type="text"
-                  placeholder={t("omnichannel.composer.locationPlaceholder")}
-                  value={locationAddress}
-                  onChange={(e) => {
-                    setLocationAddress(e.target.value);
-                    onLocationChange(e.target.value);
-                  }}
-                  className="h-10 text-xs rounded-xl"
-                />
+              <div className="rounded-2xl border-2 border-wise-green/50 dark:border-wise-green/40 bg-wise-green/5 dark:bg-wise-green/10 p-4 space-y-3 transition-all animate-in fade-in-50 duration-200">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-wise-green/20 pb-2.5">
+                  <div className="flex items-center gap-2">
+                    <div className="flex size-7 items-center justify-center rounded-lg bg-rose-500 text-white shadow-xs">
+                      <MapPin className="size-4" />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-foreground">
+                        {t("omnichannel.composer.panelLocationTitle")}
+                      </h4>
+                      <p className="text-[10px] text-foreground-secondary">
+                        Kirim pin lokasi GPS langsung ke obrolan
+                      </p>
+                    </div>
+                  </div>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={isGettingLocation}
+                    onClick={handleGetCurrentLocation}
+                    className="text-[11px] h-8 px-2.5 rounded-lg border-rose-500/30 text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 font-bold flex items-center gap-1.5 cursor-pointer"
+                  >
+                    {isGettingLocation ? (
+                      <Loader2 className="size-3.5 animate-spin" />
+                    ) : (
+                      <Navigation className="size-3.5" />
+                    )}
+                    <span>
+                      {isGettingLocation
+                        ? t("omnichannel.composer.gettingLocation")
+                        : t("omnichannel.composer.useCurrentLocation")}
+                    </span>
+                  </Button>
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-semibold text-foreground-secondary">
+                    {t("omnichannel.composer.location")}
+                  </Label>
+                  <Input
+                    type="text"
+                    placeholder={t("omnichannel.composer.locationPlaceholder")}
+                    value={locationAddress}
+                    onChange={(e) => {
+                      setLocationAddress(e.target.value);
+                      onLocationChange(e.target.value);
+                    }}
+                    className="h-10 text-xs rounded-xl bg-surface"
+                  />
+                </div>
               </div>
             )}
           </div>
