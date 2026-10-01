@@ -57,10 +57,13 @@
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
 
-  --radius-sm: 10px;
-  --radius-md: 20px;
-  --radius-lg: 30px;
-  --radius-xl: 40px;
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-2xl: 22px;
+  --radius-3xl: 28px;
   --radius-pill: 9999px;
 }
 
@@ -92,7 +95,7 @@
   --chart-3: #454745;
   --chart-4: #ffd11a;
   --chart-5: #d03238;
-  --radius: 1.25rem;
+  --radius: 0.875rem;
   --sidebar: #f2f4ef;
   --sidebar-foreground: #0e0f0c;
   --sidebar-primary: #9fe870;
