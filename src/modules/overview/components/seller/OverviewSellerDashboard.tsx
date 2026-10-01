@@ -19,9 +19,7 @@ import {
   Inbox,
   History,
   ChevronRight,
-  MessageSquare,
-  Bot,
-  Mail,
+  Building2,
   Send,
 } from "lucide-react";
 import { ChannelBadge } from "@/lib/utils/channel";
@@ -96,12 +94,6 @@ export function UserDashboardOverview({
         device_count: 0,
         connected_count: 0,
       },
-      {
-        channel_type: "EMAIL",
-        sent_count: 0,
-        device_count: 0,
-        connected_count: 0,
-      },
     ];
   }, [propStats, devices]);
 
@@ -161,7 +153,6 @@ export function UserDashboardOverview({
   const waStats = channels.find((c) => c.channel_type === "WHATSAPP");
   const wabaStats = channels.find((c) => c.channel_type === "WABA");
   const teleStats = channels.find((c) => c.channel_type === "TELEGRAM");
-  const emailStats = channels.find((c) => c.channel_type === "EMAIL");
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 p-4 sm:space-y-7 sm:p-6 lg:p-8">
@@ -372,19 +363,15 @@ export function UserDashboardOverview({
                 <div className="border-border/60 flex flex-wrap items-center justify-center gap-4 border-t pt-3 text-[11px] font-semibold text-muted-foreground">
                   <div className="flex items-center gap-1.5">
                     <span className="size-2 rounded-full bg-emerald-500" />
-                    <span>WhatsApp</span>
+                    <span>WhatsApp Web</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <span className="size-2 rounded-full bg-teal-500" />
-                    <span>WABA</span>
+                    <span>WABA (Official)</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <span className="size-2 rounded-full bg-sky-500" />
                     <span>Telegram</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="size-2 rounded-full bg-purple-500" />
-                    <span>Email</span>
                   </div>
                 </div>
               </div>
@@ -498,10 +485,10 @@ export function UserDashboardOverview({
               >
                 <div className="flex items-center gap-3">
                   <div className="bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex size-8 items-center justify-center rounded-lg">
-                    <MessageSquare className="size-4" />
+                    <Smartphone className="size-4" />
                   </div>
                   <span className="text-foreground text-xs font-bold">
-                    WhatsApp
+                    WhatsApp Web
                   </span>
                 </div>
                 <div className="text-foreground-muted group-hover:text-foreground flex items-center gap-1 text-[11px] font-medium transition-colors">
@@ -520,14 +507,16 @@ export function UserDashboardOverview({
 
               {/* WABA */}
               <Link
-                href="/waba"
+                href="/waba/devices"
                 className="hover:bg-muted/40 group flex items-center justify-between py-3 transition-colors"
               >
                 <div className="flex items-center gap-3">
                   <div className="bg-teal-500/15 text-teal-600 dark:text-teal-400 flex size-8 items-center justify-center rounded-lg">
-                    <Bot className="size-4" />
+                    <Building2 className="size-4" />
                   </div>
-                  <span className="text-foreground text-xs font-bold">WABA</span>
+                  <span className="text-foreground text-xs font-bold">
+                    WABA (Official)
+                  </span>
                 </div>
                 <div className="text-foreground-muted group-hover:text-foreground flex items-center gap-1 text-[11px] font-medium transition-colors">
                   <span>
@@ -545,7 +534,7 @@ export function UserDashboardOverview({
 
               {/* Telegram */}
               <Link
-                href="/tele"
+                href="/tele/devices"
                 className="hover:bg-muted/40 group flex items-center justify-between py-3 transition-colors"
               >
                 <div className="flex items-center gap-3">
@@ -562,40 +551,18 @@ export function UserDashboardOverview({
                       count: teleStats?.sent_count || 0,
                     })}{" "}
                     •{" "}
-                    {t("overview.devicesUnit", {
+                    {t("overview.botsUnit", {
                       count: teleStats?.device_count || 0,
                     })}
                   </span>
                   <ChevronRight className="size-3.5" />
                 </div>
               </Link>
-
-              {/* Email */}
-              <div className="group flex items-center justify-between py-3 opacity-80">
-                <div className="flex items-center gap-3">
-                  <div className="bg-purple-500/15 text-purple-600 dark:text-purple-400 flex size-8 items-center justify-center rounded-lg">
-                    <Mail className="size-4" />
-                  </div>
-                  <span className="text-foreground text-xs font-bold">Email</span>
-                </div>
-                <div className="text-foreground-muted flex items-center gap-1 text-[11px] font-medium">
-                  <span>
-                    {t("overview.dispatchesUnit", {
-                      count: emailStats?.sent_count || 0,
-                    })}{" "}
-                    •{" "}
-                    {t("overview.emailsUnit", {
-                      count: emailStats?.device_count || 0,
-                    })}
-                  </span>
-                  <ChevronRight className="size-3.5" />
-                </div>
-              </div>
             </div>
 
             {/* Quick Action Buttons: Inbox & History */}
             <div className="grid grid-cols-2 gap-2.5 pt-2">
-              <Link href="/conversations" className="w-full">
+              <Link href="/inbox" className="w-full">
                 <Button
                   variant="outline"
                   size="sm"

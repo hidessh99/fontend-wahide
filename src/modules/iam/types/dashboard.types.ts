@@ -42,7 +42,7 @@ export interface GatewayTelemetry {
 }
 
 export interface ChannelBreakdown {
-  channel_type: "WHATSAPP" | "WABA" | "TELEGRAM" | "EMAIL" | string;
+  channel_type: "WHATSAPP" | "WABA" | "TELEGRAM" | string;
   sent_count: number;
   device_count: number;
   connected_count: number;
@@ -54,7 +54,7 @@ export interface DailyActivityPoint {
   whatsapp: number;
   waba: number;
   telegram: number;
-  email: number;
+  email?: number;
   total: number;
 }
 

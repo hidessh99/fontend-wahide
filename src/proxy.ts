@@ -23,6 +23,8 @@ const PROTECTED_PREFIXES = [
   "/team",
   "/support",
   "/subscription",
+  "/inbox",
+  "/crm",
 ];
 
 // Superadmin protected routes requiring SUPERADMIN role

@@ -80,7 +80,7 @@
   "perChannelSubtitle": "Kiriman dan device terhubung",
   "dispatchesUnit": "{count} kirim",
   "devicesUnit": "{count} device",
-  "emailsUnit": "{count} email",
+  "botsUnit": "{count} bot",
   "inbox": "Inbox",
   "history": "History",
   "noCampaigns": "Belum ada Campaign.",

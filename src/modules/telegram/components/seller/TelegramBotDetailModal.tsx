@@ -30,7 +30,6 @@ import {
   Calendar,
   Activity,
   CheckCircle2,
-  AlertCircle,
   Info,
 } from "lucide-react";
 import Link from "next/link";

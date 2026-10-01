@@ -288,6 +288,10 @@
     }
   },
   "dashboardMenu": {
+    "groupCrm": "CRM & Layanan",
+    "liveInbox": "Live Inbox",
+    "pipelineCRM": "Pipeline CRM",
+    "businessHours": "Jam Kerja (OOO)",
     "businessMenu": "Menu Bisnis",
     "groupGeneral": "Menu Utama",
     "groupSend": "Kirim Pesan",

@@ -288,6 +288,10 @@
     }
   },
   "dashboardMenu": {
+    "groupCrm": "CRM & Live Chat",
+    "liveInbox": "Live Inbox",
+    "pipelineCRM": "Pipeline CRM",
+    "businessHours": "Business Hours",
     "businessMenu": "Business Menu",
     "groupGeneral": "General",
     "groupSend": "Send Messages",

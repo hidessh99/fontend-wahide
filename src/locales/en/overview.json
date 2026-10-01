@@ -80,7 +80,7 @@
   "perChannelSubtitle": "Dispatches and connected devices",
   "dispatchesUnit": "{count} dispatches",
   "devicesUnit": "{count} devices",
-  "emailsUnit": "{count} emails",
+  "botsUnit": "{count} bots",
   "inbox": "Inbox",
   "history": "History",
   "noCampaigns": "No active campaigns.",

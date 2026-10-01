@@ -38,14 +38,22 @@ import {
   Loader2,
   User as UserIcon,
   Globe,
+  Clock,
 } from "lucide-react";
+import { BusinessHoursCard } from "@/modules/inbox/components/BusinessHoursCard";
 
-type SettingsTab = "profile" | "security" | "api-keys" | "webhooks";
+type SettingsTab =
+  | "profile"
+  | "security"
+  | "api-keys"
+  | "webhooks"
+  | "business-hours";
 const VALID_TABS: SettingsTab[] = [
   "profile",
   "security",
   "api-keys",
   "webhooks",
+  "business-hours",
 ];
 
 export function IamSellerSettingsView() {
@@ -228,6 +236,12 @@ export function IamSellerSettingsView() {
       label: t("settings.tabWebhooks") || "Integrasi Webhook",
       shortLabel: t("settings.tabWebhooksShort") || "Webhook",
       icon: Globe,
+    },
+    {
+      id: "business-hours",
+      label: "Jam Kerja Pintar",
+      shortLabel: "Jam Kerja",
+      icon: Clock,
     },
   ];
 
@@ -692,6 +706,13 @@ export function IamSellerSettingsView() {
 
               {/* Webhook Delivery Logs History */}
               <WebhookLogsTable />
+            </div>
+          )}
+
+          {/* TAB 5: Business Hours */}
+          {activeTab === "business-hours" && (
+            <div className="space-y-6">
+              <BusinessHoursCard />
             </div>
           )}
         </div>
