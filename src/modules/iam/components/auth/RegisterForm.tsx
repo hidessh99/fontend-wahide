@@ -11,6 +11,7 @@ import { TurnstileInstance } from "@marsidev/react-turnstile";
 import {
   registerSchema,
   RegisterInput,
+  isAllowedRegisterEmailDomain,
 } from "@/modules/iam/schemas/auth.schema";
 import { useAuth } from "@/modules/iam/hooks/useAuth";
 import { useI18n } from "@/lib/i18n/context";
@@ -68,6 +69,30 @@ export function RegisterForm() {
       setFieldErrors((prev) => ({ ...prev, [name]: "" }));
     }
     if (error) clearError();
+  };
+
+  const handleEmailBlur = () => {
+    const email = formData.email.trim();
+    if (!email) return;
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setFieldErrors((prev) => ({
+        ...prev,
+        email:
+          t("auth.register.emailInvalidError") || "Format email tidak valid",
+      }));
+      return;
+    }
+
+    if (!isAllowedRegisterEmailDomain(email)) {
+      setFieldErrors((prev) => ({
+        ...prev,
+        email:
+          t("auth.register.emailDomainError") ||
+          "Pendaftaran hanya menerima email resmi Gmail atau Outlook (@gmail.com, @outlook.com). Email sementara (temp-mail) tidak diizinkan.",
+      }));
+    }
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -229,8 +254,16 @@ export function RegisterForm() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
+                onBlur={handleEmailBlur}
+                autoComplete="email"
                 placeholder={t("auth.register.emailPlaceholder")}
                 disabled={isLoading}
+                aria-invalid={!!fieldErrors.email}
+                aria-describedby={
+                  fieldErrors.email
+                    ? "register-email-error"
+                    : "register-email-hint"
+                }
                 className={`bg-surface text-foreground h-12 w-full rounded-full border pr-4 pl-12 font-semibold ${
                   fieldErrors.email
                     ? "border-rose-500 ring-1 ring-rose-500"
@@ -238,9 +271,20 @@ export function RegisterForm() {
                 } text-sm transition outline-none`}
               />
             </div>
-            {fieldErrors.email && (
-              <p className="mt-1 ml-4 text-xs font-semibold text-rose-600 dark:text-rose-400">
+            {fieldErrors.email ? (
+              <p
+                id="register-email-error"
+                className="mt-1 ml-4 text-xs font-semibold text-rose-600 dark:text-rose-400"
+              >
                 {fieldErrors.email}
+              </p>
+            ) : (
+              <p
+                id="register-email-hint"
+                className="mt-1 ml-4 text-[11px] font-medium text-foreground-muted"
+              >
+                {t("auth.register.emailDomainHint") ||
+                  "Hanya menerima email resmi @gmail.com atau @outlook.com (temp-mail ditolak)."}
               </p>
             )}
           </div>
