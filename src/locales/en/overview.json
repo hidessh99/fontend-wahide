@@ -89,5 +89,14 @@
   "noScheduledMessages": "No scheduled messages.",
   "scheduleDispatch": "Schedule dispatch",
   "manage": "Manage",
-  "all": "All"
+  "all": "All",
+  "planLifetime": "Validity: Lifetime Access",
+  "planExpiresIn": "{{days}} Days Remaining",
+  "expiringSoon": "Expiring Soon",
+  "totalQuotaTitle": "Total Monthly Message Quota",
+  "channelUsageTitle": "Usage Per Channel",
+  "hardwareAndVolume": "Capacity & Volume",
+  "quotaUnit": "Messages",
+  "upgradePlanBtn": "Upgrade Plan",
+  "manageSubscriptionBtn": "Manage Subscription"
 }

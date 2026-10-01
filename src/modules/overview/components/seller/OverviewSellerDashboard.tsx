@@ -5,12 +5,14 @@ import Link from "next/link";
 import { useAuth } from "@/modules/iam/hooks/useAuth";
 import { useDevices } from "@/modules/whatsapp/hooks/useDevices";
 import { useCampaigns } from "@/modules/campaign/hooks/useCampaigns";
+import { useSubscription } from "@/modules/subscription/hooks/useSubscription";
 import { UserDashboardStats } from "@/modules/iam/types/dashboard.types";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { DashboardPlanUsageCard } from "./DashboardPlanUsageCard";
+import { derivePlanUsage } from "../../utils/subscriptionUsage";
 import { useI18n } from "@/lib/i18n/context";
 import {
-  SendHorizontal,
   CheckCircle2,
   XCircle,
   Smartphone,
@@ -39,8 +41,13 @@ export function UserDashboardOverview({
   const user = useAuth((s) => s.user);
   const { devices } = useDevices();
   const { campaigns } = useCampaigns();
+  const { subscription } = useSubscription();
 
   const userName = user?.name || "Dedi Susanto";
+
+  const planUsage = useMemo(() => {
+    return derivePlanUsage(subscription, propStats, devices);
+  }, [subscription, propStats, devices]);
 
   // Telemetry KPIs from backend stats or derived fallbacks
   const telemetry = useMemo(() => {
@@ -186,17 +193,6 @@ export function UserDashboardOverview({
             />
             <span>{t("overview.reload")}</span>
           </Button>
-
-          <Link href="/wa/send">
-            <Button
-              variant="default"
-              size="sm"
-              className="bg-foreground text-background hover:bg-foreground/90 gap-1.5 rounded-full text-xs font-bold shadow-xs transition-transform active:scale-95"
-            >
-              <SendHorizontal className="size-3.5" />
-              <span>{t("overview.sendMessage")}</span>
-            </Button>
-          </Link>
         </div>
       </div>
 
@@ -465,6 +461,9 @@ export function UserDashboardOverview({
         {/* KOLOM KANAN (lg:col-span-4 / 35% Width): Channel, Campaign, & Antrian   */}
         {/* ----------------------------------------------------------------------- */}
         <div className="space-y-6 lg:col-span-4">
+          {/* Card: Subscription Plan & Multi-Channel Quota Usage */}
+          <DashboardPlanUsageCard data={planUsage} />
+
           {/* Card C: Per channel */}
           <Card className="border-border bg-surface space-y-4 rounded-2xl border p-5 shadow-xs sm:p-6">
             <div>

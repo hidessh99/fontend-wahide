@@ -89,5 +89,14 @@
   "noScheduledMessages": "Belum ada pesan terjadwal.",
   "scheduleDispatch": "Jadwalkan pengiriman",
   "manage": "Kelola",
-  "all": "Semua"
+  "all": "Semua",
+  "planLifetime": "Masa Aktif: Selamanya (Lifetime)",
+  "planExpiresIn": "Sisa {days} Hari",
+  "expiringSoon": "Segera Berakhir",
+  "totalQuotaTitle": "Total Kuota Pesan Bulanan",
+  "channelUsageTitle": "Penggunaan Per Channel",
+  "hardwareAndVolume": "Kapasitas & Volume",
+  "quotaUnit": "Pesan",
+  "upgradePlanBtn": "Tingkatkan Paket",
+  "manageSubscriptionBtn": "Kelola Langganan"
 }

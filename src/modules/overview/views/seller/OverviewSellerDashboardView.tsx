@@ -56,9 +56,8 @@ function DashboardSkeleton() {
           <Skeleton className="h-8 w-60 rounded-md" />
           <Skeleton className="h-4 w-80 sm:w-96 rounded-md" />
         </div>
-        <div className="flex gap-2">
+        <div>
           <Skeleton className="h-9 w-28 rounded-full" />
-          <Skeleton className="h-9 w-32 rounded-full" />
         </div>
       </div>
 
@@ -108,6 +107,40 @@ function DashboardSkeleton() {
 
         {/* Right Column (4 cols) */}
         <div className="space-y-6 lg:col-span-4">
+          {/* Plan Usage Card Skeleton */}
+          <div className="border-border bg-surface space-y-4 rounded-2xl border p-5 sm:p-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <Skeleton className="h-5 w-36 rounded" />
+                <Skeleton className="h-3 w-44 rounded" />
+              </div>
+              <Skeleton className="h-5 w-20 rounded-full" />
+            </div>
+            <div className="space-y-2 pt-2">
+              <Skeleton className="h-3 w-48 rounded" />
+              <Skeleton className="h-2.5 w-full rounded-full" />
+            </div>
+            <div className="space-y-3 pt-2">
+              {[1, 2, 3].map((k) => (
+                <div key={k} className="space-y-1.5">
+                  <div className="flex justify-between">
+                    <Skeleton className="h-3.5 w-28 rounded" />
+                    <Skeleton className="h-3 w-16 rounded" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Skeleton className="h-7 rounded-lg" />
+                    <Skeleton className="h-7 rounded-lg" />
+                  </div>
+                  <Skeleton className="h-1.5 w-full rounded-full" />
+                </div>
+              ))}
+            </div>
+            <div className="grid grid-cols-2 gap-2 pt-2">
+              <Skeleton className="h-8 rounded-full" />
+              <Skeleton className="h-8 rounded-full" />
+            </div>
+          </div>
+
           <div className="border-border bg-surface space-y-4 rounded-2xl border p-5 sm:p-6">
             <div className="space-y-1">
               <Skeleton className="h-5 w-32 rounded" />
