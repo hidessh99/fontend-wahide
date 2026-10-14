@@ -6,8 +6,6 @@ import {
   Send,
   CheckCircle2,
   AlertCircle,
-  Clock,
-  Activity,
   Layers,
   Inbox,
   BarChart3,
@@ -38,13 +36,6 @@ export function TelegramStatsCards({
       : timeRange === "7d"
         ? t("telegram.stats.range7d").toLowerCase()
         : t("telegram.stats.range30d").toLowerCase();
-
-  const usagePercent = Math.min(
-    100,
-    Math.round(
-      (stats.daily_sent_count / (stats.daily_limit || 100000)) * 100,
-    ),
-  );
 
   const maxDayTotal = Math.max(
     ...stats.dailyActivity.map((d) => d.total),
@@ -172,7 +163,7 @@ export function TelegramStatsCards({
           </div>
         ) : (
           <div className="space-y-4 pt-2">
-            <div className="flex items-end gap-2 sm:gap-4 overflow-x-auto pb-2 min-h-[160px] pt-4">
+            <div className="flex items-end gap-2 sm:gap-4 overflow-x-auto pb-2 min-h-40 pt-4">
               {stats.dailyActivity.map((day) => {
                 const successPercent =
                   day.total > 0
@@ -186,9 +177,9 @@ export function TelegramStatsCards({
                 return (
                   <div
                     key={day.dateKey}
-                    className="flex flex-1 min-w-[32px] flex-col items-center gap-2 group"
+                    className="flex flex-1 min-w-8 flex-col items-center gap-2 group"
                   >
-                    <div className="relative flex h-32 w-full max-w-[42px] flex-col justify-end overflow-hidden rounded-md bg-muted/30">
+                    <div className="relative flex h-32 w-full max-w-10.5 flex-col justify-end overflow-hidden rounded-md bg-muted/30">
                       <div
                         style={{ height: `${successPercent}%` }}
                         className="w-full bg-sky-500 dark:bg-wise-green transition-all duration-300"
@@ -342,108 +333,6 @@ export function TelegramStatsCards({
               ))}
             </div>
           )}
-        </div>
-      </div>
-
-      {/* Row 4: Telegram Operational Health & Quota Cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Total & Active Bots */}
-        <div className="bg-surface border-border rounded-2xl border p-5 space-y-3 shadow-xs dark:bg-[#151614]">
-          <div className="flex items-center justify-between">
-            <span className="text-foreground-secondary text-xs font-semibold">
-              {t("telegram.stats.connectedBots")}
-            </span>
-            <div className="flex size-8 items-center justify-center rounded-xl bg-sky-500/10 text-sky-600 dark:bg-sky-500/20 dark:text-sky-400">
-              <Bot className="size-4" />
-            </div>
-          </div>
-          {isLoading ? (
-            <Skeleton className="h-7 w-16" />
-          ) : (
-            <div>
-              <p className="font-mono text-2xl font-black text-foreground">
-                {stats.active_bots}{" "}
-                <span className="text-xs text-foreground-muted font-normal">
-                  / {stats.total_bots} {t("telegram.stats.activeSuffix")}
-                </span>
-              </p>
-            </div>
-          )}
-          <p className="text-foreground-muted text-[11px]">
-            {t("telegram.stats.connectedBotsDesc")}
-          </p>
-        </div>
-
-        {/* Webhook Delivery Success */}
-        <div className="bg-surface border-border rounded-2xl border p-5 space-y-3 shadow-xs dark:bg-[#151614]">
-          <div className="flex items-center justify-between">
-            <span className="text-foreground-secondary text-xs font-semibold">
-              {t("telegram.stats.webhookHealth")}
-            </span>
-            <div className="flex size-8 items-center justify-center rounded-xl bg-wise-green/15 text-dark-green dark:text-wise-green">
-              <CheckCircle2 className="size-4" />
-            </div>
-          </div>
-          {isLoading ? (
-            <Skeleton className="h-7 w-16" />
-          ) : (
-            <div>
-              <p className="font-mono text-2xl font-black text-foreground">
-                {stats.webhook_success_rate}%
-              </p>
-            </div>
-          )}
-          <p className="text-foreground-muted text-[11px]">
-            {t("telegram.stats.webhookHealthDesc")}
-          </p>
-        </div>
-
-        {/* Dispatch Latency */}
-        <div className="bg-surface border-border rounded-2xl border p-5 space-y-3 shadow-xs dark:bg-[#151614]">
-          <div className="flex items-center justify-between">
-            <span className="text-foreground-secondary text-xs font-semibold">
-              {t("telegram.stats.avgLatency")}
-            </span>
-            <div className="flex size-8 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400">
-              <Clock className="size-4" />
-            </div>
-          </div>
-          {isLoading ? (
-            <Skeleton className="h-7 w-16" />
-          ) : (
-            <div>
-              <p className="font-mono text-2xl font-black text-foreground">
-                ~{stats.avg_latency_ms} ms
-              </p>
-            </div>
-          )}
-          <p className="text-foreground-muted text-[11px]">
-            {t("telegram.stats.avgLatencyDesc")}
-          </p>
-        </div>
-
-        {/* Daily Quota Card */}
-        <div className="bg-surface border-border rounded-2xl border p-5 space-y-3 shadow-xs dark:bg-[#151614]">
-          <div className="flex items-center justify-between">
-            <span className="text-foreground-secondary text-xs font-semibold">
-              {t("telegram.stats.dailyQuotaUsed")}
-            </span>
-            <div className="flex size-8 items-center justify-center rounded-xl bg-sky-500/10 text-sky-600 dark:bg-sky-500/20 dark:text-sky-400">
-              <Activity className="size-4" />
-            </div>
-          </div>
-          {isLoading ? (
-            <Skeleton className="h-7 w-16" />
-          ) : (
-            <div>
-              <p className="font-mono text-2xl font-black text-foreground">
-                {usagePercent}%
-              </p>
-            </div>
-          )}
-          <p className="text-foreground-muted text-[11px]">
-            {stats.daily_sent_count.toLocaleString()} / {stats.daily_limit.toLocaleString()}
-          </p>
         </div>
       </div>
     </div>

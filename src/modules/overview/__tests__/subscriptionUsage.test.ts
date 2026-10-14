@@ -93,5 +93,72 @@ describe("subscriptionUsage Utility", () => {
       expect(wa?.sendersUsed).toBe(3);
       expect(wa?.sendersMax).toBe(5);
     });
+
+    it("correctly isolates Telegram sent messages and does not attribute them to WhatsApp", () => {
+      const mockSub = {
+        planId: "p-starter",
+        planName: "FREE Starter",
+        planPrice: 0,
+        tier: "FREE TRIAL",
+        quotaUsed: 1, // Total 1 message used
+        quotaTotal: 2500,
+        deviceSlotsUsed: 0,
+        deviceSlotsMax: 1,
+        hasWatermark: true,
+        expiresAt: new Date(Date.now() + 86400000 * 365).toISOString(),
+        status: "ACTIVE",
+        isActive: true,
+      };
+
+      const mockUserStats = {
+        balance: 0,
+        income: 0,
+        total_devices: 0,
+        connected_devices: 0,
+        total_contacts: 0,
+        total_campaigns: 0,
+        total_messages_sent: 1,
+        plan_name: "FREE Starter",
+        plan_status: "ACTIVE",
+        device_limit: 1,
+        monthly_message_limit: 2500,
+        open_tickets: 0,
+        recent_activities: [],
+        recent_invoices: [],
+        channels: [
+          {
+            channel_type: "WHATSAPP",
+            sent_count: 0,
+            device_count: 0,
+            connected_count: 0,
+          },
+          {
+            channel_type: "WABA",
+            sent_count: 0,
+            device_count: 0,
+            connected_count: 0,
+          },
+          {
+            channel_type: "TELEGRAM",
+            sent_count: 1,
+            device_count: 1,
+            connected_count: 1,
+          },
+        ],
+      };
+
+      const res = derivePlanUsage(mockSub, mockUserStats, [
+        { status: "CONNECTED", channel_type: "TELEGRAM" },
+      ]);
+
+      const wa = res.channels.find((c) => c.channelType === "WHATSAPP");
+      const waba = res.channels.find((c) => c.channelType === "WABA");
+      const tele = res.channels.find((c) => c.channelType === "TELEGRAM");
+
+      expect(wa?.messagesUsed).toBe(0);
+      expect(waba?.messagesUsed).toBe(0);
+      expect(tele?.messagesUsed).toBe(1);
+      expect(res.totalQuota.used).toBe(1);
+    });
   });
 });

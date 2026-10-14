@@ -85,7 +85,7 @@ export function UserDashboardOverview({
     return [
       {
         channel_type: "WHATSAPP",
-        sent_count: propStats?.total_messages_sent || 0,
+        sent_count: 0,
         device_count: waDevices.length,
         connected_count: waDevices.filter((d) => d.status === "CONNECTED").length,
       },

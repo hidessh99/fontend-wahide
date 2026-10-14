@@ -214,7 +214,7 @@ export function derivePlanUsage(
     subscription?.deviceSlotsMax ||
     userStats?.device_limit ||
     5;
-  const waMessagesUsed = waChannelStat?.sent_count || totalUsed || 0;
+  const waMessagesUsed = waChannelStat?.sent_count ?? 0;
   const waMessagesMax = waPlanChannel?.monthlyQuota || Math.round(totalMax * 0.65) || 15000;
   const waProgress = calculateUsagePercentage(waMessagesUsed, waMessagesMax);
 
@@ -224,7 +224,7 @@ export function derivePlanUsage(
     wabaChannelStat?.connected_count || 0
   );
   const wabaSendersMax = wabaPlanChannel?.maxSenders || 2;
-  const wabaMessagesUsed = wabaChannelStat?.sent_count || 0;
+  const wabaMessagesUsed = wabaChannelStat?.sent_count ?? 0;
   const wabaMessagesMax = wabaPlanChannel?.monthlyQuota || Math.round(totalMax * 0.25) || 5000;
   const wabaProgress = calculateUsagePercentage(
     wabaMessagesUsed,
@@ -237,7 +237,7 @@ export function derivePlanUsage(
     teleChannelStat?.connected_count || 0
   );
   const teleSendersMax = telePlanChannel?.maxSenders || 3;
-  const teleMessagesUsed = teleChannelStat?.sent_count || 0;
+  const teleMessagesUsed = teleChannelStat?.sent_count ?? 0;
   const teleMessagesMax = telePlanChannel?.monthlyQuota || Math.round(totalMax * 0.10) || 3000;
   const teleProgress = calculateUsagePercentage(
     teleMessagesUsed,
